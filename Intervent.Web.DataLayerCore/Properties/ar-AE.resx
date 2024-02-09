@@ -1,0 +1,489 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="L1343" xml:space="preserve">
+    <value>ما من أحد إلا ويحب أن يحظى بمزيد من الدعم. سيسعدك العمل مع طاقمنا المتفاني من أخصائيي الرعاية الصحية</value>
+  </data>
+  <data name="L1344" xml:space="preserve">
+    <value>لن تحظى فقط بصحة أفضل – يمكنك الفوز بجوائز قيمة عن الأنشطة التي تتمها</value>
+  </data>
+  <data name="L1345" xml:space="preserve">
+    <value>مواردنا متاحة دائمًا من أجلك – على حاسوبك، وجهازك اللوحي، وهاتفك الذكي</value>
+  </data>
+  <data name="L1346" xml:space="preserve">
+    <value>ابدأ الآن – فاليوم مناسب جدًا للعمل على تحسين صحتك... ما الذي يمنعك؟</value>
+  </data>
+  <data name="L1347" xml:space="preserve">
+    <value>الصفحة الرئيسية</value>
+  </data>
+  <data name="L1361" xml:space="preserve">
+    <value>رقم الموظف</value>
+  </data>
+  <data name="L1362" xml:space="preserve">
+    <value>تاريخ الميلاد ({0})</value>
+  </data>
+  <data name="L1378" xml:space="preserve">
+    <value>استنادًا إلى إجاباتك على تقييمنا الصحي، سنقدم لك استشارة متخصصة – خاصة بك وحدك.</value>
+  </data>
+  <data name="L1628" xml:space="preserve">
+    <value>أعد كتابة كلمة المرور</value>
+  </data>
+  <data name="L1630" xml:space="preserve">
+    <value>تم تغيير كلمة مرورك. يرجى تسجيل الدخول بعنوان بريدك الإلكتروني وكلمة المرور الجديدة.</value>
+  </data>
+  <data name="L1632" xml:space="preserve">
+    <value>عنوان بريدك الإلكتروني</value>
+  </data>
+  <data name="L1633" xml:space="preserve">
+    <value>تعذر إعادة تعيين كلمة المرور</value>
+  </data>
+  <data name="L1895" xml:space="preserve">
+    <value>{0} مطلوب</value>
+  </data>
+  <data name="L1896" xml:space="preserve">
+    <value>تحديد نوع الموظف</value>
+  </data>
+  <data name="L1897" xml:space="preserve">
+    <value>موظف</value>
+  </data>
+  <data name="L1899" xml:space="preserve">
+    <value>الزوج/الزوجة</value>
+  </data>
+  <data name="L1900" xml:space="preserve">
+    <value>نوع الموظف مطلوب</value>
+  </data>
+  <data name="L1903" xml:space="preserve">
+    <value>تاريخ الميلاد مطلوب.</value>
+  </data>
+  <data name="L19031" xml:space="preserve">
+    <value>تاريخ الميلاد مطلوب.</value>
+  </data>
+  <data name="L1919" xml:space="preserve">
+    <value>حوافز INTERVENT</value>
+  </data>
+  <data name="L1921" xml:space="preserve">
+    <value>اللغة الإنجليزية</value>
+  </data>
+  <data name="L1922" xml:space="preserve">
+    <value>اللغة الإسبانية</value>
+  </data>
+  <data name="L1929" xml:space="preserve">
+    <value>يجب ألا تقل كلمات المرور عن 8 أحرف وأن تحتوي على الأقل على حرف واحد من الأحرف الكبيرة والصغيرة ورقم واحد.</value>
+  </data>
+  <data name="L1931" xml:space="preserve">
+    <value>خطأ في التسجيل</value>
+  </data>
+  <data name="L1932" xml:space="preserve">
+    <value>تم إنشاء حسابك بنجاح وأصبح جاهزًا للاستخدام.</value>
+  </data>
+  <data name="L1933" xml:space="preserve">
+    <value>يرجى إدخال معلومات المستخدم الرئيسي لاستكمال التسجيل.</value>
+  </data>
+  <data name="L1967" xml:space="preserve">
+    <value>السجل غير موجود. يرجى التحقق من {0} المدخل.</value>
+  </data>
+  <data name="L1968" xml:space="preserve">
+    <value>لم نتمكن من العثور على تطابق تام. يرجى التحقق من المعلومات المدخلة.</value>
+  </data>
+  <data name="L1969" xml:space="preserve">
+    <value>الحساب موجود بالفعل. يرجى تسجيل الدخول إلى الحساب الموجود.</value>
+  </data>
+  <data name="L1970" xml:space="preserve">
+    <value>حدث خطأ أثناء معالجة الطلب</value>
+  </data>
+  <data name="L1986" xml:space="preserve">
+    <value>يجب أن يكون العمر أكبر من 18 عامًا</value>
+  </data>
+  <data name="L1988" xml:space="preserve">
+    <value>يرجى التزويد بعنوان بريد إلكتروني صالح. يجب أن يقدم الزوج/الزوجة عنوان بريد إلكتروني مستقلًا وفريدًا.</value>
+  </data>
+  <data name="L1989" xml:space="preserve">
+    <value>يبدو أنك اخترت نوع الموظف الخطأ.</value>
+  </data>
+  <data name="L238" xml:space="preserve">
+    <value>الموظفون – أدخل اسمك الأول واسم العائلة، وتاريخ الميلاد و  {2}.&lt;br&gt;&lt;br&gt;الأزواج/الزوجات (من غير العاملين لدى {0}) – أدخل/أدخلي اسمك الأول واسم العائلة، وتاريخ الميلاد و  {2} الموظف {1}.&lt;br&gt;&lt;br&gt;الأزواج/الزوجات الموظفان كلاهما في {0}) – على كل موظف إدخال الاسم الأول، واسم العائلة، وتاريخ الميلاد. أدخل {2} للشخص الذي يعتبر العضو الرئيسي في البرنامج الطبي.</value>
+  </data>
+  <data name="L2396" xml:space="preserve">
+    <value>حسابك غير فعال. يرجى تأكيد حسابك أو إعادة إرسال بريد التأكيد الإلكتروني عن طريق النقر فوق الرابط التالي.</value>
+  </data>
+  <data name="L2397" xml:space="preserve">
+    <value>إعادة إرسال بريد التأكيد الإلكتروني إلى</value>
+  </data>
+  <data name="L2398" xml:space="preserve">
+    <value>يرجى مراجعة تفاصيل البريد الإلكتروني لتفعيل حسابك.</value>
+  </data>
+  <data name="L2399" xml:space="preserve">
+    <value>طفل</value>
+  </data>
+  <data name="L2400" xml:space="preserve">
+    <value>معال بالغ</value>
+  </data>
+  <data name="L2435" xml:space="preserve">
+    <value>الاتصال بنا</value>
+  </data>
+  <data name="L2436" xml:space="preserve">
+    <value>الخصوصية</value>
+  </data>
+  <data name="L2437" xml:space="preserve">
+    <value>إنشاء حسابي</value>
+  </data>
+  <data name="L2466" xml:space="preserve">
+    <value>يرجى التحقق من رقم هويتك الفريد. رقم هويتك الفريد هو الرقم الذي يجمع بين آخر أربعة أرقام من رقم ضمانك الاجتماعي وتاريخ ميلادك شاملًا الأصفار. على سبيل المثال إذا كان رقم ضمانك الاجتماعي xxx-xx-1234 وتاريخ ميلاد 03/05/1970، فأدخل 123403051970.</value>
+  </data>
+  <data name="L2468" xml:space="preserve">
+    <value>إعادة كتابة عنوان البريد الإلكتروني</value>
+  </data>
+  <data name="L2469" xml:space="preserve">
+    <value>البريد الإلكتروني غير مطابق</value>
+  </data>
+  <data name="L2470" xml:space="preserve">
+    <value>الطعام الذي تتناوله، والضغوط التي تشعر بها، والأنشطة التي تقوم بها، تؤثر جميعًا في صحتك. وبإمكانك الآن معرفة كيف يحدث ذلك من خلال إتمام تقييمنا الصحي.</value>
+  </data>
+  <data name="L254" xml:space="preserve">
+    <value>إعادة تعيين كلمة المرور</value>
+  </data>
+  <data name="L2560" xml:space="preserve">
+    <value>عنوان البريد الإلكتروني هذا مستخدم بالفعل. يرجى التزويد بعنوان بريد إلكتروني فريد.</value>
+  </data>
+  <data name="L2569" xml:space="preserve">
+    <value>لا يحق لك إنشاء حساب. للحصول على مزيد من المساعدة يرجى الاتصال بخدمة العملاء على ‎1-855-494-1093.</value>
+  </data>
+  <data name="L2577" xml:space="preserve">
+    <value>انتهت صلاحية رابط إعادة التعيين بعد ساعة واحدة أو أنه سبق استخدامه بالفعل. يرجى النقر فوق زر "إعادة تعيين كلمة المرور"، وستتلقى بريدًا إلكترونيًا يحتوي على رابط جديد.</value>
+  </data>
+  <data name="L263" xml:space="preserve">
+    <value>كلمة المرور غير مطابقة</value>
+  </data>
+  <data name="L2693" xml:space="preserve">
+    <value>رحلتك إلى الصحة المثلى والرفاهة تبدأ هنا... والآن</value>
+  </data>
+  <data name="L2710" xml:space="preserve">
+    <value>إدارة نمط حياة الأمهات</value>
+  </data>
+  <data name="L3070" xml:space="preserve">
+    <value>الموظف</value>
+  </data>
+  <data name="L3111" xml:space="preserve">
+    <value>حققت برامجنا نجاحًا مع أكثر من 2 مليون شخص في جميع أنحاء العالم.</value>
+  </data>
+  <data name="L3112" xml:space="preserve">
+    <value>احصل على جوائز لقاء جهودك</value>
+  </data>
+  <data name="L3113" xml:space="preserve">
+    <value>التدريب الحي</value>
+  </data>
+  <data name="L3114" xml:space="preserve">
+    <value>إدارة العافية والحالات الطبية المزمنة</value>
+  </data>
+  <data name="L3115" xml:space="preserve">
+    <value>الرفاهة – التعامل مع الضغوط – القدرة على الصمود</value>
+  </data>
+  <data name="L3116" xml:space="preserve">
+    <value>التعامل مع الإعاقة – العودة إلى العمل</value>
+  </data>
+  <data name="L3117" xml:space="preserve">
+    <value>طالع واحدة من قصص النجاح العديدة</value>
+  </data>
+  <data name="L3118" xml:space="preserve">
+    <value>يمكنك الفوز بجوائز قيمة من INTERVENT. ستقدم INTERVENT نقاطًا مقابل استكمال أنشطة البرامج المختلفة، كما تجري سحوبات شهرية، وفصلية، ونصف سنوية، وسنوية لاختيار الفائزين. وكلما زاد النقاط التي تحوزها، زادت فرص فوزك.  المشاركون المسجلون في برامج التدريب الصحي والمشاركون فيها بفاعلية فقط هم الذين يحق لهم دخول السحوبات.</value>
+  </data>
+  <data name="L3119" xml:space="preserve">
+    <value>راجع إعلانات الفائزين واقرأ القصص التي تتحدث عن دور العمل مع مدربي INTERVENT الصحيين في مساعدة المشاركين على المضي قدمًا على طريق الوصول إلى الصحة المثلى.</value>
+  </data>
+  <data name="L3120" xml:space="preserve">
+    <value>وهذا التقييم الصحي مجاني، وسري، ويتم عبر الإنترنت، للنظر في عادات نمط حياتك وتاريخك الصحي، لتحديد مدى الصحة التي تتمتع بها، وما إذا كنت معرضًا لمخاطر الأمراض أو الاعتلالات المزمنة، أو مجالات التعامل معها بصورة أفضل. ولن يستغرق إتمامه سوى 15 دقيقة تقريبًا.</value>
+  </data>
+  <data name="L3121" xml:space="preserve">
+    <value>وبعد إتمام التقييم الصحي، ستتلقى على الفور تقريرًا شخصيًا عن العافية، ومجموعة غزيرة من المعلومات المفيدة المخصصة لك بصفة شخصية. يجب عليك إتمام التقييم الصحي قبل التسجيل في أحد برامج التدريب على نمط الحياة الصحية. وإذا كانت لديك أي استفسارات فأرسلها إلينا بالبريد الإلكتروني أو اتصل بنا.</value>
+  </data>
+  <data name="L3122" xml:space="preserve">
+    <value>فمدربونا الصحيون يكرسون أنفسهم لرعايتك ومتاحون دائمًا لك في أي وقت يناسبك. وقد سبق لهم العمل مع الآلاف من المشاركين مثلك. وسيستمع مدربونا لاحتياجاتك، وتفضيلاتك، وظروفك، وسيساعدونك على وضع خطة شخصية تناسبك. وسيتابع معك مدربك مدى تحقيقك للأهداف التي وضعتها لنفسك، وسيساندك في كل خطوة تخطوها على طريق الوصول إلى صحة أفضل.</value>
+  </data>
+  <data name="L3123" xml:space="preserve">
+    <value>يجب عليك إتمام التقييم الصحي قبل التسجيل في أحد برامج التدريب على نمط الحياة الصحية.</value>
+  </data>
+  <data name="L3124" xml:space="preserve">
+    <value>تشمل برامجنا الهاتفية للتدريب الصحي:</value>
+  </data>
+  <data name="L3125" xml:space="preserve">
+    <value>إدارة نمط الحياة – الأكل بطريقة صحية، الحفاظ على النشاط البدني، التعامل مع الضغوط، عدم التدخين واتباع خطتك العلاجية وإرشادات الرعاية الوقائية – هي أساس التمتع بالصحة المثلى والرفاه</value>
+  </data>
+  <data name="L3126" xml:space="preserve">
+    <value>إذا كنت تعاني من حالة مزمنة، فيمكن لبرنامجنا الهاتفي للتدريب الصحي أن يساعدك على تنفيذ خطة العلاج الموصى بها من قبل الطبيب أو مقدم الرعاية الصحية وعيش حياة أفضل مع حالتك.</value>
+  </data>
+  <data name="L3127" xml:space="preserve">
+    <value>إذا كانت تتمتع بصحة عامة جيدة، وتود أن تبقى كذلك، فسيركز برنامج تدريبك على تعزيز الصحة والعافية، وإدارة عوامل الخطر، والوقاية من الأمراض.</value>
+  </data>
+  <data name="L3128" xml:space="preserve">
+    <value>وجميع برامج إدارة العافية والحالات الطبية المزمنة مخصصة فرديًا لتلبية احتياجاتك وتفضيلاتك. وسوف تخطو خطوات صغيرة منتظمة تمكنك من إحداث فارق كبير في حالتك الصحية ونمط حياتك.</value>
+  </data>
+  <data name="L3129" xml:space="preserve">
+    <value>عندما التحقت ببرنامج التدريب، علمت أن بإمكاني التقليل من مخاطر تحول مقدمات السكري لدي إلى النوع الثاني من داء السكري عن طريق فقد خمسة إلى 10 في المائة من وزني وزيادة نشاطي البدني. وبمساعدة مدربي الصحي، فقدت الآن 12 كيلو جرامًا (حوالي 26 رطلًا)، ويسعدني أن أقول إنني لم أعد أعاني من مقدمات السكري. كما أصبحت قيمة الكوليسترول لدي في النطاق الطبيعي. أشعر بسعادة كبيرة. لم أكن لأحقق هذه التغييرات لولا الدعم الذي قدمه مدربي الصحي. لذا، فإنني أمنح برنامج التدريب تقديرًا ممتازًا، وأوصي به غيري ممن هم بحاجة إلى التعامل مع حالة طبية مزمنة، أو حتى أولئك الذي يودون الحفاظ على صحتهم.</value>
+  </data>
+  <data name="L3130" xml:space="preserve">
+    <value>ليست كل الضغوط سيئة، ولكن حتى الضغوط الجيدة - كضغوط السعي للترقي في العمل - يمكن أن تكون مجهدة للأعصاب وتؤثر سلبًا على صحتك. وتتناول برامجنا المعنية بالتعامل مع الضغوط مهارات الاسترخاء والتأقلم وغيرها من السلوكيات المهمة لتعزيز القدرة على الصمود في وجه الأوقات الصعبة. وتشمل موضوعات البرامج: إدارة الوقت، تحقيق التوازن بين العمل والحياة، القيم، أنماط التواصل، بناء الثقة، الدعم الاجتماعي، التركيز الذهني الكامل، التفكير بطريقة مختلفة، حل المشكلات، التعامل مع الاكتئاب، ومنع حدوث الانتكاسات. وبوسع الكل تقريبًا الاستفادة من نهجنا الشامل – والمخصص فرديًا في الوقت نفسه – لتحقيق الرفاهة، والتعامل مع الضغوط، والقدرة على الصمود.</value>
+  </data>
+  <data name="L3131" xml:space="preserve">
+    <value>وإذا كان المشاركون يعانون من مشكلات تتجاوز نطاق برنامج التدريب، فسنحيلهم إلى جهات أخرى ملائمة للصحة النفسية.</value>
+  </data>
+  <data name="L3132" xml:space="preserve">
+    <value>جميعنا يتعرض للضغوط في وقت من الأوقات – أليس كذلك؟ حسنًا، بالنسبة لي، كان السبب وراء الضغوط التي أعانيها هو فقدي لزوجي بعد زواج دام 25 عامًا. وكنت قد أمضيت عدة أشهر في برنامج التدريب على الرفاهة عندما توفي فجأة. ومن حسن الحظ، أنني استطعت أن أطبق العديد من مبادئ الصمود في مواجهة الأزمات التي تعلمتها من مدربي للتعامل مع حزني وما صاحبه من ضغوط. وكان بإمكاني طلب المساعدة من الآخرين وقبولها منهم، والبحث عمن يستمع إلي. وشاركت أيضًا في بعض الأنشطة التطوعية بمجتمعي، الأمر الذي ساعدني على تركيز اهتمامي على الآخرين بدلًا من أن ينصب على نفسي وحسب. وأنا ممتنة لتجربتي التدريبية. فسيجد كل شخص شيئًا ما في هذا البرنامج.</value>
+  </data>
+  <data name="L3133" xml:space="preserve">
+    <value>لا تتوقف إدارة نمط الحياة عند تعرضك لحادث، أو دخول المستشفى، أو الإصابة بمرض خطير، أو أي انتكاسة أخرى. بل، في الواقع، من شأن التدرب على عادات أكثر صحية خلال فترات تعطل الحياة الطبيعية تلك أن يساعدك على العودة إلى جدولك المعتاد وإلى عملك، وإلى الأنشطة التي تحقق لك السعادة، في أقرب وقت ممكن عمليًا.</value>
+  </data>
+  <data name="L3134" xml:space="preserve">
+    <value>وسنساعدك على أن تكون مدافعًا عن صحتك الشخصية للتعامل مع الإعاقات قصيرة أو طويلة الأجل. وسيساعدك مدربك على نمط الحياة الصحي على الوصول إلى طائفة كاملة من موارد التعافي، بما في ذلك إعادة التأهيل والعلاج الطبيعي للمرضى الخارجيين. وفي الوقت المناسب، يمكنك الانتقال إلى برنامجنا الخاص بالإدارة الشاملة لنمط الحياة للحصول على دعم مستمر.</value>
+  </data>
+  <data name="L3135" xml:space="preserve">
+    <value>بعد الجراحة التي أجريتها في الظهر، كنت قلقًا بشأن عودتي للعمل، لذا التحقت ببرنامج التدريب أثناء قيامي بإعادة التأهيل البدني. وخلال هذا الوقت، ساعدني مدربي على الوصول إلى مختلف خدمات التعافي اللازمة لعودتي للعمل. وانصب تركيزنا أيضًا على فقد الوزن وضبط ضغط الدم؛ وهما المشكلتان اللتان كنت أعاني منهما قبل الجراحة. وبعد أربعة أسابيع فقط، تمكنت من العودة إلى أداء مهام محدودة، وبعد ثلاثة أشهر، عدت لممارسة مهامي كاملة. والآن فقدت تسعة كيلو جرامات (حوالي 20 رطلًا)، وتحسن ضغط دمي، وأحافظ على نشاطي. وقد انخفضت مخاطر تعرضي لمشاكل في الظهر كثيرًا، وعدت مجددًا للاستمتاع برياضة الغولف. أشعر بسعادة كبيرة. وأخطط للاستمرار في المشاركة في برنامج التدريب.</value>
+  </data>
+  <data name="L3136" xml:space="preserve">
+    <value>هذا البرنامج للتدريب على نمط الحياة الصحية مخصص للنساء الحوامل أو اللاتي يخططن للحمل في المستقبل القريب. وتركز الموضوعات المعنية بفترة ما قبل الولادة بصفة أساسية على العافية العامة (التغذية، النشاط البدني، التعامل مع الضغوط) للمساعدة على  المرور بحمل صحي. وتتناول الموضوعات المعنية بفترة ما بعد الولادة استعادة القوام، وفقدان الوزن المكتسب أثناء الحمل، والتكيف مع الحياة في ظل وجود مولود جديد. كما تتوافر سلسلة تعليمية خاصة موجهة للنساء اللاتي يفكرن في الرضاعة الطبيعية لمولودهن.</value>
+  </data>
+  <data name="L3137" xml:space="preserve">
+    <value>ومن شأن المشاركة في برنامج التدريب على نمط الحياة الصحية للأمهات أن يحسن من احتمالات اجتياز الحمل بنجاح، ووضع مولود يتمتع بصحة جيدة. أما المسائل الإكلينيكية فتحال دائمًا إلى الأطباء الشخصيين للسيدة أو مقدمي الرعاية الصحية. كما تشجع النساء أيضًا على الاستفادة من الموارد الخاصة برعاية ما قبل الولادة، ورعاية الأم والمولود الجديد، التي يقدمها مقدمو الرعاية الصحية في الأماكن التي سيلدن بها.</value>
+  </data>
+  <data name="L3138" xml:space="preserve">
+    <value>بمجرد أن عرفت بحملي، التحقت ببرنامج التدريب على نمط الحياة الصحي للأمهات. فلم يكن لدي أدنى علم عن معنى أن يكون لدي طفل، وخصوصًا الأمور المتعلقة بالمواعيد والفحوص الطبية خلال فترة ما قبل الولادة. وقد أجاب مدربي على جميع أسئلتي وساعدني على معرفة ما ينبغي أن أتوقعه في كل شهر طوال رحلة الحمل. وبعد أن وضعت ابنتي، واصلت برنامج التدريب لكي أفقد الكيلو جرامات الخمسة (حوالي 11 رطلًا) التي اكتسبتها أثناء الحمل والحصول على قوام أفضل. وبعد ثلاثة أشهر فقط، استعدت الوزن الذي كنت عليه قبل الحمل. وأنا في تطلع دائمًا لجلسات التدريب من أجل الحصول على الدعم المستمر.</value>
+  </data>
+  <data name="L3139" xml:space="preserve">
+    <value>بوابة تجريبية لعملاء MAXIS GBN</value>
+  </data>
+  <data name="L3140" xml:space="preserve">
+    <value>العربية</value>
+  </data>
+  <data name="L3141" xml:space="preserve">
+    <value>حقق الأهداف المهمة لديك</value>
+  </data>
+  <data name="L3149" xml:space="preserve">
+    <value>اتصل بنا</value>
+  </data>
+  <data name="L3150" xml:space="preserve">
+    <value>راسلنا على البريد الإلكتروني</value>
+  </data>
+  <data name="L3159" xml:space="preserve">
+    <value>العربية-AE</value>
+  </data>
+  <data name="L424" xml:space="preserve">
+    <value>INTERVENT</value>
+  </data>
+  <data name="L425" xml:space="preserve">
+    <value>صحة أفضل مدى الحياة Better Health for Life™‎</value>
+  </data>
+  <data name="L426" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="L431" xml:space="preserve">
+    <value>إنشاء حسابي</value>
+  </data>
+  <data name="L432" xml:space="preserve">
+    <value>الاسم الأول مطلوب.</value>
+  </data>
+  <data name="L433" xml:space="preserve">
+    <value>اسم العائلة مطلوب.</value>
+  </data>
+  <data name="L434" xml:space="preserve">
+    <value>عنوان بريدك الإلكتروني مطلوب.</value>
+  </data>
+  <data name="L438" xml:space="preserve">
+    <value>كلمة المرور غير مطابقة</value>
+  </data>
+  <data name="L440" xml:space="preserve">
+    <value>شروط الخدمة</value>
+  </data>
+  <data name="L441" xml:space="preserve">
+    <value>أوافق على</value>
+  </data>
+  <data name="L442" xml:space="preserve">
+    <value>لتتمكن من الاستفادة من خدماتنا، يجب عليك الموافقة على اتفاقية المشاركة والخدمة وسياسة الخصوصية لشركة INTERVENT.</value>
+  </data>
+  <data name="L443" xml:space="preserve">
+    <value>التسجيل</value>
+  </data>
+  <data name="L446" xml:space="preserve">
+    <value>الحصول على تقرير شخصي عن العافية</value>
+  </data>
+  <data name="L451" xml:space="preserve">
+    <value>تحقيق الأهداف المهمة لديك</value>
+  </data>
+  <data name="L453" xml:space="preserve">
+    <value>التواصل مع مدرب صحي</value>
+  </data>
+  <data name="L459" xml:space="preserve">
+    <value>الوصول إلى INTERVENT أثناء تنقلك</value>
+  </data>
+  <data name="L462" xml:space="preserve">
+    <value>تم تأكيد حسابك الجديد! استخدم عنوان بريدك الإلكتروني وكلمة المرور لتسجيل الدخول.</value>
+  </data>
+  <data name="L463" xml:space="preserve">
+    <value>يرجى ‏‏إدخال عنوان بريدك الإلكتروني</value>
+  </data>
+  <data name="L464" xml:space="preserve">
+    <value>يرجى إدخال كلمة المرور</value>
+  </data>
+  <data name="L465" xml:space="preserve">
+    <value>نسيت كلمة المرور</value>
+  </data>
+  <data name="L466" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="L467" xml:space="preserve">
+    <value>{0} غير موجود بنظامنا. يرجى الاتصال على ‎1-855-494-1093 للحصول على مزيد من المساعدة.</value>
+  </data>
+  <data name="L468" xml:space="preserve">
+    <value>يرجى مراجعة بريدك الإلكتروني للاطلاع على تعليمات إعادة تعيين كلمة المرور.</value>
+  </data>
+  <data name="L469" xml:space="preserve">
+    <value>سنرسل لك بالبريد الإلكتروني تعليمات لكيفية إعادة تعيين كلمة مرورك.</value>
+  </data>
+  <data name="L470" xml:space="preserve">
+    <value>إعادة تعيين كلمة المرور</value>
+  </data>
+  <data name="L474" xml:space="preserve">
+    <value>تأكيد الحساب</value>
+  </data>
+  <data name="L475" xml:space="preserve">
+    <value>تم إرسال بريد إلكتروني لتأكيد الحساب على</value>
+  </data>
+  <data name="L476" xml:space="preserve">
+    <value>انقر فوق الرابط الوارد بالرسالة للمصادقة واستكمال عملية إنشاء الحساب.</value>
+  </data>
+  <data name="L477" xml:space="preserve">
+    <value>إذا لم تجد الرسالة في صندوق الوارد، فحاول البحث عنها في مجلد الرسائل المزعجة.</value>
+  </data>
+  <data name="L478" xml:space="preserve">
+    <value>موافق</value>
+  </data>
+  <data name="L479" xml:space="preserve">
+    <value>حدث خطأ أثناء معالجة طلب مصادقة حسابك.</value>
+  </data>
+  <data name="L535" xml:space="preserve">
+    <value>التقييم الصحي</value>
+  </data>
+  <data name="L938" xml:space="preserve">
+    <value>الاسم الأول</value>
+  </data>
+  <data name="L939" xml:space="preserve">
+    <value>اسم العائلة</value>
+  </data>
+  <data name="L986" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+</root>
