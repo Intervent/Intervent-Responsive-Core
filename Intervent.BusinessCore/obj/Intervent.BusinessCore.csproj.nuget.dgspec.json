@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj": {}
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj": {
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj",
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj",
         "projectName": "Intervent.BusinessCore",
-        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj",
         "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.BusinessCore\\obj\\",
+        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.BusinessCore\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,20 +28,20 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj": {
-                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj"
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj"
               },
-              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj": {
-                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj"
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj"
               },
-              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj": {
-                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj"
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\Intervent.HWSCore.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\Intervent.HWSCore.csproj"
               },
-              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj": {
-                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj"
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj"
               },
-              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj": {
-                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj"
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj"
               }
             }
           }
@@ -108,14 +108,14 @@
         }
       }
     },
-    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj": {
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj",
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj",
         "projectName": "Intervent.DALCore",
-        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj",
         "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\obj\\",
+        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -185,14 +185,14 @@
         }
       }
     },
-    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj": {
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj",
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj",
         "projectName": "Intervent.FrameworkCore",
-        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj",
         "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.FrameworkCore\\obj\\",
+        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.FrameworkCore\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -246,90 +246,14 @@
         }
       }
     },
-    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj": {
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj",
-        "projectName": "Intervent.HWSCore",
-        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj",
-        "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\obj\\",
-        "projectStyle": "PackageReference",
-        "configFilePaths": [
-          "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
-        ],
-        "originalTargetFrameworks": [
-          "net7.0"
-        ],
-        "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
-        },
-        "frameworks": {
-          "net7.0": {
-            "targetAlias": "net7.0",
-            "projectReferences": {}
-          }
-        },
-        "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
-        }
-      },
-      "frameworks": {
-        "net7.0": {
-          "targetAlias": "net7.0",
-          "dependencies": {
-            "Microsoft.AspNet.WebApi.Client": {
-              "target": "Package",
-              "version": "[5.2.9, )"
-            },
-            "Newtonsoft.Json": {
-              "target": "Package",
-              "version": "[13.0.3, )"
-            },
-            "System.Configuration.ConfigurationManager": {
-              "target": "Package",
-              "version": "[6.0.1, )"
-            },
-            "System.ServiceModel.Primitives": {
-              "target": "Package",
-              "version": "[4.8.1, )"
-            }
-          },
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48",
-            "net481"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "Microsoft.AspNetCore.App": {
-              "privateAssets": "none"
-            },
-            "Microsoft.NETCore.App": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
-        }
-      }
-    },
-    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj",
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj",
         "projectName": "Intervent.Web.DataLayerCore",
-        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj",
         "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayerCore\\obj\\",
+        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DataLayerCore\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -346,17 +270,17 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj": {
-                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj"
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj"
               },
-              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj": {
-                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj"
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj"
               },
-              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj": {
-                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj"
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\Intervent.HWSCore.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\Intervent.HWSCore.csproj"
               },
-              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj": {
-                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj"
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj"
               }
             }
           }
@@ -427,14 +351,14 @@
         }
       }
     },
-    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj": {
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj",
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj",
         "projectName": "Intervent.Web.DTOCore",
-        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj",
         "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTOCore\\obj\\",
+        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTOCore\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -451,8 +375,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj": {
-                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj"
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj"
               }
             }
           }

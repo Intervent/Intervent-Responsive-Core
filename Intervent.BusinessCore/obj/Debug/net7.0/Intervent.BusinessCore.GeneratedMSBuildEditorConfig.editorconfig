@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Intervent.BusinessCore
-build_property.ProjectDir = C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.BusinessCore\
+build_property.ProjectDir = C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.BusinessCore\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

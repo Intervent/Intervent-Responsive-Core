@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Intervent.DALCore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+569ab28f16382236fa2cb907756413885f911d35")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+59eab2e1827d76cc1037d9b9013a1eafb2920b85")]
 [assembly: System.Reflection.AssemblyProductAttribute("Intervent.DALCore")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Intervent.DALCore")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

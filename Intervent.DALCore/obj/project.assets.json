@@ -3622,11 +3622,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj",
+      "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj",
       "projectName": "Intervent.DALCore",
-      "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj",
+      "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj",
       "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\obj\\",
+      "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",

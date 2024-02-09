@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3IvykEsM22XIUPDenfH68ksCDQQDvWuJ+ixzO9KjKcE+4kxDisxpuQl0aDiGnR6Bb+Lf4zw+LcrJA6uLBtEu4w==",
+  "dgSpecHash": "C5lmA9HD62Jdol0vTYeFUEp8w0j5uRCohI5sD3+IuVLq39rFONmTYSnPHaS5MkD9t9J6t6Ql55bdIBsHnQ75iQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj",
+  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Santhosh\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\Santhosh\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

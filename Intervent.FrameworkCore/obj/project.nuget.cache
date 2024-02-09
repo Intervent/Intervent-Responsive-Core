@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "knHS7lATGyCKWQXmxqXE0g33/OF817hm3oVdlscRuRgNGaf05E6BTe7uNjcNMEpHbWcKCR42BAdJMDBLdUyn8A==",
+  "dgSpecHash": "20RFMGEeThVvsFvT/FZD+ykeTep6oDiJOXfnXbj0fRF/QpYYb9ajOoMdsPQZmXKCUeYsYGxcjpca18eyBmUGMQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj",
+  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.FrameworkCore\\Intervent.FrameworkCore.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Santhosh\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
   ],
