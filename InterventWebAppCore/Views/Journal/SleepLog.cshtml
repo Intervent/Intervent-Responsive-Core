@@ -1,0 +1,384 @@
+﻿@model InterventWebApp.SleepLogModel
+@using InterventWebApp
+@{
+    ViewBag.Title = "SleepLog";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main search-participants">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="small-7 left cell">
+                    <h2>@Translate.Message("L2136")</h2>
+                </div>
+                @if (Model.HasActivePortal)
+                {
+                    <div class="small-5 text-right cell">
+                        <button id="add-sleeplog-button" data-open="add-sleeplog" class="button plus-btn right">@Translate.Message("L291")</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div id="search-results"></div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <!-- pagination Start -->
+                <div class="pagination-area hide" id="pagination-centered">
+                    <ul>
+                        <li id="numeric"></li>
+                    </ul>
+                    <!-- page-link Start -->
+                    <div class="page-link">
+                        <label>@Translate.Message("L4041")</label>
+                        <div class="grid-x">
+                            <input type="text" id="jumptoPageNo">
+                            <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                        </div>
+                    </div>
+                    <!-- page-link End -->
+                </div>
+                <!-- pagination End -->
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <div class="panel" id="chart-results" hidden>
+                    <div id="chartdiv" style="width:100%;height:500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="add-sleeplog" class="reveal medium" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form id="sleepLog-form" data-abide novalidate>
+        <h2 class="text-center">@Translate.Message("L2149")</h2>
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>@Translate.Message("L2150")</label>
+                @Html.TextBoxFor(x => x.sleepLog.Start, new Dictionary<string, object> { { "class", "fdatepicker" }, { "id", "sleepLog_Date" }, { "required", "required" } })
+                <small class="form-error">@Translate.Message("L480")</small>
+                <input id="sleepLogDate" type="hidden" />
+            </div>
+            <div class="cell medium-6">
+                <label>@Translate.Message("L2151")</label>
+                @Html.TextBoxFor(x => x.sleepLog.End, new Dictionary<string, object> { { "class", "fdatepicker" }, { "id", "sleepLog_GotupTime" }, { "required", "required" }, { "data-validator", "validateEndDate" } })
+                <small class="form-error">@Translate.Message("L2853")</small>
+                <input id="sleepLogGotupTime" type="hidden" />
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>@Translate.Message("L2152")</label>
+                @Html.DropDownListFor(m => m.sleepLog.SleepQuality, Model.sleeplogList, "-- " + Translate.Message("L421") + " --", new { @required = "required" })
+                <small class="form-error">@Translate.Message("L480")</small>
+            </div>
+            <div class="cell medium-6">
+                <label>@Translate.Message("L2147")</label>
+                @Html.DropDownListFor(m => m.sleepLog.DaytimeAlertness, Model.sleeplogList, "-- " + Translate.Message("L421") + " --", new { @required = "required" })
+                <small class="form-error">@Translate.Message("L480")</small>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>@Translate.Message("L2153")</label>
+                @Html.DropDownListFor(m => m.sleepLog.Mood, Model.sleeplogList, "-- " + Translate.Message("L421") + " --", new { @required = "required" })
+                <small class="form-error">@Translate.Message("L480")</small>
+            </div>
+        </div>
+        <div class="cell medium-12">
+            <label>@Translate.Message("L1717")</label>
+            @Html.TextAreaFor(x => x.sleepLog.Notes)
+        </div>
+        <div data-alert id="inline-login-error" class="cell medium-12 alert-box alert">
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right">
+                <button class="small" type="submit">@Translate.Message("L968")</button>
+            </div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closesleepLog">@Translate.Message("L967")</button></div>
+        </div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        @Html.HiddenFor(x => x.sleepLog.Id)
+    </form>
+</div>
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $("#sleepLog_Date").on("change", function () {
+        $('#sleepLogDate').val(toSystemDateFormat(this.value, "24hour"));
+    });
+    $("#sleepLog_GotupTime").on("change", function () {
+        $('#sleepLogGotupTime').val(toSystemDateFormat(this.value, "24hour"));
+    });
+    $(document).ready(function () {
+        $('#sleepLog_Date').fdatepicker({
+            endDate: new Date(),
+            format: '@Model.DateFormat.ToLower() hh:ii',
+            disableDblClickSelection: true,
+            pickTime: true
+        }).on('change', function (selected) {
+            var endDate = new Date($("#sleepLogGotupTime").val().replace(/-/g, '/'));
+            var minDate = new Date($("#sleepLogDate").val().replace(/-/g, '/'));
+            minDate.setDate(minDate.getDate() - 1); // to enable UI to show MoveDateEnd the same as MoveDateStart on selection.
+            if (endDate < minDate) {
+                $('#sleepLog_GotupTime').fdatepicker('setDate', minDate);
+            }
+            if (minDate.getHours() == 0 && minDate.getMinutes() == 0)
+                minDate.setDate(minDate.getDate() + 1);
+            $('#sleepLog_GotupTime').fdatepicker('setStartDate', minDate);
+            if (minDate.getHours() == 0 && minDate.getMinutes() == 0)
+                minDate.setDate(minDate.getDate() + 1);
+            else
+                minDate.setDate(minDate.getDate() + 2);
+            $('#sleepLog_GotupTime').fdatepicker('setEndDate', minDate);
+        });
+        $('#sleepLog_GotupTime').fdatepicker({
+            format: '@Model.DateFormat.ToLower() hh:ii',
+            disableDblClickSelection: true,
+            pickTime: true
+        });
+        $('#closeProgram').on('click', function () {
+            $('#add-task-data').foundation('close');
+        });
+
+        ListSleepLog();
+        $('#closesleepLog').on('click', function () {
+            $('#add-sleeplog').foundation('close');
+        });
+
+        $('#sleepLog-form').foundation();
+        $('#sleepLog-form')
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                console.log(invalid_fields);
+            })
+            .on('formvalid.zf.abide', function () {
+            $('#sleepLog_Date').val($('#sleepLogDate').val());
+            $('#sleepLog_GotupTime').val($('#sleepLogGotupTime').val());
+            if (isValidform()) {
+                $("#loader-wrapper").fadeIn();
+                $.ajax({
+                    url: "@Url.Action("AddtoSleepLog", "Journal")",
+                    data: $("#sleepLog-form").serialize(),
+                    type: 'POST',
+                    dataType: "json",
+                    success: function () {
+                        startIndex = 0;
+                        pageSize = 15;
+                        totalRecords = 0;
+                        currentPage = 0;
+                        totalPages = 0;
+                        ListSleepLog();
+                        $('#add-sleeplog').foundation('close');
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                $("#loader-wrapper").fadeOut();
+            }
+        })
+        // to prevent form from submitting upon successful validation
+        .on("submit", function (ev) {
+            ev.preventDefault();
+
+        });
+
+    });
+
+    Foundation.Abide.defaults.validators['validateEndDate'] = function ($el, required, parent) {
+        var startDate = new Date($("#sleepLog_Date").val().replace(/-/g, '/'));
+        var endDate = new Date($("#sleepLog_GotupTime").val().replace(/-/g, '/'));
+        if (startDate > endDate) {
+            return false;
+        }
+        return true;
+    };
+
+    $("#add-sleeplog-button").on('click', function () {
+        $("#sleepLog-form").find('#sleepLog_Id').val('');
+        $("#sleepLog-form").find('input:text, select, textarea').val('');
+        $('#inline-login-error').addClass('hide');
+    })
+
+    function isValidform() {
+        var Sdate = $('#sleepLog_Date').val().replace(/-/g, '/');
+        var Edate = $('#sleepLog_GotupTime').val().replace(/-/g, '/');
+        var EdateHrs = new Date(Edate.substr(6));
+        var SdateHrs = new Date(Sdate.substr(6));
+
+        if (Sdate == "" || Edate == "")
+            return false;
+        if (Edate == Sdate && EdateHrs.getHours() == SdateHrs.getHours() && EdateHrs.getMinutes() <= SdateHrs.getMinutes())
+            return false;
+
+        return true;
+    }
+
+    function ListSleepLog() {
+        $('#tobaccoLog_Id').val('');
+        var paginationdata = {
+            'page': currentPage,
+            'pageSize': pageSize,
+            'totalRecords': totalRecords
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+        $.ajax({
+            url: "@Url.Action("ListSleepLog", "Journal")",
+            type: 'POST',
+            data: strData,
+            dataType: "json",
+            contentType: 'application/json, charset=utf-8',
+            success: function (data) {
+                $('#search-results').html("");
+                if (data != null) {
+                    totalRecords = data.totalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    var sleepLogHtml = [];
+                    var sleeplogData = [], firstDate, lastDate;
+                    if (data.sleepLogLists != null && data.sleepLogLists.length > 0) {
+                        var sleepLogHtml = "<table class='table'>";
+                        sleepLogHtml += "<tr><th class='purple'>@Translate.Message("L561")</th><th class='purple'>@Translate.Message("L2145")</th><th class='purple'>@Translate.Message("L2146")</th><th class='purple'>@Translate.Message("L2147")</th><th class='purple'>@Translate.Message("L2148")</th><th class='purple'></th></tr>"
+                        for (var i = 0; i < data.sleepLogList.length; i++) {
+                            var sleeplog = data.sleepLogList[i];
+                            var date = new Date(sleeplog.Start);
+                            var gotuptime = new Date(sleeplog.End);
+                            sleepLogHtml += "<tr><td>" + toLocalDateFormat(date) + "</td>" + "<td>" + sleeplog.sleptHours + "</td>" +
+                                "<td>" + sleeplog.SleepQualityText + "</td>" + "<td>" + sleeplog.DaytimeAlertnessText + "</td>" + "<td>" + sleeplog.MoodText + "</td>";
+                            if ('@Model.HasActivePortal' == "True") {
+                                sleepLogHtml += "<td><a onclick='Update(" + sleeplog.Id + ")'><i class='fa fa-file-o'></i></a></td>";
+                            } else {
+                                sleepLogHtml += "<td></td>";
+                            }
+                                "</tr>";
+                        }
+                        for (var i = 0; i < data.sleepLogLists.length; i++) {
+                            var sleeplog = data.sleepLogLists[i];
+                            var date = new Date(sleeplog.Start);
+                            var gotuptime = new Date(sleeplog.End);
+                            if (i == 0) {
+                                firstDate = lastDate = date;
+                            }
+                            else if (date < firstDate) {
+                                firstDate = date;
+                            }
+                            else if (date > lastDate) {
+                                lastDate = date;
+                            }
+                            var yyyy = date.getFullYear().toString();
+                            var mm = (date.getMonth() + 1).toString();
+                            var dd = date.getDate().toString();
+                            var hrs = date.getHours().toString();
+                            var mins = date.getMinutes().toString();
+                            var dateVal = toSystemDateFormat(date);
+                            sleeplogData.push({ "date": dateVal, "ay": sleeplog.sleptHours, "gotuptime": toLocalDateFormat(gotuptime) + " " + gotuptime.toLocaleTimeString(), "sleepDuration": sleeplog.sleptHours, "sleepquality": sleeplog.SleepQualityText, "daytimealertness": sleeplog.DaytimeAlertnessText, "mood": sleeplog.MoodText, "notes": sleeplog.Notes });
+                        }
+                        sleepLogHtml += "</table>";
+                        $('#chart-results').show();
+                        $('#search-results').append(sleepLogHtml);
+                        GenerateChart(sleeplogData, firstDate, lastDate);
+                    }
+                    else {
+                        $('#search-results').append('<center>@Translate.Message("L2774")</center>');
+                    }
+                }
+                AddPager();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    function GenerateChart(data, firstDate, lastDate) {
+        am4core.useTheme(am4themes_animated);
+        am4core.addLicense("CH39169069");
+        var chart = am4core.create("chartdiv", am4charts.XYChart);
+
+        // Add data
+        chart.data = data;
+        // Create axes
+        var xAxis = chart.xAxes.push(new am4charts.DateAxis());
+        xAxis.dataFields.category = "category";
+        xAxis.renderer.grid.template.location = 0;
+        //xAxis.renderer.minGridDistance = 30;
+
+        var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        yAxis.title.text = "@Translate.Message("L2145")";
+        // Create series
+        var series1 = chart.series.push(new am4charts.LineSeries());
+        series1.dataFields.valueY = "ay";
+        series1.dataFields.dateX = "date";
+        series1.strokeOpacity = 0;
+        series1.cursorTooltipEnabled = false;
+
+        var bullet1 = series1.bullets.push(new am4charts.CircleBullet());
+        bullet1.tooltipHTML = "@Translate.Message("L4486"):<b>{gotuptime}</b><br/>@Translate.Message("L4485"):<b>{sleepDuration} @Translate.Message("L4056")</b><br/>@Translate.Message("L2146"):<b>{sleepquality}</b><br/>@Translate.Message("L2147"):<b>{daytimealertness}</b><br/>@Translate.Message("L2148"):<b>{mood}</b><br/>@Translate.Message("L1717"):<b>{notes}</b>";
+        series1.heatRules.push({
+          target: bullet1.circle,
+          min: 10,
+          max: 60,
+          property: "radius"
+        });
+
+        // Add cursor
+        chart.cursor = new am4charts.XYCursor();
+        chart.cursor.behavior = "zoomXY";
+    }
+
+    function Update(id) {
+        $.ajax({
+            url: "@Url.Action("ReadSleepLog", "Journal")",
+            data: { id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    $('#sleepLog_Id').val(data.Record.Id);
+                    var Stdate = new Date(parseInt(data.Record.Start.substr(6)));
+                    $("#sleepLog_Date").val(toLocalDateFormat(data.Record.StartDT, "24hour"));
+                    var Eddate = new Date(parseInt(data.Record.End.substr(6)));
+                    $("#sleepLog_GotupTime").val(toLocalDateFormat(data.Record.EndDT, "24hour"));
+                    $("#sleepLog_SleepQuality").val(data.Record.SleepQuality);
+                    $("#sleepLog_DaytimeAlertness").val(data.Record.DaytimeAlertness);
+                    $("#sleepLog_Mood").val(data.Record.Mood);
+                    $("#sleepLog_Notes").val(data.Record.Notes);
+
+                    $('#add-sleeplog').foundation('open');
+                    $("#sleepLog_Date").trigger("change");
+                    $("#sleepLog_GotupTime").trigger("change");
+                    $('#inline-login-error').addClass('hide');
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListSleepLog();
+    }
+</script>

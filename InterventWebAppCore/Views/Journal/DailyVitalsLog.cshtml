@@ -1,0 +1,188 @@
+﻿@using InterventWebApp
+@model InterventWebApp.DailyVitalsLogModel
+@{
+    ViewBag.Title = "DailyVitalsLog";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<section class="main search-participants">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="small-8 cell">
+                    <h2>@Translate.Message("L2830")</h2>
+                </div>
+                @if (Convert.ToBoolean(Model.HasActivePortal))
+                {
+                    <div class="small-4 cell text-right">
+                        <button id="add-stress-button" data-open="add-Daily-vital" data-modal-path='@Html.Raw(Url.Action("AddtoDailyVitals", "Journal"))' class="button plus-btn">@Translate.Message("L291")</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell report-table-container">
+                <table id="search-results" class="table"></table>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <!-- pagination Start -->
+                <div class="pagination-area hide" id="pagination-centered">
+                    <ul>
+                        <li id="numeric"></li>
+                    </ul>
+                    <!-- page-link Start -->
+                    <div class="page-link">
+                        <label>@Translate.Message("L4041")</label>
+                        <div class="grid-x">
+                            <input type="text" id="jumptoPageNo">
+                            <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                        </div>
+                    </div>
+                    <!-- page-link End -->
+                </div>
+                <!-- pagination End -->
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <div class="panel" id="chart-results" hidden>
+                    <div id="chartdiv" style="width:100%;height:500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="add-Daily-vital" class="reveal large padded-modal-container" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $("#add-stress-button").addClass('hide');
+    ListVitalsLog();
+
+    function RealignPage() {
+        $("html, body").animate({
+            scrollTop: 0
+        }, "fast");
+    }
+    function ListVitalsLog() {
+        var paginationdata = {
+            'page': currentPage,
+            'pageSize': pageSize,
+            'totalRecords': totalRecords
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+        var url = "@Url.Action("AddtoDailyVitals", "Journal")";
+        $.ajax({
+            url: "@Url.Action("ListVitalsLog", "Journal")",
+            type: 'POST',
+            data: strData,
+            dataType: "json",
+            contentType: 'application/json, charset=utf-8',
+            success: function (data) {
+                $('#search-results').html("");
+                if (data != null) {
+                    var vitalsData = [];
+                    totalRecords = data.TotalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    if (data.ShowAdd == true)
+                        $("#add-stress-button").removeClass('hide');
+                    else
+                        $("#add-stress-button").addClass('hide');
+                    if (data.vitalsLog != null && data.vitalsLog.length > 0) {
+                        var vitalsLogHtml = "";
+                        vitalsLogHtml += "<tr><th class='orange'>@Translate.Message("L561")</th>";
+                        vitalsLogHtml += "<th class='orange'>@Translate.Message("L275")</th>";
+                        if ('@Model.HasActivePortal.ToString()' == "True") {
+                            vitalsLogHtml += "<th>@Translate.Message("L2166")</th>";
+                        }
+                        vitalsLogHtml += "<th class='orange'>@Translate.Message("L2837")</th></tr>";
+                        for (var i = 0; i < data.vitalsLog.length; i++) {
+                            var vitalsLog = data.vitalsLog[i];
+                            vitalsLogHtml += "<tr><td>" + vitalsLog.Date + "</td>";
+                            vitalsLogHtml += "<td>" + vitalsLog.Weight + "</td>";
+                            if ('@Model.HasActivePortal.ToString()' == "True") {
+                                vitalsLogHtml += "<td>" + vitalsLog.PointsText + "</td><td><a data-open='add-Daily-vital' data-modal-path='" + url + "/" + vitalsLog.Id + "'><i class='fa fa-file fa-fw'></i></a></td>/tr>";
+                            } else {
+                                vitalsLogHtml += "<td>" + vitalsLog.PointsText + "</td><td></td>/tr>";
+                            }
+                            var text = "";
+                            if (vitalsLog.Weight) {
+                                text = "<div style='margin:10px; text-align:left;'><span>@Translate.Message("L561"):" + toLocalDateFormat(vitalsLog.Date) + "</span><br><span>@Translate.Message("L275"):" + vitalsLog.Weight + "</span><br><span>@Translate.Message("L2837"):" + vitalsLog.Points + "</span>";
+                            }
+                            else {
+                                text = "<div style='margin:10px; text-align:left;'><span>@Translate.Message("L561"):" + toLocalDateFormat(vitalsLog.Date) + "</span><br><span>@Translate.Message("L2837"):" + vitalsLog.Points + "</span>";
+                            }
+                            vitalsData.push({
+                                "date": toLocalDateFormat(vitalsLog.Date),
+                                "points": vitalsLog.Points,
+                                "text": text
+                            });
+                        }
+                        $('#chart-results').show();
+                        $('#search-results').append(vitalsLogHtml);
+                        GenerateChart(vitalsData);
+                        $(document).foundation();
+                    }
+                }
+                else {
+                    $('#search-results').append('<center>@Translate.Message("L2774")</center>');
+                }
+                AddPager();
+                $("[data-open]").on('click', function (e) {
+                    showmodal($(this), e)
+                });
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListVitalsLog();
+    }
+
+    function GenerateChart(data, pointsText) {
+        var points = "@Translate.Message("L2837")";
+        var pointsText = points.replace("&#243;", "o");
+        am4core.useTheme(am4themes_animated);
+        am4core.addLicense("CH39169069");
+        var chart = am4core.create("chartdiv", am4charts.XYChart);
+        am4core.addLicense("CH39169069");
+        // Add data
+        chart.data = data;
+
+        // Create axes
+        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        categoryAxis.dataFields.category = "date";
+        categoryAxis.renderer.grid.template.location = 0;
+
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.title.text = "@Translate.Message("L2837")";
+
+        // Create series
+        var series = chart.series.push(new am4charts.ColumnSeries());
+        series.dataFields.valueY = "points";
+        series.dataFields.categoryX = "date";
+
+
+        series.columns.template.tooltipHTML = "{text}";
+    }
+</script>

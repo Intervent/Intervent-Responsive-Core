@@ -1,0 +1,446 @@
+﻿<!--ADMIN VIEW-->
+@{
+	ViewBag.Title = "AdminUsers";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+	ViewBag.Details = "EligibilityPage";
+}
+@using InterventWebApp
+@model InterventWebApp.Models.EligibilitySearchModel
+<section class="main search-participants eligibility-section new-search-form">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="small-6 left cell">
+                    <h2>Eligibility/Claims Search</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container top-eligibility-content">
+        <div class="crm-main-wrapper">
+            <div class="grid-x grid-margin-x">
+                <div class="small-12 cell">
+                    <div class="panel filters">
+                        <form data-abide="ajax" class="form-component">
+                            <ul class="accordion eligibility-search-accordion" data-accordion>
+                                <li class="form-section accordion-item is-active" data-accordion-item>
+
+                                    <a href="#" class="accordion-title">Eligibility</a>
+                                    <div class="accordion-content" data-tab-content>
+                                        <div class="grid-x grid-margin-x">
+                                            <div class="small-12 medium-4 cell">
+												<label>
+													First name
+													<input type="text" id="firstName" placeholder="First Name..." />
+												</label>
+                                            </div>
+                                            <div class="small-12 medium-4 end cell">
+												<label>
+													Last name
+													<input type="text" id="lastName" placeholder="Last Name..." />
+												</label>
+                                            </div>
+                                            <div class="small-12 medium-4 cell">
+												<label>
+													Select organization
+													@Html.DropDownListFor(x => x.Org, Model.OrganizationList, "--Select Organization--", new { @onchange = "OrganizationChange();" })
+												</label>
+                                            </div>
+                                            <div class="small-12 medium-4 end cell">
+												<label>
+													Unique Id
+													<input type="text" id="id" placeholder="Unique Id..." />
+												</label>
+                                            </div>
+                                            <div class="small-12 medium-4 cell">
+												<label>
+													Email
+													<input type="text" placeholder="Email" id="email">
+												</label>
+                                            </div>
+
+                                            <div class="small-12 medium-4 cell">
+												<label>
+													Phone number
+													<input type="text" placeholder="Phone number" id="telephone">
+												</label>
+                                            </div>
+                                            <div class="small-12 medium-4 end cell">
+												<label>
+													Select language
+													@Html.DropDownList("LanguageSearch", ViewData["languageList"] as IEnumerable<SelectListItem>, "--Select Language--")
+												</label>
+                                            </div>
+											<div class="small-12 medium-4 cell" id="canrisk" hidden>
+												<label class="options-main-label">CANRISK questionaire</label>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" id="CANRISKquestionnaire" name="canrisk" />
+														<span class="checkmark"></span>
+														Completed CANRISK questionnaire
+													</label>
+												</div>
+											</div>
+											<div class="small-12 medium-4 cell" id="coachingenabled" hidden>
+												<label class="options-main-label">Coaching enabled</label>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" id="chkCoachingEnabled" name="coachingenabled" />
+														<span class="checkmark"></span>
+														Coaching Enabled
+													</label>
+												</div>
+											</div>
+                                            <div class="small-12 medium-4 cell">
+												<label>
+													Start date
+													<input id="eligibilityStartDate" type="text" placeholder="Eligibility Start Date..." />
+													<input id="HeligibilityStartDate" type="hidden" />
+												</label>
+                                            </div>
+                                            <div class="small-12 medium-4 end cell">
+												<label>
+													End date
+													<input id="eligibilityEndDate" type="text" placeholder="Eligibility End Date..." />
+													<input id="HeligibilityEndDate" type="hidden" />
+												</label>
+                                            </div>
+                                            <div class="small-12 medium-4 cell">
+												<label>
+													Tracking mode
+													<select id="trackingMode">
+														@foreach (var item in Model.TrackingModes)
+														{
+															<option value="@item.Value">@item.Text</option>
+														}
+													</select>
+												</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li class="form-section accordion-item" data-accordion-item>
+                                    <a href="#" class="accordion-title">Claims</a>
+                                    <div class="accordion-content" data-tab-content>
+                                        <div class="grid-x grid-margin-x">
+                                            <div class="small-12 medium-4 cell">
+												<label>
+													Claim start date
+													<input id="claimStartDate" type="text" placeholder="Claim Start Date..." />
+													<input id="HclaimStartDate" type="hidden" />
+												</label>
+                                            </div>
+                                            <div class="small-12 medium-4 end cell">
+												<label>
+													Claim end date
+													<input id="claimEndDate" type="text" placeholder="Claim End Date..." />
+													<input id="HclaimEndDate" type="hidden" />
+												</label>
+                                            </div>
+                                            <div class="small-12 medium-4 end cell">
+												<label>
+													Diagnosis code
+													<select id="diagnosisCode">
+														@foreach (var item in Model.DiagnosisCodes)
+														{
+															<option value="@item.Value">@item.Text</option>
+														}
+													</select>
+												</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="grid-x grid-margin-x">
+                                <div class="text-center cell">
+                                    <button type="submit" class="button" id="search">
+                                        <div class="loading-spinner hide" show-if-submitting></div>
+                                        Search
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell small-12">
+                    <div class="records-list-wrapper">
+                        <div class="records-list">
+                            <div id="search-results"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="grid-x grid-padding-x">
+                <div class="cell">
+                    <!-- pagination Start -->
+                    <div class="pagination-area hide" id="pagination-centered">
+                        <ul>
+                            <li id="numeric"></li>
+                        </ul>
+                        <!-- page-link Start -->
+                        <div class="page-link">
+                            <label>@Translate.Message("L4041")</label>
+                            <div class="grid-x">
+                                <input type="text" id="jumptoPageNo">
+                                <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                            </div>
+                        </div>
+                        <!-- page-link End -->
+                    </div>
+                    <!-- pagination End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="eligibility-profile" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+<div id="spouse-eligibility-profile" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+<div id="associate-eligibility-profile" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+<div id="add-spouse-eligibility" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+@*<div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12">
+                <ul class="pagination text-center hide" id="pagination-centered">
+                    <li id="first" aria-disabled="true"><a>&laquo;</a></li>
+                    <li id="previous" class="pagination-previous" aria-disabled="true"><a>&lt;</a></li>
+                    <li id="numeric"></li>
+                    <li id="next" class="pagination-next"><a>&gt;</a></li>
+                    <li id="last"><a>&raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>*@
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+
+<script>
+    $('[data-reveal]').on('closed.zf.reveal', function () {
+        $(this).find('.eligibility-tabs-container').remove();
+    });
+</script>
+
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $("#claimStartDate").on("change", function () {
+        $('#HclaimStartDate').val(toSystemDateFormat($('#claimStartDate').val()));
+    });
+    $("#claimEndDate").on("change", function () {
+        $('#HclaimEndDate').val(toSystemDateFormat($('#claimEndDate').val()));
+    });
+    $("#eligibilityStartDate").on("change", function () {
+        $('#HeligibilityStartDate').val(toSystemDateFormat($('#eligibilityStartDate').val()));
+    });
+    $("#eligibilityEndDate").on("change", function () {
+        $('#HeligibilityEndDate').val(toSystemDateFormat($('#eligibilityEndDate').val()));
+    });
+    $(document).ready(function () {
+        $("#claimStartDate").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        }).on('change', function (selected) {
+            var endDate = new Date($("#HclaimEndDate").val());
+            var minDate = new Date($("#HclaimStartDate").val());
+            if (endDate < minDate) {
+                $('#claimEndDate').fdatepicker('setDate', minDate);
+            }
+            $('#claimEndDate').fdatepicker('setStartDate', minDate);
+            $('#claimEndDate').trigger("change");
+        });
+        $("#claimEndDate").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        });
+        $("#eligibilityStartDate").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        }).on('change', function (selected) {
+            var endDate = new Date($("#HeligibilityEndDate").val());
+            var minDate = new Date($("#HeligibilityStartDate").val());
+            if (endDate < minDate) {
+                $('#eligibilityEndDate').fdatepicker('setDate', minDate);
+            }
+            $('#eligibilityEndDate').fdatepicker('setStartDate', minDate);
+            $('#eligibilityEndDate').trigger("change");
+        });
+        $("#eligibilityEndDate").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        });
+        $('#closeNumbers').on('click', function () {
+            $('#add-organization-data').foundation('close');
+        });
+    });
+
+    function ListEligibility(uId) {
+        if (uId != undefined && uId != null)
+            var uniqueId = uId;
+        var uniqueId = $("#id").val();
+        var firstName = $("#firstName").val();
+        var lastName = $("#lastName").val();
+        var orgId = $("#Org").val();
+        var email = $("#email").val();
+        var telephone = $("#telephone").val();
+        var LanguageSearch = $('#LanguageSearch').val();
+        var eligibilityStartDate = $('#HeligibilityStartDate').val();
+        var eligibilityEndDate = $('#HeligibilityEndDate').val();
+
+        var claimStartDate = $('#HclaimStartDate').val();
+        var claimEndDate = $('#HclaimEndDate').val();
+        var trackingMode = $('#trackingMode').val();
+        var diagnosisCode = $('#diagnosisCode').val();
+        var canrisk = $("input[name='canrisk']:checked").length == 1;
+        var coachingEnabled = $("input[name='coachingenabled']:checked").length == 1;
+        $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+        $('[show-if-submitting]').removeClass('hide');
+        $('#search-results').html("");
+        $.ajax({
+            url: "@Url.Action("ListEligibility", "Participant")",
+            data: { orgId: orgId, uniqueId: uniqueId, firstName: firstName, lastName: lastName, email: email, telephone: telephone, language: LanguageSearch, eligibilityStartDate: eligibilityStartDate, eligibilityEndDate: eligibilityEndDate, claimStartDate: claimStartDate, claimEndDate: claimEndDate, enrollmentStatus: trackingMode, claimDiagnosisMode: diagnosisCode, canrisk: canrisk, coachingEnabled: coachingEnabled, page: currentPage, pageSize: pageSize, totalRecords: totalRecords },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    if (data.Success) {
+                        totalRecords = data.TotalRecords;
+                        totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                        if (totalRecords > 0) {
+                            displayEligibility(data.Records);
+                            $('#pagination-centered').removeClass("hide");
+                            AddPager();
+                        }
+                        else {
+                            $('#search-results').append("<center>No data were found.</center>");
+                            $('#pagination-centered').addClass("hide");
+                        }
+                    }
+                    else {
+                        $('#search-results').append("<center>" + data.ErrorMessage + "</center>");
+                        $('#pagination-centered').addClass("hide");
+                    }
+                    $(document).foundation();
+                }
+                $('[show-if-submitting]').parent().prop('disabled', '');
+                $('[show-if-submitting]').addClass('hide');
+                $("[data-open]").on('click', function (e) {
+                    showmodal($(this), e)
+                });
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    function displayEligibility(eligibilityData) {
+        var eligibilityHtml = "<table>";
+        eligibilityHtml += "<thead><tr><th class='orange'>Name</th><th class='orange'>Date of Birth</th><th class='orange'>Unique Id</th><th class='orange'>Portal</th><th class='orange'>Referred On</th><th class='orange'>Last Outreach Date</th><th></th></tr></thead><tbody>"
+        for (var i = 0; i < eligibilityData.length; i++) {
+            var user = eligibilityData[i];
+            var dateOfBirth, referredOn, lastCalledDate;
+            if (user.DOB != null)
+                dateOfBirth = toLocalDateFormat(user.DOB);
+            else
+                dateOfBirth = 'N/A';
+            if (user.ReferredOn != null)
+                referredOn = toLocalDateFormat(user.ReferredOn);
+            else
+                referredOn = 'N/A';
+            if (user.LastCalledDate != null)
+                lastCalledDate = toLocalDateFormat(user.LastCalledDate);
+            else
+                lastCalledDate = 'N/A';
+            eligibilityHtml += "<tr><td>" + user.Name + "</td>" + "<td>" + dateOfBirth + "</td>" + "<td>" + user.UniqueId + "</td>" +
+                "<td>" + user.PortalName + "</td>" +
+                "<td>" + referredOn + "</td>" +
+                "<td>" + lastCalledDate + "</td>" +
+                "<td><a onClick='GetEligibilityDetails(" + user.Id +")'><i class='fa fa-file-o'></i></a></td>" +
+                "</tr>";
+        }
+		eligibilityHtml += "</tbody></table>";
+        $('#search-results').append(eligibilityHtml);
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListEligibility();
+    }
+    $("#search").on('click', function (ev) {
+        startIndex = 0;
+        pageSize = 10;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        ListEligibility();
+        ev.preventDefault();
+    });
+
+    function OrganizationChange() {
+        var org = $("#Org").children("option").filter(":selected").text();
+        if (org.indexOf("LMC Clinical") > - 1) {
+            $("#canrisk").show();
+        }
+        else {
+            $("#canrisk").hide();
+            $("#CANRISKquestionnaire").prop("checked", false);
+        }
+        if (org.indexOf("Intuity") > - 1) {
+            $("#coachingenabled").show();
+        }
+        else {
+            $("#coachingenabled").hide();
+            $("#chkCoachingEnabled").prop("checked", false);
+        }
+    }
+
+    function GetEligibilityDetails(eligibilityId) {
+        $.ajax({
+            url: '@Url.Action("GetEligibilityDetails", "Participant")',
+            type: 'GET',
+            data: { eligibilityId: eligibilityId, fromElgPage: true },
+            success: function (data) {
+                $("#eligibility-profile").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+        $('#eligibility-profile').foundation('open');
+    }
+
+    function RefreshListNotes(contactId, loadMorePage) {
+        totalCRMNotes = totalCRMNotes + loadMorePage;
+        ListNotes(contactId);
+    }
+    function ListNotes(contactId) {
+        $("#loader-wrapper").fadeIn();
+        $.ajax({
+            data: { contactId: contactId, totalNotes: totalCRMNotes, isComplaint: false, isRequiresRMA: false, noteSearch: "", fromInfoPage: true },
+            url: '@Url.Action("ListNotesDetails", "CRM")',
+            success: function (data) {
+                $("#crm-notes-details").html(data);
+
+                window.scrollTo(0, 0);
+            },
+            complete: function () {
+				$('#records-list').foundation();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+        $("#loader-wrapper").fadeOut();
+		if($(window).width() < 640) {
+			$(".crm-sidenav, .crm-device-back-btn").toggleClass("hide");
+		}
+    }
+</script>

@@ -1,0 +1,329 @@
+﻿@using InterventWebApp
+@model InterventWebApp.LoginModel
+
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass">
+    @Html.Partial("Activate/_ActivateHeader", new ViewDataDictionary(ViewData) { { "headerStyle", "transparent" }, { "OrgId", ViewData["OrgId"]}  })
+    <div class="grid-container">
+        <div class="intro-body create-account-box grid-x grid-margin-x hide">
+            <div class="intro-text compass-intro medium-7 cell">
+                <h2>@Translate.Message("L1893")</h2>
+                <p>
+                    @string.Format(Translate.Message("L3051"), ViewData["OrgContactNumber"])
+                </p>
+
+                <div class="grid-x show-for-small-only">
+                    <div class="small-12 cell show-for-small-only intro-buttons">
+                        <button class="intro-button pink expand" onclick="$('#sign-up-modal').foundation('open'); return false;">
+                            @Translate.Message("L443")
+                        </button>
+                        <button class="intro-button pink expand" onclick="scrollDown();">@Translate.Message("L1232")</button>
+                    </div>
+                </div>
+            </div>
+            <div class="medium-5 large-4 show-for-medium large-offset-1 cell">
+                <div class="login-form right">
+                    <h3 class="text-center">@Translate.Message("L431")</h3>
+                    <form id="sign-up-inlineform" data-abide novalidate>
+                        <!--replace with compass organization id-->
+                        <input type="hidden" id="organizationId" name="OrganizationId" value="@ViewData["OrgId"]" />
+                        <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+                        <div class="grid-x grid-margin-x">
+                            <div class="small-12 cell">
+                                <input type="text" id="infirstName" name="FirstName" placeholder="@Translate.Message("L938")" required pattern="[a-zA-Z]+">
+                                <small class="form-error">@Translate.Message("L432")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="text" id="inlastName" name="LastName" placeholder="@Translate.Message("L939")" required pattern="[a-zA-Z]+">
+                                <small class="form-error">@Translate.Message("L433")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="text" id="inDOB" name="DOB" placeholder="@string.Format(Translate.Message("L1362"), ViewData["DateFormat"])" class="fdatepicker" data-validator="validateInAGE" onchange="DateFormatter('inDOB', '@ViewData["DateFormat"]')" required>
+                                <small id="inAgeError" class="form-error">@Translate.Message("L1903")</small>
+                                <input id="tempInDOB" type="hidden">
+                            </div>
+                            <div class="small-12 cell select position-relative">
+                                <select id="inUserType" name="PersonnelType" required>
+                                    <option value="">@Translate.Message("L1896")</option>
+                                    <option value="E">@Translate.Message("L3070")</option>
+                                    <option value="S">@Translate.Message("L1899")</option>
+                                </select>
+                                <small class="form-error">@Translate.Message("L1900").</small>
+                                <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip data-allow-html="true" aria-haspopup="true" title="@string.Format(Translate.Message("L3052"), ViewData["Name"], ViewData["ShortName"], ViewData["IDText"])"></i>
+                            </div>
+                            <div class="small-12 cell position-relative">
+                                <input type="text" id="inCouponCode" name="UniqueID" placeholder="@ViewData["IDText"]" required>
+                                <small class="form-error">@string.Format(Translate.Message("L1895"), ViewData["IDText"]).</small>
+                                <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip data-allow-html="true" aria-haspopup="true" title="@ViewData["IDInfo"]"></i>
+                            </div>
+                            <div class="small-12 cell email position-relative">
+                                <input type="email" id="inemail" name="EmailAddress" placeholder="@Translate.Message("L986")" required>
+                                <small class="form-error">@Translate.Message("L434")</small>
+                                <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip data-allow-html="true" aria-haspopup="true" title="@Translate.Message("L1988")"></i>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="email" placeholder="@Translate.Message("L2468")" data-equalto="inemail">
+                                <small class="form-error">@Translate.Message("L2469")</small>
+                            </div>
+                            <div class="small-12 cell position-relative">
+                                <input type="password" id="inpassword" name="Password" placeholder="@Translate.Message("L466")" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+                                       required data-tooltip data-allow-html="true" aria-haspopup="true" class="has-tip tip-top" title="@Translate.Message("L1929")">
+                                <small class="form-error">@Translate.Message("L1929")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="password" placeholder="@Translate.Message("L1628")" id="inconfirmpassword" data-equalto="inpassword">
+                                <small class="form-error">@Translate.Message("L438")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="checkbox" id="checkbox" required>@Translate.Message("L441") <a href="#" onclick="ServiceAgreement(false);">@Translate.Message("L440")</a>
+                                <small class="form-error">@Translate.Message("L442")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                <button type="submit" value="" class="expand pink">@Translate.Message("L443")</button>
+                            </div>
+                            <input type="hidden" name="IDText" value="@ViewData["IDText"]" />
+                            <input type="hidden" id="SignUpDate" name="SignUpDate" value="" />
+                        </div>
+                    </form>
+                    <!--<a href='@Url.Action("TechnicalHelp", "Home")' target="_blank"><i class="fa fa-weixin"></i>Help</a>-->
+                </div>
+            </div>
+
+        </div>
+        <div class="intro-body login-box grid-x grid-margin-x">
+            <div class="intro-text medium-7 cell">
+                <h2>@Translate.Message("L1893")</h2>
+                <p>
+                    @string.Format(Translate.Message("L3051"), ViewData["OrgContactNumber"])
+                </p>
+                <div class="grid-x show-for-small-only">
+                    <div class="small-12 cell intro-buttons">
+                        <button class="intro-button pink expand" onclick="$('#login-modal').foundation('open'); return false;">
+                            @Translate.Message("L426")
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="intro-box medium-5 cell">
+                <div class="show-for-medium cell">
+                    <div class="login-form intro-box">
+                        <form id="inline-login-form" data-abide novalidate>
+                            <div data-alert id="inline-login-error" class="callout alert-box alert hide">
+                                <a href="#" class="close">&times;</a>
+                            </div>
+                            <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+                            <div class="grid-x grid-margin-x">
+                                <div class="small-12 cell">
+                                    @Html.TextBoxFor(m => m.UserName, new Dictionary<string, object> { { "placeholder", @Translate.Message("L986") }, { "required", "required" }, { "id", "loginUserName" } })
+                                    <small class="form-error">@Translate.Message("L463")</small>
+                                </div>
+                                <div class="small-12 cell">
+                                    @Html.PasswordFor(m => m.Password, new Dictionary<string, object> { { "placeholder", @Translate.Message("L466") }, { "required", "required" } })
+                                    <small class="form-error">@Translate.Message("L464")</small>
+                                </div>
+                                <input class="DeviceId" type="hidden" id="DeviceId" name="DeviceId" value="" />
+                                <div class="small-12 cell">
+                                    <button type="submit" class="expand pink">
+                                        <div class="loading-spinner hide" show-if-submitting></div>
+                                        @Translate.Message("L426")
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div id="device-verification-inline-login-form"></div>
+
+                        <div class="grid-x grid-margin-x">
+                            <div class="small-6 cell forgot-password float-left">
+                                <a href="#" onclick="$('.create-account-box').removeClass('hide'); $('.login-box').addClass('hide');">
+                                    @Translate.Message("L443")
+                                </a>
+                            </div>
+                            <div class="small-6 cell forgot-password">
+                                <a href="#" onclick="$('#forgot-password-modal').foundation('open'); return false;">
+                                    @Translate.Message("L3110")?
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@Html.Partial("Activate/_ActivateFooter")
+<div id="sign-up-modal" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="cell medium-12">
+        <h2 class="text-center">@Translate.Message("L431")</h2>
+    </div>
+    @Html.Partial("_ActivateSignUp")
+    <div class="cell text-center">
+        <a href="#" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</a>
+    </div>
+    <a class="close-button" data-close id="close">&#215;</a>
+</div>
+
+@Html.Partial("_ResetPassword")
+
+<div class="nav-to-top">
+    <a href="#" class="button"><i class="fa fa-chevron-up"></i></a>
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/AgeValidation.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/RegistrationSignIn.js")?v=@CommonUtility.GetRandom()"></script>
+@section scripts
+{
+    <script type="text/javascript">
+        if ('@ViewData["Signup"]' === 'True')
+        {
+            $('.create-account-box').removeClass('hide'); $('.login-box').addClass('hide');
+        }
+        Foundation.Abide.defaults.validators['validateInAGE'] = function ($el, required, parent) {
+            $('#tempInDOB').val(moment($('#inDOB').val(), "@ViewData["DateFormat"].ToString()").format('YYYY/MM/DD'));
+            var DOB = $("#tempInDOB").val();
+            var valid = validateage(DOB);
+            if (valid == false) {
+            $("#inAgeError").text('@InterventWebApp.Translate.Message("L1986")');
+                return valid;
+            }
+            else
+                return valid;
+        };
+    $(document).ready(function () {
+        DateFormatter("inDOB", "@ViewData["DateFormat"]");
+            if ('@ViewData["ForgotPassword"]' === 'True')
+            {
+                $('#forgot-password-modal').foundation('open');
+            }
+            $("#sign-up-inlineform").foundation();
+            //When Not Valid
+            $("#sign-up-inlineform")
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                console.log(invalid_fields);
+             })
+            //When Valid
+                .on('formvalid.zf.abide', function () {
+                    $('#inDOB').val($('#tempInDOB').val());
+                    $('#SignUpDate').val(toSystemDateFormat(new Date().toLocaleDateString()));
+                if (document.getElementById('checkbox').checked) {
+                    $.ajax({
+                        url: "@Url.Action("RegisterUsingEligibility", "Account")",
+                        type: 'POST',
+                        dataType: "json",
+                        data: $("#sign-up-inlineform").serialize(),
+                        success: function (data) {
+                            if (data.Success) {
+                                var username = $('#inemail').val();
+                                var password = $('#inpassword').val();
+                                var organizationEmail = $('#supportEmail').val();
+                                var loginURL = "@Url.Action("Login", "Account")";
+                                var streamURL = "@Url.Action("Stream", "Participant")";
+                                validateSignIn(data, username, password, organizationEmail, loginURL, streamURL);
+                                $('.register-modal-email').text($('#inemail').val());
+                                document.getElementById("sign-up-inlineform").reset();
+                            }
+                            else {
+                                if (data.Action != undefined) {
+                                    if (data.Action == 'VerifyPrimaryInfo') {
+                                        //verify primary user info
+                                        $('#register-primaryuserinfo-confirmation-modal').foundation('open');
+                                        $('#primaryVerificationRegisterInfo').val(data.RegisterData);
+                                    }
+                                }
+                                else {
+                                    $('#error-modal').foundation('open');
+                                    $("#error-message-genericmodal").text(data.ErrorMessage);
+                                    $('#primaryVerificationRegisterInfo').val(data.RegisterData);
+                                }
+                            }
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                            DisplayError(jqXHR.status);
+                      });
+                }
+                $('#inDOB').val(moment($('#tempInDOB').val()).format("@ViewData["DateFormat"].ToString()"));
+            }).on("submit", function (ev) {
+                    ev.preventDefault();
+            })
+        });
+
+        //Homepage Scroll function
+        function scrollDown() {
+            $('html, body').animate({
+                scrollTop: $(".parallax-wrapper").offset().top
+            }, 1000);
+        }
+
+        $('#inline-login-form').foundation();
+        $('#inline-login-form')
+            //When Not Valid
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                console.log(invalid_fields);
+            })
+            //When Valid
+            .on('formvalid.zf.abide', function () {
+                $("#loader-wrapper").removeClass("hide");
+                $("#loader-wrapper").fadeIn();
+                $("#inline-login-form").find('input[id="Password"]').val(window.btoa(Math.random().toString(36).substring(2, 8) + $("#inline-login-form").find('input[id="Password"]').val()));
+                $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+                $('[show-if-submitting]').removeClass('hide');
+                $.ajax({
+                    url: "@Url.Action("Login", "Account")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#inline-login-form").serialize(),
+                    success: function (data) {
+                        $("#inline-login-form").find('input[id="Password"]').val("");
+                        if (data == "success") {
+                            window.location.href = "@Url.Action("Stream", "Participant")";
+                        }
+                        else if (data.hasOwnProperty("verifyDevice")) {
+                            $("#device-verification-inline-login-form").html(deviceVerificationSection);
+                            $("#inline-login-form").addClass("hide");
+                            $("#device-security-verify-container").removeClass("hide");
+                            $('.login-switch-paddle').css({ 'pointer-events': 'none', 'cursor': 'not-allowed' });
+                            $("#verify-device-email").html(data.emailId);
+                            $("#verify-device-userid").val(data.userId);
+                            if (data.phoneNo != null) {
+                                $("#verify-device-phone").html(data.phoneNo);
+                                $("#device-phoneno").removeClass("hide");
+                            }
+                        }
+                        else if (data == "confirmEmail") {
+                            var email = $("#loginUserName").val();
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                            $('#resend-email-modal').find("#email").text(email);
+                            $('#resend-email-modal').find("#emailId").val(email)
+                            $('#resend-email-modal').foundation('open');
+                            $("#loader-wrapper").addClass("hide");
+                        }
+                        else {
+                            $("#inline-login-error").html(data);
+                            $('#inline-login-error').removeClass('hide');
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                            $("#loader-wrapper").addClass("hide");
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        DisplayError(jqXHR.status);
+                    });
+            }).on("submit", function (ev) {
+                    ev.preventDefault();
+            })
+        $(document).on('click', '#close', function () {
+            document.getElementById("sign-up-form").reset();
+        });
+
+        function OpenRewards(){
+            window.open('../Home/ActivateInfo#employerrewards','_self');
+        }
+    </script>
+}

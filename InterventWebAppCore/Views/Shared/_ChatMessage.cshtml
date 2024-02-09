@@ -1,0 +1,840 @@
+﻿@using InterventWebApp
+@using Intervent.Web.DTO;
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{string chatClass = (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId) != HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId)) ? "chat-filter-left" : "chat-filter-left flex-container align-bottom";}
+<div class="dashboard-content cell chat-msg-content">
+	<!--<div class="control-bar">
+		<div class="grid-x collapse action-container">
+			<div class="small-12 cell hra-view-toggles">
+				<button class="chart-toggle icon-button small active" onclick="ChangeMenu(1)" data-chart="message" id="message-toggle-button">Messages</button>
+				<button class="chart-toggle icon-button small" onclick="ChangeMenu(2)" data-chart="email" id="email-toggle-button">Automated Emails</button>
+			</div>
+		</div>
+	</div>
+	<div id="automated-email"></div>
+	<div id="message"></div>-->
+	<div class="grid-x">
+		<div class="cell">
+			<div class="chat-filter">
+				<div class="@chatClass">
+                    @if (Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)) && HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId) != HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId))
+					{
+						<div>
+							<button class="plus-btn button" data-open="new-msg-modal" onclick="addNewMsg()">Create New</button>
+						</div>
+					}
+					<div class="msg-type-filter-box">
+						<p class="msg-type-filter" data-toggle="msg-type-filter">
+							<span class="msg-title">Messages</span>
+						</p>
+						<div class="dropdown-pane" id="msg-type-filter" data-dropdown data-auto-focus="true" data-close-on-click="true">
+							<ul>
+								<li onclick="ChangeMenu(1)">Messages</li>
+								<li onclick="ChangeMenu(2)">Automated Emails</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<div class="chat-filter-right">
+					<div class="msg-search-container">
+						<div class="msg-search-form">
+							<input type="text" placeholder="Search" id="searchText">
+							<button id="messageSearch"></button>
+						</div>
+					</div>
+
+					<div class="msg-sort-filter">
+						<p data-toggle="msg-sort-filter">
+							Sort by
+							<span>
+								<select id="msg-filter">
+									<option value="1">All Messages</option>
+									<option value="2">New &amp; Unread</option>
+									<option value="3">Drafts</option>
+								</select>
+							</span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Message filter ends -->
+
+		<div class="cell chat-list-container hide" id="automated-email">
+
+
+		</div>
+		<!-- Automated Emails ends -->
+		<div class="cell chat-list-container" id="chat-list">
+			<section class="msg-board-container">
+				<div class="msg-list-container">
+					<div class="msg-list-inner" id="my-message">
+					</div>
+				</div>
+				@*<div class="msg-list-container">
+						<div class="msg-list-inner" id="message-board">
+						</div>
+					</div>
+					<div class="msg-list-container">
+						<div class="msg-list-inner" id="drafts">
+						</div>
+					</div>*@
+			</section>
+		</div>
+		<!-- Message list container ends -->
+
+		<div class="cell medium-8 selected-chat-container hide" id="chat-message">
+			<section class="chat-section">
+				<div class="admin-chat-heading">
+					<div class="chat-heading-top">
+						<h5 data-toggle="msg-detail-modal"><a href="#" class="back-btn"></a> Complete lab work</h5>
+
+						<i class="fa fa-ellipsis-v"></i>
+					</div>
+					<div class="chat-heading-btm">
+						<div>
+							<div class="msg-contact-img"></div>
+							<div class="msg-contact-detail">Jennifer coachName<span>Coach</span></div>
+						</div>
+						<div>
+							<div class="msg-status msg-active"></div>
+						</div>
+					</div>
+				</div>
+				<div class="message-chat">
+					<div class="chat-scroll-container">
+						<div class="chat-container">
+							<div class="chat">
+								<div class="chat-sender">sample string 2 sample string 3 <span>null</span></div>
+								<div class="chat-content">
+									<p>Complete labwork at Labcorp</p>
+								</div>
+								<div class="chat-date">Tuesday, January 21, 2020</div>
+							</div>
+							<div class='uploaded-doc'>
+								<div class='doc-detail'><img src='~/Images/attachment-pdf.png' alt='PDF'>Loan_interest_payment.pdf</div>
+								<div class='doc-action'>
+									<a href='#' download><img src='~/Images/chat-download-icon.jpg' alt='Download'></a><i class='fa fa-ellipsis-v' data-toggle='chat-options'></i>
+									<div class='dropdown-pane' id='chat-options' data-dropdown data-auto-focus='true' data-close-on-click='true' data-position='bottom' data-alignment='right'>
+										<div class='chat-opt-title'>
+											<p>Options <img src='~/Images/challenge/icon-down-arrow.png' alt='v'></p>
+										</div>
+										<div class='chat-opt-list'>
+											<ul>
+												<li><img src='~/Images/messages/reply-icon.png' alt=''> Reply</li>
+												<li><img src='~/Images/messages/forward-icon.png' alt=''> Forward</li>
+												<li><img src='~/Images/messages/delete-icon.png' alt=''> Delete</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="chat my-msg">
+								<div class="chat-date">Sunday, May 17, 2020<span> | Not seen yet</span></div>
+							</div>
+						</div>
+					</div>
+                    @if (Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)))
+                    {
+					    <div class="message-footer">
+					    	<div class="doc-remove-container hide">
+					    		<div>
+					    			<p id="UploadedForm"></p>
+					    		</div>
+					    	</div>
+					    	<input type="text" name="name" value="">
+					    	<label><input type="file" name="files" id="updatePDF" class="upload" accept=".pdf" onchange="ValidateFileExtension(true);"></label><button type="submit" class="submit-chat" onclick="sendResponse(false,'updatePDF');"></button>
+					    </div>
+                    }
+				</div>
+			</section>
+		</div>
+		<!--Selected chat container ends-->
+
+		<div class="cell medium-4 attachments-container hide">
+			<section class="attachments-section">
+				<div class="section-heading">
+					<h5>Attachments</h5>
+				</div>
+				<div class="reminders-list" id="reminders-list">
+					<div class="callout">
+						<span class="due-tag">Uploaded:Sunday, May 17, 2020</span>
+						<p class="desc"><img src="~/Images/attachment-img.png" alt="Alternate Text"> Loan_interest_payment.pdf</p>
+						<p><a href="#" target="_blank">See Details</a></p>
+					</div>
+				</div>
+				<div class="no-attachments hide">
+					<img src="~/Images/messages/no-attachment.svg" alt="No file attached">
+				</div>
+			</section>
+		</div>
+		<!--Attachements container ends-->
+	</div>
+</div>
+<div class="reveal msg-modal" id="new-msg-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+	<div class="msg-modal-heading">New Message</div>
+	<div class="msg-modal-form">
+		<form id="add-message" data-abide novalidate>
+			<input type="hidden" id="parentMessageId" />
+			<input type="hidden" id="messageSubject" />
+			<label for="subject">
+				<span class="f-label">Subject:</span>
+				<input type="text" name="subject" placeholder="" maxlength="100" id="subject" onchange="checkUpload();" required />
+				<small class="form-error">Required</small>
+			</label>
+			<label>
+				<textarea required id="messageBody" placeholder="Type a message or drop a file here…"></textarea>
+				<small class="form-error">Required</small>
+			</label>
+			<div id="upload-option" class="hide">
+				<div id="drop_zone" class="drop-area" ondrop="dropHandler(event, this);" ondragover="dragOverHandler(event, this);">
+					<div>
+						<label> Add Attachment <input type='file' name='files' id="pdfUpload" class='upload' accept='.pdf' onchange="ValidateFileExtension(false);" /></label> or drag and drop files here
+						<p>Please upload PDF file.</p>
+						<small class="form-error">Required</small>
+					</div>
+				</div>
+				<div class="doc-remove-container hide">
+					<div>
+						<img src="~/Images/upload-doc-tick.svg">
+						<p id="UploadedFormNewMsg"></p>
+					</div>
+				</div>
+			</div>
+			<div class="button-group align-center">
+				<button type="submit" id="submit" class="button" value="button1">Send</button>
+				<button type="submit" id="draft" class="button hollow" value="button2">Save as Draft</button>
+			</div>
+			@Html.Hidden("RecipientId")
+		</form>
+	</div>
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+
+<input type="hidden" id="systemAdmin" value="@(Convert.ToInt32(ViewData["SystemAdminId"]))" />
+<input type="hidden" id="messageId" value="0" />
+<input type="hidden" id="ImageUrl" value="@ViewData["EmailUrl"]" />
+
+<script>
+    $(document).foundation();
+    var messageStatus = ["", "<span class='msg-status msg-pending'>New</span>", "<span class='msg-status msg-sent'>Sent</span>", "<span class='msg-status msg-read'>Seen</span>", "<span class='msg-status msg-follow'>Draft</span>"];
+    var url = $('#ImageUrl').val();
+    var showUnread = false;
+    var ownMessage, drafts, category, isDraft, api_msg_list, type = 0;
+
+    $(document).ready(function () {
+        isDraft = false
+        ListMessages(false, false, 2, false, false);
+        messageDetailsShow();
+        messageDetailsHide();
+
+        $('.pagination-area .dropdown').on("click", function () {
+            $('.pagination-area .dropdown ul').toggle();
+            $('.pagination-area .dropdown ul').jScrollPane({
+                showArrows: false,
+                resizeSensor: true
+            });
+        });
+
+        $("#chat-message").on("click", ".drop-menu-lv2 li a", function (e) {
+            e.preventDefault();
+            $(".drop-menu-lv2 li a").removeClass("active");
+            $(this).addClass("active");
+            var status = $(this).text();
+            var classname = $(this).children("span").attr("class");
+            $(".chat-heading-btm .msg-status").text(status).attr("class", classname);
+            $('#ellipsis-dropdown').foundation('close');
+        });
+        $("#chat-message").on("click", ".drop-menu-lv1 li a", function (e) {
+            e.preventDefault();
+            $('#ellipsis-dropdown').foundation('close');
+        });
+        $("#chat-message").on("click", ".chat-opt-list li, .chat-opt-title img", function (e) {
+            e.preventDefault();
+            $(this).parents('.dropdown-pane').foundation('close');
+        });
+    });
+
+    function dropHandler(ev) {
+        if (ev.dataTransfer.items) {
+            if (ev.dataTransfer.items[0].kind === 'file') {
+                var fileUpload = document.getElementById("pdfUpload");
+                fileUpload.files = ev.dataTransfer.files;
+                ValidateFileExtension(false);
+
+            }
+         }
+            ev.preventDefault();
+
+    }
+
+    function dragOverHandler(ev) {
+        ev.preventDefault();
+    }
+
+    function ValidateFileExtension(update) {
+        var pdfId = update ? "updatePDF" : "pdfUpload";
+        var formData = new FormData();
+        var file = document.getElementById(pdfId).files[0];
+        if (!file) {
+            return false;
+        }
+        formData.append("FileUpload", file);
+        var extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+
+        if (!(extension && /^(jpg|png|jpeg|gif|pdf)$/.test(extension.toLowerCase()))) {
+            alert("@Translate.Message("L2221")");
+            return;
+        }
+        else {
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("ValidateImage", "Common")',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.data !== "Failed") {
+                        $(".drop-area").addClass("hide");
+                        if (update) {
+                            if ($("#msg-textbox").val() == "") {
+                                $("#msg-textbox").val(file.name);
+                            }
+                            sendResponse(false, pdfId);
+                        }
+                        else {
+                            $(".doc-remove-container").removeClass("hide");
+                            $('#UploadedFormNewMsg').html(file.name);
+                        }
+
+                    }
+                    else {
+                        alert("@Translate.Message("L2130")");
+                    }
+                },
+                error: function (error) {
+                    alert("@Translate.Message("L2221")");
+                }
+
+            });
+        }
+    }
+
+	var pane = $('.chat-scroll-container');
+    pane.jScrollPane({
+        showArrows: false,
+        resizeSensor: true
+    });
+    var api = pane.data('jsp');
+
+    var pane_remind = $('.reminders-list');
+    pane_remind.jScrollPane({
+        showArrows: false,
+        resizeSensor: true
+    });
+    var api_remind = pane_remind.data('jsp');
+
+	function messageDetailsShow() {
+	    $(document).on("click", ".msg-list-container li", function (e) {
+			e.preventDefault();
+			console.log("show details");
+	        $(".attachments-container, .selected-chat-container").removeClass("hide");
+            $(".chat-list-container, .chat-filter").addClass("hide");
+			//api_msg_list.reinitialise();
+			api_remind.reinitialise();
+			api.reinitialise();
+	    });
+	}
+
+	function messageDetailsHide() {
+		$(document).on("click", "a.back-btn", function(e) {
+			e.preventDefault();
+			console.log("hide details");
+	        $(".attachments-container, .selected-chat-container").addClass("hide");
+            $(".chat-list-container, .chat-filter").removeClass("hide");
+            $("#automated-email").addClass("hide");
+            $("#msg-filter").change();
+			//api_msg_list.reinitialise();
+			api_remind.reinitialise();
+			api.reinitialise();
+		})
+	}
+
+    $("#draft").on("click", function (e) {
+        isDraft = true;
+    });
+
+	$("#msg-type-filter ul li").on("click", function(){
+		var listText = $(this).text();
+        $(this).parents(".msg-type-filter-box").find("span.msg-title").html(listText);
+	});
+
+    function ListMessages(OwnMessage, Drafts, Category, Search, Unread) {
+        var searchText = "";
+        if (!Search) {
+            ownMessage = OwnMessage;
+            drafts = Drafts;
+            category = Category;
+        }
+        else
+        {
+            searchText = $('#searchText').val();
+        }
+        var getCount = false;
+        if (category == 1 && !Search) {
+            getCount = true;
+        }
+        if($("#my-message").hasClass("jspScrollable")) {
+            api_msg_list.destroy();
+        }
+		$.ajax({
+            data: { isAdmin: false, ownMessage: ownMessage, drafts: drafts, getCount: getCount, searchText: searchText, unread: Unread, hasPagination: false, page: 0, pageSize: 0, totalRecords: 0 },
+			url: "@Url.Action("GetMessageDashboard", "Message")",
+			type: 'POST',
+			dataType: "json",
+			async: false,
+			success: function (data) {
+                if (data != null) {
+					var messagesHtml = [];
+					var messageCategory = ["", "message-board", "my-message", "drafts"];
+                    const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+                    $('#' + messageCategory[category] + '').html("");
+                    //if (category == 3)
+                        //messagesHtml += "<div class='msg-draft-top'><h6>Message Title</h6></div>";
+                    messagesHtml += "<ul>";
+                    if (data.model.parentMessages != null && data.model.parentMessages.length > 0) {
+                        for (var i = 0; i < data.model.parentMessages.length; i++)
+                        {
+                            var ProfilePicture = "";
+                            if (data.model.parentMessages[i].Picture != null)
+                                ProfilePicture = url + "/ProfilePictures/" + data.model.parentMessages[i].Picture;
+                            var date = new Date(parseInt(data.model.parentMessages[i].CreateDate.substr(6)));
+                            var isRead = data.model.parentMessages[i].StatusId != 1 ? "" : "msg-unread";
+                            if (category == 1) {
+                                var noAction = data.model.parentMessages[i].NoActionNeeded ? "<span class='action-status'>No Action Needed</span>" : "";
+                                messagesHtml += "<a onclick='GetMessageDetails(" + data.model.parentMessages[i].Id + ", " + data.model.parentMessages[i].CanShowUnread + ")'><li class='grid-x " + isRead + "'><div class='cell large-3 small-6'><div class='msg-contact-img'><img src='" + ProfilePicture + "' /></div><div class='msg-contact-detail'>" + data.model.parentMessages[i].CreatorName + "<span>" + data.model.parentMessages[i].CreatorRole + "</span>" + messageStatus[data.model.parentMessages[i].StatusId] + " <span class='msg-status msg-readby'>" + data.model.parentMessages[i].SeenBy + "</span></div></div>";
+                                messagesHtml += "<div class='cell large-6 large-order-2 small-12 small-order-3'><div class='msg-title-box'><p class='msg-title'>" + data.model.parentMessages[i].Subject + "</p></div></div>";
+                                messagesHtml += "<div class='cell large-3 small-6 small-order-2 text-right'>";
+                                if (data.model.parentMessages[i].hasAttachment) {
+                                    messagesHtml += "<div class='f-icon'><img src='../../Images/messages/attach_file.png' alt='' /></div>";
+                                }
+                                messagesHtml += "<div class='msg-time'><span>" + date.toLocaleDateString(undefined, options) + "</span>" + noAction + "</div></div></li></a>";
+                            }
+                            else if (category == 2) {
+                                messagesHtml += "<a onclick='GetMessageDetails(" + data.model.parentMessages[i].Id + ", " + data.model.parentMessages[i].CanShowUnread + ", " + data.model.parentMessages[i].CanShowUnread + ")'><li class='grid-x " + isRead + " align-justify'><div class='cell medium-7'><div class='msg-contact-img'><img src='" + ProfilePicture + "' /></div><div class='msg-contact-detail'>" + data.model.parentMessages[i].CreatorName + "</div></div>";
+                                messagesHtml += "<div class='cell medium-5 small-6 small-text-left text-right'>";
+                                if (data.model.parentMessages[i].hasAttachment) {
+                                    messagesHtml += "<div class='f-icon'><img src='../../Images/messages/attach_file.png' alt='' /></div>";
+                                }
+                                messagesHtml += "<div class='msg-time'><span>" + date.toLocaleDateString(undefined, options) + "</span>" + noAction + "</div></div>";
+								messagesHtml += "<div class='cell large-9 small-12 large-order-3 small-order-4'><div class='msg-title-box'><p class='msg-title'>" + data.model.parentMessages[i].Subject + "</p><p class='msg-text msg-body-preview'>" + data.model.parentMessages[i].RecentMessage + "</p>" + messageStatus[data.model.parentMessages[i].StatusId] + " <span class='msg-status msg-readby'>" + data.model.parentMessages[i].SeenBy +"</span></div></div>";
+                                messagesHtml += "<div class='cell large-3 medium-12 small-6 text-right large-order-4 small-order-3'></div></li></a>";
+                            }
+                            else if (category == 3) {
+                                messagesHtml += "<li onclick='editMessage(" + data.model.parentMessages[i].Id + ")'><span>" + date.toLocaleDateString(undefined, options) + "</span><p>" + data.model.parentMessages[i].Subject + "</p></li>";
+                            }
+                        }
+                        if (category == 1 && !Search) {
+                            updateMessageCount(data.model.messageCount)
+                        }
+                    }
+                    else {
+                        messagesHtml += "<div class='no-msg-container'><div class='no-msg'><img src='../../Images/messages/no-msg.jpg'><h3>No Messages, Yet</h3><p>There are No Messages in your Inbox as yet!</p>";
+                        if (Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)) && @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId) != @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId)) {
+                            messagesHtml += "<p>You can start by creating a new message</p><button class='button' data-open='new-msg-modal' onclick='addNewMsg();' aria-controls='new-msg-modal' aria-haspopup='true' tabindex='0'>Create New</button>";
+                        }
+                        messagesHtml += "</div></div>";
+                        $('#pagination-centered').addClass("hide");
+                    }
+					messagesHtml += "</ul>";
+					$('#' + messageCategory[category] + '').html(messagesHtml);
+				}
+			},
+			complete: function () {
+				setTimeout(function(){
+					var pane_msg_list = $('#my-message');
+					pane_msg_list.jScrollPane({
+						showArrows: false,
+						resizeSensor: true
+					});
+					api_msg_list = pane_msg_list.data('jsp');
+				}, 600);
+			}
+        });
+	}
+
+
+    function GetMessageDetails(messageId, showunread) {
+        showUnread = showunread;
+        $.ajax({
+            data: { messageId: messageId, infoPage: true },
+			url: "@Url.Action("GetMessageDetails", "Message")",
+			type: 'POST',
+			dataType: "json",
+			success: function (data) {
+                if (data != null) {
+                    if (data.Record.Messages.length == 0)
+                        $(".back-btn").trigger("click");
+                    else
+                        BindMessageDetail(data.Record.Messages);
+				}
+			},
+			complete: function () {
+                //backToListing();
+                if ('@HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId)' != '@HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId)') {
+                    document.getElementById("msg-textbox").addEventListener("mouseout", function () {
+                        sendResponse(true, "updatePDF");
+                    }, false);
+                }
+			}
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+	}
+
+    function BindMessageDetail(messageDetails) {
+        const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+        var noActionNeeded = messageDetails[(messageDetails.length - 1)].NoActionNeeded ? "checked disabled" : "";
+        $("#parentMessageId").val(messageDetails[0].Id);
+        $("#RecipientId").val(messageDetails[(messageDetails.length - 1)].CreatorId);
+        $("#messageSubject").val(messageDetails[0].Subject);
+        var draftMessage = "", unReadOption = "";
+        var messageDetailsHtml = [];
+        var pdfHtml = [];
+        $('.no-attachments').removeClass('hide');
+        $('#chat-message').html("");
+        $('#reminders-list').html("");
+        if (showUnread) {
+            unReadOption = "<div class='dropdown-pane small msg-board-options ellipsis-dropdown' id='ellipsis-dropdown' data-close-on-click='true' data-dropdown data-auto-focus='true' data-position='bottom' data-alignment='right'><button class='close-button' data-close aria-label='Close dropdown menu' type='button'><span aria-hidden='true'>&times;</span></button><ul class='drop-menu-lv1'><li><a href='#' onclick='updateAction(" + messageDetails[(messageDetails.length - 1)].Id + ", " + false + ", " + true + ")' ><span>Mark as Unread</span></a></li></ul></div>";
+        }
+        messageDetailsHtml += "<section class='chat-section'><div class='admin-chat-heading'><div class='chat-heading-top'><h5 data-toggle='msg-detail-modal'><a href='#' class='back-btn'></a> ";
+        messageDetailsHtml += "" + messageDetails[0].Subject + "</h5><i class='fa fa-ellipsis-v' aria-hidden='true' data-toggle='ellipsis-dropdown'></i>";
+        //messageDetailsHtml += "<div class='dropdown-pane small ellipsis-dropdown' id='ellipsis-dropdown' data-dropdown data-auto-focus='true' data-position='bottom' data-alignment='right'><button class='close-button' data-close aria-label='Close dropdown menu' type='button'><span aria-hidden='true'>&times;</span>";
+        //messageDetailsHtml += "<ul class='drop-menu-lv1'><li><a href='#'><span>Search</span></a></li><li><a href='#'><span>Add Contacts</span></a></li><li><a href='#' data-toggle='msg-detail-modal'><span>Details</span></a></li></ul></button>";
+        messageDetailsHtml += "" + unReadOption + "</div>";
+        messageDetailsHtml += "<div class='chat-heading-btm'><div><div class='msg-contact-img'><img src='" + url + "/ProfilePictures/" + messageDetails[0].MessageRecipients[0].OwnershipImage + "' /></div><div class='msg-contact-detail'>" + messageDetails[0].MessageRecipients[0].OwnershipName + "<span>" + messageDetails[0].MessageRecipients[0].OwnershipRole + "</span></div></div><div><div class='tick-buttons'><label><input type='checkbox' id='activate-button' onclick='updateAction(" + messageDetails[(messageDetails.length - 1)].Id + ", " + true + ", " + false + ")' " + noActionNeeded + "/>No action needed<span class='checkmark'></span></label></div></div></div></div></div></div>";
+        messageDetailsHtml += "<div class='message-chat'><div class='chat-scroll-container'><div class='chat-container'>";
+        if (messageDetails != null && messageDetails.length > 0) {
+            for (var i = 0; i < messageDetails.length; i++) {
+                var date = new Date(parseInt(messageDetails[i].CreateDate.substr(6)));
+                if (messageDetails[i].Attachment != null) {
+                    $('.no-attachments').addClass('hide');
+                    var deleteAttachment = "", myMsg = "doc-left";
+                    if (messageDetails[i].CreatorName != null)
+                        myMsg = "";
+                    if (messageDetails[i].CanShowDelete) {
+                        deleteAttachment = "<i class='fa fa-ellipsis-v chat-options' data-toggle='chat-options'></i><div class='dropdown-pane' id='chat-options' data-dropdown data-auto-focus='true' data-close-on-click='true' data-alignment='right' data-h-offset='-12' data-v-offset='-30'><div class='chat-opt-title'><p>Options</p> <img src='../../Images/challenge/icon-down-arrow.png' alt='v'></div><div class='chat-opt-list'><ul><li onclick=deleteAttachment(" + messageDetails[i].Id + ",'" + messageDetails[i].Attachment + "')><img src='../Images/messages/delete-icon.png' alt=''> Delete</li></ul></div></div>";
+                    }
+                    messageDetailsHtml += "<div class='uploaded-doc " + myMsg + "'><div class='doc-detail'><img src='../../Images/attachment-pdf.png' alt='PDF'><p>" + messageDetails[i].Attachment + "</p></div><div class='doc-action'><a href='../../Messageuploads/" + messageDetails[i].Attachment + "' download><img src='../../Images/program/download-icon.svg' alt='Download'></a>" + deleteAttachment + "</div></div>";
+                    pdfHtml.push("<div class='callout'><span class='due-tag'>Uploaded:" + date.toLocaleDateString(undefined, options) + "</span><p class='desc'>" +
+                        "<img src='../../Images/attachment-img.png' alt='Alternate Text' /> " + messageDetails[i].Attachment + "</p><p><a  href='../../Messageuploads/" + messageDetails[i].Attachment + "' target='_blank'>See Details</a></p></div>");
+                }
+                if (messageDetails[i].IsSent) {
+                    if (messageDetails[i].CreatorName != null) {
+                        var seen = "", msgBody = "", deleteText = "";
+                        if (messageDetails[i].CanShowDelete) {
+                            deleteText = "&nbsp;<i class='fa fa-ellipsis-v chat-options' data-toggle='chat-options" + i + "'></i><div class='dropdown-pane' id='chat-options" + i + "' data-dropdown data-auto-focus='true' data-close-on-click='true' data-alignment='right' data-h-offset='-12' data-v-offset='-30'><div class='chat-opt-title'><p>Options</p> <img src='../../Images/challenge/icon-down-arrow.png' alt='v'></div><div class='chat-opt-list'><ul><li onclick=deleteAttachment(" + messageDetails[i].Id + ",'" + messageDetails[i].Attachment + "')><img src='../../Images/delete-icon-red.svg' alt=''> Delete</li></ul></div></div>";
+                        }
+                        if (messageDetails[i].MessageRecipients[0].IsRead != true) {
+                            seen = "<span> | Not seen yet</span >";
+                        }
+                        else if (messageDetails[i].MessageRecipients[0].IsRead == true) {
+                            seen = "<span> | Read</span >";
+                        }
+                        if (messageDetails[i].Attachment != messageDetails[i].MessageBody) {
+                            msgBody = "<div class='chat-content'>" + messageDetails[i].MessageBody + deleteText + "</p></div>";
+                        }
+                        messageDetailsHtml += ("<div class='chat my-msg'><div class='chat-sender'>" + messageDetails[i].DisplayName + (messageDetails[i].CreatorRole != null ? ("<span>" + messageDetails[i].CreatorRole + "</span>") : "") + "</div>" + msgBody + "" +
+                            "<div class='chat-date'>" + date.toLocaleDateString(undefined, options) + seen + "</div></div>");
+                    }
+                    else if (messageDetails[i].Attachment != messageDetails[i].MessageBody) {
+                        messageDetailsHtml += "<div class='chat'><div class='chat-sender'>" + messageDetails[0].MessageRecipients[0].OwnershipName + (messageDetails[i].CreatorRole != null ? ("<span>" + messageDetails[i].CreatorRole + "</span>") : "") + "</div>" +
+                            "<div class='chat-content'><p>" + messageDetails[i].MessageBody + "</p></div>" +
+                            "<div class='chat-date'>" + date.toLocaleDateString(undefined, options) + "</div></div>";
+                    }
+                }
+                else if (!messageDetails[i].IsSent && messageDetails[i].DisplayId == @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId)) {
+                    draftMessage = messageDetails[i].MessageBody;
+                    $("#messageId").val(messageDetails[i].Id);
+                }
+
+            }
+        }
+        var messageFooter = "";
+        if (@Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)) && @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId) != @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId))
+            messageFooter = "<div class='message-footer'><div class='doc-remove-container hide'><div><p id='UploadedForm'></p></div></div><input type='text' name='name' value='' /><textarea id='msg-textbox' class='msg-textbox'></textarea><label><input type='file' name='files' id='updatePDF' class='upload' accept='.pdf' onchange='ValidateFileExtension(" + true + ");' /></label><button type='submit' class='submit-chat' onclick='sendResponse(" + false + ",);'></button></div>";
+        messageDetailsHtml += "</div></div>"+ messageFooter +"</div></section>";
+        $('#chat-message').html(messageDetailsHtml);
+        $("#msg-textbox").val(draftMessage);
+        $('#reminders-list').html(pdfHtml);
+        //initChatScrollbar();
+
+        $('#ellipsis-dropdown').foundation();
+        $("#chat-message").on("click", "i.ellipsis-dropdown", function () {
+            $('#ellipsis-dropdown').foundation();
+        });
+        $("#chat-message").on("click", "i.chat-options", function () {
+            $(this).next('.dropdown-pane').foundation();
+        });
+        $("#chat-message").on("click", "i.fa-ellipsis-v", function () {
+            $('#ellipsis-dropdown').foundation();
+        });
+
+        var pane = $('.chat-scroll-container');
+        pane.jScrollPane({
+            showArrows: false,
+            resizeSensor: true
+        });
+        var api = pane.data('jsp');
+
+        var pane_remind = $('.reminders-list');
+        pane_remind.jScrollPane({
+            showArrows: false,
+            resizeSensor: true
+        });
+        var api_remind = pane_remind.data('jsp');
+    }
+
+    function deleteAttachment(messageId, attachment) {
+        $.ajax({
+            url: "@Url.Action("DeleteAttachment", "Message")",
+            type: 'POST',
+            dataType: "json",
+            data: { MessageId:messageId, AttachmentName:attachment },
+                success: function (data) {
+                    GetMessageDetails($("#parentMessageId").val(), false);
+			    }
+
+        });
+    }
+
+    function backToListing() {
+        $(".chat-heading-top a.back-btn").on("click", function (e) {
+            e.preventDefault();
+            $(".selected-chat-container, .attachments-container").addClass("hide");
+            $(".dashboard-middle-container").removeClass("hide");
+        });
+    }
+
+    $("#chat-message").on("click", ".drop-menu-lv2 li a", function (e) {
+        e.preventDefault();
+        $(".drop-menu-lv2 li a").removeClass("active");
+        $(this).addClass("active");
+        var status = $(this).text();
+        var classname = $(this).children("span").attr("class");
+        $(".chat-heading-btm .msg-status").text(status).attr("class", classname);
+        $('#ellipsis-dropdown').foundation('close');
+    });
+
+    $("#chat-message").on("click", "i.chat-options", function () {
+        $('#chat-options').foundation();
+    });
+    $('#new-msg-modal').on('open.zf.reveal', function () {
+        $('#add-message button#submit').prop('disabled', false);
+        $('#add-message button#draft').prop('disabled', false);
+    });
+
+    $('#add-message').foundation();
+    $('#add-message')
+        .on('forminvalid.zf.abide', function (ev) {
+            var invalid_fields = $(this).find('[data-invalid]');
+            console.log(invalid_fields);
+        })
+        .on('formvalid.zf.abide', function (ev) {
+            if (!$('#add-message button#submit').is(":disabled")) {
+                $('#add-message button#submit').prop('disabled', true);
+                $('#add-message button#draft').prop('disabled', true);
+                var messageId = $("#messageId").val();
+                var subject = $("#subject").val();
+                var messageBody = $("#messageBody").val();
+                var isSent = !isDraft;
+                var parentMessageId = null;
+                var file = document.getElementById("pdfUpload").files[0];
+                var formData = new FormData();
+
+                formData.append("FileUpload", file);
+                formData.append("messageId", messageId);
+                formData.append("recipientId", @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId));
+                formData.append("subject", subject);
+                formData.append("messageBody", messageBody);
+                formData.append("isSent", isSent);
+                formData.append("parentMessageId", null);
+                formData.append("infoPage", true);
+                for (var [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
+
+                $("#loader-wrapper").fadeIn();
+                $.ajax({
+                    type: 'POST',
+                    url: "@Url.Action("AddEditMessage", "Message")",
+                    data: formData,
+                    //cache:false,
+                    dataType: "json",
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        if (data.Result != null) {
+                            $('.open-recent-msg').trigger('click');
+                            $("#new-msg-modal").find('input:text, textarea').val('');
+                            $(".drop-area").removeClass("hide");
+                            $(".doc-remove-container").addClass("hide");
+                            $('#new-msg-modal').foundation('close');
+                            $("#msg-filter").change();
+                            $("#add-message").find('input[type="submit"]').prop('disabled', false);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+
+                    RedirectToErrorPage(jqXHR.status);
+                });
+                $("#loader-wrapper").fadeOut();
+            }
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        });
+    function sendResponse(update, uploadId) {
+        var parentMessageId = $("#parentMessageId").val();
+        var recipientId = $("#RecipientId").val();
+        var messageId = $("#messageId").val();
+        var messageSubject = $("#messageSubject").val();
+        var responseText = $("#msg-textbox").val().trim();
+        if (!update && responseText == "") {
+            return false;
+        }
+        if (!update || responseText != "" || messageId != 0) {
+            var formData = new FormData();
+            if (uploadId == null)
+            {
+                var file = null;
+                formData.append("messageId", messageId);
+                formData.append("messageBody", responseText);
+            }
+            else
+            {
+                var file = document.getElementById(uploadId).files[0];
+                if (file != undefined && responseText != file.name) {
+                    formData.append("messageId", 0);
+                    formData.append("messageBody", file.name);
+                }
+                else {
+                    formData.append("messageId", messageId);
+                    formData.append("messageBody", responseText);
+                }
+            }
+
+            formData.append("FileUpload", file);
+            formData.append("recipientId",recipientId);
+            formData.append("subject", messageSubject);
+            formData.append("isSent", !update);
+            formData.append("parentMessageId", parentMessageId); 
+            formData.append("infoPage", true);
+            $.ajax({
+                data: formData,
+                url: "@Url.Action("AddEditMessage", "Message")",
+                type: 'POST',
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                async: false,
+                success: function (data) {
+                    if (data != null) {
+                        if (update) {
+                            $("#messageId").val(data.updateResponse.updatedId);
+
+                        }
+                        else {
+                            BindMessageDetail(data.Record.Messages);
+                            if (!(file != undefined && responseText != file.name)) {
+                                $("#messageId").val(0);
+                                $("#msg-textbox").val("");
+                            }
+                        }
+                    }
+                },
+                complete: function () {
+			        messageDetailsShow();
+			        messageDetailsHide();
+                }
+            });
+        }
+    }
+    $("#messageSearch").on("click", function () {
+        ListMessages(false, false, 2, true, false);
+    });
+
+    $("#msg-filter").on('change', function () {
+        if (this.value == 1) {
+            type = 1;
+            ListMessages(false, false, 2, false, false);
+        }
+        else if (this.value == 2) {
+            type = 2;
+            ListMessages(false, false, 2, false, true);
+        }
+        else if (this.value == 3) {
+            type = 3;
+            ListMessages(false, true, 2, false, false);
+        }
+    });
+
+    function ChangeMenu(type) {
+        if (type == 1) {
+            $("#automated-email").addClass('hide');
+            $("#chat-list").removeClass('hide');
+            ListMessages(null, false, false, 2, false, false);
+            messageDetailsShow();
+            messageDetailsHide();
+        }
+        else if (type == 2) {
+            $(".no-msg-container").addClass('hide');
+            $("#chat-list").addClass('hide');
+            $("#automated-email").load("@Url.Action("AutomatedEmails", "Participant")");
+            $("#automated-email").removeClass('hide');
+        }
+        $("#msg-type-filter").foundation("close");
+    }
+
+    function addNewMsg() {
+        isDraft = false;
+        $("#new-msg-modal").find('input,textarea').val('');
+        $("#upload-option").addClass("hide");
+        $("#upload-option .doc-remove-container").addClass("hide");
+        $("#upload-option .drop-area").removeClass("hide");
+
+        checkUpload();
+    }
+
+    function checkUpload() {
+        if ($('#UserText').val() == "" || $('#subject').val() == "") {
+
+            $("#upload-option").addClass("hide");
+        }
+        else {
+            $("#upload-option").removeClass("hide");
+        }
+    }
+
+    function updateAction(messageId, noActionNeeded, markasUnread) {
+        $.ajax({
+            url: "@Url.Action("ActionUpdate", "Message")",
+            type: 'POST',
+            dataType: "json",
+            data: { messageId: messageId, noActionNeeded: noActionNeeded, markasUnread: markasUnread },
+            success: function (data) {
+                if (noActionNeeded)
+                    $("#activate-button").attr('disabled', true);
+                else if (markasUnread) {
+                    $('#ellipsis-dropdown').foundation('close');
+                    $('#ellipsis-dropdown').remove();
+                }
+            }
+        });
+    }
+</script>

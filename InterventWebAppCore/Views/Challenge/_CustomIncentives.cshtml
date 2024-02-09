@@ -1,0 +1,112 @@
+﻿@using InterventWebApp
+@model PortalIncentiveModel
+<button class="close-button" data-close aria-label="Close modal" type="button">
+    <span aria-hidden="true">&times;</span>
+</button>
+
+<div class="modal-header"><h3>Add Bonus Points</h3></div>
+
+<div class="add-bonus-form">
+    <form id="custom-incentives-form" data-abide novalidate>
+        @if (Model.AdminId.HasValue)
+        {
+            <div class="cell medium-4">
+                <label>REWARDED FOR</label>
+                @Html.DropDownListFor(m => m.CustomIncentiveType, Model.CustomIncentiveTypes, "---Select Type---", new { @required = "required" })
+            </div>
+            <div class="cell medium-2">
+                <label>BONUS AMOUNT</label>
+                <select id="Points" required>
+                    @if (Model.IntegrationWith == (byte)Integrations.Activate)
+                    {
+                        <option value="25" selected>25 Points</option>
+                    }
+                    <option value="50">50 Points</option>
+                    <option value="100">100 Points</option>
+                    <option value="200">200 Points</option>
+                </select>
+            </div>
+            <div class="cell medium-6">
+                <label>WHAT'S THE REASON</label>
+                <textarea placeholder="Comments" id="comments"></textarea>
+            </div>
+            <div class="cell button-set flex-container align-justify">
+                <button class="button"  type="submit">Add Bonus Points</button>
+                <button class="button hollow" data-close>Cancel</button>
+            </div>
+        }
+        @Html.HiddenFor(m => m.PortalIncentiveId)
+    </form>        
+</div>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+    <span aria-hidden="true">&times;</span>
+</button>
+<script>
+    $('#closeIncetive').on('click', function () {
+        $('#more-information').foundation('close');
+    });
+    $('#custom-incentives-form').foundation();
+    $('#custom-incentives-form')
+        .on('forminvalid.zf.abide', function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+            if (invalid_fields) {
+                var scrollTo = $('#' + invalid_fields[0].id).offset().top;
+                $('html, body').animate({
+                    scrollTop: scrollTo
+                }, 400);
+            }
+        })
+        .on('formvalid.zf.abide', function () {
+   
+            var CustomIncentiveType = $("#CustomIncentiveType").val();
+            var Points = $("#Points").val();
+            var PortalIncentiveId = $("input[id='PortalIncentiveId']",this).val();
+            var comments = $("#comments").val();
+            $.ajax({
+                url: "@Url.Action("AddCustomIncentive", "Challenge")",
+                type: 'POST',
+                dataType: "json",
+                data: { PortalIncentiveId: PortalIncentiveId, CustomIncentiveType: CustomIncentiveType, Points: Points, comments : comments },
+                success: function (data) {
+                    if (data != null && data.Result == true) {
+                        $('#reward-bonus-points').foundation('close');
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("Challenges", "Challenge")',
+                            success: function (data) {
+                                $("#profile-content").html(data);
+                            }
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                                RedirectToErrorPage(jqXHR.status);
+                            });
+                        $('#custom-incentives-form').remove();
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        })
+        .on("submit", function (ev) {
+            ev.preventDefault();
+        })
+    @*function removeCustomIncentive(incentiveId) {
+        $.ajax({
+            url: "@Url.Action("RemoveCustomIncentive", "Portal")",
+            type: 'POST',
+            dataType: "json",
+            data: { UserIncentiveId: incentiveId },
+            success: function (data) {
+                if (data != null && data.Result == true) {
+                   // $('#more-information').foundation('close');
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Challenges", "Challenge")',
+                        success: function (data) {
+                            $("#profile-content").html(data);
+                        }
+                    });
+                }
+            }
+        });
+    }*@
+</script>

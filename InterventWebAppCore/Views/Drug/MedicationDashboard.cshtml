@@ -1,0 +1,273 @@
+﻿@using InterventWebApp;
+@using System.Globalization;
+@model InterventWebApp.UserMedications
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main">
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x">
+            @{
+                CultureInfo info = HttpContextAccessor.HttpContext.Session.GetString(SessionContext.LanguagePreference) != null && HttpContextAccessor.HttpContext.Session.GetString(SessionContext.LanguagePreference) == "es" ? CultureInfo.CreateSpecificCulture("es-MX") : CultureInfo.CreateSpecificCulture("en-US");
+            }
+            <div class="large-12 medium-12 cell med-block user-med-block">
+                <div class="header-block">
+                    <h3>@String.Format(Translate.Message("L2978"), Model.userDrugs.Where(x => (!x.DiscontinuedOn.HasValue)).Count()).</h3>
+                    @if (Model.userDrugs.Where(x => (!x.DiscontinuedOn.HasValue)).Count() > 0)
+                    {
+                        <div class="toogle-class">
+                            <p>@Translate.Message("L2965")</p>
+                            <div class="switch small">
+                                <input class="switch-input" onchange="OnlyAllergicMedications('AMFalse', 'exampleCheckboxSwitch4');" id="exampleCheckboxSwitch4" type="checkbox" name="exampleCheckboxSwitch4">
+                                <label class="switch-paddle" for="exampleCheckboxSwitch4"></label>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="card-block">
+                    <table class="table-expand">
+                        @if (Model.userDrugs.Where(x => (!x.DiscontinuedOn.HasValue)).Count() > 0)
+                        {
+                            <thead>
+                                <tr class="table-expand-row table-header">
+                                    <th></th>
+                                    <th>
+                                        <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                            <li class="filter-tabs">
+                                                <a class="main-link">@Translate.Message("L2966")</a>
+                                            </li>
+                                        </ul>
+                                    </th>
+                                    <th>
+                                        <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                            <li class="filter-tabs">
+                                                <a href="#0" class="main-link">@Translate.Message("L2967")</a>
+                                            </li>
+                                        </ul>
+                                    </th>
+                                    <th>
+                                        <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                            <li class="filter-tabs"><a href="#0" class="main-link">@Translate.Message("L2968")</a></li>
+                                        </ul>
+                                    </th>
+                                    <th>
+                                        <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                            <li class="filter-tabs">
+                                                <a href="#0" class="main-link">@Translate.Message("L2969")</a>
+                                            </li>
+                                        </ul>
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            foreach (var Userdrug in Model.userDrugs.Where(x => (!x.DiscontinuedOn.HasValue)))
+                            {
+                                <tbody name="@(Userdrug.UserDrugAllergy != null ? "AMTrue" : "AMFalse")">
+                                    <tr class="table-expand-row table-info">
+                                        <td class="row-open">
+                                            <img src="@Userdrug.Drug_Formulation.ImageUrl" alt=" ">
+                                        </td>
+                                        <td class="row-open">
+                                            @Userdrug.MedicationName<br>
+                                            @if (!string.IsNullOrEmpty(Userdrug.Ingredient))
+                                            {
+                                                <span>@Userdrug.Ingredient</span><br />
+                                            }
+                                            <span>@Userdrug.Dosage</span>
+                                        </td>
+                                        <td class="row-open">@Translate.Message(Userdrug.Drug_Condition.LanguageItem)</td>
+                                        <td class="row-open">
+                                            @Userdrug.Quantity @Translate.Message(Userdrug.Drug_Formulation.LanguageItem), @Translate.Message(Userdrug.Drug_Frequency.LanguageItem)<br>From @Userdrug.MedicationStartDate.ToLongDateString()
+                                        </td>
+                                        <td class="row-open">
+                                            @if (Userdrug.UserDrugAllergy != null)
+                                            {@Translate.Message(Userdrug.UserDrugAllergy.Drug_Allergy.LanguageItem)}
+                                        </td>
+                                        @if (Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)))
+                                        {
+                                            <td>
+                                                <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                                    <li class="filter-tabs">
+                                                        <a class="actn-link">@Translate.Message("L2971")</a>
+                                                        <ul class="menu">
+                                                            <li><a href="@Html.Raw(Url.Action("AddMedication", new { id = Userdrug.Id }))"><img src="../Images/icon-edit.png">@Translate.Message("L2166")</a></li>
+                                                            <li><a href="#" onclick="Discontinue(@Userdrug.Id);"><img src="../Images/icon-delete.png">@Translate.Message("L2972")</a></li>
+                                                            <li><a href="#" data-open="allergy-popup" onclick='AddAllergy("@Userdrug.MedicationName @Userdrug.Dosage", @Userdrug.Id);'><img src="../Images/icon-add.png">@Translate.Message("L2973")</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        }
+                                    </tr>
+                                    <tr class="expanded-row user-expanded-row" style="display: none;">
+                                        <td></td>
+                                        <td colspan="2">
+                                            <span>@Translate.Message("L1717"):</span><br>
+                                            @Userdrug.Notes
+                                        </td>
+                                        <td colspan="2">
+                                            @if (@Userdrug.UserDrugAllergy != null)
+                                            {
+                                                <span>@Translate.Message("L2974"):</span><br>
+                                                @Userdrug.UserDrugAllergy.Notes
+                                            }
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr class="blk-row">
+                                        <td colspan="6" class="row-space" height="10"></td>
+                                    </tr>
+                                </tbody>
+                            }
+
+                        }
+                    </table>
+                    @if (Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)))
+                    {
+                        <a href="@Html.Raw(Url.Action("AddMedication"))" class="button plus-btn">@Translate.Message("L2975")</a>
+                    }
+                    </div>
+                @if (Model.userDrugs.Where(x => (x.DiscontinuedOn.HasValue)).Count() > 0)
+                {
+                    <div class="header-block header-block02">
+                        <h3>@Translate.Message("L2976")</h3>
+                        <div class="toogle-class">
+                            <p>@Translate.Message("L2965")</p>
+                            <div class="switch small">
+                                <input class="switch-input" onchange="OnlyAllergicMedications('IMFalse', 'exampleCheckboxSwitch5');" id="exampleCheckboxSwitch5" type="checkbox" name="exampleCheckboxSwitch5">
+                                <label class="switch-paddle" for="exampleCheckboxSwitch5"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="history-block" id="history-block">
+                        <table class="table-expand">
+                            <thead>
+                                <tr class="table-expand-row table-header">
+                                    <th></th>
+                                    <th>
+                                        <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                            <li class="filter-tabs">
+                                                <a class="main-link">@Translate.Message("L2966")</a>
+                                            </li>
+                                        </ul>
+                                    </th>
+                                    <th>
+                                        <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                            <li class="filter-tabs">
+                                                <a href="#0" class="main-link">@Translate.Message("L2967")</a>
+                                            </li>
+                                        </ul>
+                                    </th>
+                                    <th>
+                                        <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                            <li class="filter-tabs">
+                                                <a href="#0" class="main-link">@Translate.Message("L2969")</a>
+                                            </li>
+                                        </ul>
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            @foreach (var Userdrug in Model.userDrugs.Where(x => (x.DiscontinuedOn.HasValue)))
+                            {
+                                <tbody name="@(Userdrug.UserDrugAllergy != null ? "IMTrue" : "IMFalse")">
+                                    <tr class="table-expand-row ">
+                                        <td>
+                                            <img src="@Userdrug.Drug_Formulation.ImageUrl" alt=" ">
+                                        </td>
+                                        <td>
+                                            @Userdrug.MedicationName<br>
+                                            <span>@Userdrug.Dosage</span>
+                                        </td>
+                                        <td>@Translate.Message(Userdrug.Drug_Condition.LanguageItem)</td>
+                                        <td>
+                                            @if (Userdrug.UserDrugAllergy != null)
+                                            {@Translate.Message(Userdrug.UserDrugAllergy.Drug_Allergy.LanguageItem)}
+                                        </td>
+                                        <td>@Translate.Message("L2977") <span>@Userdrug.DiscontinuedOn.Value.ToString("dddd, MMMM dd, yyyy", info)</span></td>
+                                    </tr>
+                                </tbody>
+                            }
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+<div class="reveal allergy-popup" id="allergy-popup" data-reveal>
+    <h2>@Translate.Message("L2979") <span id="allergy-med"></span></h2>
+    @Html.DropDownListFor(x => x.Allergy, Model.DrugAllergy, "Select")
+    <textarea class="allergy-comments" rows="3" placeholder="@Translate.Message("L2980")"></textarea>
+    <a href="#" class="button btn-cnt" id="btncnt3">@Translate.Message("L2981")</a>
+    <button class="close-button" data-close aria-label="Close reveal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <input type="hidden" id="drugId" />
+</div>
+
+
+
+@section scripts
+{
+    <script src="@Url.Content("~/Scripts/medication.js")?v=@CommonUtility.GetRandom()"></script>
+
+    <script>
+    var listdrugurl = "@Url.Action("SearchDrugData", "Drug")";
+    var adddrugurl = "@Url.Action("AddUserDrug", "Drug")";
+    var editdrugurl = "@Url.Action("ReadUserDrug", "Drug")";
+    var minSearchLength = 3, sliceListLength = 20;
+    var emptyResultText = "@Translate.Message("L4487")", naText = "@Translate.Message("L1149")";
+    function AddAllergy(drugDetails, id) {
+        $("#allergy-med").html(drugDetails);
+        $("#drugId").val(id);
+    }
+    function Discontinue(drugId) {
+      $.ajax({
+            url: "@Url.Action("DiscontinueDrug", "Drug")",
+            data: { Id: drugId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    window.location.href = "@Url.Action("MedicationDashboard", "Drug")";
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+        $("#btncnt3").on('click', function () {
+        var Id = $("#drugId").val();
+        var Allergy = $("#Allergy").val();
+        var Comments = $(".allergy-comments").val();
+        if (Allergy != '') {
+            $.ajax({
+                url: "@Url.Action("AddDrugAllergy", "Drug")",
+                type: 'POST',
+                dataType: "json",
+                data: { drugId: Id, allergy: Allergy, Comments: Comments, remove: false },
+                success: function (data) {
+                    window.location.href = "@Url.Action("MedicationDashboard", "Drug")";
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+        });
+        function OnlyAllergicMedications(med, id){
+            var element = document.getElementsByName(med);
+            for(var e=0; e < element.length; e++){
+                if(document.getElementById(id).checked){
+                        element[e].style.display = 'none';
+                }
+                else{
+                    element[e].removeAttribute("style");
+                }
+            }
+        }
+    </script>
+}

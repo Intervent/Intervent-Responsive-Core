@@ -1,0 +1,199 @@
+﻿@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div class="dashboard-content participant-log cell">
+    <div class="control-bar">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 medium-6 cell">
+                <h2>Timer History</h2>
+            </div>
+        </div>
+    </div>
+    <div class="notification-card text-center floating-card" hidden><span id="notificationCard">Added successfully</span></div>
+    <div class="actions send-report-wrapper time-report-wrapper">
+        <div>
+            @if (Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)))
+            {
+                <div class="grid-x">
+                    <div class="cell text-right">
+                        <a class="button add-btn" data-open="add-timedetails">Add time</a>
+                    </div>
+                </div>
+            }
+        </div>
+        <div id="timerList" class="content-table table-overflow-container"></div>
+        <div class="grid-x grid-padding-x">
+            <div class="cell">
+                <!-- pagination Start -->
+                <div class="pagination-area hide" id="pagination-centered">
+                    <ul>
+                        <li id="numeric"></li>
+                    </ul>
+                    <!-- page-link Start -->
+                    <div class="page-link">
+                        <label>@Translate.Message("L4041")</label>
+                        <div class="grid-x">
+                            <input type="text" id="jumptoPageNo">
+                            <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                        </div>
+                    </div>
+                    <!-- page-link End -->
+                </div>
+                <!-- pagination End -->
+            </div>
+        </div>
+    </div>
+</div>
+<script src="@Url.Content("~/Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 10;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    LoadTimerHistory();
+
+    $("#add-timer-startDate, #add-timer-endDate, #add-disposition-list").on("blur change", function () {
+		$(this).removeClass("is-invalid-input");
+    });
+
+    $("#add-timedetails").foundation();
+    $('#add-timedetails').on("submit", function (ev) {
+        ev.preventDefault();
+    });
+    $('#add-timer-log').on('click', function () {
+        $("#alert-timer").hide();
+        $("#alert-timer").html("");
+        var startTime = $("#add-timer-startDate").val();
+        if (startTime == "") {
+			$("#add-timer-startDate").focus().addClass("is-invalid-input");
+            return;
+        }
+        var endTime = $("#add-timer-endDate").val();
+        if (endTime == "") {
+			$("#add-timer-endDate").focus().addClass("is-invalid-input");
+            return;
+        }
+
+        var startDate = new Date(startTime);
+        var endDate = new Date(endTime);
+        if ('@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()' == 'dd/mm/yyyy') {
+            var sdate = startTime.split('/');
+            var edate = endTime.split('/');
+            startDate = new Date(sdate[1] + '/' + sdate[0] + '/' + sdate[2]);
+            endDate = new Date(edate[1] + '/' + edate[0] + '/' + edate[2]);
+        }
+        if (startDate > endDate) {
+            $("#alert-timer").show();
+            $("#alert-timer").html("End date can't be less than start date.");
+            return;
+        }
+
+        if (Math.floor(((endDate - startDate) / 1000) / 60) > 60) {
+            $("#alert-timer").show();
+            $("#alert-timer").html("Time spent cant be more than 60 Min's");
+            return;
+        }
+
+        if (startDate.getTime() === endDate.getTime()) {
+            $("#alert-timer").show();
+            $("#alert-timer").html("Start date and End date can't be same.");
+            return;
+        }
+
+        var disposition = $("#add-disposition-list").val();
+        if (disposition == 0) {
+			$("#add-disposition-list").focus().addClass("is-invalid-input");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("AddTrackTime", "Participant")",
+            data: { startTime: startDate.toLocaleString(), endTime: endDate.toLocaleString(), disposition: disposition },
+            success: function (data) {
+                if (data.Result) {
+                    clearForm();
+                    LoadTimerHistory();
+                    showAlertMessage("Successfully added.");
+                } else {
+                    $("#alert-timer").show();
+                    $("#alert-timer").html("Can't add timer on billed date.");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    });
+
+    $('#close-timer-log').on('click', function () {
+        clearForm();
+    });
+
+    $('#close-timer-log-btn').on('click', function () {
+        clearForm();
+    });
+
+    function clearForm() {
+        startIndex = 1;
+        pageSize = 10;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        $("#alert-timer").hide();
+        $("#alert-timer").html("");
+        $("#add-timedetails").foundation('close');
+        $("#add-timer-startDate").val(null);
+        $("#add-timer-endDate").val(null);
+        $("#add-disposition-list").val(0);
+    }
+
+    function showAlertMessage(msg) {
+        $('#notificationCard').text(msg);
+        $(".notification-card").show('slow');
+        setTimeout(function () {
+            $('.notification-card').hide('slow');
+        }, 3500);
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        LoadTimerHistory();
+    }
+
+    function LoadTimerHistory() {
+        var htmlView = '<div class="no-graph-info text-center flex-container flex-dir-column  align-middle"><img src="/Images/device/no-data.png" alt="Alternate Text"><p>No records found</p></div>';
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetParticipantTimeTracker", "Participant")",
+            data: { page: currentPage, pageSize: pageSize },
+            success: function (data) {
+                totalRecords = data.TotalRecords;
+                totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                if (data.Result && data.Records.length > 0) {
+                    htmlView = '<div class="content-table table-overflow-container"><table class="timer-report-table table basic-table2"><thead><tr><th><span>Start time</span></th><th><span>End time</span></th><th><span>Duration (Mins)</span></th><th><span>Disposition type</span></th><th><span>Billed</span></th></tr></thead><tbody>';
+                    for (var i = 0; i < data.Records.length; i++) {
+                        console.log(data.Records[i]);
+                        htmlView += '<tr><td>' + data.Records[i].StartTime + '</td>';
+                        htmlView += '<td>' + data.Records[i].EndTime + '</td>';
+                        htmlView += '<td>' + data.Records[i].Minutes + '</td>';
+                        htmlView += '<td class="disposition-types">' + data.Records[i].Disposition + '</td>';
+                        htmlView += data.Records[i].Billed ? '<td><i class="fa fa-check-square"></i></td></tr>' : '<td></td></tr>';
+                        $('#pagination-centered').removeClass("hide");
+                        AddPager();
+                    }
+                    htmlView += '</tbody></table></div>';
+                } else {
+                    $('#pagination-centered').addClass("hide");
+                }
+                $('#timerList').html(htmlView);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+
+    }
+</script>

@@ -1,0 +1,155 @@
+﻿@using InterventWebApp
+@model InterventWebApp.LoginModel
+
+<!--Login Modal-->
+<div class="reveal lmc-form" id="login-modal" data-reveal>
+    <form id="login-form" data-abide novalidate>
+        <div class="grid-x grid-margin-x login-modal-confirmed hide">
+            <div class="small-12 cell">
+                <p class="success">@Translate.Message("L462")</p>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x password-changed hide">
+            <div class="small-12 cell">
+                <p class="success">@Translate.Message("L1630")</p>
+            </div>
+        </div>
+        <div class="form-white-bg">
+            <div data-alert="" id="login-form-inline-login-error" class="callout alert alert-box red hide"></div>
+            <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="info@myintervent.com" />
+            <div>
+                <label>@Translate.Message("L572")</label>
+                @Html.TextBoxFor(m => m.UserName, new Dictionary<string, object> { { "placeholder", Translate.Message("L986") }, { "required", "required" } })
+                <small class="form-error red">@Translate.Message("L463")</small>
+            </div>
+			<div class="password-field-box">
+				<label>@Translate.Message("L466")</label>
+				@Html.PasswordFor(m => m.Password, new Dictionary<string, object> { { "placeholder", Translate.Message("L466") }, { "required", "required" } })
+				<span class="toggle-password fa fa-fw fa-eye"></span>
+				<small class="form-error red">@Translate.Message("L463")</small>
+			</div>
+            <div class="lmc-login-container">
+                <button type="submit" class="button expanded">
+                    <div class="loading-spinner hide" show-if-submitting></div>
+                    @Translate.Message("L426")
+                </button>
+            </div>
+            <input class="DeviceId" type="hidden" id="DeviceId" name="DeviceId" value="" />
+            <div class="small-12 cell text-center">
+                @if (ViewData["ShowSignUp"].ToString() == "True")
+                {
+                    <a href="#" onclick="$('#lmc-mobile-signup').foundation('open'); return false;">@Translate.Message("L443")</a>
+                    @: |
+                }
+            <a href="#" onclick="$('#forgot-password-modal').foundation('open'); return false;">@Translate.Message("L465")</a>
+            </div>
+        </div>
+    </form>
+
+    <div id="device-verification-login-form"></div>
+
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/DeviceVerification.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+
+    var deviceVerificationSection = "";
+    $.ajax({
+        type: 'POST',
+        url: '@Url.Action("DeviceVerification", "Home")',
+        success: function (data) {
+            deviceVerificationSection = data;
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        RedirectToErrorPage(jqXHR.status);
+    });
+
+    //LOGIN FORM
+    $(document).ready(function () {
+        $('#inline-login-form').foundation();
+        $('#inline-login-form')
+        //When Not Valid
+            .on("forminvalid.zf.abide", function (ev, frm) {
+            console.log("Form id "+ev.target.id+" is invalid");
+        })
+        //When Valid
+        .on('formvalid.zf.abide', function () {
+            Login("inline-login-form");
+        })
+        // to prevent form from submitting upon successful validation
+        .on("submit", function (ev) {
+            ev.preventDefault();
+        });
+
+        $('#login-form').foundation();
+        $('#login-form')
+        //When Not Valid
+            .on("forminvalid.zf.abide", function (ev, frm) {
+            console.log("Form id "+ev.target.id+" is invalid");
+        })
+        //When Valid
+            .on('formvalid.zf.abide', function () {
+                Login("login-form");
+        })
+        // to prevent form from submitting upon successful validation
+        .on("submit", function (ev) {
+            ev.preventDefault();
+            });
+        function Login(formName) {
+            $("#loader-wrapper").removeClass("hide");
+            $("#loader-wrapper").fadeIn();
+            $("#inline-login-form").find('input[name="Password"]').val(window.btoa(Math.random().toString(36).substring(2, 8) + $("#inline-login-form").find('input[name="Password"]').val()));
+            $("#login-form").find('input[name="Password"]').val(window.btoa(Math.random().toString(36).substring(2, 8) + $("#login-form").find('input[name="Password"]').val()));
+            $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+            $('[show-if-submitting]').removeClass('hide');
+            $.ajax({
+                url: "@Url.Action("Login", "Account")",
+                type: 'POST',
+                dataType: "json",
+                data: $("#"+formName+"").serialize(),
+                success: function (data) {
+                    $("#inline-login-form").find('input[name="Password"]').val("");
+                    $("#login-form").find('input[name="Password"]').val("");
+                    if (data == "success") {
+                        window.location.href = "@Url.Action("Stream", "Participant")";
+                    }
+                    else if (data.hasOwnProperty("verifyDevice")) {
+                        $("#device-verification-" + formName).html(deviceVerificationSection);
+                        $("#" + formName + "").addClass("hide");
+                        $("#device-security-verify-container").removeClass("hide");
+						$('.login-switch-paddle').css({ 'pointer-events': 'none', 'cursor': 'not-allowed'});
+                        $("#verify-device-email").html(data.emailId);
+                        $("#verify-device-userid").val(data.userId);
+                        if (data.phoneNo != null) {
+                            $("#verify-device-phone").html(data.phoneNo);
+                            $("#device-phoneno").removeClass("hide");
+                        }
+                    }
+                    else if (data == "confirmEmail") {
+                            var email = $("#loginUserName").val();
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                            $('#resend-email-modal').find("#email").text(email);
+                            $('#resend-email-modal').find("#emailId").val(email)
+                            $('#resend-email-modal').foundation('open');
+                        }
+                    else {
+                        $("#" + formName +"-inline-login-error").html(data);
+                        $("#" + formName +"-inline-login-error").removeClass('hide');
+                        $('[show-if-submitting]').parent().prop('disabled', '');
+                        $('[show-if-submitting]').addClass('hide');
+                        $("#loader-wrapper").addClass("hide");
+                    }
+                },
+                complete: function () {
+                    $('#try-later').foundation();
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    DisplayError(jqXHR.status);
+                });
+        }
+    });
+</script>

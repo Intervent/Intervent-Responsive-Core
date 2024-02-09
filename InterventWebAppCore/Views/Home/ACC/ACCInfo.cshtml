@@ -1,0 +1,172 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass chi-memorial info">
+    @Html.Partial("ACC/_ACCHeader")
+</section>
+
+<!--Signup Modal-->
+<div id="sign-up-modal" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="cell medium-12">
+        <h2 class="text-center">@Translate.Message("L431")</h2>
+    </div>
+    <div class="cell">@Html.Partial("_OldCompassSignUp")</div>
+    <div class="cell text-center">
+        <a href="#" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</a>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+
+<section class="container feature interventincentives">
+    <a name="interventincentives" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="~/images/Incentives.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 ">
+                    <h2>@Translate.Message("L1919")</h2>
+                    <p>@Translate.Message("L1920")</p>
+                    <div class="small-12 cell text-center">
+                        <p class="more-link" href="#" onclick="$('#incentives').foundation('open'); return false;">
+                            @Translate.Message("L1363")<span class="more"></span>
+                        </p>
+                    </div>
+                </div>            
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature healthassessment">
+    <a name="healthassessment" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/assessment.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L535")</h2>
+                    <p>@Translate.Message("L2470")</p>
+                    <p>@Translate.Message("L2471")</p>
+                    <p>@Translate.Message("L2472")</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature coachedprogram">
+    <a name="coachedprogram" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/coaching.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L1349")</h2>
+                    <p>@Translate.Message("L1908")</p>
+                    <p>@Translate.Message("L1909")</p>
+                    <p>Please call INTERVENT at 1-855-494-1093 to enroll in a program.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature selfhelpprograms">
+    <a name="selfhelpprograms" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/self-help.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1913")</h2>
+                    <p>@Translate.Message("L1914").</p>
+                    <p>@Translate.Message("L1915").</p>
+                    <p>@string.Format(Translate.Message("L1916"), TempData["OrgContactNumber"].ToString()).</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature cardiosmart">
+    <a name="cardiosmart" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/CardioSmart.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L2065")</h2>
+                    <p>@Translate.Message("L2509")</p>
+                    <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/') ">
+                        @Translate.Message("L2473")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature successstories">
+    <a name="successstories" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/success.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L1351")</h2>
+                    <p>@Translate.Message("L2074")</p>
+                    <ul class="checkmark green listinside">
+                        <li>“@Translate.Message("L2431")”</li>
+                        <li>“@Translate.Message("L2432")”</li>
+                        <li>“@Translate.Message("L2433")”</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<div id="incentives" class="reveal large" data-reveal data-close-on-click="true">
+    <h4>@Translate.Message("L1365"):</h4>
+    <table class="table margin-top-1">
+        <tr><th class="pink">@Translate.Message("L1731")</th><th class="pink">@Translate.Message("L1716")</th></tr>
+        <tr><td>@Translate.Message("L535")</td><td>50 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L1367")</td><td>200 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L1368")</td><td>500 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L1369")</td><td>250 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L1370")</td><td>150 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L2508")</td><td>200 @Translate.Message("L1716")</td></tr>
+    </table>
+    <h4>@Translate.Message("L1364"):</h4>
+    <table class="table">
+        <tr><th class="pink">@Translate.Message("L1371")</th><th class="pink">250</th><th class="pink">251-499</th><th class="pink">500-999</th><th class="pink">@Translate.Message("L1377")</th></tr>
+        <tr><td>@String.Format(Translate.Message("L1372"), "$100")</td><td><i class="fa fa-close"></i></td><td><i class="fa fa-close"></i></td><td><i class="fa fa-close"></i></td><td><i class="fa fa-close"></i></td></tr>
+        <tr><td>@String.Format(Translate.Message("L1373"), "$250")</td><td></td><td><i class="fa fa-close"></i></td><td><i class="fa fa-close"></i></td><td><i class="fa fa-close"></i></td></tr>
+        <tr><td>@String.Format(Translate.Message("L1374"), "$500")</td><td></td><td></td><td><i class="fa fa-close"></i></td><td><i class="fa fa-close"></i></td></tr>
+        <tr><td>@String.Format(Translate.Message("L1375"), "$1000")</td><td></td><td></td><td></td><td><i class="fa fa-close"></i></td></tr>
+    </table>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<script type="text/javascript">
+    $(window).ready(function(){
+        $(".compass-menu").find("a").on('click', function(e) {
+            var url = $(this).attr("href");
+            var arr = url.split('#');
+            var showscroll = arr[1];
+            $("html, body").animate({                
+                scrollTop: $('.' + showscroll).offset().top - 80
+            });
+        });
+    })
+</script>

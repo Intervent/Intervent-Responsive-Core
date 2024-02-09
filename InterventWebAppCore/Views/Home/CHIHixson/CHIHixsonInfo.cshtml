@@ -1,0 +1,267 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass chi-memorial info">
+    @Html.Partial("CHIHixson/_CHIHixsonHeader")
+</section>
+
+<!--Signup Modal-->
+<div id="sign-up-modal" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="cell medium-12">
+        <h2 class="text-center">@Translate.Message("L431")</h2>
+    </div>
+    <div class="cell">@Html.Partial("_SignUp")</div>
+    <div class="cell text-center">
+        <a href="#" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</a>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+
+<section class="container feature">
+    <a name="healthcare" class="compass anchor">
+        <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                <img src="~/images/Twohandsheart.svg" alt="" />
+            </div>
+            <div class="feature-info cell medium-7 medium-order-1">
+                <h2>@Translate.Message("L2028")</h2>
+                <p>You are the most important member of your health care team. Involvement in developing your care plan and your commitment to change are critical. With our help you can achieve your lifestyle management and risk reduction goals and change the course of your life.</p>
+                <p>You are the expert on yourself. No one knows your personal history and current circumstances as well as you. The strength, motivation and resources for change are within you. Your CHI Memorial and INTERVENT health care team will help bring forth, support and maintain your motivation. It’s already there – it may just need to be encouraged.  Change goals are not real until you adopt and embrace them.</p>
+                <div class="small-12 cell text-center">
+                    <p class="more-link" href="#" onclick="$('#tipsForSuccess').foundation('open'); return false;">
+                        @Translate.Message("L1363")<span class="more"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature">
+    <a name="cardiacscore" class="compass anchor">
+        <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 text-center">
+                <img src="../Images/StethoscopeTealredheart.svg" alt="" />
+            </div>
+            <div class="feature-info cell medium-7">
+                <h2>Cardiac Rehabilitation</h2>
+                <p>Cardiac rehabilitation (rehab) teaches you how to be more active and make lifestyle changes that can lead to a stronger heart and better health. Cardiac rehab can help you feel better and reduce your risk of future heart problems. In cardiac rehab, you work with a team of health professionals. Often the team includes a doctor, a nurse specialist, a dietitian, an exercise therapist and a physical therapist. The team designs a program just for you, based on your health and goals. Then they give you support to help you succeed.</p>
+                <div class="small-12 cell text-center">
+                    <p class="more-link" href="#" onclick="$('#cardiac').foundation('open'); return false;">
+                        @Translate.Message("L1363")<span class="more"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+
+</section>
+<section class="container feature">
+    <a name="healthassessment" class="compass anchor">
+        <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                <img src="../Images/assessment.svg" alt="" />
+            </div>
+            <div class="feature-info cell medium-7 medium-order-1">
+                <h2>@Translate.Message("L535")</h2>
+                <p>You can learn how your lifestyle habits – eating, exercising, dealing with stress and following your doctor’s plan of care – affect your health by completing our health assessment.  The health assessment is a free and confidential online assessment that considers your lifestyle habits along with your health history to determine how healthy you are, how much you’re at risk for certain chronic diseases, illnesses or incidents. It will also help you set appropriate goals. It only takes about 15 minutes to complete.</p>
+                <p>Once you complete the health assessment, you will immediately receive a personal report, health improvement roadmap and a wealth of useful information individualized for you. Plus, you’ll be able to enroll in our lifestyle management programs to learn about how to eat healthfully, be physically active, manage your weight, manage your stress, sleep better and much more.</p>
+                <p>You must complete a health assessment before enrolling in a CHI Memorial cardiac rehabilitation and lifestyle management program. Call for more information.</p>
+                <div class="small-12 cell text-center">
+                    <p class="more-link" href="#" onclick="$('#support').foundation('open'); return false;">
+                        @Translate.Message("L1363")<span class="more"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="coachedprogram" class="compass anchor">
+        <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 text-center">
+                <img src="../Images/coaching.svg" alt="" />
+            </div>
+            <div class="feature-info cell medium-7">
+                <h2>Health Coaching</h2>
+                <p>You have choices. After discussion with your CHI Memorial health team, select the program choice that best fits your needs and circumstances.</p>
+                <p>
+                          •	Facility-based phase II cardiac rehab (add)
+                    <br />•	Facility-based phase III cardiac rehab (add)
+                    <br />•	One-on-one, face to face consultation, exercise prescription, etc. followed by telephonic coaching (add)
+                    <br />•	Telephonic lifestyle health coaching
+                </p>
+                <p>If you enroll in our telephonic lifestyle health coaching program, you will be paired with a health professional serving as your health coach who’ll help you make and sustain important lifestyle changes – to get healthier, stay healthier and feel better.</p>
+                <p>We are ready to assist you in making the changes that are currently important to you – just as we have with thousands of patients just like you. We will listen to your needs, preferences and circumstances and help you develop an individualized plan supported by your cardiologist. Your health coach will guide you, teach you, provide encouragement and hold you accountable for your actions each step of the way to better health.</p>
+                <p>You must complete a health assessment before enrolling in a coached program. Call CHI Memorial, Hixson for more information at 423-495-7422, Monday-Friday 8:30 a.m. to 4:00 p.m. Eastern Time.</p>
+                <div class="small-12 cell text-center">
+                    <p class="more-link" href="#" target="_blank" onclick="window.open('../pdf/CardioSmartOnCallFlyer_Participant.pdf')">
+                        @Translate.Message("L1363")<span class="more"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="selfhelpprograms" class="compass anchor">
+        <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                <img src="../Images/self-help.svg" alt="" />
+            </div>
+            <div class="feature-info cell medium-7 medium-order-1">
+                <h2>@Translate.Message("L1913")</h2>
+                <p>@Translate.Message("L2434") @DateTime.Now.Year</p>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="hearchhospital" class="compass anchor">
+        <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 text-center">
+                <img class="smaller" src="../Images/chi_tag.svg" alt="" />
+            </div>
+            <div class="feature-info cell medium-7">
+                <h2>@Translate.Message("L2032")</h2>
+                <p class="more-link" href="#" onclick="window.open('http://www.memorial.org/heart-and-vascular-rehabilitation-services') ">
+                    Cardiac Rehabilitation Services
+                </p>
+                <p class="more-link" href="#" onclick="window.open('http://www.memorial.org/support-services') ">
+                    Support Services
+                </p>
+                <p class="more-link" href="#" onclick="window.open('http://www.memorial.org/heart-and-vascular-center-prevention') ">
+                    Prevention
+                </p>
+                <p class="more-link" href="#" onclick="window.open('http://www.memorial.org/inspire-media') ">
+                    Heart Failure Program (video)
+                </p>
+                <p class="more-link" href="#" onclick="window.open('https://youtu.be/PXmb8d9s4Yg') ">
+                    Preventive Heart Care (video)
+                </p>
+                <p class="more-link" href="#" onclick="window.open('https://youtu.be/dyV_iAmXHjY') ">
+                    Heart Health (video)
+                </p>
+                <p class="more-link" href="#" onclick="window.open('https://youtu.be/MM61KDHiNO0') ">
+                    Women in Heart Disease (video)
+                </p>
+                <p class="more-link" href="#" onclick="window.open('https://youtu.be/6k0DtSlxyVs') ">
+                    Sleep Apnea and Your Heart (video)
+                </p>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature">
+    <a name="cardiosmart" class="compass anchor">
+        <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                <img src="../Images/CardioSmart.svg" alt="" />
+            </div>
+            <div class="feature-info cell medium-7 medium-order-1">
+                <h2>@Translate.Message("L2033")</h2>
+                <p>CardioSmart is a patient-centered initiative of the American College of Cardiology. INTERVENT is part of this unique program that encourages patients to play a more active and informed role in their own heart health. CardioSmart resources are available to all patients of CHI Memorial.</p>
+                <p>
+                    @Translate.Message("L2067")
+                </p>
+                <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/Join') ">
+                    @Translate.Message("L2427")
+                </p>
+                <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/AZ-Topics') ">
+                    @Translate.Message("L2072")
+                </p>
+                <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/Drugs-and-Treatments/Find-a-Drug') ">
+                    @Translate.Message("L2073")
+                </p>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature">
+    <a name="successstories" class="compass anchor">
+        <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 text-center">
+                <img src="../Images/success.svg" alt="" />
+            </div>
+            <div class="feature-info cell medium-7">
+                <h2>@Translate.Message("L1351")</h2>
+                <p>
+                    @Translate.Message("L2074")
+                </p>
+                <h3>Larry Gets Healthier after Heart Attacks</h3><br />
+                <p>Larry, who has suffered two heart attacks, says the INTERVENT lifestyle management program has been an important part of his ongoing cardiac rehabilitation. “The program has made a big difference in my health. I’ve made significant improvements. It’s changed my life for the better.”</p>
+                <p>Larry, who is retired, enjoys gardening, playing with his grandchildren and engaging in various outdoor recreations activities, especially fishing. Area walking and biking trails also provides opportunities for lifestyle physical activity and exercise. Larry enjoys cycling several times a week for exercise. In addition to physical activity, Larry reports that he and his wife Betty have changed their eating habits to include more fruits and vegetables, especially salads. And, they enjoy eating the fish that Larry catches.</p>
+                <p>“Working with the coach is quite helpful and easy to do. The information that she shares has been excellent. I look forward to visiting with her. In fact, I have already scheduled my next session for 2017,” says Larry.</p>
+                <p>Bobbie, Larry’s health coach, says: “Larry is always eager to learn and takes his health very seriously. He has implemented the recommendations from his action plan and is making healthy choices in his meal plan. Larry stays active daily and enjoys being with his new puppy and grandkids. I really enjoy our regular coaching calls!”</p>
+            </div>
+        </div>
+    </a>
+</section>
+
+<div id="tipsForSuccess" class="reveal large" data-reveal data-close-on-click="true">
+    <table class="table margin-top-1">
+        <tr><th class="pink">Tips for Success</th></tr>
+        <tr><td>Always provide complete and honest information – whether answering questionnaires or talking with your doctor or health coach.</td></tr>
+        <tr><td>Keep your health care team updated with new information as it becomes available. Report any unusual symptoms or health problems.</td></tr>
+        <tr><td>Concentrate on taking one step at a time, one day at a time.</td></tr>
+        <tr><td>Do the best you can. If you make a mistake or have a problem, think about it, deal with it and go on.</td></tr>
+        <tr><td>Keep all appointments with your doctor and other health care providers (whether in-person or by telephone). Prepare for visits by making a list of questions to ask and reviewing any other material. Invite a family member or friend to go with you, if needed.</td></tr>
+        <tr><td>Obtain clearance from your doctor or health care provider before engaging in any activity or practice that seems uncomfortable or risky to you.</td></tr>
+        <tr><td>Make a real effort to learn as much as possible about your health and any risks and conditions that you might have. Seek information from reliable sources.</td></tr>
+        <tr><td>Be patient with yourself, especially as you are getting started with new habits and changes. Remember, there is no quick solution. Change is difficult and requires work, but it is possible – especially with the help and support of your CHI Memorial/INTERVENT health team.</td></tr>
+        <tr><td>Involve others in your care plan, as appropriate. Ask for the specific type of support that you need and want. Don’t expect others to “read your mind.”</td></tr>
+        <tr><td>Learn to identify your high-risk situations in advance and make plans to manage them so that you can avoid a setback or slip. Stay focused on the present rather than worrying unnecessarily about past or future events.</td></tr>
+        <tr><td>Stay focused on the present rather than worrying unnecessarily about past or future events.</td></tr>
+    </table>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div id="support" class="reveal large" data-reveal data-close-on-click="true">
+    <table class="table margin-top-1">
+        <tr><th class="pink">Support</th></tr>
+        <tr><td>CHI Memorial Hixson:</td></tr>
+        <tr><td>423-495-7422 (M-F 8:30 a.m. to 4 p.m. Eastern Time)</td></tr>
+        <tr><td> </td></tr>
+        <tr><td>INTERVENT:</td></tr>
+        <tr><td>For technical support call 1-855-494-1093 (M-F 8:30 a.m. to 9 p.m., Saturday 9:00 a.m. to 4:00 p.m. Eastern Time) Email us at @TempData.Peek("OrgContactEmail").ToString() after hours.</td></tr>
+    </table>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div id="cardiac" class="reveal large" data-reveal data-close-on-click="true">
+    <h2>What Is Cardiac Rehabilitation?</h2>
+    <p>Cardiac rehabilitation (rehab) teaches you how to be more active and make lifestyle changes that can lead to a stronger heart and better health. Cardiac rehab can help you feel better and reduce your risk of future heart problems. In cardiac rehab, you work with a team of health professionals. Often the team includes a doctor, a nurse specialist, a dietitian, an exercise therapist and a physical therapist. The team designs a program just for you, based on your health and goals. Then they give you support to help you succeed.</p>
+    <h3>What happens in cardiac rehab?</h3>
+    In cardiac rehab, you will learn how to:
+    <ul>
+        <li>Manage your heart disease and problems such as <a target="_blank" href="https://www.cardiosmart.org/healthwise/sth1/4981/9/sth149819" style="color:deepskyblue">high blood pressure</a> and <a target="_blank" href="https://www.cardiosmart.org/healthwise/sth1/4984/1/sth149841" style="color:deepskyblue">high cholesterol</a>.</li>
+        <li>Exercise safely.</li>
+        <li>Eat a heart-healthy diet.</li>
+        <li>Quit smoking.</li>
+        <li>Reduce stress and depression.</li>
+        <li>Get back to work sooner and safely.</li>
+    </ul>
+    <h3>What are the benefits of cardiac rehab?</h3>
+    <p>Starting cardiac rehab after a heart attack can lower your chance of dying from heart disease and can help you stay out of the hospital. It may reduce your need for medicine.</p>
+    Cardiac rehab may also help you to:
+    <ul>
+        <li>Have better overall health</li>
+        <li>Lose weight or keep weight off </li>
+        <li>Feel less depressed and more hopeful </li>
+        <li>Have more energy and feel better about yourself</li>
+    </ul>
+    <p>Changing old habits is hard. But in cardiac rehab, you get the support of experts who can help you make new healthy habits. And meeting other people who are in cardiac rehab can help you know that you're not alone.</p>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>

@@ -1,0 +1,721 @@
+﻿@using InterventWebApp
+@model InterventWebApp.CheckRiskModel
+<section class="main what-if">
+    <div class="grid-container">
+        <div class="grid-x" id="checkrisk-breadcrumbs" style="display:none">
+            <ul class="breadcrumbs">
+                <li><a href="~/Reports/ReportsDashboard">@Translate.Message("L1064") </a></li>
+                <li class="unavailable"><a href="~/Participant/CheckRisk">@Translate.Message("L1433")</a></li>
+            </ul>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12">
+                <div class="panel calculate">
+                    <div class="step">1. @Translate.Message("L1595")</div>
+                    <div class="option-container">
+                        <button id="option-risk-heart-disease" class="small option-button">@Translate.Message("L1434")</button>
+                        <button id="option-heart-age" class="small option-button">@Translate.Message("L11")</button>
+                        <button id="option-lifetime-risk" class="small option-button">@Translate.Message("L1435")</button>
+                        <button id="option-risk-stroke" class="small option-button">@Translate.Message("L1436")</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x what-if-content hide">
+            <div class="cell medium-6">
+                <div class="panel tools">
+                    <div class="step">
+                        2. @Translate.Message("L1437")
+                        <span data-tooltip title='@Translate.Message("L1885")' class="float-right">
+                            <a id="option-reset-all" class="small option-button" style='color:deepskyblue'>@Translate.Message("L1695")</a>
+                        </span>
+                    </div>
+                    <div class="grid-x grid-margin-x switch-container">
+                        <div class="cell small-12 medium-6">
+                            <span class="text-label">@Translate.Message("L884")</span>
+                        </div>
+                        <div class="cell small-12 medium-6">
+
+                            <!--  <div class="switch long-narrow">
+                                 <input id="toggle-gender" type="checkbox" name="toggle-gender">
+                                 <label for="toggle-gender">
+                                     <span class="switch-on">@Translate.Message("L928")</span>
+                                     <span class="switch-off">@Translate.Message("L929")</span>
+                                 </label>
+                             </div> -->
+                            <div class="switch large">
+                                <input id="toggle-gender" class="switch-input" id="yes-no" type="checkbox" name="toggle-gender">
+                                <label class="switch-paddle" for="toggle-gender">
+                                    <span class="switch-active" aria-hidden="true">@Translate.Message("L928")</span>
+                                    <span class="switch-inactive" aria-hidden="true">@Translate.Message("L929")</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x switch-container">
+                        <div class="cell small-12 medium-6">
+                            <span class="text-label">@Translate.Message("L932")</span>
+                        </div>
+                        <div class="cell small-12 medium-6">
+                            <!-- <div class="switch long-narrow">
+                                <input id="toggle-smoker" type="checkbox" name="toggle-smoker">
+                                <label for="toggle-smoker">
+                                    <span class="switch-on"><i class="fa fa-warning"></i>@Translate.Message("L2")</span>
+                                    <span class="switch-off">@Translate.Message("L3")</span>
+                                </label>
+                            </div> -->
+                            <div class="switch large">
+                                <input id="toggle-smoker" class="switch-input" id="yes-no" type="checkbox" name="toggle-smoker">
+                                <label class="switch-paddle" for="toggle-smoker">
+                                    <span class="switch-active"><i class="fa fa-warning"></i>@Translate.Message("L2")</span>
+                                    <span class="switch-inactive">@Translate.Message("L3")</span>
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x switch-container">
+                        <div class="cell small-12 medium-6">
+                            <span class="text-label">@Translate.Message("L21")</span>
+                        </div>
+                        <div class="cell small-12 medium-6">
+                            <!-- <div class="switch long-narrow">
+                                <input id="toggle-diabetes" type="checkbox" name="toggle-diabetes">
+                                <label for="toggle-diabetes">
+                                    <span class="switch-on"><i class="fa fa-warning"></i>@Translate.Message("L2")</span>
+                                    <span class="switch-off">@Translate.Message("L3")</span>
+                                </label>
+                            </div> -->
+
+                            <div class="switch large">
+                                <input id="toggle-diabetes" class="switch-input" id="yes-no" type="checkbox" name="toggle-diabetes">
+                                <label class="switch-paddle" for="toggle-diabetes">
+                                    <span class="switch-active"><i class="fa fa-warning"></i>@Translate.Message("L2")</span>
+                                    <span class="switch-inactive">@Translate.Message("L3")</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x switch-container">
+                        <div class="cell small-12 medium-6">
+                            <span class="text-label">@Translate.Message("L930")</span>
+                        </div>
+                        <div class="cell small-12 medium-6">
+                            <!-- <div class="switch long-narrow">
+                                <input id="toggle-khd" type="checkbox" name="toggle-khd">
+                                <label for="toggle-khd">
+                                    <span class="switch-on"><i class="fa fa-warning"></i>@Translate.Message("L2")</span>
+                                    <span class="switch-off">@Translate.Message("L3")</span>
+                                </label>
+                            </div> -->
+                            <div class="switch large">
+                                <input id="toggle-khd" class="switch-input" id="yes-no" type="checkbox" name="toggle-khd">
+                                <label class="switch-paddle" for="toggle-khd">
+                                    <span class="switch-active"><i class="fa fa-warning"></i>@Translate.Message("L2")</span>
+                                    <span class="switch-inactive">@Translate.Message("L3")</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x switch-container" id="bpmed-container">
+                        <div class="cell small-12 medium-6">
+                            <span class="text-label">@Translate.Message("L1438")</span>
+                        </div>
+                        <div class="cell small-12 medium-6">
+                            <!-- <div class="switch long-narrow">
+                                <input id="toggle-bpmed" type="checkbox" name="toggle-bpmed">
+                                <label for="toggle-bpmed">
+                                    <span class="switch-on"><i class="fa fa-warning"></i>@Translate.Message("L2")</span>
+                                    <span class="switch-off">@Translate.Message("L3")</span>
+                                </label>
+                            </div> -->
+                            <div class="switch large">
+                                <input id="toggle-bpmed" class="switch-input" id="yes-no" type="checkbox" name="toggle-bpmed">
+                                <label class="switch-paddle" for="toggle-bpmed">
+                                    <span class="switch-active"><i class="fa fa-warning"></i>@Translate.Message("L2")</span>
+                                    <span class="switch-inactive">@Translate.Message("L3")</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x switch-container" id="race-container">
+                        <div class="cell small-12 medium-6">
+                            <span class="text-label">@Translate.Message("L931")</span>
+                        </div>
+                        <div class="cell small-12 medium-6">
+                            <select id="ddl-race">
+                                <option value="">--@Translate.Message("L421")--</option>
+                                <option value="1">@Translate.Message("L1439")</option>
+                                <option value="2">@Translate.Message("L174")</option>
+                                <option value="3">@Translate.Message("L1440")</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="division"></div>
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 cell">
+                            <div class="range-title">
+                                <div>@Translate.Message("L1441"):&nbsp;</div>
+                                <div class="range-input">
+                                    <input class="range-age" type="number" value="50" min="18" max="100" id="input-age">
+                                </div>
+                            </div>
+                            <!-- <div id="ageSlider" class="range-slider slider-age" data-slider data-options="initial: ''; start: 18; end: 100;">
+                                <span class="range-slider-handle" role="slider" tabindex="0"></span>
+                                <span class="range-slider-active-segment"></span>
+                                <input type="hidden">
+                            </div> -->
+                            <div id="ageSlider" class="slider slider-age" data-slider data-start="18" data-end="100" data-step="1">
+                                <span class="slider-handle" data-slider-handle role="slider" aria-controls="input-age"></span>
+                                <span class="slider-fill" data-slider-fill></span>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 cell">
+                            <div class="range-title">
+                                <div>@Model.CholesterolText:&nbsp;</div>
+                                <div class="range-input">
+                                    <input id="input-cholesterol" class="range-cholesterol" type="number" min=@Model.TotalCholMin max=@Model.TotalCholMax>
+                                    <div class="warning cholesterol-warning no-warning"><i class="fa fa-warning"></i></div>
+                                </div>
+                            </div>
+                            <!--  <div id="cholesterolSlider" class="range-slider slider-cholesterol" data-slider data-options="initial: ''; start:@Model.TotalCholMin ; end: @Model.TotalCholMax;">
+                                 <span class="range-slider-handle" role="slider" tabindex="0"></span>
+                                 <span class="range-slider-active-segment"></span>
+                                 <input type="hidden">
+                             </div> -->
+                            <div id="cholesterolSlider" class="slider slider-cholesterol" data-slider data-start="@Model.TotalCholMin" data-end="@Model.TotalCholMax">
+                                <span class="slider-handle" data-slider-handle role="slider" aria-controls="input-cholesterol"></span>
+                                <span class="slider-fill" data-slider-fill></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 cell" id="hdl-container">
+                            <div class="range-title">
+                                <div>@Model.HDLText:&nbsp;</div>
+                                <div class="range-input">
+                                    <input id="input-hdl" class="range-hdl" type="number" min="@Model.HDLMin" max="@Model.HDLMax">
+                                    <div class="warning hdl-warning no-warning"><i class="fa fa-warning"></i></div>
+                                </div>
+                            </div>
+                            <!--  <div id="hdlSlider" class="range-slider slider-hdl" data-slider data-options="initial: ''; start: @Model.HDLMin; end: @Model.HDLMax;">
+                                 <span class="range-slider-handle" role="slider" tabindex="0"></span>
+                                 <span class="range-slider-active-segment"></span>
+                                 <input type="hidden">
+                             </div> -->
+
+                            <div id="hdlSlider" class="slider slider-hdl" data-slider data-start="@Model.HDLMin" data-end="@Model.HDLMax" data-step="1">
+                                <span class="slider-handle" data-slider-handle role="slider" aria-controls="input-hdl"></span>
+                                <span class="slider-fill" data-slider-fill></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 cell">
+                            <div class="range-title">
+                                <div>@Translate.Message("L1442"):&nbsp;</div>
+                                <div class="range-input">
+                                    <input id="input-sbp" class="range-sbp" type="number" min="50" max="250">
+                                    <div class="warning sbp-warning no-warning"><i class="fa fa-warning"></i></div>
+                                </div>
+                            </div>
+                            <!-- <div id="sbpSlider" class="range-slider slider-sbp" data-slider data-options="initial: ''; start: 50; end: 250;">
+                                <span class="range-slider-handle" role="slider" tabindex="0"></span>
+                                <span class="range-slider-active-segment"></span>
+                                <input type="hidden">
+                            </div> -->
+
+                            <div id="sbpSlider" class="slider slider-sbp" data-slider data-start="50" data-end="250" data-step="1">
+                                <span class="slider-handle" data-slider-handle role="slider" aria-controls="input-sbp"></span>
+                                <span class="slider-fill" data-slider-fill></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 cell" id="dbp-container">
+                            <div class="range-title">
+                                <div>@Translate.Message("L1443"):&nbsp;</div>
+                                <div class="range-input">
+                                    <input id="input-dbp" class="range-dbp" type="number" min="10" max="140">
+                                    <div class="warning dbp-warning no-warning"><i class="fa fa-warning"></i></div>
+                                </div>
+                            </div>
+                            <!-- <div class="range-slider slider-dbp" data-slider data-options="initial: ''; start: 10; end: 140;">
+                                <span class="range-slider-handle" role="slider" tabindex="0"></span>
+                                <span class="range-slider-active-segment"></span>
+                                <input type="hidden">
+                            </div> -->
+                            <div id="dbpSlider" class="slider slider-dbp" data-slider data-start="10" data-end="140" data-step="5">
+                                <span class="slider-handle" data-slider-handle role="slider" aria-controls="input-dbp"></span>
+                                <span class="slider-fill" data-slider-fill></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cell small-12 medium-6 position-relative">
+                <div class="cell small-toolbar fixed">
+                    <div class="toolbar-items">
+                        <div class="item-label">
+                            <span class="title"></span>
+                            <span class="value"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-panel">
+                    <div class="chart-container">
+                        <div class="gauge-score"></div>
+                        <div id="chart" class="chart"></div>
+                        <div class="chart-message hide"></div>
+                        <div class="chart-info" id="chart-info">
+                            <button class="transparent">@Translate.Message("L1694") <i class="fa fa-info-circle"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="risk-info-modal" class="reveal risk-info-modal medium" data-reveal>
+    <h2 id="risk-title"></h2>
+    <div id="risk-info"></div>
+    <a class="close-button" data-close>&#215;</a>
+</div>
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/HeartDisease.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+
+    var selectedId;
+    var ConversionValue = @Model.ConversionValue;
+    var currentRiskText = '@Translate.Message("L1484")';
+    var lowRiskText = '@Translate.Message("L1485")';
+    var optimalRiskText = '@Translate.Message("L1487")';
+    var heartAgeText = '@Html.Raw(Translate.Message("L11"))';
+
+    $(document).ready(function () {
+        LoadUserData();
+        $("#option-heart-age").trigger("click");
+    });
+        //Allow user to modify the slider by changing the input
+        $('.range-age').on('change', function () {
+            AgeRange(true);
+            CalculateRisk();
+        });
+
+        $('.range-cholesterol').on('change', function () {
+            CholestrolRange(true);
+            CalculateRisk();
+        });
+
+        $('.range-hdl').on('change', function () {
+            HDLRange(true);
+            CalculateRisk();
+        });
+
+        $('.range-sbp').on('change', function () {
+            SBPRange(true);
+            CalculateRisk();
+        });
+
+        $('.range-dbp').on('change', function () {
+            DBPRange(true);
+            CalculateRisk();
+        });
+
+        $('.slider').on('moved.zf.slider', function() {
+            CalculateRisk();
+        });
+
+    //input changes
+    $('#toggle-gender').on('change', function () {
+        CalculateRisk();
+    });
+    $('#toggle-smoker').on('change', function () {
+        CalculateRisk();
+    });
+    $('#toggle-diabetes').on('change', function () {
+        CalculateRisk();
+    });
+    $('#toggle-khd').on('change', function () {
+        CalculateRisk();
+    });
+    $('#toggle-bpmed').on('change', function () {
+        CalculateRisk();
+    });
+    $('#toggle-bpmed').on('change', function () {
+        CalculateRisk();
+    });
+    $('#ddl-race').on('change', function () {
+        CalculateRisk();
+    });
+
+    //Show information
+    $(document).on('click', '.chart-info > .transparent', function () {
+        $('#risk-info-modal').foundation('open', {
+            close_on_background_click: false
+        });
+    });
+
+    //Toggle Chart
+    $('.chart-toggle').on('click', function () {
+        if ($('.small-toolbar').hasClass('chart-displayed')) {
+            $('.small-toolbar').removeClass('chart-displayed');
+            $('.chart-status').text('@Html.Raw(Translate.Message("L1891"))');
+            $('.chart-status + i').removeClass('fa-chevron-up');
+            $('.chart-status + i').addClass('fa-chevron-down');
+            $('.chart-container-small').addClass('hide');
+        } else {
+            $('.small-toolbar').addClass('chart-displayed');
+            $('.chart-status').text('@Html.Raw(Translate.Message("L1892"))');
+            $('.chart-status + i').removeClass('fa-chevron-down');
+            $('.chart-status + i').addClass('fa-chevron-up');
+            $('.chart-container-small').removeClass('hide');
+        }
+    });
+
+    //Option Selection
+    toggleOptions = function (el) {
+        $('.item-label > .title').text('@Html.Raw(Translate.Message("L1887")): ');
+        $('.option-button').removeClass('selected');
+        el.addClass('selected');
+        $('.what-if-content').removeClass('hide');
+    }
+
+    $('#option-risk-heart-disease').on('click', function () {
+        selectedId = "option-risk-heart-disease";
+        SetNormalSlider();
+        $("#dbp-container").show();
+        $("#hdl-container").show();
+        $("#bpmed-container").hide();
+        $("#race-container").hide();
+        $('#risk-title').html('@Html.Raw(Translate.Message("L1886"))');
+        toggleOptions($(this));
+    });
+
+    $('#option-heart-age').on('click', function () {
+        selectedId = "option-heart-age";
+        SetNormalSlider();
+        $("#dbp-container").show();
+        $("#hdl-container").show();
+        $("#bpmed-container").hide();
+        $("#race-container").hide();
+        $('#risk-title').html('@Html.Raw(Translate.Message("L11"))');
+        toggleOptions($(this));
+        $('.item-label > .title').text('@Html.Raw(Translate.Message("L495")): ');
+    });
+
+    $('#option-lifetime-risk').on('click', function () {
+        selectedId = "option-lifetime-risk";
+        SetASCVDSlider();
+        $("#bpmed-container").show();
+        $("#race-container").hide();
+        $("#dbp-container").hide();
+        $("#hdl-container").hide();
+        $('#risk-title').html('@Html.Raw(Translate.Message("L1435"))');
+        toggleOptions($(this));
+    });
+
+    $('#option-risk-stroke').on('click', function () {
+        selectedId = "option-risk-stroke";
+        SetASCVDSlider();
+        $("#dbp-container").hide();
+        $("#hdl-container").show();
+        $("#bpmed-container").show();
+        $("#race-container").show();
+        $('#risk-title').html('@Html.Raw(Translate.Message("L1436"))');
+        toggleOptions($(this));
+    });
+    $('#option-reset-all').on('click', function () {
+        LoadUserData();
+        $('.range-age').trigger("change");
+        $('.range-cholesterol').trigger("change");
+        $('.range-hdl').trigger("change");
+        $('.range-sbp').trigger("change");
+        $('.range-dbp').trigger("change");
+        $("#" + selectedId).trigger("click");
+    });
+
+    var age18ha = '@InterventWebApp.Translate.Message("L256")';
+    var age18hd = '@InterventWebApp.Translate.Message("L257")';
+    var age74hd = '@InterventWebApp.Translate.Message("L994")';
+    var age74ha = '@InterventWebApp.Translate.Message("L995")';
+    var missinghd = '@InterventWebApp.Translate.Message("L996")';
+    var missingha = '@InterventWebApp.Translate.Message("L997")';
+    var ageal = '@InterventWebApp.Translate.Message("L998")';
+    var missingalhs = '@InterventWebApp.Translate.Message("L999")';
+    var agehs = '@InterventWebApp.Translate.Message("L1000")';
+    var over74HA = '@InterventWebApp.Translate.Message("L1001")';
+    var chdRisk = '@InterventWebApp.Translate.Message("L420")';
+    var HA = '@InterventWebApp.Translate.Message("L1002")';
+    var HS = '@InterventWebApp.Translate.Message("L1003")';
+    var AL = '@InterventWebApp.Translate.Message("L1004")';
+    var mobileMessage = ' @Html.Raw(Translate.Message("L1888")).';
+
+    function LoadUserData() {
+        @if (Model.Age > 0)
+        {
+            @: $(".range-age").val(@Model.Age);
+        }
+        @if (Model.TotalChol > 0)
+        {
+            @: $(".range-cholesterol").val(@Model.TotalChol);
+        }
+        else
+        {
+            @: $(".range-cholesterol").val("");
+        }
+        @if (Model.HDL > 0)
+        {
+            @: $(".range-hdl").val(@Model.HDL);
+        }
+        else
+        {
+            @: $(".range-hdl").val("");
+        }
+        @if (Model.SBP > 0)
+        {
+            @: $(".range-sbp").val(@Model.SBP);
+        }
+        else
+        {
+            @: $(".range-sbp").val("");
+        }
+        @if (Model.DBP > 0)
+        {
+            @: $(".range-dbp").val(@Model.DBP);
+        }
+        else
+        {
+             @: $(".range-dbp").val("");
+        }
+        @if (Model.Gender.HasValue && Model.Gender.Value == 1)
+        {
+            @: $("#toggle-gender").prop('checked', true);
+        }
+        else
+        {
+             @: $("#toggle-gender").prop('checked', false);
+        }
+        @if (Model.ASCVD == true)
+        {
+            @: $("#toggle-khd").prop('checked', true);
+        }
+        else
+        {
+             @: $("#toggle-khd").prop('checked', false);
+        }
+        @if (Model.SmokeCig.HasValue && Model.SmokeCig.Value == 1)
+        {
+            @: $("#toggle-smoker").prop('checked', true);
+        }
+        else
+        {
+             @: $("#toggle-smoker").prop('checked', false);
+        }
+        @if (Model.Diabetes == 1)
+        {
+            @: $("#toggle-diabetes").prop('checked', true);
+        }
+        else
+        {
+             @: $("#toggle-diabetes").prop('checked', false);
+        }
+        @if (Model.HighBPMed.HasValue && Model.HighBPMed == 1)
+        {
+            @: $("#toggle-bpmed").prop('checked', true);
+        }
+        else
+        {
+             @: $("#toggle-bpmed").prop('checked', false);
+        }
+        @if (Model.Race.HasValue)
+        {
+            @: $("#ddl-race").val(@Model.Race);
+        }
+        else
+        {
+            @: $("#ddl-race").val('');
+        }
+        CalculateRisk();
+       // registerSliders();
+    }
+    function AgeRange(validate) {
+        if (selectedId == "option-lifetime-risk") {
+            if ($('.range-age').val() > 59) {
+                $('.range-age').val(59);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3152"), 20, 59)");
+            }
+            else if ($('.range-age').val() < 20) {
+                $('.range-age').val(20);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3152"), 20, 59)");
+            }
+        }
+        else if (selectedId == "option-risk-stroke") {
+            if ($('.range-age').val() > 79) {
+                $('.range-age').val(79);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3152"), 40, 79)");
+            }
+            else if ($('.range-age').val() < 40) {
+                $('.range-age').val(40);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3152"), 40, 79)");
+            }
+        }
+        else if (selectedId == "option-risk-heart-disease" || selectedId == "option-heart-age") {
+             if ($('.range-age').val() > 100) {
+                $('.range-age').val(100);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3152"), 18, 100)");
+            }
+            else if ($('.range-age').val() < 18) {
+                $('.range-age').val(18);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3152"), 18, 100)");
+            }
+        }
+        $('.slider slider-age').slider('value', $('.range-age').val());
+    }
+
+    function CholestrolRange(validate) {
+        if (selectedId == "option-lifetime-risk" || selectedId == "option-risk-stroke") {
+            if ($('.range-cholesterol').val() != "" && $('.range-cholesterol').val() > @Model.ASCVDCholMax){
+                $('.range-cholesterol').val(@Model.ASCVDCholMax);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3190"), Model.ASCVDCholMin, Model.ASCVDCholMax)");
+            }
+            else if ($('.range-cholesterol').val() != "" && $('.range-cholesterol').val() < @Model.ASCVDCholMin){
+                $('.range-cholesterol').val(@Model.ASCVDCholMin);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3190"), Model.ASCVDCholMin, Model.ASCVDCholMax)");
+            }
+        }
+        else if (selectedId == "option-risk-heart-disease" || selectedId == "option-heart-age") {
+            if ($('.range-cholesterol').val() != "" && $('.range-cholesterol').val() > @Model.TotalCholMax){
+                $('.range-cholesterol').val(@Model.TotalCholMax);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3190"), Model.TotalCholMin, Model.TotalCholMax)");
+            }
+            else if ($('.range-cholesterol').val() != "" && $('.range-cholesterol').val() < @Model.TotalCholMin){
+                $('.range-cholesterol').val(Model.TotalCholMin);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3190"), Model.TotalCholMin, Model.TotalCholMax)");
+            }
+            $('.slider slider-cholesterol').slider('value', $('.range-cholesterol').val());
+        }
+    }
+
+    function HDLRange(validate) {
+            if (selectedId == "option-lifetime-risk" || selectedId == "option-risk-stroke") {
+                if ($('.range-hdl').val() != "" && $('.range-hdl').val() > @Model.ASCVDHDLMax){
+                    $('.range-hdl').val(@Model.ASCVDHDLMax);
+                    if (validate)
+                        alert("@string.Format(Translate.Message("L3191"), Model.ASCVDHDLMin, Model.ASCVDHDLMax)");
+                }
+                else if ($('.range-hdl').val() != "" && $('.range-hdl').val() < @Model.ASCVDHDLMin){
+                    $('.range-hdl').val(@Model.ASCVDHDLMin);
+                    if (validate)
+                        alert("@string.Format(Translate.Message("L3191"), Model.ASCVDHDLMin, Model.ASCVDHDLMax)");
+                }
+            }
+            else if (selectedId == "option-risk-heart-disease" || selectedId == "option-heart-age") {
+                if ($('.range-hdl').val() != "" && $('.range-hdl').val() > @Model.HDLMax){
+                    $('.range-hdl').val(@Model.HDLMax);
+                    if (validate)
+                        alert("@string.Format(Translate.Message("L3191"), Model.HDLMin, Model.HDLMax)");
+                }
+                else if ($('.range-hdl').val() != "" && $('.range-hdl').val() < @Model.HDLMin){
+                    $('.range-hdl').val(@Model.HDLMin);
+                    if (validate)
+                        alert("@string.Format(Translate.Message("L3191"), Model.HDLMin, Model.HDLMax)");
+                }
+            }
+        $('.slider slider-hdl').slider('value', $('.range-hdl').val());
+    }
+
+    function SBPRange(validate) {
+        if ($('.range-sbp').val() != "" && selectedId == "option-lifetime-risk" || selectedId == "option-risk-stroke") {
+            if ($('.range-sbp').val() > 200) {
+                $('.range-sbp').val(200);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3192"), 90, 200)");
+            }
+            else if ($('.range-sbp').val() < 90) {
+                $('.range-sbp').val(90);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3192"), 90, 200)");
+            }
+        }
+        else if ($('.range-sbp').val() != "" && selectedId == "option-risk-heart-disease" || selectedId == "option-heart-age") {
+            if ($('.range-sbp').val() > 250) {
+                $('.range-sbp').val(250);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3192"), 50, 250)");
+            }
+            else if ($('.range-sbp').val() < 50) {
+                $('.range-sbp').val(50);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3192"), 50, 250)");
+            }
+        }
+        $('.slider slider-sbp').slider('value', $('.range-sbp').val());
+    }
+
+    function DBPRange(validate) {
+        if ($('.range-dbp').val() != "" && selectedId == "option-risk-heart-disease" || selectedId == "option-heart-age") {
+            if ($('.range-dbp').val() > 140) {
+                $('.range-dbp').val(140);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3193"), 10, 140)");
+            }
+            else if ($('.range-dbp').val() < 10) {
+                $('.range-dbp').val(10);
+                if (validate)
+                    alert("@string.Format(Translate.Message("L3193"), 10, 140)");
+            }
+        }
+        $('.slider slider-dbp').slider('value', $('.range-dbp').val());
+    }
+    function SetASCVDSlider() {
+        AgeRange(false);
+        CholestrolRange(false);
+        HDLRange(false);
+        SBPRange(false);
+        DBPRange(false);
+        if (selectedId == "option-lifetime-risk") {
+            setSliders("ageSlider",$(".range-age").val(),20,59);
+        }
+        else if (selectedId == "option-risk-stroke") {
+            setSliders("ageSlider", $(".range-age").val(),40,79);
+        }
+        setSliders("cholesterolSlider", $(".range-cholesterol").val(),@Model.ASCVDCholMin,@Model.ASCVDCholMax);
+        setSliders("hdlSlider", $(".range-hdl").val(),@Model.ASCVDHDLMin,@Model.ASCVDHDLMax);
+        setSliders("sbpSlider", $(".range-sbp").val(),90,200);
+    }
+    function SetNormalSlider() {
+        setSliders("ageSlider", $(".range-age").val(), 18, 100);
+        setSliders("cholesterolSlider", $(".range-cholesterol").val(),@Model.TotalCholMin,@Model.TotalCholMax);
+        setSliders("hdlSlider", $(".range-hdl").val(),@Model.HDLMin,@Model.HDLMax);
+        setSliders("sbpSlider", $(".range-sbp").val(),50,250);
+        setSliders("dbpSlider", $(".range-dbp").val(),10,140);
+    }
+
+    function setSliders(id, initial, start, end) {
+        if (!initial || isNaN(initial))
+            initial = 0;
+        var target = document.getElementById(id);
+        var options = {
+            "initialStart":initial,
+            "start" : start,
+            "end" : end
+        };
+        var elem = new Foundation.Slider($(target), options);
+    }
+</script>

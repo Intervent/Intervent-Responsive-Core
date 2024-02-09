@@ -1,0 +1,619 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+@using System.Collections.Generic
+@using System.Linq
+
+@using Intervent.Web.DTO
+@model ChallengesModel
+@{
+    ViewBag.Title = "Activities";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main challenges-section user-challenges-section">
+    <!-- challenges-user start -->
+    <div class="challenges-user">
+        <div class="grid-container">
+            <!-- challenges-user-inner start -->
+            <div class="challenges-user-inner">
+                <div class="user-content">
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-4">
+                            <div class="user-info">
+                                <h4 class="name">@Model.Name</h4>
+                                <p class="date">@Translate.Message("L2897") : @Model.MemberSince</p>
+                                <p class="rank">@Translate.Message("L2898"):<span id="rank">@Html.Raw(Model.Rank)</span></p>
+                            </div>
+                        </div>
+                        <div class="cell medium-8">
+                            <div class="challenges-level grid-x small-up-3 medium-up-3">
+                                <div class="cell progress-bar easy-level">
+                                    <div class="progress">
+                                        <div id="250" class="progress-meter"></div>
+                                    </div>
+                                    <div class="level-range">
+                                        <p>250</p>
+                                    </div>
+                                </div>
+
+                                <div class="cell progress-bar medium-level">
+                                    <div class="progress">
+                                        <div id="500" class="progress-meter"></div>
+                                    </div>
+                                    <div class="level-range">
+                                        <p>500</p>
+                                    </div>
+                                </div>
+                                <div class="cell progress-bar advance-level">
+                                    <div class="progress">
+                                        <div id="1000" class="progress-meter"></div>
+                                    </div>
+                                    <div class="level-range">
+                                        1000
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="track-btn">
+                                @Translate.Message("L2899")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- challenges-track start -->
+                <div class="challenges-track">
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell">
+                            <div class="title-content">
+                                <h3>@Translate.Message("L2925")</h3>
+                                @if (!CommonUtility.IsIntegratedWithLMC(Context.Session.GetInt32(SessionContext.IntegrationWith).HasValue ? (byte)Context.Session.GetInt32(SessionContext.IntegrationWith).Value : null))
+                                {
+                                    <p>@Html.Raw(Translate.Message("L2926"))</p>
+                                }
+                                else
+                                {
+                                    <p>@Html.Raw(Translate.Message("L3721"))</p>
+                                }
+                            </div>
+                            <!-- track-detail Start -->
+                            <div class="track-detail">
+                                <table>
+                                    <thead>
+                                        <tr class="user-row">
+                                            <td></td>
+                                            <td id="member"></td>
+                                            <td id="prime"></td>
+                                            <td id="elite"></td>
+                                            <td id="eliteplus"></td>
+                                        </tr>
+                                        <tr class="level-row">
+                                            <td></td>
+                                            <td><img src="../Images/challenge/icon11.png" width="17" /> @Translate.Message("L2903")</td>
+                                            <td><img src="../Images/challenge/icon6.png" width="22" /> @Translate.Message("L2904") </td>
+                                            <td><img src="../Images/challenge/icon5.png" width="22" /> @Translate.Message("L2905")</td>
+                                            <td><img src="../Images/challenge/icon1.png" width="40" /> @Translate.Message("L2906")</td>
+                                        </tr>
+                                        <tr class="heading-row">
+                                            <td>@Translate.Message("L1371")</td>
+                                            <td><div class="headingicon"><img src="../Images/challenge/icon10.png" width="15" /> 0-249</div></td>
+                                            <td><div class="headingicon"><img src="../Images/challenge/icon10.png" width="15" /> 250-499</div></td>
+                                            <td><div class="headingicon"><img src="../Images/challenge/icon10.png" width="15" /> 500-999</div></td>
+                                            <td><div class="headingicon"><img src="../Images/challenge/icon10.png" width="15" /> @Translate.Message("L1377")</div></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var raffle in Model.raffles)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="track-content">
+                                                        <p>@raffle.Name</p>
+                                                        <p><span></span> <span>@Translate.Message("L2964"): @raffle.RaffleDate</span></p>
+                                                    </div>
+                                                </td>
+                                                @if (raffle.Points == 1000)
+                                                {
+                                                    <td name="rafflemember"></td>
+                                                    <td name="raffleprime"></td>
+                                                    <td name="raffleelite"></td>
+                                                    <td name="raffleeliteplus"><div class="icon"><img src="../Images/challenge/icon13.png" width="24" /></div></td>
+                                                }
+                                                else if (raffle.Points == 500)
+                                                {
+                                                    <td name="rafflemember"></td>
+                                                    <td name="raffleprime"></td>
+                                                    <td name="raffleelite"><div class="icon"><img src="../Images/challenge/icon13.png" width="24" /></div></td>
+                                                    <td name="raffleeliteplus"><div class="icon"><img src="../Images/challenge/icon13.png" width="24" /></div></td>
+                                                }
+                                                else if (raffle.Points == 250)
+                                                {
+                                                    <td name="rafflemember"></td>
+                                                    <td name="raffleprime"><div class="icon"><img src="../Images/challenge/icon13.png" width="24" /></div></td>
+                                                    <td name="raffleelite"><div class="icon"><img src="../Images/challenge/icon13.png" width="24" /></div></td>
+                                                    <td name="raffleeliteplus"><div class="icon"><img src="../Images/challenge/icon13.png" width="24" /></div></td>
+                                                }
+                                                else
+                                                {
+                                                    <td name="rafflemember"><div class="icon"><img src="../Images/challenge/icon13.png" width="24" /></div></td>
+                                                    <td name="raffleprime"><div class="icon"><img src="../Images/challenge/icon13.png" width="24" /></div></td>
+                                                    <td name="raffleelite"><div class="icon"><img src="../Images/challenge/icon13.png" width="24" /></div></td>
+                                                    <td name="raffleeliteplus"><div class="icon"><img src="../Images/challenge/icon13.png" width="24" /></div></td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- track-detail End -->
+                        </div>
+                    </div>
+                </div>
+                <!-- challenges-track end -->
+            </div>
+            <!-- challenges-user-inner end -->
+
+        </div>
+    </div>
+    <!-- challenges-top End -->
+    <!-- challenges-point start -->
+    <div class="challenges-point">
+        <div class="grid-container">
+            <!-- challenges-point-inner start -->
+            <div class="challenges-point-inner">
+                <div class="grid-x grid-margin-x">
+                    <div class="cell medium-12 large-8">
+                        <div class="grid-x grid-margin-x">
+                            @if (!CommonUtility.IsIntegratedWithLMC(Context.Session.GetInt32(SessionContext.IntegrationWith).HasValue ? (byte)Context.Session.GetInt32(SessionContext.IntegrationWith).Value : null))
+                            {
+                                <div class="cell small-4">
+                                    <div class="challenges-point-content border-right">
+                                        <div class="point-icon">
+                                            <img src="../Images/challenge/icon1.png" width="40" />
+                                        </div>
+                                        <div class="point-info">
+                                            <h4>@Model.Keys</h4>
+                                            <p>@Translate.Message("L2900")<span class="info" data-tooltip tabindex="1" title="@Translate.Message("L2929")"><img src="../Images/challenge/icon9.png" width="13" />   </span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.challenges.Any(x => x.IsCompanyIncentive == true))
+                            {
+                                <div class="cell small-4">
+                                    <div class="challenges-point-content border-right">
+                                        <div class="point-icon">
+                                            <img src="../Images/challenge/icon4.png" width="35" />
+                                        </div>
+                                        <div class="point-info">
+                                            <h4>$@Model.Currency</h4>
+                                            <p>@Translate.Message("L2901")
+                                            @if(!string.IsNullOrEmpty(Model.employerIncentiveText))
+                                            {
+                                                <span class="info" data-tooltip tabindex="1" title="@Translate.Message(Model.employerIncentiveText)"><img src="../Images/challenge/icon9.png" width="13" />   </span>
+                                            }
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="cell small-4">
+                                <div class="challenges-point-content">
+                                    <div class="point-icon">
+                                        <img src="../Images/challenge/icon10.png" width="22" />
+                                    </div>
+                                    <div class="point-info">
+                                        <h4>@Model.Points</h4>
+                                        <p>@Translate.Message("L1716")<span class="info" data-tooltip tabindex="1" title="@Translate.Message("L2956")"><img src="../Images/challenge/icon9.png" width="13" />   </span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (!String.IsNullOrEmpty(Model.nextRaffle) && Context.Session.GetInt32(SessionContext.UserinProgramId).HasValue)
+                    {
+                        <div class="cell medium-12 large-4">
+                            <div class="point-highlight">
+                                <div class="point-icon">
+                                    <img src="../Images/challenge/icon7.png" width="30" />
+                                </div>
+                                <div class="point-info">
+                                    @Html.Raw(Model.nextRaffle)
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <!-- challenges-point-inner end -->
+
+        </div>
+    </div>
+    <!-- challenges-point End -->
+    <!-- challenges-point start -->
+    <div class="challenges-details">
+        <div class="grid-container">
+            <div class="challenges-details-inner">
+                <div class="tab-list grid-x">
+                    <ul class="cell small-12 medium-12 large-8 tabs" data-deep-link="true" data-update-history="true" data-deep-link-smudge="true" data-deep-link-smudge-delay="500" data-tabs id="deeplinked-tabs">
+                        <li class="tabs-title is-active"><a class="button hollow upcoming-challenges-btn" href="#upcoming-challenges" aria-selected="true">@Translate.Message("L2913")</a></li>
+                        <li class="tabs-title"><a class="button hollow" href="#all-challenges">@Translate.Message("L2911")</a></li>
+                        <li class="tabs-title"><a class="button hollow" href="#rewards-history">@Translate.Message("L2912")</a></li>
+                    </ul>
+                    @if (Model.challenges.Where(x=>x.IsCompanyIncentive).Any())
+                    {
+                        <div class="cell small-12 medium-12 large-4 toogle-class">
+                            <p>@string.Format(Translate.Message("L2928"), Context.Session.GetString(SessionContext.OrganizationName))</p>
+                            <div class="switch small">
+                                <input class="switch-input" id="exampleCheckboxSwitch4" onchange="HideInterventIncentive();" type="checkbox" name="exampleCheckboxSwitch4">
+                                <label class="switch-paddle" for="exampleCheckboxSwitch4"></label>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="tabs-content" data-tabs-content="deeplinked-tabs">
+                    <div class="tabs-panel is-active" id="upcoming-challenges">
+                        <!-- challenge-content start -->
+                        <div class="challenge-content">
+                            <ul class="accordion" data-accordion data-deep-link="true" data-update-history="true" data-deep-link-smudge="true" data-deep-link-smudge-delay="500" id="deeplinked-accordion" data-allow-all-closed="true">
+                                @foreach (var incentive in Model.challenges.Where(x => !x.completed && !x.employerComplete))
+                                {
+                                    if ((incentive.IncentiveTypeId == (int)IncentiveTypes.FollowUp_Evaluation || incentive.IncentiveTypeId == (int)IncentiveTypes.Intervent_NSession || incentive.IncentiveTypeId == (int)IncentiveTypes.Participant_Survey)
+                                    && !Context.Session.GetInt32(SessionContext.UserinProgramId).HasValue)
+                                    {
+                                        continue;
+                                    }
+                                    if ((incentive.IncentiveTypeId == (int)IncentiveTypes.FollowUp_Evaluation || incentive.IncentiveTypeId == (int)IncentiveTypes.Participant_Survey) && (!Context.Session.GetInt32(SessionContext.AssignedFollowUp).HasValue || Context.Session.GetInt32(SessionContext.AssignedFollowUp).Value == 0))
+                                    {
+                                        continue;
+                                    }
+                                        <li name="@incentive.IsCompanyIncentive.ToString()" class="accordion-item" data-accordion-item>
+                                            <a href="#list1" class="accordion-title">
+                                                <div class="grid-x grid-margin-x grid-margin-y align-justify">
+                                                    <div class="cell medium-4 large-6">
+                                                        <h4>
+                                                            @incentive.Name
+                                                            <span class="report-approved hide">@Translate.Message("L2907")</span>
+                                                            <span class="report-rejected hide">@Translate.Message("L2908")</span>
+                                                        </h4>
+                                                    </div>
+                                                    <div class="cell medium-4 large-3">
+                                                        <div class="challenges-list-info">
+                                                            @if (!String.IsNullOrEmpty(incentive.PointsText))
+                                                            {
+                                                                <span class="icon"><img src="../Images/challenge/icon10.png" width="14" /></span>
+                                                                <span class="info">@incentive.PointsText @Translate.Message("L1716") - <strong>@Translate.Message("L2909")</strong></span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="cell medium-4 large-3">
+                                                        <div class="challenges-list-info border-left">
+                                                            @if (!String.IsNullOrEmpty(incentive.CompanyPointsText))
+                                                            {
+                                                                <span class="icon"><img src="../Images/challenge/icon4.png" width="25" /></span>
+                                                            <span class="info"><strong>$@incentive.CompanyPointsText - @Context.Session.GetString(SessionContext.OrganizationName) @Translate.Message("L332")</strong></span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <div class="accordion-content" data-tab-content id="list1">
+                                                <div class="inner-content">
+                                                    <div class="grid-x grid-margin-x">
+                                                        <div class="cell medium large">
+                                                            <div class="left-content">
+                                                                <p>@Html.Raw(incentive.MoreInfo)</p>
+                                                                @if (incentive.supportTobaccoUpload)
+                                                                {
+                                                                    <div class="challenge-form-box">
+                                                                        <p>@Translate.Message("L2914")</p>
+
+                                                                        <ul>
+                                                                            <li>@Translate.Message("L2915") : <a href="~/pdf/@incentive.Attachment" target="_blank" class="form-load-button form-download">@Translate.Message("L2917")</a></li>
+                                                                            <li>
+                                                                                @Translate.Message("L2916") : <span>@Translate.Message("L2918")</span>
+																											  <label class="upload-wrapper">@Translate.Message("L2918")<input type="file" id="imageUpload" class="upload" name="files" onchange="upload_files();" /></label>
+                                                                                @if (!string.IsNullOrWhiteSpace(incentive.Reference))
+                                                                                {
+                                                                                    <div class="show-uploaded-report">
+                                                                                        <div class="cancel-icon"><a onclick='removeReference("@incentive.userIncentiveId", "@incentive.Reference");'><img src="../Images/labs/cancel.svg" /></a></div>
+                                                                                        <span class="report-name">@incentive.Reference</span> <!-- Name of pdf file uploaded will come in this span -->
+                                                                                        <p><a href="~/IncentiveUploads/@incentive.Reference" target="_blank">@Translate.Message("L2919")</a></p>
+                                                                                    </div>
+                                                                                }
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    if (string.IsNullOrWhiteSpace(incentive.Reference))
+                                                                    {
+                                                                        <a class="button secondary hollow" href="#" id="approval">@Translate.Message("L2920")</a>
+                                                                    }
+
+                                                                    <div class="form-submission-message">
+                                                                        @if (!string.IsNullOrWhiteSpace(incentive.Reference))
+                                                                        {
+                                                                            <div class="upload-success">@Translate.Message("L2921")</div>
+                                                                        }
+                                                                        <div class="upload-rejected">
+                                                                            <div><span>@Translate.Message("L2922")</span></div>
+                                                                            <p><strong>@Translate.Message("L278"):</strong> @Translate.Message("L2923")</p>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                else if (!String.IsNullOrEmpty(incentive.Url))
+                                                                {
+                                                                    <a class="button secondary hollow" href="@incentive.Url">@Translate.Message("L2924")</a>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                }
+                            </ul>
+                        </div>
+                        <!-- challenge-content End -->
+                        <!-- rewards-card start -->
+                        @if (Model.Points >= 250 || Model.challenges.Where(x => x.isGiftCard).Count() > 0)
+                        {
+                        <div class="rewards-card">
+                            <!-- rewards-card-inner Start -->
+                            <div class="rewards-card-inner">
+                                <h3>@Translate.Message("L4588")</h3>
+                                <div class="grid-x grid-margin-x small-up-1 medium-up-3 large-up-5" data-equalizer>
+                                    @{var rand = new Random(); }
+                                    @foreach (var raffle in Model.raffles)
+                                    {
+                                        if (Model.Points < 250 && raffle.Id < 4)
+                                        {
+                                            continue;
+                                        }
+                                        else if (Model.Points < 500 && raffle.Id < 3)
+                                        {
+                                            continue;
+                                        }
+                                        //TODO
+                                       @*  var path = Server.MapPath("~/Images/challenge/");
+                                        var files = Directory.GetFiles(path, "*.svg");
+                                        var file = Path.GetFileName(files[rand.Next(0, files.Length)]); *@
+                                        <div class="cell">
+                                            <div class="rewards-card-info">
+                                                <div class="icon">
+                                                    @* <img src="~/Images/challenge/@file" width="23" /> *@
+                                                </div>
+                                                <h5 class="price">@raffle.Name</h5>
+                                                <p class="info" data-equalizer-watch>@raffle.Description</p>
+                                                <p class="date">@Translate.Message("L3176"): @raffle.RaffleDate </p>
+                                            </div>
+                                        </div>
+                                    }
+                                    @foreach (var giftCard in Model.challenges.Where(x => x.isGiftCard))
+                                    {
+                                        <div class="cell">
+                                            <div class="rewards-card-info">
+                                                <div class="icon">
+                                                    <img src="~/Images/challenge/mm gift card pink.svg" width="23" />
+                                                </div>
+                                                <h5 class="price">@giftCard.Name</h5>
+                                                <!--<p class="info" data-equalizer-watch>@giftCard.MoreInfo</p>-->
+                                                @if (giftCard.userIncentives != null)
+                                                {
+                                                    <p class="date">@Translate.Message("L4478") @giftCard.userIncentives.OrderByDescending(x => x.Id).FirstOrDefault().DateCreated.ToString("MMMM dd yyyy") </p>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <!-- rewards-card-inner end -->
+                        </div>
+                        }
+                        <!-- rewards-card End -->
+
+                    </div>
+                    <div class="tabs-panel" id="all-challenges">
+                        <!-- filter-content start -->
+                        <!-- filter-content start -->
+                        <!-- challenge-content start -->
+                        <div class="challenge-content">
+                            <ul class="accordion" id="incentive-data">
+                                @foreach (var incentive in Model.challenges)
+                                {
+                                    <li name="@incentive.IsCompanyIncentive.ToString()" class="accordion-item">
+                                        <div class="accordion-title">
+                                            <div class="grid-x grid-margin-x grid-margin-y">
+                                                <div class="cell medium-4 large-6">
+                                                    <h4>@incentive.Name</h4>
+                                                </div>
+                                                    <div class="cell medium-4 large-3">
+                                                        <div class="challenges-list-info border-right">
+                                                            @if (!String.IsNullOrEmpty(incentive.PointsText))
+                                                            {
+                                                                <span class="icon"><img src="../Images/challenge/icon10.png" width="14" /></span>
+                                                                <span class="info">@incentive.PointsText @Translate.Message("L1716") - <strong>@Translate.Message("L2909")</strong></span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="cell medium-4 large-3">
+                                                        <div class="challenges-list-info">
+                                                            @if (!String.IsNullOrEmpty(incentive.CompanyPointsText))
+                                                            {
+                                                                <span class="icon"><img src="../Images/challenge/icon4.png" width="25" /></span>
+                                                                <span class="info"><strong>$@incentive.CompanyPointsText - @Context.Session.GetString(SessionContext.OrganizationName) @Translate.Message("L332")</strong></span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <!-- upcoming-challenge-content End -->
+                    </div>
+                    <div class="tabs-panel" id="rewards-history">
+                        <!-- challenge-content start -->
+                        <div class="challenge-content">
+                            <ul class="accordion">
+                                @foreach (var incentive in Model.challenges.Where(x => x.completed || x.employerComplete))
+                                {
+
+                                    <li name="@incentive.employerComplete.ToString()" class="accordion-item">
+                                        <div class="accordion-title">
+                                            <div class="grid-x grid-margin-x grid-margin-y">
+                                                <div class="cell medium-4 large-6">
+                                                    <h4>@incentive.Name</h4>
+                                                </div>
+                                                    <div class="cell medium-4 large-3">
+                                                        <div class="challenges-list-info border-right">
+                                                            @if (!String.IsNullOrEmpty(incentive.PointsText) && incentive.completed)
+                                                            {
+                                                                <span class="icon"><img src="../Images/challenge/icon10.png" width="14" /></span>
+                                                                <span class="info">@incentive.PointsText @Translate.Message("L1716") - <strong>@Translate.Message("L2909")</strong></span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="cell medium-4 large-3">
+                                                        <div class="challenges-list-info">
+                                                            @if (!String.IsNullOrEmpty(incentive.CompanyPointsText) && incentive.employerComplete)
+                                                            {
+                                                                <span class="icon"><img src="../Images/challenge/icon4.png" width="25" /></span>
+                                                                <span class="info"><strong>$@incentive.CompanyPointsText - @Context.Session.GetString(SessionContext.OrganizationName) @Translate.Message("L332")</strong></span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <!-- upcoming-challenge-content End -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- challenges-point End -->
+
+
+
+
+</section>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var percent = 0;
+            $(".upload-rejected").hide();
+            var points = parseInt('@Model.Points');
+            var element = document.getElementsByClassName("progress-meter");
+            if(points >= 1000){
+                $("#eliteplus").addClass('active');
+                $("[name = 'raffleeliteplus']").addClass('active');
+                $("#eliteplus").text('@Html.Raw(Translate.Message("L2927"))');
+                for(var e=0; e < element.length; e++){
+                    element[e].style.width='100%';
+                }
+                $("#rank").html('@Translate.Message("L2906")');
+            }
+            else if(points >= 500){
+                $("#elite").addClass('active');
+                $("[name = 'raffleelite']").addClass('active');
+                $("#elite").text('@Html.Raw(Translate.Message("L2927"))');
+                percent = (points-500)/500 * 100;
+                element[0].style.width='100%';
+                element[1].style.width='100%';
+                element[2].style.width= percent +'%';
+                $("#rank").html('@Translate.Message("L2905")');
+            }
+            else if(points >= 250){
+                $("#prime").addClass('active');
+                $("[name = 'raffleprime']").addClass('active');
+                $("#prime").text('@Html.Raw(Translate.Message("L2927"))');
+                percent = (points-250)/250 * 100;
+                element[0].style.width='100%';
+                element[1].style.width= percent +'%';
+                $("#rank").html('@Translate.Message("L2904")');
+            }
+            else{
+                $("#member").addClass('active');
+               $("[name = 'rafflemember']").addClass('active');
+                $("#member").text('@Html.Raw(Translate.Message("L2927"))');
+                $("#rank").html('@Translate.Message("L2903")');
+                percent = points/250 * 100;
+                element[0].style.width= percent +'%';
+            }
+            $(".track-btn").on('click', function () {
+                $(this).toggleClass("active");
+                $(".challenges-track").slideToggle("slow");
+            });
+        });
+
+        $("#approval").on('click', function () {
+            $("#approval").hide();
+            $(".upload-success").show();
+        });
+
+        function HideInterventIncentive(){
+            var element = document.getElementsByName("False");
+            for(var e=0; e < element.length; e++){
+                if(document.getElementById('exampleCheckboxSwitch4').checked){
+                        element[e].style.display = 'none';
+                }
+                else{
+                    element[e].style.display = 'block';
+                }
+            }
+        }
+
+    function upload_files() {
+        var formData = new FormData();
+        var file = document.getElementById("imageUpload").files[0];
+        formData.append("FileUpload", file);
+        formData.append("action", 'incentive');
+        var extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+
+        if (!(extension && /^(jpg|png|jpeg|gif|pdf)$/.test(extension.toLowerCase()))) {
+             alert("@Translate.Message("L2221")");
+            return;
+        }
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("UploadFile", "Common")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.data !== "Failed") {
+                    window.location.reload();
+                }
+                else {
+                    alert("@Translate.Message("L2130")");
+                }
+            },
+            error: function (error) {
+                 alert("@Translate.Message("L2221")");
+            }
+        });
+        }
+
+    function removeReference(userIncentiveId, tobaccoAffidavit) {
+        $.ajax({
+            url: "@Url.Action("RemoveIncentiveReference", "Challenge")",
+            data: { userIncentiveId: userIncentiveId, fileName: tobaccoAffidavit },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null && data.Result == true) {
+                    window.location.reload();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    </script>
+}

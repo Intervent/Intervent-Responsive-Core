@@ -1,0 +1,193 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass chi-memorial info">
+    @Html.Partial("McAllen/_McAllenHeader")
+</section>
+
+<!--Signup Modal-->
+<div id="sign-up-modal" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="cell medium-12">
+        <h2 class="text-center">@Translate.Message("L431")</h2>        
+    </div>
+    <div class="cell">@Html.Partial("_SignUp")</div>
+    <div class="cell text-center">
+        <a href="#" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</a>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<section class="container feature">
+    <a name="healthcare" class="compass mcallen anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                <img src="../Images/Twohandsheart.svg" alt="" />
+            </div>
+            <div class="feature-info cell medium-7 medium-order-1">
+                <h2>@Translate.Message("L2028")</h2>
+                <p>@Translate.Message("L2053")</p>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="cardiacscore" class="compass mcallen anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/CTscreening.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L2029")</h2>
+                    <h3>@Translate.Message("L2055")</h3>
+                    <p>@Translate.Message("L2056")</p>
+                    <p>@Translate.Message("L2057")</p>
+                    <p>@Translate.Message("L2058")</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="healthassessment" class="compass mcallen anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/assessment.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L535")</h2>
+                    <p>@Translate.Message("L2059")</p>
+                    <p>@Translate.Message("L2060")</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="coachedprogram" class="compass mcallen anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/coaching.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L2030")</h2>
+                    <p>@Translate.Message("L1908")</p>
+                    <p>@Translate.Message("L1909")</p>
+                    <p>@Translate.Message("L2426")</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="selfhelpprograms" class="compass mcallen anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/self-help.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1913")</h2>
+                    <p>@Translate.Message("L2434") @DateTime.Now.Year</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="hearchhospital" class="compass mcallen anchor">
+       <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img class="smaller" src="../Images/McAllenfulllogo.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L2032")</h2>
+                    <p class="more-link" href="#" onclick="window.open('http://www.mcallenhearthospital.com/') ">
+                        @Translate.Message("L2061")
+                    </p>
+                    <p class="more-link" href="#" onclick="window.open('http://www.southtexashealthsystem.com/patients-and-visitors/health-records-online#.WFmTaMLHzIU') ">
+                        @Translate.Message("L2062")
+                    </p>
+                    <p class="more-link" href="#" onclick="window.open('http://www.southtexashealthsystem.com/community-programs/attend-a-free-weight-loss-surgery-seminar#.WFmTGMLHz4g') ">
+                        @Translate.Message("L2063")
+                    </p>
+                    <p class="more-link" href="#" onclick="window.open('https://regie.uhsinc.com/H0PF/Membership/RegieBegin.aspx') ">
+                        @Translate.Message("L2064")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="cardiosmart" class="compass mcallen anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/CardioSmart.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L2065")</h2>
+                    <p>@Translate.Message("L2066")</p>
+                    <p>
+                        @Translate.Message("L2067")
+                    </p>
+                    <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/Join') ">
+                        @Translate.Message("L2427")
+                    </p>
+                    <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/News-and-Events/2016/04/Coronary-Artery-Calcium-Scans-Help-Refine-Treatment-Decisions') ">
+                        @Translate.Message("L2428")
+                    </p>
+                    <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/News-and-Events/2016/04/Experts-Endorse-Routine-Imaging-to-Screen-for-Heart-Disease') ">
+                        @Translate.Message("L2429")
+                    </p>
+                    <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/News-and-Events/2015/10/Measuring-Calcium-Build-Up-Helps-Predict-Risk-for-Heart-Disease') ">
+                        @Translate.Message("L2430")
+                    </p>
+                    <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/AZ-Topics') ">
+                        @Translate.Message("L2072")
+                    </p>
+                    <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/Drugs-and-Treatments/Find-a-Drug') ">
+                        @Translate.Message("L2073")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="successstories" class="compass mcallen anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/success.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L1351")</h2>
+                    <p>@Translate.Message("L2074")</p>
+                    <ul class="noliststyle">
+                        <li>“@Translate.Message("L2431")”</li>
+                        <li>“@Translate.Message("L2432")”</li>
+                        <li>“@Translate.Message("L2433")”</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>

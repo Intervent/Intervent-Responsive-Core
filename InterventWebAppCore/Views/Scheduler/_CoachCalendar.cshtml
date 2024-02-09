@@ -1,0 +1,136 @@
+﻿@using InterventWebApp
+
+<div class="reveal" id="event_edit_container" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <h2 id="H1">Set Availability</h2>
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-12">
+            <label for="SelectedDate">Selected Date: </label>
+            <input type="text" id="SelectedDateText" readonly />
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-12">
+            <label for="StartTimeLabel">Time Available:</label><select id="StartTime"></select>
+            <label for="EndTimeLabel">to</label><select id="EndTime"></select>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x" id="AllFutureDiv">
+        <div class="cell medium-12">
+            <div id="CheckBoxList" class="checkbox">
+                <label>
+                    <input type="checkbox" value="1" name="AllFutureCheckBox" onclick="AllFutureCheckBoxClicked()" />
+                    All the following slots.
+                </label>
+            </div>
+        </div>
+    </div>
+    <div id="multiSlot">
+        <div class="grid-x grid-margin-x">
+            <div id="MultipleList" class="cell medium-12">
+                <label>Repeat On:</label>
+                <div class="medium-12">
+                    <select id="repeat-days" name="repeat-days" class="override-select" multiple="multiple" data-prompt="Select">
+                        <option value="SU">Sunday</option>
+                        <option value="MO">Monday</option>
+                        <option value="TU">Tuesday</option>
+                        <option value="WE">Wednesday</option>
+                        <option value="TH">Thursday</option>
+                        <option value="FR">Friday</option>
+                        <option value="SA">Saturday</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-12">
+                <label for="startDateLabel">Starts On: </label>
+                <input type="text" id="startDate" readonly="readonly" />
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-12">
+                <label for="EndDatelabel">Ends On: </label>
+                <input type="text" id="EndDate" />
+            </div>
+        </div>
+    </div>
+    <div class="cell medium-2">
+        <button id="saveAvail" class="small" type="submit">Save</button>
+    </div>
+    <div class="cell medium-2">
+        <button class="small" id="deleteAvail">Delete</button>
+    </div>
+    <div class="cell medium-2 medium-push-8 medium-text-right">
+        <button class="small secondary" type="reset" id="closeModal" data-dismiss="modal">Cancel</button>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<!-- Preloader-->
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+
+<input type="hidden" id="coachId" name="coachId" />
+<input type="hidden" id="eventId" name="eventId" />
+<link href="@Url.Content("~/Content/css/fullcalendar-5.11.3/main.min.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" />
+<script type="text/javascript" src="@Url.Content("~/Scripts/CoachCalendar.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/moment.min.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/fullcalendar-5.11.3/main.min.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        year = @ViewBag.Year;
+        month = @ViewBag.Month;
+        day = @ViewBag.Day;
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetCoachList", "Scheduler")",
+            type: 'POST',
+            success: function (data) {
+                var coachId = @ViewBag.CoachId;
+                $("#coach").html("");
+                $("#coach").append("<option value=''>-- Select --</option>");
+                var csr=""
+                if (data.CSRCount > 0) {
+                    csr += "<optgroup label='CSR'>";
+                }
+                var coach = ""
+                if (data.CoachCount > 0) {
+                    coach += "<optgroup label='COACH'>";
+                }
+                $("#coach").append("");
+                for (i = 0; i < data.Records.length; i++) {
+                    if (data.Records[i].RoleCode == 'CSR') {
+                        csr+= "<option value=" + data.Records[i].Id + ">" + data.Records[i].FirstName + " " + data.Records[i].LastName + "</option>";
+                    }
+                    else {
+                        coach += "<option value=" + data.Records[i].Id + ">" + data.Records[i].FirstName + " " + data.Records[i].LastName + "</option>";
+                    }
+                }
+                if (csr) 
+                    csr += "</optgroup>";
+                if (coach) 
+                    coach += "</optgroup>";
+                $("#coach").append(csr);
+                $("#coach").append(coach);
+                if(coachId != 0){
+                    $("#coach").val(coachId);
+                    $('#calendar').show();
+                    getApt(coachId);
+                }
+                $("#loader-wrapper").fadeOut();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+
+    });
+    $('#closeModal').on('click', function () {
+        $('#event_edit_container').foundation('close');
+    });
+</script>
+
+

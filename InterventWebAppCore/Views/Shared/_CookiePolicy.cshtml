@@ -1,0 +1,30 @@
+﻿@using InterventWebApp
+<div class="cookies-box" hidden>
+    <div class="grid-container">
+        <div class="grid-x">
+            <div class="cell cookies-container">
+                <p class="small-order-2 medium-order-1">@Html.Raw(Translate.Message("L3725"))</p>
+                <button id="acceptCookies" class="button small-order-2 medium-order-1">@Translate.Message("L3726")</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if (document.cookie.indexOf("intervent_canrisk-cookie") < 0) {
+            $('.cookies-box').show();
+        }
+    });
+</script>
+
+<script>
+    $('#acceptCookies').on('click', function () {
+        var d = new Date();
+        d.setTime(d.getTime() + (1825 * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = "intervent_canrisk-cookie = yes;" + expires + ";path=/";
+        $('.cookies-box').hide();
+    });
+</script>
+

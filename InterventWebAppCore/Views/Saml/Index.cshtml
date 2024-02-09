@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<div>Saml redirection failed</div>
+@if(ViewData["ErrorMessage"] != null){
+    string errormessage = ViewData["ErrorMessage"] as string;
+    if(!string.IsNullOrEmpty(errormessage))  {
+        Html.Raw("Errormessage:" + errormessage);
+    }        
+}
+
+if()

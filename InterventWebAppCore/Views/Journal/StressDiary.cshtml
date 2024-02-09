@@ -1,0 +1,356 @@
+﻿<!--USER VIEW-->
+@model InterventWebApp.StressDiaryModel
+@using InterventWebApp
+@{
+    ViewBag.Title = "StressDiary";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<section class="main search-participants">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="small-7 cell">
+                    <h2>@Translate.Message("L557") </h2>
+                </div>
+                @if (ViewData["HasActivePortal"] == "True")
+                {
+                    <div class="small-5 cell text-right">
+                        <button id="add-stress-button" data-open="add-stress" class="button plus-btn right">@Translate.Message("L291")</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="search-results-container" id="stress-container">
+            <div class="search-results" id="stress">
+            </div>
+        </div>        
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <!-- pagination Start -->
+                <div class="pagination-area hide" id="pagination-centered">
+                    <ul>
+                        <li id="numeric"></li>
+                    </ul>
+                    <!-- page-link Start -->
+                    <div class="page-link">
+                        <label>@Translate.Message("L4041")</label>
+                        <div class="grid-x">
+                            <input type="text" id="jumptoPageNo">
+                            <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                        </div>
+                    </div>
+                    <!-- page-link End -->
+                </div>
+                <!-- pagination End -->
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <div class="panel" id="chart-results" hidden>
+                    <div id="chartdiv" style="width:100%;height:500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="add-stress" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form data-abide id="stress-form" novalidate>
+        <h2 class="text-center">@Translate.Message("L560")</h2>
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>
+                    @Translate.Message("L561")
+                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2531")"><i class="fa fa-question-circle"></i></span>
+                    @Html.TextBoxFor(x => x.stressDiary.Date, new Dictionary<string, object> { { "class", "fdatepicker" }, { "required", "required" } })
+                    <small class="form-error">@Translate.Message("L480")</small>
+                    <input id="stressDiaryDate" type="hidden">
+                </label>
+            </div>
+            <div class="cell medium-6">
+                <label>
+                    @Translate.Message("L562")
+                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2532")"><i class="fa fa-question-circle"></i></span>
+                    @Html.TextBoxFor(x => x.stressDiary.Duration, "", new { @required = "required", @type = "number" })
+                    <small class="form-error">@Translate.Message("L480")</small>
+                </label>
+            </div>
+            <div class="cell medium-12">
+                <label>
+                    @Translate.Message("L563")
+                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2533")"><i class="fa fa-question-circle"></i></span>
+                    @Html.TextBoxFor(x => x.stressDiary.Intensity, new { @required = "required", @type = "number", min = "1", max = "10" })
+                    <small class="form-error">@Translate.Message("L480")</small>
+                </label>
+            </div>
+            <div class="cell medium-12">
+                <label>
+                    @Translate.Message("L564")
+                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2534")"><i class="fa fa-question-circle"></i></span>
+                    @Html.TextBoxFor(x => x.stressDiary.Trigger, new { @placeholder = Translate.Message("L1733"), @required = "required", @maxLength = 200 })
+                    <small class="form-error">@Translate.Message("L480")</small>
+                </label>
+            </div>
+            <div class="cell medium-12">
+                <label>
+                    @Translate.Message("L565")
+                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2535")"><i class="fa fa-question-circle"></i></span>
+                    @Html.TextBoxFor(x => x.stressDiary.Response, new { @placeholder = Translate.Message("L1734"), @required = "required", @maxLength = 500 })
+                    <small class="form-error">@Translate.Message("L480")</small>
+                </label>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right">
+                <button class="small" type="submit">@Translate.Message("L968")</button>
+            </div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeStress">@Translate.Message("L967")</button></div>
+        </div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        @Html.HiddenFor(x => x.stressDiary.Id)
+    </form>
+</div>
+<!-- Preloader-->
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/moment-timezone.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $("#stressDiary_Date").on("change", function () {
+        $('#stressDiaryDate').val(toSystemDateFormat(this.value, "24hour"))
+    });
+    //Activate the detailed info
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+
+    $(document).ready(function () {
+        $('.fdatepicker').fdatepicker({
+            format: '@ViewData["DateFormat"] hh:ii',
+            disableDblClickSelection: true,
+            pickTime: true,
+            endDate: new Date()
+        });
+        ListStress();
+        $('#closeStress').on('click', function () {
+            $('#add-stress').foundation('close');
+        });
+
+        $('#stress-form').foundation();
+        $('#stress-form')
+        .on('forminvalid.zf.abide', function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+            console.log(invalid_fields);
+        })
+        .on('formvalid.zf.abide', function () {
+        $('#stressDiary_Date').val($('#stressDiaryDate').val());
+        var id = $('#stressDiary_Id').val();
+        $("#loader-wrapper").fadeIn();
+        $.ajax({
+            url: "@Url.Action("AddtoStressDiary", "Journal")",
+            data: $("#stress-form").serialize(),
+            type: 'POST',
+            dataType: "json",
+            success: function () {
+                startIndex = 0;
+                pageSize = 15;
+                totalRecords = 0;
+                currentPage = 0;
+                totalPages = 0;
+                ListStress();
+                $('#add-stress').foundation('close');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+        })
+        // to prevent form from submitting upon successful validation
+        .on("submit", function (ev) {
+            ev.preventDefault();
+
+        })
+
+    });
+
+    $("#add-stress-button").on('click', function () {
+        $("#stress-form").find('input, select, textarea').val('');
+    })
+
+    function ListStress() {
+        $('#stressDiary_Id').val('');
+        var paginationdata = {
+            'page': currentPage,
+            'pageSize': pageSize,
+            'totalRecords': totalRecords
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+        $.ajax({
+            url: "@Url.Action("ListStress", "Journal")",
+            type: 'POST',
+            data: strData,
+            dataType: "json",
+            contentType: 'application/json, charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    var stressHtml = [];
+                    var stressData = [];
+                    totalRecords = data.Records.totalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    if (data.Records != null && data.Records.StressDiaries.length > 0) {
+                        stressHtml.push("<table class='table'><tr><th class='pink'>@Translate.Message("L561")</th>" +
+                            "<th class='pink'>@Translate.Message("L564")</th><th class='pink'>@Translate.Message("L563")</th><th class='pink'>@Translate.Message("L565")</th><th class='pink'>@Translate.Message("L562")</th>" +
+                            "<th class='pink'>@Translate.Message("L2166")</th></tr>");
+                        for (var i = 0; i < data.Records.StressDiary.length; i++) {
+                            var stress = data.Records.StressDiary[i];
+                            var date = new Date(parseInt(stress.Date.substr(6)));
+                            //render stress list
+                            stressHtml.push("<tr><td>" + toLocalDateFormat(date) + "</td>" + "<td>" + stress.Trigger + "</td>" +
+                                "<td>" + stress.Intensity + "</td>" +
+                                "<td>" + stress.Response + "</td>" +
+                                "<td>" + stress.Duration + "</td>");
+                            if ('@ViewData["HasActivePortal"]' == "True") {
+                                stressHtml.push("<td><a onclick='Update(" + stress.Id + ")'><i class='fa fa-file-o'></i></i></a></td></tr>");
+                            } else {
+                                stressHtml.push("<td></td></tr>");
+                            }
+                        }
+                        for (var i = 0; i < data.GraphData.length; i++) {
+                            var stress = data.GraphData[i];
+                            var intensity = 0, duration = 0;
+                            for (var j = 0; j < stress.length; j++) {
+                                if (stress[j].Intensity > 0)
+                                    intensity = intensity + stress[j].Intensity;
+                                if (stress[j].Duration > 0)
+                                    duration = duration + stress[j].Duration;
+                            }
+                            var date = new Date(parseInt(stress[0].Date.substr(6)));
+                            stressData.push({ "date": toSystemDateFormat(date), "ay": intensity, "aValue": duration });
+                        }
+                        stressHtml.push("</table>");
+                        $('#chart-results').show();
+                        $('#stress').html(stressHtml.join(''));
+                        GenerateChart(stressData);
+                    }
+                    else {
+                        $('#stress').append('<center>@Translate.Message("L2774")</center>');}
+                }
+                AddPager();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListStress();
+    }
+
+    function Update(id) {
+        $.ajax({
+            url: "@Url.Action("ReadStress", "Journal")",
+            data: { id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    $('#stressDiary_Id').val(data.Record.Id);
+                    var stressDate = toLocalDateFormat(data.Record.Date, "24hour");
+                    $("#stressDiary_Date").val(stressDate);
+                    $("#stressDiary_Duration").val(data.Record.Duration);
+                    $("#stressDiary_Intensity").val(data.Record.Intensity);
+                    $("#stressDiary_Trigger").val(data.Record.Trigger);
+                    $("#stressDiary_Response").val(data.Record.Response);
+
+                    $('#add-stress').foundation('open');
+                    $("#stressDiary_Date").trigger("change");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function GenerateChart(data) {
+            // Themes end
+        am4core.addLicense("CH39169069");
+        // Create chart instance
+        var chart = am4core.create("chartdiv", am4charts.XYChart);
+        chart.dateFormatter.dateFormat = "@ViewData["DateFormat"];
+
+        // Create daily series and related axes
+        var dateAxis1 = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis1.renderer.grid.template.location = 0;
+        dateAxis1.renderer.minGridDistance = 40;
+
+        var valueAxis1 = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis1.title.html = "@Translate.Message("L562")";
+
+        var series1 = chart.series.push(new am4charts.ColumnSeries());
+        series1.dataFields.valueY = "aValue";
+        series1.dataFields.dateX = "date";
+        series1.data = data;
+        series1.xAxis = dateAxis1;
+        series1.yAxis = valueAxis1;
+        series1.tooltipHTML = "<div style='margin:5px;'><b>{dateX}</b><br>@Translate.Message("L562"):<b>{aValue}</b></div>";
+
+        // Create hourly series and related axes
+        var dateAxis2 = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis2.renderer.grid.template.location = 0;
+        dateAxis2.renderer.minGridDistance = 40;
+        dateAxis2.renderer.labels.template.disabled = true;
+        dateAxis2.renderer.grid.template.disabled = true;
+        dateAxis2.renderer.tooltip.disabled = true;
+
+        var valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis2.renderer.opposite = true;
+        valueAxis2.renderer.grid.template.disabled = true;
+        valueAxis2.renderer.labels.template.disabled = true;
+        valueAxis2.renderer.tooltip.disabled = true;
+
+        var series2 = chart.series.push(new am4charts.LineSeries());
+        series2.dataFields.valueY = "ay";
+        series2.dataFields.dateX = "date";
+        series2.data = data;
+        series2.xAxis = dateAxis2;
+        series2.yAxis = valueAxis2;
+        series2.stroke = am4core.color("#FFFF00");
+        series2.strokeWidth = 1;
+        series2.tensionX = 0.8;
+        series2.tooltipHTML = "@Translate.Message("L563"):<b>{ay}</b>";
+
+        var durationBullet = series2.bullets.push(new am4charts.Bullet());
+        var durationRectangle = durationBullet.createChild(am4core.Rectangle);
+        durationBullet.horizontalCenter = "middle";
+        durationBullet.verticalCenter = "middle";
+        durationBullet.width = 7;
+        durationBullet.height = 7;
+        durationRectangle.width = 7;
+        durationRectangle.height = 7;
+
+        // Add cursor
+        chart.cursor = new am4charts.XYCursor();
+    }
+</script>

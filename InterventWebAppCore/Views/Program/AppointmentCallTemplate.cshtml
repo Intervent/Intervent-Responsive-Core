@@ -1,0 +1,110 @@
+﻿@using InterventWebApp
+@model InterventWebApp.AppointmentCallTemplateModel
+
+<!--ADMIN VIEW-->
+@{
+    ViewBag.Title = "Appointment Call Templates";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<section class="main search-participants">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-6 cell">
+                <h2>Appointment Call Templates</h2>
+            </div>
+            <div class="small-6 cell text-right">
+                <button id="add-callTemplate-button" data-open="add-calltemplate-data" class="secondary-color small right"><i class="fa fa-plus"></i>Add Call Template</button>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <table class='table'>
+                    <tr><th class='blue'>Name</th><th class='blue'>No. Of Weeks</th><th class='blue'>No. Of Calls</th><th class='blue'>Active</th><th class="blue">Call Intervals</th>@*<th class="blue">Edit</th>*@</tr>
+                    @foreach (var item in Model.CallTemplates)
+                    {
+                        <tr>
+                            <td>@item.TemplateName</td>
+                            <td>@item.NoOfWeeks</td>
+                            <td>@item.NoOfCalls</td>
+                            <td>@item.IsActive</td>
+                            <td><a href='#' data-open='calltemplate-interval' data-modal-path='../Program/AppointmentCallTemplateIntervals/@item.TemplateId'><i class='fa fa-file-o'></i></a></td>
+                            @*<td><a onclick='ReadProgram(@item.TemplateId)'><i class='fa fa-pencil-square-o'></i></a></td>*@
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="add-calltemplate-data" class="reveal medium" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <input type="hidden" id="apptCallTemplateId" />
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <h2>Add/Edit Appointment Call Template</h2>
+        </div>
+        <div class="cell medium-12">
+            <label>Template Name</label>
+            <input type="text" id="templateName" maxlength="50" />
+        </div>
+        <div class="cell medium-12">
+            <label>No of Weeks</label>
+            <input type="text" id="noOfWeeks" maxlength="2" />
+        </div>
+        <div class="cell medium-12">
+            <label>No of Calls</label>
+            <input type="text" id="noOfCalls" maxlength="2" />
+        </div>
+        <div class="cell medium-12">
+            <input type="checkbox" id="isActive" /> <label>Active </label>
+        </div>
+    </div>
+    <div id="callIntervals" class="grid-x grid-margin-x">
+    </div>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="saveCallTemplate">Save</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeCallTemplate">Cancel</button></div>
+    </div>
+</div>
+
+<div id="calltemplate-interval" class="reveal medium" data-reveal data-close-on-click="false" data-close-on-esc="true">
+</div>
+
+<script src="~/Scripts/CallTemplate.js?v=@CommonUtility.GetRandom()" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        callTemplate.init();
+    });
+    $('#add-calltemplate-data').on('click', function () {
+             $("#templatename").val("");
+             $("#noofweeks").val("");
+             $("#noofcalls").val("");
+             $('#isactive').prop('checked', false);
+         });
+     function ReadProgram(id) {
+         $.ajax({
+             url: "@Url.Action("ReadAppointmentCallTemplate", "Program")",
+             data: { templateid: id },
+             type: 'POST',
+             dataType: "json",
+             success: function (data) {
+                 if (data != null) {
+                     $('#apptCallTemplateId').val(data.TemplateId);
+                     $("#templateName").val(data.TemplateName);
+                     $("#noOfWeeks").val(data.NoOfWeeks);
+                     $("#noOfCalls").val(data.NoOfCalls);
+                     if (data.IsActive) {
+                         $('#isActive').prop('checked', true);
+                     }
+                     else {
+                         $('#isActive').prop('checked', false);
+                     }
+ 
+                     $('#add-calltemplate-data').foundation('open');
+                 }
+             }
+         }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+     }
+</script>

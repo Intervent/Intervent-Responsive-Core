@@ -1,0 +1,433 @@
+@using InterventWebApp
+@model InterventWebApp.MyCoachModel
+
+<div class="appt-timezone hide">
+    <img src="~/Images/appointment-booking/global-time-icon.svg" alt="" /> @Model.participantTimeZone
+</div>
+<div class="appt-timezone-container">
+    <div class="appt-timezone-select">
+        <label for="timezone"><img src="~/Images/appointment-booking/global-time-icon.svg" alt="" /></label>
+        @Html.DropDownList("timezone", Model.Timezones, Translate.Message("L3749"))
+        <div class="timezone-list-box">
+            <div class="timezone-list" id="timezone-list"></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="appt-calendar grid-x grid-margin-y" id="calendar">
+    <div class="cell">
+        <button id="prevMonth" type="button" class="secondary small nav lnav"></button>
+        <span class="month-picker-label" id="selectedMonth"></span>
+        <button id="nextMonth" type="button" class="secondary small nav rnav"></button>
+    </div>
+
+    <div class="cell">
+        <div class="cal-legends">
+            <ul>
+                <li><span></span> @Translate.Message("L3660")</li>
+                <li><span></span> @Translate.Message("L3661")</li>
+            </ul>
+        </div>
+
+        <ul id="calendar-month" class="grid-x grid-padding-x small-up-7"></ul>
+
+        <p class="slot-selected" id="slots" hidden>@Translate.Message("L3662"): <span id="dateSelected"></span></p>
+    </div>
+</div>
+
+
+<div class="appt-time-slot" id="availabilities" hidden>
+    <div class="slot-left">
+        <h4>@Translate.Message("L3663")</h4>
+        <div class="no-apt">@Translate.Message("L3682")</div>
+        <div class="slot-timings" id="beforeNoonSlots">
+        </div>
+    </div>
+
+    <div class="slot-right">
+        <h4>@Translate.Message("L3664")</h4>
+        <div class="no-apt">@Translate.Message("L3682")</div>
+        <div class="slot-timings" id="afterNoonSlots">
+        </div>
+    </div>
+</div>
+<div class="appt-no-coach" id="notimeslots" hidden>
+    <div class="callout red"><span id="avl-alert">@Translate.Message("L3665")</span></div>
+</div>
+<div class="appt-proceed-btn" id="datetime-proceed" hidden>
+    <p id="coachCount"></p>
+    <a class="button" id="acc-toggle-btn" disabled="disabled">@Translate.Message("L3666")</a>
+</div>
+<div class="appt-confirm-btn" id="confirm-appt-datetime" hidden>
+    <button class="button" id="appt-confirm-btn-datetime">@Translate.Message("L873")</button>
+</div>
+
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    var url = '@Model.BaseUrl';
+    $("#loader-wrapper").fadeOut();
+    var weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var adDay, adMonth, adYear, dDay, dMonth, dYear;
+    var timeZone = '@Model.participantTimeZone';
+    var element = document.getElementById("timezone");
+    element.value = timeZone;
+    if (timeZone != '') {
+        $('.ui-selectmenu-text').text(timeZone);
+    }
+    //var nextMonth = false;
+    $(document).ready(function(){//Calendar jQuery
+        pickDate(false);
+    });
+
+    //Jquery for timezone selector dropdown
+    $("#timezone").selectmenu({
+        appendTo: "#timezone-list",
+        select: function (event, ui) {
+            $(".timezone-list-box").hide();
+            changeTimezone();
+        },
+        open: function (event, ui) {
+            $(".timezone-list-box").show();
+
+            var pane1 = $('.timezone-list');
+            pane1.jScrollPane({
+                showArrows: false,
+                resizeSensor: true
+            });
+            var api1 = pane1.data().jsp;
+        }
+    });
+
+    $(".appt-timezone-select").on('focusout', function (event) {
+        $(".timezone-list-box").hide();
+    });
+
+    function pickDate(scroll) {
+        adDay = new Date().getDate();
+        adMonth = new Date().getMonth();
+        adYear = new Date().getFullYear();
+        dDay = adDay;
+        @if (CommonUtility.IsIntegratedWithLMC(Model.integrationWith))
+        {
+            @: if (adMonth < new Date(adYear, adMonth, adDay + 7).getMonth()) {
+            @: dMonth = adMonth + 1; }
+            @: else { dMonth = adMonth;}
+        }
+        else
+        {
+            @: dMonth = adMonth;
+        }
+        dYear = adYear;
+        return printCalendar(true, scroll);
+    }
+
+    function printCalendar(showError, scroll) {
+        printCalendars(showError, scroll);
+    }
+
+    function changeTimezone() {
+        selectedTime = null;
+        selectedDate = null;
+        $("#selectedDate").html("");
+		$("#selectedTime").html("");
+		$(".appt-booking-detail, .appt-timezone").addClass("hide");
+        $("#dateSelected").html("");
+        $(".slot-timings span").removeClass('is-active');
+        $("#availabilities").hide();
+        $("#coachCount").hide();
+        $("#slots").hide();
+        $("#appt-confirm-btn-datetime").hide();
+        printCalendars(true);
+    }
+
+    function printCalendars(showError, scroll) {
+        $("#calendar-month").html("").removeClass("hide-loader");
+        var dWeekDayOfMonthStart = new Date(dYear, dMonth, 1).getDay();
+        var dLastDayOfMonth = new Date(dYear, dMonth + 1, 0).getDate();
+        var dLastDayOfPreviousMonth = new Date(dYear, dMonth + 1, 0).getDate() - dWeekDayOfMonthStart + 1;
+        $('.month-picker-label').html(months[dMonth] + ' ' + dYear);
+        for (var i = 0; i < weekDays.length; i++) {
+            $("#calendar-month").append("<li class='cell day-label'>" + weekDays[i] + "</li>");
+        }
+        var availCount = {};
+        var coach = '@Model.coachId';
+        var apptId = '@Model.apptId';
+        var time = selectedTime;
+        var selectedTimezone = $("#timezone").val();
+        if (selectedTimezone == undefined)
+            selectedTimezone = timezone;
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../Scheduler/CheckFreeSlot",
+			//async: false,
+            data: { year: dYear, month: (dMonth + 1), coachId: coach, time: time, timeZone: selectedTimezone, apptId: apptId },
+            success: function (data) {
+                if (data != null) {
+                    if (data.Records != null) {
+                        $("#calendar").show();
+                        $("#notimeslots").hide();
+                        var eventList = data.Records;
+                        for (var i = 0; i < eventList.length; i++) {
+                            var parsedDate = new Date(eventList[i].DateString);
+                            var day = parsedDate.getDate();
+                            var month = parsedDate.getMonth() + 1;
+                            availCount[day + '-' + month] = eventList[i].NoOfRecords;
+                        }
+                    }
+                    else {
+                        if(showError)
+                            $("#notimeslots").show();
+                        else
+                            $("#notimeslots").hide();
+                    }
+                }
+                var day = 1;
+                var dayOfNextMonth = 1;
+                var html = "";
+                if (document.getElementById('calendar-month').getElementsByClassName("select-day").length == 0) {
+                    var totalDays = getWeeksInMonth(dMonth, dYear) * 7;
+                    for (var i = 0; i < totalDays; i++) {
+                        var newClass = "available";
+                        if (availCount[(day) + '-' + (dMonth + 1)] == undefined) {
+                            newClass = 'grayed-out';
+                        }
+                        if (i < dWeekDayOfMonthStart) {
+                            html = html + "<li class='cell grayed-out'><a><span class='date'></span></a></li>";
+                        }
+                        else if (day <= dLastDayOfMonth) {
+                            if (day == dDay && adMonth == dMonth && adYear == dYear) {
+                                if (newClass == "available") {
+                                    html = html + "<li id=" + day + "-" + (dMonth + 1) + "-" + dYear + " class='cell today " + newClass + "'><a id=" + day + "," + (dMonth + 1) + "," + dYear + " class='select-day' data-day='" + day + "' data-month='" + (dMonth + 1) + "' data-year='" + dYear + "' onclick='GetTimeSlots(" + day + "," + (dMonth + 1) + "," + dYear + ");' ><span class='date'>" + day++ + "</span></a></li>";
+                                }
+                                else {
+                                    html = html + "<li class='cell today " + newClass + "'><a class='select-day' data-day='" + day + "' data-month='" + dMonth + "' data-year='" + dYear + "'><span class='date'>" + day++ + "</span></a></li>";
+                                }
+                            }
+                            else {
+                                if (newClass == "available") {
+                                    html = html + "<li id=" + day + "-" + (dMonth + 1) + "-" + dYear + " class='cell " + newClass + "'><div class='time-slot'><a  href='#' class='select-time-slot' data-day='" + day + "' data-month='" + (dMonth + 1) + "' data-year='" + dYear + "' onclick='GetTimeSlots(" + day + "," + (dMonth + 1) + "," + dYear + ");'>@Translate.Message("L421")</a></div><a id='dat' class='select-day' data-day='" + day + "' data-month='" + (dMonth + 1) + "' data-year='" + dYear + "' onclick='GetTimeSlots(" + day + "," + (dMonth + 1) + "," + dYear + ");' id=" + day + "," + (dMonth + 1) + "," + dYear + "><span class='day-info'>" + weekDays[new Date(dYear, dMonth, day).getDay()] + ", " + months[dMonth] + "</span><span class='date'>" + day++ + "</span></span><div class='close-times hide'><span>@Translate.Message("L3410")</span></div><div class='add-calendar-show'><ul></ul></div></a></li>";
+                                }
+                                else {
+                                    html = html + "<li class='cell " + newClass + "'><div class='time-slot'><a href='#' class='select-time-slot' data-day='" + day + "' data-month='" + dMonth + "' data-year='" + dYear + "'>@Translate.Message("L421")</a></div><a id='dat' class='select-day' data-day='" + day + "' data-month='" + dMonth + "' data-year='" + dYear + "'><span class='day-info'>" + weekDays[new Date(dYear, dMonth, day).getDay()] + ", " + months[dMonth] + "</span><span class='date'>" + day++ + "</span></span><div class='close-times hide'><span>@Translate.Message("L3410")</span></div><div class='add-calendar-show'><ul></ul></div></a></li>";
+                                }
+                            }
+                        }
+                        else {
+                            html = html + "<li class='cell grayed-out'><a><span class='date'></a></li>";
+                        }
+                    }
+                }
+                $("#calendar-month").append(html).addClass("hide-loader");
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+
+
+            $("#calendar-month li.available").on('click', function (e) {
+                if (!$(this).hasClass('is-active')) {
+                    $("#calendar-month li.available").removeClass('is-active');
+                    $(this).addClass('is-active');
+                }
+        });
+
+    }
+
+	$("#nextMonth").on('click', function () {
+        $("#availabilities, #slots" ).hide();
+        if (dMonth < 11) {
+            dMonth++;
+        } else {
+            dMonth = 0;
+            dYear++;
+        }
+        printCalendars(true, true);
+    });
+
+	$("#prevMonth").on('click', function () {
+        $("#availabilities, #slots").hide();
+        if (dMonth > 0) {
+            dMonth--;
+        } else {
+            dMonth = 11;
+            dYear--;
+        }
+        printCalendars(true, true);
+	});
+	var selectedDate, selectedTime, selectedCoach = @Model.coachId;
+    var timezone = '@Model.participantTimeZone';
+
+    function SetActiveItems(e) {
+        if (!$(e).hasClass('is-active')) {
+			$(".slot-timings span").removeClass('is-active');
+            $(e).addClass('is-active');
+            selectedTime = e.id;
+            $("#apptTime").html("<span>@Translate.Message("L3780")</span>" + selectedTime + "<span class='appt-zone-details'><img src='~/Images/appointment-booking/global-time-icon.svg' alt='' /> @Model.participantTimeZone</span>");
+            $("#confirm-appt-datetime").show();
+            windowScroll('confirm-appt-datetime', true);
+        }
+    }
+
+    function GetTimeSlots(day, month, year) {
+        $(".select-day").closest("li").removeClass('is-active');
+        $("#" + day + "-" + (dMonth + 1) + "-" + dYear + "").addClass('is-active');
+        $('#acc-toggle-btn').attr('disabled', 'disabled');
+        $("#confirm-appt-datetime").hide();
+        $("#beforeNoonSlots").html("");
+        $("#afterNoonSlots").html("");
+        $("#dateSelected").text(months[month - 1] + " " + day + " " + year);
+        var date = year + "/" + month + "/" + day;
+        selectedDate = date;
+        $("#apptDate").html("<span>@Translate.Message("L3779")</span>" + months[month - 1] + " " + day + " " + year);
+        var beforeSlots = "";
+        var afterSlots = "";
+         var selectedTimezone = $("#timezone").val();
+        if (selectedTimezone == undefined)
+             selectedTimezone = timezone;
+        var apptId = '@Model.apptId';
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../Scheduler/GetFreeSlotforDay",
+            //async: false,
+            data: { startDate: date, coachId: selectedCoach, time: null, timeZone: selectedTimezone, apptId: apptId },
+            success: function (data) {
+                if (data != null) {
+                    var hasSlots = false;
+                    if (data.Records.length > 0) {
+                        var eventList = data.Records;
+                        var currentDate = new Date();
+                        for (var i = 0; i < eventList.length; i++) {
+                            var parsedDate = new Date(eventList[i]);
+                            var time = parsedDate.toLocaleTimeString(navigator.language, { hour12: true, hour: '2-digit', minute: '2-digit' });
+                            if (currentDate < parsedDate) {
+                                hasSlots = true;
+                                if (time.indexOf("AM") > -1) {
+                                    var html = "";
+                                    html += "<span id='" + time + "' onclick='SetActiveItems(this);'>" + time + "</span>";
+                                    beforeSlots += html;
+                                }
+                                else {
+                                    var html = "";
+                                    html += "<span id='" + time + "' onclick='SetActiveItems(this);'>" + time + "</span>";
+                                    afterSlots += html;
+                                }
+                            }
+                        }
+                        if (selectedCoach == null) {
+							$("#appt-confirm-btn-datetime").show();
+                        }
+                        else {
+                            $("#appt-confirm-btn-datetime").show();
+                        }
+                    }
+                    if (!hasSlots) {
+                        $("#beforeNoonSlots").html("");
+                        $("#afterNoonSlots").html("");
+                        $("#confirm-appt-datetime").hide();
+                        $("#notimeslots").show();
+                        $("#availabilities").hide();
+                        $("#slots").hide();
+                        $("#coachCount").hide();
+                    }
+                    else {
+                        $("#confirm-appt-datetime").hide();
+                        $("#beforeNoonSlots").html(beforeSlots);
+                        $("#afterNoonSlots").html(afterSlots);
+                        $("#notimeslots").hide();
+                        $("#availabilities").show();
+                        $("#slots").show();
+                        windowScroll('availabilities');
+                        $(".slot-left .no-apt").hide();
+                        $(".slot-right .no-apt").hide();
+                        if (beforeSlots == "") {
+                            $(".slot-left .no-apt").show();
+                        }
+                        if (afterSlots == "") {
+                            $(".slot-right .no-apt").show();
+                        }
+                    }
+                }
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+	}
+
+    function getWeeksInMonth(month, year) {
+        var weeks = 0,
+            firstDate = new Date(year, month, 1),
+            lastDate = new Date(year, month + 1, 0),
+            numDays = lastDate.getDate();
+
+        var start = 1;
+        var end = 7 - firstDate.getDay();
+        while (start <= numDays) {
+            weeks++;
+            start = end + 1;
+            end = end + 7;
+            if (end > numDays)
+                end = numDays;
+        }
+        return weeks;
+    }
+    $("#appt-confirm-btn, #appt-confirm-btn-datetime").on('click', function (e) {
+        e.preventDefault();
+        $("#appt-confirm-btn").attr("disabled", "disabled");
+        $("#appt-confirm-btn-datetime").attr("disabled", "disabled");
+        var formatDate = new Date(selectedDate);
+        selectedTime = selectedTime.replace('a.m.', 'AM');
+        selectedTime = selectedTime.replace('p.m.', 'PM');
+        var selectedTimeVal = selectedTime.split(':');
+        var appDate = new Date(formatDate.getFullYear() + '/' + (formatDate.getMonth() + 1) + '/' + formatDate.getDate() + ' ' + selectedTimeVal[0] + ':' + selectedTimeVal[1]);
+        var selectedTimezone = $("#timezone").val();
+        if (selectedTimezone == undefined)
+            selectedTimezone = timezone;
+        var apptId = '@Model.apptId';
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../Scheduler/ScheduleAppointment",
+            data: { apptId: apptId, Date: appDate.toLocaleString(), coachId: selectedCoach, minutes: null, comments: null, timeZone: selectedTimezone },
+            success: function (data) {
+                $("#appt-confirm-btn").removeAttr("disabled", "disabled");
+                $("#appt-confirm-btn-datetime").removeAttr("disabled", "disabled");
+                var html = "";
+                if (data != null) {
+                    if (data.ErrorMessage == null) {
+                        $(".appt-welcome, .appt-confirmation-message, .appt-type-toggle, .appt-accordion, .appt-scheduled-detail").toggleClass("hide");
+                        $('#upcoming-appt').html("");
+                        windowScroll('appt-cnf');
+                        $("#confirmMessage").html(data.ConfirmationMessage);
+                    }
+                    else {
+                        $('#schedule-appointment-alert').html(data.ErrorMessage);
+                        $('#confirmation-conflict').foundation('open');
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    });
+
+    function windowScroll(element, isNot) {
+        var $element = $("#" + element);
+        var windowCenter = $(window).height() / 2;
+        if ($(window).width() > 540 || isNot) {
+            var scrollPos = $element.offset().top - windowCenter
+        }
+        else {
+            var scrollPos = $element.offset().top
+        }
+        $('html, body').animate({
+            scrollTop: scrollPos
+        }, 500);
+    }
+</script>

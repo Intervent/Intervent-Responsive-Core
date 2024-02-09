@@ -1,0 +1,100 @@
+﻿@model InterventWebApp.ScheduleAppointmentModel
+@using InterventWebApp;
+
+<form data-abide id="schedule-form" novalidate>
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-12">
+            <div data-alert id="scheduler-error" class="callout alert hide">
+            </div>
+        </div>
+        <div class="cell medium-12">
+            <div>
+                <label for="AppointmentDate">Appointment Date</label>
+                <input id="AppointmentDateText" type="text" readonly /> 
+                @Html.HiddenFor(x => x.AppointmentDate)
+            </div>  
+            <div>
+                <label for="CoachName">Coach Name</label>
+                @Html.TextBoxFor(x => x.CoachName)
+                @Html.HiddenFor(x => x.CoachID)
+            </div>
+            <div>
+                <label for="Length">Length</label>
+                @Html.DropDownListFor(x => x.Length, Model.Lengths)
+            </div>
+            <div>
+                <label for="Type">Type</label>
+                @Html.DropDownListFor(x => x.Type, Model.Types, "Select a Type", new Dictionary<string, object> { { "required", "required" } })
+                <small class="form-error">Type is required</small>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.MeetingId))
+            {
+                <div>
+                    <label>Video Required</label>
+                    <input type="checkbox" id="VideoRequired" />
+                </div>
+            }
+            <div>
+                <label for="Comments">Comments</label>
+                @Html.TextAreaFor(x => x.Comments)
+            </div>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="submit" id="schedule">@Translate.Message("L968")</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeNumbers">@Translate.Message("L967")</button></div>
+    </div>
+</form>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#closeNumbers').on('click', function () {
+            $('#book-appointment').foundation('close');
+        });
+
+        $('#AppointmentDateText').val(toLocalDateFormat($('#AppointmentDate').val(), "12hour"));
+        $("#schedule-form").foundation();
+        $('#schedule-form')
+            .on('forminvalid.zf.abide', function () {
+            })
+            .on('formvalid.zf.abide', function () {
+            var coachId = $("#CoachID").val();
+            var Date = $("#AppointmentDate").val();
+            var comments = $("#Comments").val();
+            var minutes = $("#Length").val();
+            var type = $("#Type").val();
+            var videorequired = $("#VideoRequired").is(':checked');
+            $("#schedule").attr("disabled", "disabled");
+            $.ajax({
+                url: "@Url.Action("ScheduleAppointmentByAdmin", "Scheduler")",
+                type: 'POST',
+                dataType: "json",
+                data: { Date: Date, coachId: coachId, type: type, minutes: minutes, comments: comments, timeZone: '@Model.TimeZone', videorequired: videorequired, meetingId: '@Model.MeetingId' },
+                success: function (data) {
+                    $("#schedule").removeAttr("disabled", "disabled");
+                    if (data.Status == 2) {
+                        $("#scheduler-error").html(data.ErrorMessage);
+                        $('#scheduler-error').removeClass('hide');
+                    }
+                    else {
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("Appointments", "Scheduler")',
+                            success: function (data) {
+                                $("#profile-content").html(data);
+                            }
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+                        $('#book-appointment').foundation('close');
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }).on("submit", function (ev) {
+                ev.preventDefault();
+
+            })
+            
+    });
+</script>

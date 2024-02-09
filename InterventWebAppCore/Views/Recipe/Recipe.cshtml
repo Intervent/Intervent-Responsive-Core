@@ -1,0 +1,40 @@
+﻿@model Intervent.Web.DTO.RecipesDto
+@using InterventWebApp
+<div id="recipe-modal" class="recipe-modal">
+
+    <h2 class="recipe-name">@Model.Name</h2>
+    <div class="recipe-image"><img src="@Model.ImageURL"></div>
+    <div class="details">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="cell small-4">
+                    <div class="servings">@Translate.Message("L394")<span class="detail">@Model.ServingSize</span></div>
+                    <div class="time">@Translate.Message("L395")<span class="detail">@Model.Yield @Translate.Message("L1889")</span></div>
+                </div>
+                <div class="cell small-4">
+                    <div class="servings">@Translate.Message("L396") <span class="detail">@Model.Carbohydrate</span></div>
+                    <div class="time">@Translate.Message("L397") <span class="detail">@Model.Fat</span></div>
+                </div>
+                <div class="cell small-4">
+                    <div class="time">@Translate.Message("L398"): <span class="detail">@Model.Calories</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <h4>@Translate.Message("L399")</h4>
+        @Html.Raw(Model.Ingredients)
+        <h4>@Translate.Message("L4")</h4>
+        @Html.Raw(Model.Direction)
+    </div>
+
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<script>
+    $(window).on('closed.zf.reveal', function () {
+        $("#recipe-modal").remove();
+    });
+</script>

@@ -1,0 +1,85 @@
+﻿@using InterventWebApp
+@model InterventWebApp.SummaryCarePlanModel
+
+<div class="grid-x grid-margin-x key-action-steps">
+    @if (!Model.isPrintableReport)
+    {    
+        <div class="cell">
+            <h3>@Translate.Message("L4328")</h3>
+        </div>
+    }
+    <div class="cell">
+        <h3>@Translate.Message("L4329")</h3>
+        <div class="small-12 cell">
+            <ul class="decorated orange">
+                @if (Model.numbersandGoals.Count() != 0)
+                {
+                    foreach (var goals in Model.numbersandGoals.Where(x => x.Length > 0))
+                    {
+                <text>
+                    <li>
+                        <span>@Html.Raw(goals)</span>
+                    </li>
+                </text>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="cell">
+        <h3>@Translate.Message("L4330")</h3>
+        <div class="small-12 cell">
+            <ul class="decorated orange">
+                @if (Model.healthyLifestyle.Count() != 0)
+                {
+                    foreach (var lifestyle in Model.healthyLifestyle.Where(x => x.Length > 0))
+                    {
+                <text>
+                    <li>
+                        <span>@Html.Raw(lifestyle)</span>
+                    </li>
+                </text>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="cell">
+        <h3>@Translate.Message("L4331")</h3>
+        <div class="small-12 cell">
+            <ul class="decorated orange">
+                @if (Model.selfManagement.Count() != 0)
+                {
+                    foreach (var selfManagement in Model.selfManagement.Where(x => x.Length > 0))
+                    {
+                <text>
+                    <li>
+                        <span>@Html.Raw(selfManagement)</span>
+                    </li>
+                </text>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="cell">
+        <h3>@Translate.Message("L4332")</h3>
+        <div class="small-12 cell">
+            <ul class="decorated orange">
+                @if (Model.regularMedicalCare.Count() != 0)
+                {
+                    foreach (var medicalCare in Model.regularMedicalCare.Where(x => x.Length > 0))
+                    {
+                <text>
+                    <li>
+                        <span>@Html.Raw(medicalCare)</span>
+                    </li>
+                </text>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,101 @@
+﻿@using InterventWebApp
+@model InterventWebApp.InitialDashboardModel
+
+@{
+    ViewBag.Title = "Initial Dashboard New";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    ViewBag.Details = "InitialDashboardNew";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>InitialDashboardNew</title>
+</head>
+<body>
+    <section class="main initial-dashboard new-button">
+        <div class="grid-container">
+            <div class="grid-x grid-padding-x">
+                <div class="cell">
+                    <div class="main-title-content text-center">
+                        <h1>@Html.Raw(Translate.Message("L4381"))</h1>
+                        <p>@Translate.Message("L4382")</p>
+                        <p><a href="@Url.Action("ProgramIntro", "Participant")" class="button">@Translate.Message("L4383")</a></p>
+                        <h2 class="text-center">@Translate.Message("L4384")</h2>
+                    </div>
+
+                    @Html.Raw(Model.dashboardContent)
+                    @*<div class="program-features">
+                        <div class="features-card">
+                            <div class="grid-x">
+                                <div class="cell left-cell medium-4 large-4">
+                                    <div>
+                                        <img src="../Images/participant/icon-free-coaching.svg" alt="Coaching calls" />
+                                        <h3>@Translate.Message("L4385")</h3>
+                                        <ul>
+                                            <li>@Translate.Message("L4386")</li>
+                                            <li>@Translate.Message("L4387")</li>
+                                            <li>@Translate.Message("L4388")</li>
+                                            <li>@Translate.Message("L4389")</li>
+                                            <li>@Translate.Message("L4390")</li>
+                                            <li>@Translate.Message("L4391")</li>
+                                            <li>@Translate.Message("L4392")</li>
+                                            <li>@Translate.Message("L4393")</li>
+                                        </ul>
+                                        @Translate.Message("L4394")
+                                    </div>
+                                </div>
+                                <div class="cell middle-cell medium-4 large-4">
+                                    <div>
+                                        <img src="../Images/participant/rewards.svg" alt="Rewards" />
+                                        <h3>@Translate.Message("L4395")</h3>
+                                        <p>@Translate.Message("L4396")</p>
+                                        <p>@Translate.Message("L4397")</p>
+                                    </div>
+                                </div>
+                                <div class="cell right-cell medium-4 large-4">
+                                    <div>
+                                        <img src="../Images/participant/achieve-personal-goals.svg" alt="Personal Goals" />
+                                        <h3>@Translate.Message("L4398")</h3>
+                                        <ul>
+                                            <li>
+                                                @Translate.Message("L4399")
+                                            </li>
+                                            <li>
+                                                @Translate.Message("L4400")
+                                            </li>
+                                            <li>
+                                                @Translate.Message("L4401")
+                                            </li>
+                                            <li>
+                                                @Translate.Message("L4402")
+                                            </li>
+                                            <li>
+                                                @Translate.Message("L4403")
+                                            </li>
+                                            <li>
+                                                @Translate.Message("L4404")
+                                            </li>
+                                            <li>
+                                                @Translate.Message("L4405")
+                                            </li>
+                                            <li>
+                                                @Translate.Message("L4406")
+                                            </li>
+                                            <li>
+                                                @Translate.Message("L4407")
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

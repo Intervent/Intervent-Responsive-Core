@@ -1,0 +1,354 @@
+﻿@model InterventWebApp.TobaccoLogModel
+@using InterventWebApp
+@{
+    ViewBag.Title = "TobaccoLog";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main search-participants">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="small-7 left cell">
+                    <h2>@Translate.Message("L2135")</h2>
+                </div>
+                @if (Model.HasActivePortal)
+                {
+                    <div class="small-5 cell text-right">
+                        <button id="add-tobacco-button" data-open="add-tobacco" class="button plus-btn right">@Translate.Message("L291")</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div id="search-results"></div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <!-- pagination Start -->
+                <div class="pagination-area hide" id="pagination-centered">
+                    <ul>
+                        <li id="numeric"></li>
+                    </ul>
+                    <!-- page-link Start -->
+                    <div class="page-link">
+                        <label>@Translate.Message("L4041")</label>
+                        <div class="grid-x">
+                            <input type="text" id="jumptoPageNo">
+                            <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                        </div>
+                    </div>
+                    <!-- page-link End -->
+                </div>
+                <!-- pagination End -->
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <div class="panel" id="chart-results" hidden>
+                    <div id="chart4div" style="width:100%;height:500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<div id="add-tobacco" class="reveal medium" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form data-abide id="tobacco-form" novalidate>
+        <h2 class="text-center">@Translate.Message("L2173")</h2>
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>@Translate.Message("L561")</label>
+                @Html.TextBoxFor(x => x.tobaccoLog.Date, new Dictionary<string, object> { { "class", "fdatepicker" }, { "required", "required" } })
+                <small class="form-error">@Translate.Message("L480")</small>
+            </div>
+            <div class="cell medium-6">
+                <label>@Translate.Message("L2174")</label>
+                @Html.TextBoxFor(x => x.tobaccoLog.Location, new { @required = "required" })
+                <small class="form-error">@Translate.Message("L480")</small>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>@Translate.Message("L2175")</label>
+                @Html.TextBoxFor(x => x.tobaccoLog.UsedWith, new { @required = "required" })
+                <small class="form-error">@Translate.Message("L480")</small>
+            </div>
+            <div class="cell medium-6">
+                <label>@Translate.Message("L564")</label>
+                @Html.TextBoxFor(x => x.tobaccoLog.Trigger, new { @required = "required" })
+                <small class="form-error">@Translate.Message("L480")</small>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-12">
+                <label>@Translate.Message("L1717")</label>
+                @Html.TextAreaFor(x => x.tobaccoLog.Notes)
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right">
+                <button class="small" type="submit">@Translate.Message("L968")</button>
+            </div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeTobacco">@Translate.Message("L967")</button></div>
+        </div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        @Html.HiddenFor(x => x.tobaccoLog.Id)
+        <input id="tobaccoLogDate" type="hidden">
+    </form>
+</div>
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $("#tobaccoLog_Date").on("change", function () {
+        $('#tobaccoLogDate').val(toSystemDateFormat(this.value, "24hour"));
+    });
+
+
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+
+    $(document).ready(function () {
+        $('.fdatepicker').fdatepicker({
+            format: '@Model.DateFormat.ToLower() hh:ii',
+            endDate: new Date(),
+            disableDblClickSelection: true,
+            pickTime: true
+        });
+
+        ListTobacco();
+
+        $('#tobacco-form').foundation();
+        $('#tobacco-form')
+        .on('forminvalid.zf.abide', function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+            console.log(invalid_fields);
+        })
+        .on('formvalid.zf.abide', function ()  {
+        $('#tobaccoLog_Date').val($('#tobaccoLogDate').val());
+        var id = $('#tobaccoLog_Id').val();
+        $("#loader-wrapper").fadeIn();
+        $.ajax({
+            url: "@Url.Action("AddtoTobaccoLog", "Journal")",
+            data: $("#tobacco-form").serialize(),
+            type: 'POST',
+            dataType: "json",
+            success: function () {
+                startIndex = 0;
+                pageSize = 15;
+                totalRecords = 0;
+                currentPage = 0;
+                totalPages = 0;
+                ListTobacco();
+                $('#add-tobacco').foundation('close');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+        })
+        // to prevent form from submitting upon successful validation
+        .on("submit", function (ev) {
+            ev.preventDefault();
+
+        })
+
+
+        $('#closeTobacco').on('click', function () {
+            $('#add-tobacco').foundation('close');
+        });
+
+    });
+
+    $("#add-tobacco-button").on('click', function () {
+        $("#tobacco-form").find('input:text, input:password, input:file, select, textarea').val('');
+    })
+
+    function ListTobacco() {
+        $('#tobaccoLog_Id').val('');
+        var paginationdata = {
+            'page': currentPage,
+            'pageSize': pageSize,
+            'totalRecords': totalRecords
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+        $.ajax({
+            url: "@Url.Action("ListTobaccoLog", "Journal")",
+            data: strData,
+            type: 'POST',
+            contentType: 'application/json, charset=utf-8',
+            dataType: "json",
+            success: function (data) {
+                $('#search-results').html("");
+                if (data != null && data.Records.tobaccoLogLists.length > 0) {
+
+                    totalRecords = data.Records.totalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    //get current date
+                    var today = new Date();
+                    var ddate = today.getDate().toString();
+                    var mmonth = (today.getMonth() + 1).toString();
+                    var year = today.getFullYear().toString();
+                    var currentDate = (mmonth[1] ? mmonth : "0" + mmonth[0]) + '-' + (ddate[1] ? ddate : "0" + ddate[0]) + '-' + year;
+                    //build table
+                    var tobaccoHtml = [];
+                    var tobaccoData = [], firstDate, lastDate;
+                    var tobaccoHtml = "<table class='table'>";
+                    tobaccoHtml += "<tr><th class='pink'>@Translate.Message("L561")</th><th class='pink'>@Translate.Message("L2175")</th><th class='pink'>@Translate.Message("L564")</th><th class='pink'>@Translate.Message("L2174")</th><th class='pink'></th></tr>"
+                    for (var i = 0; i < data.Records.tobaccoLogList.length; i++) {
+                        var tobacco = data.Records.tobaccoLogLists[i];
+                        var date = new Date(parseInt(tobacco.Date.substr(6)));
+                        tobaccoHtml += "<tr><td>" + toLocalDateFormat(date, "12hour") + "</td>" + "<td>" + tobacco.UsedWith + "</td>" +
+                            "<td>" + tobacco.Trigger + "</td>" + "<td>" + tobacco.Location + "</td>";
+                        if ('@Model.HasActivePortal.ToString()' == "True") {
+                            tobaccoHtml += "<td><a onclick='Update(" + tobacco.Id + ")'><i class='fa fa-file-o'></i></a></td>";
+                        }
+                        tobaccoHtml += "</tr>";
+                    }
+                    for (var i = 0; i < data.Records.tobaccoLogLists.length; i++) {
+                        var tobacco = data.Records.tobaccoLogLists[i];
+                        var date = new Date(parseInt(tobacco.Date.substr(6)));
+                        if (i == 0) {
+                            firstDate = lastDate = date;
+                        }
+                        else if (date < firstDate) {
+                            firstDate = date;
+                        }
+                        else if (date > lastDate) {
+                            lastDate = date;
+                        }
+                        var yyyy = date.getFullYear().toString();
+                        var mm = (date.getMonth() + 1).toString();
+                        var dd = date.getDate().toString();
+                        var hrs = date.getHours().toString();
+                        var mins = date.getMinutes().toString();
+
+                        var dateVal = (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]) + "-" + yyyy;
+                        var dateTimeVal = currentDate + " " + (hrs[1] ? hrs : "0" + hrs[0]) + ":" + (mins[1] ? mins : "0" + mins[0]);
+                        tobaccoData.push({ "date": dateVal, "ay": dateTimeVal, "timeofuse": hrs + ":" + mins, "where": tobacco.Location, "withwhom": tobacco.UsedWith, "trigger": tobacco.Trigger, "notes": tobacco.Notes });
+                    }
+                    tobaccoHtml += "</table>";
+                    $('#search-results').append(tobaccoHtml);
+                    $('#chart-results').show();
+                    GenerateChart(tobaccoData, firstDate, lastDate);
+                }
+                else {
+                $('#search-results').append('<center>@Translate.Message("L2774")</center>');}
+                AddPager();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListTobacco();
+    }
+
+    function GenerateChart(data, firstDate, lastDate) {
+        am4core.addLicense("CH39169069");
+        am4core.options.onlyShowOnViewport = true;
+        var chart = am4core.create("chart4div", am4charts.XYChart);
+
+        chart.data = data;
+        chart.dateFormatter.inputDateFormat = "MM-dd-yyyy HH:mm";
+        // Create axes
+        var xAxis = chart.xAxes.push(new am4charts.DateAxis());
+        xAxis.dataFields.category = "category";
+        xAxis.renderer.grid.template.location = 0;
+        //xAxis.renderer.minGridDistance = 50;
+
+        var yAxis = chart.yAxes.push(new am4charts.DateAxis());
+        yAxis.title.text= "@Translate.Message("L725")";
+        // Create series
+
+        var series2 = chart.series.push(new am4charts.LineSeries());
+        series2.dataFields.dateY = "ay";
+        series2.dataFields.dateX = "date";
+        series2.strokeOpacity = 0;
+        series2.cursorTooltipEnabled = false;
+
+        var bullet2 = series2.bullets.push(new am4charts.Bullet());
+        bullet2.tooltipHTML = "<b>{date}</b> <br/> @Translate.Message("L2176") <b>{timeofuse}</b> <br/> @Translate.Message("L2177"):<b>{where}</b> <br/> @Translate.Message("L2175"):<b>{withwhom}</b> <br/> @Translate.Message("L564"):<b>{trigger}</b> <br/> @Translate.Message("L1717"):<b>{notes}</b>";
+
+        var rectangle2 = bullet2.createChild(am4core.Rectangle);
+        rectangle2.verticalCenter = "middle";
+        rectangle2.horizontalCenter = "middle";
+        rectangle2.width = 10;
+        rectangle2.height = 10;
+        rectangle2.rotation = 45;
+        rectangle2.stroke = am4core.color("#ff0000");
+        rectangle2.strokeWidth = 1;
+        rectangle2.fill=am4core.color("#ff0000");
+        rectangle2.nonScalingStroke = true;
+        series2.heatRules.push({
+          target: rectangle2,
+          min: 1,
+          max: 6,
+          property: "scale"
+        });
+
+        // Add scrollbars
+        chart.scrollbarX = new am4core.Scrollbar();
+        chart.scrollbarY = new am4core.Scrollbar();
+
+        // Add cursor
+        chart.cursor = new am4charts.XYCursor();
+        chart.cursor.behavior = "zoomXY";
+    }
+
+    function Update(id) {
+        $.ajax({
+            url: "@Url.Action("ReadTobaccoLog", "Journal")",
+            data: { id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    $('#tobaccoLog_Id').val(data.Record.Id);
+                    var Stdate = new Date(parseInt(data.Record.Date.substr(6)));
+                    var tobDate = toLocalDateFormat(Stdate, "24hour");
+                    $("#tobaccoLog_Date").val(tobDate);
+                    $("#tobaccoLog_Location").val(data.Record.Location);
+                    $("#tobaccoLog_UsedWith").val(data.Record.UsedWith);
+                    $("#tobaccoLog_Trigger").val(data.Record.Trigger);
+                    $("#tobaccoLog_Notes").val(data.Record.Notes);
+
+                    $('#add-tobacco').foundation('open');
+                    $("#tobaccoLog_Date").trigger("change");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+</script>

@@ -1,0 +1,3069 @@
+﻿@using InterventWebApp
+@model InterventWebApp.FoodDiaryDetailsModel
+
+<div class="welcome-title">
+	<div class="food-entry-date">
+        <label for="food-date">@Translate.Message("L4480")</label>
+		@if (!Model.mousehover)
+		{
+            <input type="text" class="input-date" id="food-date">
+		}
+		else
+		{
+            <span class="foodDate">@Model.foodDate</span>
+		}
+	</div>
+</div>
+
+<div class="food-form-header">
+	<div class="food-entry-tabs main-tabs">
+		<ul class="tabs" id="food-entry-tabs">
+			<li class="tabs-title is-active" data-tablink="food-breakfast"><a href="food-breakfast" onclick="TabChange(event, 'food-breakfast')">@Translate.Message("L3556")</a></li>
+			<li class="tabs-title" data-tablink="food-snack"><a href="food-snack" onclick="TabChange(event, 'food-snack')">@Translate.Message("L3558")</a></li>
+			<li class="tabs-title" data-tablink="food-lunch"><a href="food-lunch" onclick="TabChange(event, 'food-lunch')">@Translate.Message("L3557")</a></li>
+			<li class="tabs-title" data-tablink="food-dinner"><a href="food-dinner" onclick="TabChange(event, 'food-dinner')">@Translate.Message("L3559")</a></li>
+		</ul>
+	</div>
+
+</div>
+
+<div class="food-form-body">
+	<div class='content-box @(Model.FoodDiaryAccess == 3 ? "food-fat-only" : "") @(Model.FoodDiaryAccess >= 4 ? "food-fat-crabs" : "")'>
+		<div class="tabs-wrapper" data-tabs-content="food-entry-tabs">
+			<div class="tabs-panel is-active" id="food-breakfast">
+				<ul class="food-entry-list">
+					<li class="table-title">
+						<div>@Translate.Message("L1728")</div>
+						<div>
+							<div class="grid-x grid-margin-x">
+								@if (Model.FoodDiaryAccess >= 3)
+								{
+									<div class="cell small-4">@Translate.Message("L4040")</div>
+								}
+								@if (Model.FoodDiaryAccess >= 4)
+								{
+									<div class="cell small-4">@Translate.Message("L2785")</div>
+								}
+								@if (Model.FoodDiaryAccess >= 4)
+								{
+									<div class="cell small-4">@Translate.Message("L1697")</div>
+								}
+							</div>
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-meat.png">
+								<span>@Translate.Message("L3560")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 1).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 1 && food.FoodGroupId == 1)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {
+                                    <div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>
+                                            }
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+                                                        <button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+                                                        <button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								@if (Model.HasActivePortal)
+                                {
+									<div class="add-food-details">
+										<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(1, 1)">@Translate.Message("L291")</button>
+									</div>
+                                }
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 1).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 1 && food.FoodGroupId == 1)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-grains.png">
+								<span>@Translate.Message("L3791")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 2).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 1 && food.FoodGroupId == 2)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {
+                                    <div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>
+                                            }
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+                                                    <p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(2, 1)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 2).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 1 && food.FoodGroupId == 2)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-fruit.png">
+								<span>@Translate.Message("L1644")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 3).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 1 && food.FoodGroupId == 3)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(3, 1)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 3).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 1 && food.FoodGroupId == 3)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-non-starch-veg.png">
+								<span>@Translate.Message("L1645")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 4).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 1 && food.FoodGroupId == 4)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(4, 1)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 4).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 1 && food.FoodGroupId == 4)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-milk.png">
+								<span>@Translate.Message("L3564")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 5).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 1 && food.FoodGroupId == 5)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(5, 1)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 5).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 1 && food.FoodGroupId == 5)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-others.png">
+								<span>@Translate.Message("L3565")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 6).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 1 && food.FoodGroupId == 6)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(6, 1)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 1 && x.FoodGroupId == 6).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 1 && food.FoodGroupId == 6)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+				</ul>
+			</div>
+
+			<div class="tabs-panel" id="food-snack">
+				<ul class="food-entry-list">
+					<li class="table-title">
+						<div>@Translate.Message("L1728")</div>
+						<div>
+							<div class="grid-x grid-margin-x">
+								@if (Model.FoodDiaryAccess >= 3)
+								{
+									<div class="cell small-4">@Translate.Message("L4040")</div>
+								}
+								@if (Model.FoodDiaryAccess >= 4)
+								{
+									<div class="cell small-4">@Translate.Message("L2785")</div>
+								}
+								@if (Model.FoodDiaryAccess >= 4)
+								{
+									<div class="cell small-4">@Translate.Message("L1697")</div>
+								}
+							</div>
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-meat.png">
+								<span>@Translate.Message("L3560")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 1).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 2 && food.FoodGroupId == 1)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(1, 2)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 1).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 2 && food.FoodGroupId == 1)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-grains.png">
+								<span>@Translate.Message("L3791")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 2).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 2 && food.FoodGroupId == 2)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(2, 2)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 2).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 2 && food.FoodGroupId == 2)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-fruit.png">
+								<span>@Translate.Message("L1644")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 3).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 2 && food.FoodGroupId == 3)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(3, 2)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 3).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 2 && food.FoodGroupId == 3)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-non-starch-veg.png">
+								<span>@Translate.Message("L1645")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 4).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 2 && food.FoodGroupId == 4)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(4, 2)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 4).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 2 && food.FoodGroupId == 4)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-milk.png">
+								<span>@Translate.Message("L3564")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 5).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 2 && food.FoodGroupId == 5)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(5, 2)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 5).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 2 && food.FoodGroupId == 5)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-others.png">
+								<span>@Translate.Message("L3565")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 6).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 2 && food.FoodGroupId == 6)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(6, 2)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 2 && x.FoodGroupId == 6).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 2 && food.FoodGroupId == 6)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+				</ul>
+			</div>
+
+			<div class="tabs-panel" id="food-lunch">
+				<ul class="food-entry-list">
+					<li class="table-title">
+						<div>@Translate.Message("L1728")</div>
+						<div>
+							<div class="grid-x grid-margin-x">
+								@if (Model.FoodDiaryAccess >= 3)
+								{
+									<div class="cell small-4">@Translate.Message("L4040")</div>
+								}
+								@if (Model.FoodDiaryAccess >= 4)
+								{
+									<div class="cell small-4">@Translate.Message("L2785")</div>
+								}
+								@if (Model.FoodDiaryAccess >= 4)
+								{
+									<div class="cell small-4">@Translate.Message("L1697")</div>
+								}
+							</div>
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-meat.png">
+								<span>@Translate.Message("L3560")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 1).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 3 && food.FoodGroupId == 1)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(1, 3)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 1).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 3 && food.FoodGroupId == 1)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-grains.png">
+								<span>@Translate.Message("L3791")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 2).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 3 && food.FoodGroupId == 2)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(2, 3)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 2).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 3 && food.FoodGroupId == 2)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-fruit.png">
+								<span>@Translate.Message("L1644")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 3).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 3 && food.FoodGroupId == 3)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(3, 3)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 3).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 3 && food.FoodGroupId == 3)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-non-starch-veg.png">
+								<span>@Translate.Message("L1645")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 4).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 3 && food.FoodGroupId == 4)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(4, 3)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 4).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 3 && food.FoodGroupId == 4)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-milk.png">
+								<span>@Translate.Message("L3564")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 5).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 3 && food.FoodGroupId == 5)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(5, 3)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 5).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 3 && food.FoodGroupId == 5)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-others.png">
+								<span>@Translate.Message("L3565")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 6).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 3 && food.FoodGroupId == 6)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(6, 3)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 3 && x.FoodGroupId == 6).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 3 && food.FoodGroupId == 6)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+				</ul>
+			</div>
+
+			<div class="tabs-panel" id="food-dinner">
+				<ul class="food-entry-list">
+					<li class="table-title">
+						<div>@Translate.Message("L1728")</div>
+						<div>
+							<div class="grid-x grid-margin-x">
+								@if (Model.FoodDiaryAccess >= 3)
+								{
+									<div class="cell small-4">@Translate.Message("L4040")</div>
+								}
+								@if (Model.FoodDiaryAccess >= 4)
+								{
+									<div class="cell small-4">@Translate.Message("L2785")</div>
+								}
+								@if (Model.FoodDiaryAccess >= 4)
+								{
+									<div class="cell small-4">@Translate.Message("L1697")</div>
+								}
+							</div>
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-meat.png">
+								<span>@Translate.Message("L3560")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 1).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 4 && food.FoodGroupId == 1)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(1, 4)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 1).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 4 && food.FoodGroupId == 1)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-grains.png">
+								<span>@Translate.Message("L3791")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 2).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 4 && food.FoodGroupId == 2)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(2, 4)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 2).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 4 && food.FoodGroupId == 2)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-fruit.png">
+								<span>@Translate.Message("L1644")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 3).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 4 && food.FoodGroupId == 3)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(3, 4)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 3).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 4 && food.FoodGroupId == 3)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-non-starch-veg.png">
+								<span>@Translate.Message("L1645")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 4).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 4 && food.FoodGroupId == 4)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(4, 4)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 4).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 4 && food.FoodGroupId == 4)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-milk.png">
+								<span>@Translate.Message("L3564")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 5).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 4 && food.FoodGroupId == 5)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(5, 4)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 5).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 4 && food.FoodGroupId == 5)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+
+					<li>
+						<div>
+							<div class="food-category">
+								<img src="~/Images/program/icon-others.png">
+								<span>@Translate.Message("L3565")</span>
+							</div>
+
+                            <div class="food-entry-details">
+                                @if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 6).Count() > 0)
+                            {
+                                foreach (var food in Model.FoodDiaryList)
+                                {
+                                    if (food.MealTypeId == 4 && food.FoodGroupId == 6)
+                                    {
+                                <div class="details-summary food-@food.Id">
+                                    <div id="label-Name-@food.Id" class="food-name">@food.Name</div>
+                                    @if (Model.FoodDiaryAccess >= 2 && @food.ServingSize != null)
+                                            {<div id="label-ServingSize-@food.Id" class="food-servings count-circle">@food.ServingSize</div>}
+                                    <div class="food-details-trigger show-details-trigger" data-toggle="food-details-@food.Id">@Translate.Message("L2166")</div>
+                                    <div class="food-dropdown-pane" id="food-details-@food.Id">
+                                        <div id="edit-form-@food.Id">
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L3742")</label>
+                                                <input id="@food.Id-Name" type="text" value="@food.Name" maxlength="255" required />
+                                            </div>
+                                            @if (Model.FoodDiaryAccess >= 2)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L2144")</label>
+                                                <input id="@food.Id-ServingSize" value="@food.ServingSize" onkeypress="ValidateTwoDecimalPoint(this, event);" type="text" min="0" required />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 3)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1699")</label>
+                                                <input id="@food.Id-FatGrams" value="@food.FatGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+                                            @if (Model.FoodDiaryAccess >= 4)
+                                                    {
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1698")</label>
+                                                <input id="@food.Id-CarbGrams" value="@food.CarbGrams" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                            <div class="food-entry-item">
+                                                <label>@Translate.Message("L1697")</label>
+                                                <input id="@food.Id-CarbChoices" value="@food.CarbChoices" onkeypress="ValidateDecimal(this, event);" type="text" min="0" />
+                                            </div>
+                                                    }
+
+														<div class="food-entry-item button-group inactive-portal">
+															<button class="button hollow">@Translate.Message("L967")</button>
+															<button class="button" onclick="EditFoodDetails(@food.Id, '')">@Translate.Message("L968")</button>
+														</div>
+
+
+													</div>
+												</div>
+
+												<div class="food-detail-delete">
+													<span data-open="@food.Id-delete-confirmation"><img src="~/Images/delete-icon-red.svg"></span>
+												</div>
+
+												<div class="reveal" id="@food.Id-delete-confirmation" data-reveal data-multiple-opened="true">
+													<p>@Translate.Message("L4481") @food.Name?</p>
+													<div class="flex-container align-justify align-middle">
+														<button class="button" onclick="DeleteFood(@food.Id)" data-close>@Translate.Message("L3704")</button>
+														<button class="button hollow" data-close>@Translate.Message("L967")</button>
+													</div>
+												</div>
+											</div>
+										}
+									}
+								}
+
+								<div class="add-food-details new-button">
+									<button class="button plus-btn" data-toggle="add-food-details" onclick="AddFood(6, 4)">@Translate.Message("L291")</button>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="additional-entry-details show-for-small-only"></div>
+							@if (Model.FoodDiaryList.Count > 0 && Model.FoodDiaryList.Where(x => x.MealTypeId == 4 && x.FoodGroupId == 6).Count() > 0)
+							{
+								foreach (var food in Model.FoodDiaryList)
+								{
+									if (food.MealTypeId == 4 && food.FoodGroupId == 6)
+									{
+										<div class="additional-entry-details grid-x grid-margin-x food-@food.Id">
+											@if (Model.FoodDiaryAccess >= 3)
+											{
+												<div class="cell small-4" id="label-FatGrams-@food.Id">
+													@food.FatGrams @if (food.FatGrams != null)
+													{@Html.Raw('g')}
+												</div>
+											}
+											@if (Model.FoodDiaryAccess >= 4)
+											{
+												<div class="cell small-4" id="label-CarbGrams-@food.Id">
+													@food.CarbGrams @if (food.CarbGrams != null)
+													{@Html.Raw('g')}
+												</div>
+												<div class="cell small-4" id="label-CarbChoices-@food.Id">@food.CarbChoices</div>
+											}
+										</div>
+									}
+								}
+							}
+						</div>
+					</li>
+				</ul>
+			</div>
+
+			<div class="dropdown-pane" data-dropdown data-auto-focus="true" id="add-food-details" data-position="bottom" data-alignment="right">
+				<form id="add-food-form" data-abide novalidate autocomplete="off">
+					<div>
+						<div class="food-entry-item">
+							<label>@Translate.Message("L3742")</label>
+							@Html.TextBoxFor(x => x.FoodDiary.Name, new Dictionary<string, object> { { "maxlength", "255" }, { "required", "required" } })
+						</div>
+						<small class="form-error" data-form-error-for="FoodDiary_Name">@Translate.Message("L480")</small>
+
+                        @*@if (Model.recentFoodNames != null)
+                            {*@
+                        <div class="recent-food-entry-list">
+                            <div>
+                                <p>Recent items</p>
+                                @foreach (var foodname in Model.fg1RecentItems)
+                            {
+                                <span class="foodGroup1">@foodname</span>
+                            }
+                                @foreach (var foodname in Model.fg2RecentItems)
+                            {
+                                <span class="foodGroup2">@foodname</span>
+                            }
+                                @foreach (var foodname in Model.fg3RecentItems)
+                            {
+                                <span class="foodGroup3">@foodname</span>
+                            }
+                                @foreach (var foodname in Model.fg4RecentItems)
+                            {
+                                <span class="foodGroup4">@foodname</span>
+                            }
+                                @foreach (var foodname in Model.fg5RecentItems)
+                            {
+                                <span class="foodGroup5">@foodname</span>
+                            }
+                                @foreach (var foodname in Model.fg6RecentItems)
+                            {
+                                <span class="foodGroup6">@foodname</span>
+                            }
+                            </div>
+                        </div>
+                        @*  }*@
+                    </div>
+                    @if (Model.FoodDiaryAccess >= 2)
+                {
+                    <div>
+                        <div class="food-entry-item">
+                            <label>@Translate.Message("L2144")</label>
+                            @Html.TextBoxFor(x => x.FoodDiary.ServingSize, new Dictionary<string, object> { { "onkeypress", "ValidateTwoDecimalPoint(this, event)" }, { "required", "required" },  { "min", "0" } })
+                        </div>
+                        <small class="form-error" data-form-error-for="FoodDiary_ServingSize">@Translate.Message("L480")</small>
+                    </div>
+                }
+                    @if (Model.FoodDiaryAccess >= 3)
+                {
+                    <div>
+                        <div class="food-entry-item">
+                            <label>@Translate.Message("L1699")</label>
+                            @Html.TextBoxFor(x => x.FoodDiary.FatGrams, new Dictionary<string, object> { { "onkeypress", "ValidateDecimal(this, event)" }, { "min", "0" } })
+                        </div>
+                        <small class="form-error" data-form-error-for="FoodDiary_FatGrams">@Translate.Message("L480")</small>
+                    </div>
+                }
+                    @if (Model.FoodDiaryAccess >= 4)
+                {
+                    <div>
+                        <div class="food-entry-item">
+                            <label>@Translate.Message("L1698")</label>
+                            @Html.TextBoxFor(x => x.FoodDiary.CarbGrams, new Dictionary<string, object> { { "onkeypress", "ValidateDecimal(this, event)" }, { "min", "0" } })
+                        </div>
+                        <small class="form-error" data-form-error-for="FoodDiary_CarbGrams">@Translate.Message("L480")</small>
+                    </div>
+
+						<div>
+							<div class="food-entry-item">
+								<label>@Translate.Message("L1697")</label>
+								@Html.TextBoxFor(x => x.FoodDiary.CarbChoices, new Dictionary<string, object> { { "onkeypress", "ValidateDecimal(this, event)" }, { "min", "0" } })
+							</div>
+							<small class="form-error" data-form-error-for="FoodDiary_CarbChoices">@Translate.Message("L480")</small>
+						</div>
+					}
+					<div class="food-entry-item button-group">
+						<button class="button hollow" type="button" data-toggle="add-food-details">@Translate.Message("L283")</button>
+						<button class="button" type="submit">@Translate.Message("L418")</button>
+					</div>
+
+					<input id="foodDiaryDate" type="hidden">
+					@Html.HiddenFor(x => x.FoodDiary.MealTypeId)
+					@Html.HiddenFor(x => x.FoodDiary.FoodGroupId)
+					@Html.HiddenFor(x => x.FoodDiary.Date)
+				</form>
+			</div>
+		</div>
+	</div>
+
+		<div class="food-modal-close text-center">
+			<button class="button" onclick="CloseModel()" data-close>@Translate.Message("L2995")</button>
+		</div>
+
+</div>
+<button class="close-button" data-close onclick="CloseModel()" type="button">
+	<span aria-hidden="true">&times;</span>
+</button>
+
+<script>
+
+	$(document).ready(function () {
+		if ("@Model.HasActivePortal" != "True")
+		{
+            $('.add-food-details').addClass('hide');
+            $('.food-detail-delete').addClass('hide');
+            $('.food-details-trigger').addClass('hide');
+		}
+		
+        $('#food-date').fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        });
+        $('#food-date').val($('#date-diary').val());
+        $('#foodDiaryDate').val($('#hdate-diary').val());
+
+		$("#food-date").on("change", function (ev) {
+            $('#date-diary').val($('#food-date').val());
+			$('#hdate-diary').val(toSystemDateFormat($('#date-diary').val()));
+			ListFoodDetails(ev, 'food-entry', true);
+        });
+
+        $('#add-food-form').foundation();
+        $('#add-food-form').on('forminvalid.zf.abide', function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+        }).on('formvalid.zf.abide', function (ev) {
+			$('#FoodDiary_Date').val($('#foodDiaryDate').val());
+			var id = $(this).parents('.food-entry-modal').attr('id');
+            $.ajax({
+                url: "@Url.Action("AddtoFoodDiary", "Journal")",
+                data: $("#add-food-form").serialize(),
+                type: 'POST',
+                dataType: "json",
+				success: function (data) {
+					reload = true;
+                    ListFoodDetails(ev, id, false);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+            $("#loader-wrapper").fadeOut();
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        });
+
+        $(".show-details-trigger").on("click", function () {
+            var target = $(this).data("toggle");
+            if($(this).parents(".details-summary").find("#"+target).is(":visible")) {
+                $(this).parents(".details-summary").find("#"+target).hide();
+            }
+            else {
+                $(".food-dropdown-pane").hide();
+                $(this).parents(".details-summary").find("#"+target).toggle();
+            }
+            $('#add-food-details').foundation('close');
+        });
+
+        $(".food-dropdown-pane button.hollow").on("click", function () {
+			$(this).parents(".food-dropdown-pane").hide();
+        });
+
+        $("#food-date").fdatepicker().on('show', function () {
+            $(".datepicker").css("position", "fixed");
+        });
+        $("#food-date").fdatepicker().on('hide', function () {
+            $(".datepicker").css("position", "absolute");
+        });
+
+        $(".recent-food-entry-list span").on("click", function () {
+            var foodName = $(this).text();
+            $(".recent-food-entry-list span").removeClass("is-selected");
+            $(this).addClass("is-selected");
+            $("input#FoodDiary_Name").val(foodName);
+        });
+
+    }); // document ready ends
+
+    function AddFood(foodType, mealType) {
+        $(".foodGroup1, .foodGroup2, .foodGroup3, .foodGroup4, .foodGroup5, .foodGroup6").addClass("hide");
+        if ($(".foodGroup" + foodType + "").length) {
+            $(".recent-food-entry-list").removeClass("hide");
+            $(".foodGroup" + foodType + "").removeClass("hide");
+        }
+        else {
+            $(".recent-food-entry-list").addClass("hide");
+        }
+        $("#FoodDiary_MealTypeId").val(mealType);
+        $("#FoodDiary_FoodGroupId").val(foodType);
+    }
+
+
+	function CloseModel() {
+		$('.edit-cal-entry').removeClass('is-open');
+        if (reload) {
+            LoadFoodDetails();
+            $('#food-entry').foundation('close');
+        }
+        else {
+			$('#food-entry').foundation('close');
+            RemoveAddDetails();
+        }
+    }
+
+	function TabChange(e, id) {
+		e.preventDefault();
+		e.stopPropagation();
+		if (id == "")
+			tabTarget = "food-breakfast";
+		else
+			tabTarget = id;
+		$tabLink = $('[data-tablink="' + tabTarget + '"]');
+		if (!$tabLink.hasClass('is-active')) {
+			$('#food-entry-tabs li').removeClass('is-active');
+			$tabLink.addClass('is-active');
+			$('[data-tabs-content="food-entry-tabs"] .tabs-panel').removeClass('is-active');
+			$('[data-tabs-content="food-entry-tabs"] #' + tabTarget).addClass('is-active');
+		}
+		else {
+			return;
+		}
+    }
+
+</script>

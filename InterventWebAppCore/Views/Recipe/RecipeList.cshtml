@@ -1,0 +1,174 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+@model IEnumerable<Intervent.Web.DTO.RecipesDto>
+
+@{
+	ViewBag.Title = "RecipeList";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+    <div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="cell">
+				<div class="main-content-wrapper">
+					<div class="grid-x grid-margin-x">
+						<div class="cell">
+							<div class="primary-section-top">
+								<div class="grid-x grid-margin-x">
+									<div class="cell medium-8">
+										<h2>Recipes</h2>
+									</div>
+									<div class="cell medium-4 text-right">
+										<button id="add-recipes-button" data-open="add-recipes-data" class="button"><i class="fa fa-plus"></i>Add</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="cell">
+							<div id="search-results" class="main-results-table-container recipe-list-table"></div>
+						</div>
+						<div class="cell">
+							<!-- pagination Start -->
+							<div class="pagination-area main-results-table-container hide" id="pagination-centered">
+								<ul>
+									<li id="numeric"></li>
+								</ul>
+								<!-- page-link Start -->
+								<div class="page-link">
+									<label>@Translate.Message("L4041")</label>
+									<div class="grid-x">
+										<input type="text" id="jumptoPageNo">
+										<button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+									</div>
+								</div>
+								<!-- page-link End -->
+							</div>
+							<!-- pagination End -->
+						</div>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<div id="add-recipes-data" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+	<form id="add-recipes-data" data-abide novalidate class="form-component">
+		<div class="grid-container">
+			<div class="grid-x grid-margin-x">
+				<div class="cell">
+					<label for="name">
+						Name
+						<input type="text" id="name" required />
+						<small class="form-error">Required</small>
+					</label>
+					
+					<label for="direction">
+						Direction
+						<textarea id="direction" cols="3"> </textarea>
+					</label>
+					
+					<label for="ingredients">
+						Ingredients
+						<textarea cols="3" id="ingredients"> </textarea>
+					</label>
+					
+					<label for="serving">
+						Serving Count
+						<input type="number" id="serving" />
+					</label>					
+				</div>
+			</div>
+			<div class="grid-x grid-margin-x button-set">
+				<div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="submit">Save</button></div>
+				<div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeRecipe">Cancel</button></div>
+
+			</div>
+		</div>
+	</form>
+</div>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $(document).ready(function () {
+        ListRecipes();
+        $('#closeRecipe').on('click', function () {
+            $('#add-recipes-data').foundation('close');
+        });
+    });
+
+    function ListRecipes() {
+        $('#search-results').html("");
+        $.ajax({
+            url: "@Url.Action("ListRecipes", "Recipe")",
+            data: { page: currentPage, pageSize: pageSize, totalRecords: totalRecords },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    if (data.Records != null) {
+                        totalRecords = data.TotalRecords;
+                        totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+						var recipesHtml = "<table class='table basic-table1'>";
+                        recipesHtml += "<thead><tr><th>Name</th><th>Active</th><th></th></tr></thead>";
+                        for (var i = 0; i < data.Records.length; i++) {
+                            var recipe = data.Records[i];
+							recipesHtml += "<tr><td>" + recipe.Name + "</td><td>" + recipe.IsActive + "</td><td><a class='anchor-blue' href='../Recipe/RecipeDetails/" + recipe.Id +"'><i class='fa fa-pencil fa-fw'></i></a></td></tr >";
+                        }
+                        recipesHtml += "</table>";
+                        $('#search-results').append(recipesHtml);
+                    }
+                    AddPager();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListRecipes();
+    }
+    $("#add-recipes-data").foundation();
+    $("#add-recipes-data").on('formvalid.zf.abide', function () {
+        var name = $("#name").val();
+        var description = $("#description").val();
+        var direction = $('#direction').val();
+        var ingredients = $('#ingredients').val();
+        var serving = $('#serving').val();
+        $.ajax({
+            url: "@Url.Action("CreateRecipe", "Recipe")",
+            data: { name: name, ingredients: ingredients, direction: direction, serving: serving },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#add-recipes-data').foundation('close');
+                $("#add-recipes-data").find('input:text, input:password, input:file, select, textarea').val('');
+                startIndex = 0;
+                pageSize = 15;
+                totalRecords = 0;
+                currentPage = 0;
+                totalPages = 0;
+                ListRecipes();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    })
+
+    function addRecipe(name, id) {
+        var appendHtml = "<td>" + name + "</td>";
+        appendHtml += "<td>" + true + "</td>";
+        appendHtml += "<td><a href='../Recipe/Details/" + id + "'><i class='fa fa-pencil fa-fw'></i></a></td>";
+        return appendHtml;
+    }
+</script>

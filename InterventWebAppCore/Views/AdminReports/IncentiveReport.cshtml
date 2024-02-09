@@ -1,0 +1,65 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+@model InterventWebApp.ReportSelectModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x scheduler-offset-small-only">
+                <div class="small-12 large-6 left cell">
+                   @Html.Partial("_ReportSelect", Model, new ViewDataDictionary(ViewData) { { "Kind", "IncentiveReport" } })
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="grid-container">
+        <div class="panel filters">
+            <fieldset>
+                <div class="callout hide" id="alert-message1" data-closable>
+                    <div id="alert"></div>
+                    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <legend>Report Criteria</legend>
+                <div class="grid-x grid-padding-x">
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.portal, Model.PortalList, "--Select Portal--", new Dictionary<string, object> { { "class", "primary-select" } })
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <select id="FileType" required class="primary-select">
+                            <option selected disabled>Download As</option>
+                            <option id="1" value="1">Text File</option>
+                            <option id="2" value="2">CSV File</option>
+                        </select>
+                    </div>
+                    <div class="small-12 medium-6 medium-offset-6 cell text-right">
+                        <button class="secondary-color small" onclick="DownloadData();" type="submit">
+                            <i class="fa fa-download"></i>
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</section>
+<script>
+    function DownloadData() {
+        var filtype = $('#FileType').val();
+        var portalId = $('#portal').val();
+        if (portalId && filtype) {
+            $('#alert-message1').addClass('hide');
+            window.location = "../AdminReports/ListIncentiveReport?PortalId=" + portalId + "&filetype=" + filtype;
+        }
+        else {
+            $('#alert-message1').removeClass('hide');
+            if (!portalId || !filtype) 
+                $('#alert').html('Portal and download type are required.');
+        }
+            
+    }
+</script>
+

@@ -1,0 +1,450 @@
+﻿@model InterventWebApp.UserinProgramModel
+@using Intervent.Web.DTO
+@using InterventWebApp
+
+@if (Model.userinProgram != null && Model.userinProgram.KitsinUserPrograms != null && Model.userinProgram.KitsinUserPrograms.Where(x => x.IsActive == true).Count() > 0)
+{
+    var Kits = Model.userinProgram.KitsinUserPrograms.Where(x => x.IsActive == true).ToList();
+    <div class="kit-container">
+        <div class="kit-header">
+            <ul class="tabs rounded-tabs status-tabs" data-tabs id="status-tabs">
+                <li class="tabs-title is-active"><a href="#active" aria-selected="true">@Translate.Message("L3938")</a></li>
+                <li class="tabs-title"><a href="#completed">@Translate.Message("L3939")</a></li>
+            </ul>
+            <div class="search-box"></div>
+        </div>
+
+        <div class="tabs-content" data-tabs-content="status-tabs">
+            <div class="tabs-panel is-active" id="active">
+                @if (Model.userinProgram.KitsinUserPrograms.Where(x => !x.CompleteDate.HasValue && x.IsActive == true).Any())
+                {
+                    var latestKit = Model.userinProgram.KitsinUserPrograms.Where(x => !x.CompleteDate.HasValue && x.IsActive == true).FirstOrDefault();
+                    <div class="kit-category">
+                        <h6>@Translate.Message("L3940") :</h6>
+                        <div class="kit-list incompleted-kit">
+                            <div class="kit-list-inner">
+                                <div class="media">
+                                    <img src="~/Images/program/@latestKit.Kit.KitTopic.Image" alt="" />
+                                </div>
+                                <div class="content">
+                                    <div class="title-content ">
+                                        <p class="title">@Html.Raw(Translate.Message(latestKit.Kit.KitTopic.Name)) <span><a href="@Html.Raw(Url.Action("ViewKit", "Kit", new { id = latestKit.KitId, kitsInUserProgramId = latestKit.Id }))">@Html.Raw(Translate.Message(latestKit.Kit.Name))</a></span></p>
+                                        @if (Model.IsKitCompletionIncentive)
+                                        {
+                                        <p class="info">@Translate.Message("L3941") <img src="~/Images/program/icon-circle.svg" alt="" /> @Model.KitCompletionPoints @Translate.Message("L1716")</p>
+                                        }
+                                    </div>
+                                    <div class="kit-progress-circle">
+                                        <h4>@latestKit.PercentCompleted%</h4>
+                                        <div class="circle-graph" data-circle-graph data-percent="@latestKit.PercentCompleted">
+                                            <div class="circle-graph-progress">
+                                                <div class="circle-graph-progress-fill"></div>
+                                            </div>
+                                            <div class="circle-graph-percents"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            @if(Model.hasActivePortal)
+                            {
+                                if (Model.StepName != null)
+                                {
+                                    <div class="kit-other">
+                                        <p>@Translate.Message("L3940") :<b>@Model.StepName.StepName</b></p>
+                                        <a href="@Html.Raw(Url.Action("ViewKit", "Kit", new { id = latestKit.KitId, kitsInUserProgramId = latestKit.Id }))"><button class="button">@(latestKit.PercentCompleted == 0 ? Translate.Message("L3942") : Translate.Message("L4275"))</button></a>
+                                    </div>
+                                }
+
+                                <div class="more-content">
+                                    @*@if (latestKit.KitsinUserProgramGoals.Count > 0)
+                                    {
+                                        <div class="msg-contnet">
+                                            <div class="content">
+                                                <p><b>You successfully completed your HRA.</b></p>
+                                                <p>@latestKit.KitsinUserProgramGoals[0].Goals</p>
+                                                <div class="grid-x">
+                                                    <div class="cell small-12 medium-6 checkboxs">
+                                                        @Translate.Message("L3924")
+                                                        @if (latestKit.KitsinUserProgramGoals[0].GoalsAchieved)
+                                                        {
+                                                            <input type="checkbox" checked="checked" readonly disabled>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" class="achieveKitGoal" value="@latestKit.KitsinUserProgramGoals[0].Id">
+                                                        }
+                                                        <span class="checkmark"></span>
+                                                    </div>
+                                                    <div class="cell small-12 medium-6 other">
+                                                        @if (Model.IsKitGoalCompletionIncentive)
+                                                        {
+                                                            <p>@Translate.Message("L3943") <img src="~/Images/program/icon-circle.svg" alt="" /> <b>@Model.KitCompletionPoints @Translate.Message("L1716")</b></p>
+                                                        }
+                                                        </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }*@
+
+
+                                    @if ((Model.StepNames != null && Model.StepNames.Any(x => x.PageIdentifier == "KC" || x.IsAppendix)) || (Model.EduKit != null && !string.IsNullOrEmpty(Model.EduKit.Pdf)) || (Model.EduKit != null && !string.IsNullOrEmpty(Model.EduKit.Audio)))
+                                    {
+                                        <div class="resources-contnet">
+                                            <h5>@Translate.Message("L2032")</h5>
+                                            <div class="resource-slider">
+                                                @foreach (var step in @Model.StepNames)
+                                                {
+                                                    if (step.PageIdentifier == "KC" || step.IsAppendix)
+                                                    {
+                                                        <div class="resource-thumb">
+                                                            @if (step.PageIdentifier == "KC")
+                                                            {
+                                                                <div class="media">
+                                                                    <a href="@Html.Raw(Url.Action("ViewKit", "Kit", new { id = latestKit.KitId, kitsInUserProgramId = latestKit.Id, index = step.Index, pageIdentifier = "KC" }))"><img src="~/Images/program/key-concept.svg" alt="" /></a>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="media">
+                                                                    <a href="@Html.Raw(Url.Action("ViewKit", "Kit", new { id = latestKit.KitId, kitsInUserProgramId = latestKit.Id, index = step.Index, pageIdentifier = step.PageIdentifier  }))"><img src="~/Images/program/other-generic.png" alt="" /></a>
+                                                                </div>
+                                                            }
+                                                            <div class="content">
+
+                                                                @if (step.PageIdentifier == "KC")
+                                                                {
+                                                                    <h4>
+                                                                        <a href="@Html.Raw(Url.Action("ViewKit", "Kit", new { id = latestKit.KitId, kitsInUserProgramId = latestKit.Id, index = step.Index, pageIdentifier = "KC" }))"> @Translate.Message("L3816")</a>
+                                                                    </h4>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <h4>
+                                                                        <a href="@Html.Raw(Url.Action("ViewKit", "Kit", new { id = latestKit.KitId, kitsInUserProgramId = latestKit.Id, index = step.Index, pageIdentifier =  step.PageIdentifier }))"> @step.StepName</a>
+                                                                    </h4>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                                @if (Model.EduKit != null && !string.IsNullOrEmpty(Model.EduKit.Pdf))
+                                                {
+                                                    var pdfs = Model.EduKit.Pdf.Split(';');
+                                                    for (int i = 0; i < pdfs.Count(); i++)
+                                                    {
+                                                        <a href="~/Pdf/@pdfs[i]" target="_blank">
+                                                            <div class="resource-thumb">
+                                                                <div class="media">
+                                                                    <img src="~/Images/program/other-generic.png" alt="" />
+                                                                </div>
+                                                                <div class="content">
+                                                                    <h4>@pdfs[i].Split('.')[0]</h4>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    }
+                                                }
+                                                @if (Model.EduKit != null && !string.IsNullOrEmpty(Model.EduKit.Audio))
+                                                {
+                                                    <div href='#' onclick="listenAudio()" class="resource-thumb">
+                                                        <div class="media">
+                                                            <img src="~/Images/program/audio.svg" alt="" />
+                                                        </div>
+                                                        <div class="content">
+                                                            <h4>@Translate.Message("L2179")</h4>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                            @* <button class="button hollow">See all details</button>*@
+                                        </div>
+                                    }
+                                </div>
+                                if ((Model.StepNames != null && Model.StepNames.Any(x => x.PageIdentifier == "KC" || x.IsAppendix)) || (Model.EduKit != null && !string.IsNullOrEmpty(Model.EduKit.Pdf)) || (Model.EduKit != null && !string.IsNullOrEmpty(Model.EduKit.Audio)))
+                                {
+                                    <a class="mlink" href="javascript:void(0);">@Html.Raw(Translate.Message("L3944"))</a>
+                                }
+                            }
+                        </div>
+
+                    </div>
+                    <div class="kit-category">
+                        @{var kitCount = 0;}
+                        @for (int i = 0; i < Kits.Count(); i++)
+                        {
+                            var kit = Kits[i];
+                            if (!kit.CompleteDate.HasValue && kit.Id != latestKit.Id)
+                            {
+                                kitCount = kitCount + 1;
+                                if (kitCount <= 2)
+                                {
+                                    <div class="kit-list incompleted-kit">
+                                        <div class="kit-list-inner">
+                                            <div class="media">
+                                                <img src="~/Images/program/@kit.Kit.KitTopic.Image" alt="" />
+                                            </div>
+                                            <div class="content">
+                                                <div class="title-content ">
+                                                    <p class="title">@Html.Raw(Translate.Message(kit.Kit.KitTopic.Name))<span><a href="@Html.Raw(Url.Action("ViewKit", "Kit", new { id = kit.KitId, kitsInUserProgramId = kit.Id }))">@Html.Raw(Translate.Message(kit.Kit.Name))</a></span></p>
+                                                    @if (Model.IsKitCompletionIncentive)
+                                                    {
+                                                    <p class="info">@Translate.Message("L3941") <img src="~/Images/program/icon-circle.svg" alt="" /> @Model.KitCompletionPoints @Translate.Message("L1716")</p>
+                                                    }
+                                                </div>
+                                                <div class="kit-progress-circle">
+                                                    @if (Model.userinProgram.ProgramsinPortal.program.ProgramType == 2)
+                                                    {
+                                                        <h4>@kit.PercentCompleted%</h4>
+                                                        <div class="circle-graph" data-circle-graph data-percent="@kit.PercentCompleted">
+                                                            <div class="circle-graph-progress">
+                                                                <div class="circle-graph-progress-fill"></div>
+                                                            </div>
+                                                            <div class="circle-graph-percents"></div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        if (kit.Id != latestKit.Id)
+                                                        {
+                                                            <!--<div class="kit-locked">
+                                                                <span data-tooltip class="top" tabindex="2" title="Complete your current kit before proceeding to the next one." data-template-classes="self-kit-tooltip"><img src="~/Images/program/locked-kit-icon.jpg" alt="i" /></span>
+                                                            </div>-->
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                else
+                                {
+                                    <div class="kits-acc">
+                                        <div class="kit-list incompleted-kit">
+                                            <div class="kit-list-inner">
+                                                <div class="media">
+                                                    <img src="~/Images/program/@kit.Kit.KitTopic.Image" alt="" />
+                                                </div>
+                                                <div class="content">
+                                                    <div class="title-content ">
+                                                        <p class="title">@Html.Raw(Translate.Message(kit.Kit.KitTopic.Name))<span><a href="@Html.Raw(Url.Action("ViewKit", "Kit", new { id = kit.KitId, kitsInUserProgramId = kit.Id }))">@Translate.Message(kit.Kit.Name)</a></span></p>
+                                                        @if (Model.IsKitCompletionIncentive)
+                                                        {
+                                                        <p class="info">@Translate.Message("L3941") <img src="~/Images/program/icon-circle.svg" alt="" /> @Model.KitCompletionPoints @Translate.Message("L1716")</p>
+                                                        }
+                                                    </div>
+                                                    <div class="kit-progress-circle">
+                                                        @if (Model.userinProgram.ProgramsinPortal.program.ProgramType == 2)
+                                                        {
+                                                            <h4>@kit.PercentCompleted%</h4>
+                                                            <div class="circle-graph" data-circle-graph data-percent="@kit.PercentCompleted">
+                                                                <div class="circle-graph-progress">
+                                                                    <div class="circle-graph-progress-fill"></div>
+                                                                </div>
+                                                                <div class="circle-graph-percents"></div>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (kit.Id != latestKit.Id)
+                                                            {
+                                                                <!--<div class="kit-locked">
+                                                                    <span data-tooltip class="top" tabindex="2" title="Complete your current kit before proceeding to the next one." data-template-classes="self-kit-tooltip"><img src="~/Images/program/locked-kit-icon.jpg" alt="i" /></span>
+                                                                </div>-->
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+                        @if (kitCount > 2)
+                        {
+                            <a class="link" href="#">@Translate.Message("L3945")</a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-kits" id="incompleted-empty-state">
+                        <div class="no-kits-msg">
+                            <img src="~/Images/program/empty-active-kits-img.png" alt="" />
+                            <p>@Translate.Message("L3946").</p>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="tabs-panel" id="completed">
+                @if (Model.userinProgram.KitsinUserPrograms.Where(x => x.CompleteDate.HasValue && x.IsActive == true).Any())
+                {
+                    <div class="kit-category">
+                        @for (int i = 0; i < Kits.Count(); i++)
+                        {
+                            var kit = Kits[i];
+                            if (kit.CompleteDate.HasValue)
+                            {
+                                <div class="kit-list completed-kit">
+                                    <div class="kit-list-inner">
+                                        <div class="media">
+                                            <img src="~/Images/program/@kit.Kit.KitTopic.Image" alt="" />
+                                        </div>
+                                        <div class="content">
+                                            <div class="title-content">
+                                                <p class="title">@Html.Raw(Translate.Message(kit.Kit.KitTopic.Name)) <span><a href="@Html.Raw(Url.Action("ViewKit", "Kit", new { id = kit.KitId, kitsInUserProgramId = kit.Id }))">@Html.Raw(Translate.Message(kit.Kit.Name))</a></span></p>
+                                                <p class="info">
+                                                    @if (Model.IsKitCompletionIncentive)
+                                                    {
+                                                    @Translate.Message("L4077")  @Convert.ToDateTime(kit.CompleteDate).ToString("MMM")  @Convert.ToDateTime(kit.CompleteDate).ToString("dd")
+                                                        var pointsText = Model.KitCompletionPoints + " " + Translate.Message("L3921") + "";
+                                                    <img src="~/Images/program/icon-circle.svg" alt="" />  @pointsText
+                                                    }
+                                                </p>
+                                            </div>
+                                            <div class="status">
+                                                <img src="~/Images/program/tick-mark-big.svg" alt="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @if (kit.KitsinUserProgramGoals.Count > 0)
+                                    {
+                                        if (kit.KitsinUserProgramGoals.FirstOrDefault().GoalsAchieved)
+                                        {
+                                            <div class="kit-list-bottom">
+                                                <h5>@Translate.Message("L3947")</h5>
+                                                <p><span><img src="~/Images/program/tick-mark-small.svg" alt="" /></span><span>@kit.KitsinUserProgramGoals.FirstOrDefault().Goals</span></p>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="kit-list-bottom">
+                                                <h5>@Translate.Message("L3948")</h5>
+                                                <p><span><img src="~/Images/program/worng-mark.svg" alt="" /></span><span>@kit.KitsinUserProgramGoals.FirstOrDefault().Goals</span></p>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-kits" id="completed-empty-state">
+                        <div class="no-kits-msg">
+                            <img src="~/Images/program/empty-completed-kits-img.png" alt="" />
+                            <p>@Translate.Message("L3949")</p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+}
+<div id="modal-audio" class="reveal small" data-reveal>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    @if (Model.EduKit != null && !string.IsNullOrEmpty(Model.EduKit.Audio))
+    {
+        var audios = Model.EduKit.Audio.Split(';');
+        if (audios.Count() > 0)
+        {
+            foreach (var audio in audios)
+            {
+                var title = Model.EduKit.Name;
+                @Html.Raw(title + ":");
+                {
+                    <div class="grid-x grid-margin-x">
+                        <div class="medium-6 cell">
+                            <audio controls preload="none" id="audio-@title">
+                                <source src="~/Audio/@audio">
+                            </audio>
+                        </div>
+                    </div>
+                }
+            }
+        }
+    }
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/MyProgram.js")"></script>
+<script>
+    $(document).ready(function () {
+        $("[data-circle-graph]").each(function () {
+            var $graph = $(this),
+                percent = parseInt($graph.data('percent'), 10),
+                deg = 360 * percent / 100;
+            if (percent > 50) {
+                $graph.addClass('gt-50');
+            }
+            $graph.find('.circle-graph-progress-fill').css('transform', 'rotate(' + deg + 'deg)');
+            if ($graph.parents('div#past').length == 0) {
+                if (percent == 100) {
+                    $(this).parents("li").addClass("hide");
+                }
+                else {
+                    $(this).closest(".kit-category").find("h5").removeClass("hide");
+                }
+            }
+        });
+
+    @*$(".achieveKitGoal").on('click', function () {  
+        $(this).prop('disabled', true);
+        var goalsId = $(this).val();
+        $.ajax({
+            data: { goalsId: goalsId, achieveGoal: true },
+            url: "@Url.Action("AddEditActionGoals", "Kit")",
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+
+            }
+        });
+    });*@
+
+        // $(".mlink").on('click', function () {
+        //     $(this).toggleClass('active');
+        //     $(this).text($(this).text() == '@Translate.Message("L3944")' ? '@Translate.Message("L3951")' : '@Translate.Message("L3944")');
+        //     $('.more-content').slideToggle("fast");
+        //     resource_slider();
+        // });
+
+
+        // $("a.link").on('click', function (ev) {
+        //     ev.preventDefault();
+        //     $(".kits-acc").slideToggle("fast");
+        //     $(this).text($(this).text() == '@Translate.Message("L3945")' ? '@Translate.Message("L3950")' : '@Translate.Message("L3945")');
+        // })
+
+        //$("#status-tabs").foundation();
+
+        // slider_num('.pagingInfo', '.goal-slider');
+        // slider_num('.pagingInfo', '.wellness-slider');
+
+        // $(".tips-slider").slick({
+        //     dots: false,
+        //     infinite: false,
+        //     variableWidth: true
+        // });
+
+        $(document).on("click", ".exercise-plan-table .tick-buttons label", function () {
+            if ($(this).find("input").is(":checked")) {
+                $(this).parents("tr").addClass("is-complete");
+            } else {
+                $(this).parents("tr").removeClass("is-complete");
+            }
+        });
+    });
+
+    $("#closeModal").on('click', function () {
+        $("#modal-audio").find("audio").each(function () {
+            var myAudio = document.getElementById(this.id);
+            myAudio.pause();
+        });
+    });
+</script>

@@ -1,0 +1,540 @@
+﻿@model InterventWebApp.CRMProfileModel
+@using InterventWebApp
+
+<div class="crm-form-title align-justify align-middle flex-container">
+    <h2>@(Model.CRM_Contact == null ? "Create New Profile" : "Profile details")</h2>
+    <a href="" id="close-new-profile">Close</a>
+</div>
+<div class="create-profile-form" id="crm-contact">
+    <form data-abide novalidate id="create-contact-from" autocomplete="off" class="form-component">
+        <div class="form-section">
+            <p>Primary Info</p>
+
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-4">
+					<label>
+						First Name
+						@Html.TextBoxFor(m => m.CRM_Contact.FirstName, new { @placeholder = "First Name", @required = "required", @pattern = "[a-zA-Z]+", @maxLength = 50 })
+						<small class="form-error">@Translate.Message("L432")</small>
+					</label>
+                </div>
+
+                <div class="cell medium-4">
+					<label>
+						Last Name
+						@Html.TextBoxFor(m => m.CRM_Contact.LastName, new { @placeholder = "Last Name", @required = "required", @pattern = "[a-zA-Z]+", @maxLength = 50 })
+						<small class="form-error">@Translate.Message("L433")</small>
+					</label>
+                </div>
+
+                <div class="cell medium-4">
+					<label>
+						Phone Number
+						@Html.TextBoxFor(m => m.CRM_Contact.PhoneNumber1, new { @id = "PhoneNumber1", @placeholder = "Phone Number", @type = "tel", @maxLength = 25 })
+					</label>
+                </div>
+
+                <div class="cell medium-4">
+					<label>
+						Email
+						@Html.TextBoxFor(m => m.CRM_Contact.Email, new { @placeholder = "Email", @type = "email", @maxLength = 50 })
+						<small class="form-error">@Translate.Message("L434")</small>
+					</label>
+                </div>
+
+                <div class="medium-4 cell">
+					<label>
+						Gender
+						@Html.DropDownListFor(m => m.CRM_Contact.Gender, Model.GenderList, "----Select----")
+					</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <p>Additional Info</p>
+
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-4">
+					<label>
+						Date of Birth
+						@Html.TextBoxFor(m => m.CRM_Contact.DOB, new { @placeholder = "Date of birth", @class = "fdatepicker", @Id = "DOB" })
+						<input id="dateofBirth" type="hidden">
+					</label>
+                </div>
+
+                <div class="cell medium-4">
+					<label>
+						Phone Number 2
+						@Html.TextBoxFor(m => m.CRM_Contact.PhoneNumber2, new { @id = "PhoneNumber2", @placeholder = "Phone Number 2", @type = "tel", @maxLength = 25 })
+					</label>
+                </div>
+
+                <div class="cell medium-4">
+					<label>
+						Phone Number 3
+						@Html.TextBoxFor(m => m.CRM_Contact.PhoneNumber3, new { @id = "PhoneNumber3", @placeholder = "Phone Number 3", @type = "tel", @maxLength = 25 })
+					</label>
+                </div>
+
+                <div class="medium-4 cell">
+					<label>
+						Insurance Type
+						@Html.DropDownListFor(m => m.InsuranceType, Model.InsuranceTypes, new Dictionary<string, object> { { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "Select" } })
+					</label>
+                </div>
+
+                <div class="cell medium-8">
+					<label for="">
+						Notes
+						@Html.TextAreaFor(m => m.CRM_Contact.Notes, new { @placeholder = "Notes" })
+					</label>
+                </div>
+                <div class="cell medium-4 pogo-serial-number">
+					<label class="options-main-label">
+						POGO Serial Number
+						@if (Model.CRM_Contact != null && Model.CRM_Contact.CRM_PogoMeterNumbers.Count > 0)
+						{
+							for (int i = 0; i < Model.CRM_Contact.CRM_PogoMeterNumbers.Count; i++)
+							{
+								<input id="PogoMeterNumber-@(i + 1)" maxlength="50" name="pogoMeterNumber" placeholder="POGO Serial Number" type="text" value="@Model.CRM_Contact.CRM_PogoMeterNumbers[i].PogoMeterNumber">
+							}
+
+						}
+						else
+						{
+							<input id="PogoMeterNumber-1" maxlength="50" name="pogoMeterNumber" placeholder="POGO Serial Number" type="text">
+						}
+					</label>
+					<div class="new-record-container hide"></div>
+                    @if (Model.CRM_Contact == null || Model.CRM_Contact.CRM_PogoMeterNumbers.Count < 3)
+                    {
+                        <a href="#" class="add-new-record" id="addNewPogoMeter"><i class="fa fa-plus"></i> Add serial number</a>
+                    }
+                </div>
+                <div class="cell medium-4">
+                    <label class="options-main-label">Opted-in for Marketing?</label>
+                    <div class="flex-container">
+                        <div class="tick-buttons radio-btn">
+                            @Html.RadioButtonFor(M => M.CRM_Contact.OptedIn, 1, new Dictionary<string, object> { { "id", "yesOptedIn" }, { "data-validator", "validateOptedIn" } })
+                            <label for="yesOptedIn">
+                                Yes
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="tick-buttons radio-btn">
+                            @Html.RadioButtonFor(M => M.CRM_Contact.OptedIn, 2, new Dictionary<string, object> { { "id", "noOptedIn" }, { "data-validator", "validateOptedIn" } })
+                            <label for="noOptedIn">
+                                No
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="tick-buttons radio-btn">
+                            @Html.RadioButtonFor(M => M.CRM_Contact.OptedIn, 3, new Dictionary<string, object> { { "id", "naOptedIn" }, { "data-validator", "validateOptedIn" } })
+                            <label for="naOptedIn">
+                                NA
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <small class="form-error" data-form-error-for="naOptedIn" id="optedInError">@Translate.Message("L480")</small>
+                </div>
+                @{string uniqueId = "", hideClass = "hide"; }
+                @if (Model.CRM_Contact != null && Model.CRM_Contact.UniqueId != null)
+                {
+                    hideClass = "";
+                    uniqueId = Model.CRM_Contact.UniqueId;
+                }
+                <div class="cell medium-4 linked-eligibility @hideClass">
+                    <label>Linked Eligibility</label>
+                    <label><span id="uniqueId">@uniqueId</span><a data-open="remove-eligibility"> x</a></label>
+                </div>
+                <div class="cell medium-4 select-eligibility hide">
+                    <label>Select Eligibility</label>
+                    <div class="search-bar">
+                        <input type="text" class="user-picker typeahead tt-input" id="userSearch" placeholder="Search" autocomplete="off" spellcheck="false" dir="auto" maxlength="200">
+                        <button class="search-btn" onclick="searchByOrgName()"></button>
+                    </div>
+                    <div id="confirm-eligibility-link" class="hide">
+                        <a data-open="confirm-eligibility">Link this Eligibility Record <em>(Unique ID)</em></a>
+                    </div>
+                    @Html.Hidden("UniqueId")
+                    @Html.Hidden("EligibilityOrgId")
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <p>Address Info</p>
+
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6">
+					<label>
+						Street Address
+						@Html.TextBoxFor(m => m.CRM_Contact.Address, new { @placeholder = Translate.Message("L1620"), @maxLength = 255 })
+						<small class="form-error">@Translate.Message("L949").</small>
+					</label>
+                </div>
+
+                <div class="cell medium-6">
+					<label>
+						City
+						@Html.TextBoxFor(m => m.CRM_Contact.City, new { @placeholder = Translate.Message("L1621"), @maxLength = 50 })
+						<small class="form-error">@Translate.Message("L965").</small>
+					</label>
+                </div>
+
+                <div class="cell medium-4">
+					<label>
+						Country
+						@Html.DropDownListFor(m => m.CRM_Contact.Country, Model.Countries, "----Select----")
+						<small class="form-error">@Translate.Message("L988").</small>
+					</label>
+                </div>
+
+                <div class="cell medium-4">
+					<label>
+						State
+						@Html.DropDownListFor(m => m.CRM_Contact.State, Model.States, "----Select----")
+						<small class="form-error">@Translate.Message("L970").</small>
+					</label>
+                </div>
+
+                <div class="cell medium-4">
+					<label>
+						Zip Code
+						@Html.TextBoxFor(m => m.CRM_Contact.Zip, new { @placeholder = Translate.Message("L971"), @maxLength = 15 })
+					</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <p>Secondary Address Info</p>
+
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6">
+					<label>
+						Street Address
+						@Html.TextBoxFor(m => m.CRM_Contact.Address2, new { @placeholder = Translate.Message("L1620"), @maxLength = 255 })
+						<small class="form-error">@Translate.Message("L949").</small>
+					</label>
+                </div>
+
+                <div class="cell medium-6">
+					<label>
+						City
+						@Html.TextBoxFor(m => m.CRM_Contact.City2, new { @placeholder = Translate.Message("L1621"), @maxLength = 50 })
+						<small class="form-error">@Translate.Message("L965").</small>
+					</label>
+                </div>
+
+                <div class="cell medium-4">
+					<label>
+						Country
+						@Html.DropDownListFor(m => m.CRM_Contact.Country2, Model.Countries, "----Select----")
+						<small class="form-error">@Translate.Message("L988").</small>
+					</label>
+                </div>
+
+                <div class="cell medium-4">
+					<label>
+						State
+						@Html.DropDownListFor(m => m.CRM_Contact.State2, Model.States2, "----Select----")
+						<small class="form-error">@Translate.Message("L970").</small>
+					</label>
+                </div>
+
+                <div class="cell medium-4">
+					<label>
+						Zip Code
+						@Html.TextBoxFor(m => m.CRM_Contact.Zip2, new { @placeholder = Translate.Message("L971"), @maxLength = 15 })
+					</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-submit new-button">
+            <button class="button">Save Profile</button>
+        </div>
+
+        @Html.HiddenFor(x => x.CRM_Contact.Id, new { @id = "CRM_Contact_Id" })
+        @Html.HiddenFor(x => x.CRM_Contact.PogoMeterNumber, new { @id = "CRM_Contact_PogoMeterNumber" })
+        @Html.HiddenFor(x => x.CRM_Contact.InsuranceType, new { @id = "CRM_Contact_InsuranceType" })
+    </form>
+</div>
+<div class="reveal confirm-eligibility" id="confirm-eligibility" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="text-center">
+        <p class="lead">Are you sure this is the correct person?</p>
+
+        <div class="flex-container align-middle align-justify">
+            <button class="button" id="confirmEligibility">Save</button>
+            <button class="button hollow" id="cancelEligibility" data-close>Cancel</button>
+        </div>
+    </div>
+</div>
+<div class="reveal remove-eligibility" id="remove-eligibility" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="text-center">
+        <p class="lead">Are you sure you want to remove the eligibility?</p>
+
+        <div class="flex-container align-middle align-justify">
+            <button class="button" id="removeEligibility">Remove</button>
+            <button class="button hollow" data-close>Cancel</button>
+        </div>
+    </div>
+</div>
+
+
+<script src="@Url.Content("~/Scripts/typeahead.jquery.min.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    $('.override-select').foundationSelect();
+    var element = document.getElementById("CRM_Contact_Zip");
+    $("#DOB").on("change", function () {
+        $('#dateofBirth').val(toSystemDateFormat(this.value));
+    });
+    Foundation.Abide.defaults.validators['validateOptedIn'] = function ($el, required, parent) {
+        if ($("input[name='CRM_Contact.OptedIn']:checked").length == 0) {
+            return false;
+        }
+        else {
+            $("#optedInError").removeClass('is-visible');
+            return true;
+        }
+    };
+
+    $(document).ready(function () {
+        $('.fdatepicker').fdatepicker({
+            format: '@Model.DateFormat.ToLower()',
+            endDate: new Date()
+        });
+        if ('@Model.dob' != '') {
+            $("#DOB").val(toLocalDateFormat('@Model.dob'));
+        }
+        @if (Model.CRM_Contact != null && Model.CRM_Contact.Id != 0 && string.IsNullOrEmpty(Model.CRM_Contact.UniqueId)) {
+            @:  $('.select-eligibility').removeClass('hide');
+        }
+
+        @if (Model.CRM_Contact != null && Model.CRM_Contact.InsuranceTypes != null) {
+            foreach (var insuranceType in Model.CRM_Contact.InsuranceTypes) {
+                @: $('li[data-value="@insuranceType.Id"]').trigger("click");
+            }
+        }
+
+        $("#DOB").trigger("change");
+
+        $("#create-contact-from").foundation();
+        $('#create-contact-from')
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                if (invalid_fields) {
+                    var scrollTo = $('#' + invalid_fields[0].id).position().top;
+                    $('body, html').animate({
+                        scrollTop: scrollTo
+                    }, 400);
+                }
+            })
+            .on('formvalid.zf.abide', function () {
+                var pogoMeterNumbers = document.getElementsByName('pogoMeterNumber');
+                var str = '';
+                for (var i = 0; i < pogoMeterNumbers.length; i++) {
+                    if (pogoMeterNumbers.item(i).value != '') {
+                        if (str == '')
+                            str = pogoMeterNumbers.item(i).value;
+                        else
+                            str = str + '|' + pogoMeterNumbers.item(i).value;
+                    }
+                }
+                $('#CRM_Contact_PogoMeterNumber').val(str);
+                $('#DOB').val($('#dateofBirth').val());
+                var insuranceType = getSelectItems("InsuranceType");
+                $('#CRM_Contact_InsuranceType').val(insuranceType);
+                $.ajax({
+                    url: "@Url.Action("AddEditCRMProfile", "CRM")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#create-contact-from").serialize(),
+                    success: function (data) {
+                        $("#create-contact-from").find('input:text, number, input:password, input:file, select, textarea, :input').val('');
+                        $('#newContactId').val(data.response.contactId);
+                        showAlertMessage("Contact record saved successfully");
+                        RefreshListNotes($('#newContactId').val(), 0);
+                        $(".create-profile-container, .add-new-records-container").toggleClass('hide');
+                        window.scrollTo(0, 0);
+                    }
+                })
+            })
+            // to prevent form from submitting upon successful validation
+            .on('submit', function (e) {
+                e.preventDefault();
+            });
+
+        $('#CRM_Contact_Country').on('change', function () {
+            CountryChange('CRM_Contact_Country', '', 'CRM_Contact_State', 'CRM_Contact_Zip', "@Url.Action("ListStates", "Common")", '', "", false, "@Url.Action("CheckIfCountryHasZipCode", "Common")");
+        });
+
+        $('#CRM_Contact_Country2').on('change', function () {
+            CountryChange('CRM_Contact_Country2', '', 'CRM_Contact_State2', 'CRM_Contact_Zip2', "@Url.Action("ListStates", "Common")", '', "", false, "@Url.Action("CheckIfCountryHasZipCode", "Common")");
+        });
+
+        $('#PhoneNumber1').on('change', function () {
+            ValidatePhoneNoExistence($('#PhoneNumber1').val());
+        });
+
+        $('#PhoneNumber2').on('change', function () {
+            ValidatePhoneNoExistence($('#PhoneNumber2').val());
+        });
+
+        $('#PhoneNumber3').on('change', function () {
+            ValidatePhoneNoExistence($('#PhoneNumber3').val());
+        });
+
+        $("input#escalations-switch").on('change', function() {
+            $(".escalation-card-cell").slideToggle();
+        });
+
+        $("#close-new-profile").on('click', function (e) {
+            e.preventDefault();
+            var isExistingContactId = $("#CRM_Contact_Id").val();
+            if (typeof isExistingContactId === "undefined" || isExistingContactId === '') {
+                $(".search-records-container, .records-list-container, .create-profile-container").toggleClass('hide');
+
+				if($(window).width() < 640) {
+					$(".crm-sidenav, .crm-device-back-btn").toggleClass("hide");
+				}
+
+            } else {
+                RefreshListNotes($('#newContactId').val(), 0);
+                $(".create-profile-container, .add-new-records-container").toggleClass('hide');
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $("a.add-new-record").on("click", function (e) {
+            e.preventDefault();
+            var pogoMeterCount = document.getElementsByName('pogoMeterNumber').length + 1;
+            $(".new-record-container").append('<input maxlength="50" name="pogoMeterNumber" id="PogoMeterNumber-' + (pogoMeterCount)  +'" placeholder="POGO Serial Number" type="text">');
+            $(this).siblings(".new-record-container").removeClass("hide");
+            if (pogoMeterCount == 3) {
+                $("#addNewPogoMeter").addClass("hide");
+            }
+        });
+
+		$("a.custom-dropdown-button").on("click", function (e) { e.preventDefault(); });
+
+		//typehead
+		var users = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('Name'),
+			queryTokenizer: Bloodhound.tokenizers.whitespace
+            , remote: {
+                url: '../Participant/ListEligibilityByUserName?name=%QUERY',
+				wildcard: "%QUERY"
+			},
+			limit: Number.MAX_VALUE
+		});
+
+		users.initialize();
+
+		$('.typeahead').typeahead({
+			hint: true,
+			highlight: true,
+			minLength: 3
+		}, {
+			name: 'users',
+			displayKey: 'Name',
+			source: users.ttAdapter(),
+			limit: 100
+		});
+        $('.typeahead').bind('typeahead:selected', function (ev, user) {
+            $("#UniqueId").val(user.Id);
+            $("#EligibilityOrgId").val(user.EligibilityOrgId);
+            $('#confirm-eligibility-link').removeClass('hide');
+        });
+		$('#confirm-eligibility').foundation();
+		$('#remove-eligibility').foundation();
+		$('#remove-eligibility').foundation();
+    });
+
+    $("#confirmEligibility").on('click', function () {
+        var crmId = $("#CRM_Contact_Id").val();
+        var uniqueId = $("#UniqueId").val();
+        var eligibilityOrgId = $("#EligibilityOrgId").val();
+        $.ajax({
+            data: { crmId: crmId, uniqueId: uniqueId, eligibilityOrgId: eligibilityOrgId },
+            dataType: "json",
+            type: 'POST',
+            url: '@Url.Action("AddEditEligibilityToCRM", "CRM")',
+            success: function (data) {
+                if (data.response.success) {
+                    if (uniqueId != "") {
+                        $('#confirm-eligibility').foundation('close');
+                        $('.select-eligibility').addClass('hide');
+                        $('#uniqueId').html(uniqueId);
+                        $('.linked-eligibility').removeClass('hide');
+                        $('#userSearch').val("");
+                        $('#confirm-eligibility-link').addClass('hide');
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    $("#removeEligibility").on('click', function () {
+        var crmId = $("#CRM_Contact_Id").val();
+        $.ajax({
+            data: { crmId: crmId, eligibilityId: null, eligibilityOrgId: null },
+            dataType: "json",
+            type: 'POST',
+            url: '@Url.Action("AddEditEligibilityToCRM", "CRM")',
+            success: function (data) {
+                if (data.response.success) {
+                    $('#remove-eligibility').foundation('close');
+                    $('.linked-eligibility').addClass('hide');
+                    $('.select-eligibility').removeClass('hide');
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+    $("#cancelEligibility").on('click', function () {
+        $('#userSearch').val("");
+        $('#confirm-eligibility-link').addClass('hide');
+    });
+    function ValidatePhoneNoExistence(phoneNo) {
+        if ('@(Model.CRM_Contact == null)' == 'True') {
+            $.ajax({
+                data: { phoneNumber: phoneNo },
+                dataType: "json",
+                type: 'POST',
+                url: '@Url.Action("ValidatePhoneNoExistence", "CRM")',
+                success: function (data) {
+                    if (data.isPhoneNumberExist == true) {
+                        showAlertMessage("Phone Number already exist.");
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+    }
+
+    function getSelectItems(id) {
+        var ddlValues = "";
+        var ddlElement = $("[name='" + id + "']");
+        if (ddlElement != null && ddlElement[0] != undefined) {
+            var selectObject = ddlElement[0].selectedOptions;
+            for (var i = 0; i < selectObject.length; i++) {
+                if (ddlValues == "") {
+                    ddlValues = selectObject[i].value
+                }
+                else {
+                    ddlValues = ddlValues + "|" + selectObject[i].value;
+                }
+            }
+        }
+        return ddlValues;
+    }
+</script>

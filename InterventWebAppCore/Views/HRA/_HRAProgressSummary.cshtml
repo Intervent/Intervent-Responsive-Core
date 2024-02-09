@@ -1,0 +1,71 @@
+﻿
+<div class="content-comparison hide">
+    <div class="row">
+        <div class="small-6 cell">
+            <div class="comparison-title">Measurements</div>
+        </div>
+        <div class="small-3 cell collapse small min">
+            <select>
+                <option selected="selected">T1/2015</option>
+                <option>T2/2015</option>
+            </select>
+        </div>
+        <div class="small-3 cell collapse small min">
+            <select>
+                <option>T1/2015</option>
+                <option selected="selected">T2/2015</option>
+            </select>
+        </div>
+    </div>
+    <div class="comparison-table">
+        <div class="grid-x grid-margin-x comparison-row">
+            <div class="small-6 cell">
+                <div class="title">{{title}}</div>
+            </div>
+            <div class="small-3 cell">
+                <div class="indicator {{indicator1}}"></div>
+                <div class="value">{{value1}}</div>
+            </div>
+            <div class="small-3 cell">
+                <div class="indicator {{indicator2}}"></div>
+                <div class="value">{{value2}}</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    //Comparison mock data
+    var measurements = [
+      { title: 'Weight (pounds)', measure1: { value: '164 lbs', kind: 'alert' }, measure2: { value: '150 lbs', kind: 'good' } },
+      { title: 'Height (inches)', measure1: { value: '74 (6.2)', kind: '' }, measure2: { value: '74 (6.2)', kind: '' } },
+      { title: 'Waist measurement (inches)', measure1: { value: '30', kind: 'optimal' }, measure2: { value: '35', kind: 'alert' } },
+      { title: 'Body mass index (BMI:kg/m2)', measure1: { value: '22', kind: '' }, measure2: { value: '23.8', kind: 'optimal' } },
+      { title: 'Systolic blood pressure (mmHg)', measure1: { value: '118', kind: 'good' }, measure2: { value: '118', kind: 'alert' } },
+      { title: 'Total Cholesterol (mg/dl)', measure1: { value: '76', kind: 'good' }, measure2: { value: '74', kind: 'optimal' } },
+      { title: 'Triglycerides, fasting (mg/dl)', measure1: { value: '199', kind: 'optimal' }, measure2: { value: '202', kind: 'alert' } },
+      { title: 'LDL Cholesterol, fasting (mg/dl)', measure1: { value: '149', kind: 'alert' }, measure2: { value: '130', kind: 'optimal' } },
+      { title: 'HDL Cholesterol (mg/dl)', measure1: { value: '99', kind: '' }, measure2: { value: '99', kind: '' } },
+      { title: 'Glucose, fasting (mg/dl)', measure1: { value: '51', kind: 'good' }, measure2: { value: '51', kind: '' } },
+      { title: 'Framingham 10-year CHD risk score (%)', measure1: { value: '35%', kind: '' }, measure2: { value: '5%', kind: 'optimal' } },
+      { title: '10-year ASCVD risk score (%)', measure1: { value: '6.2%', kind: 'good' }, measure2: { value: '4.1%', kind: 'optimal' } },
+      { title: 'Lifetime ASCVD risk score (%)', measure1: { value: '21%', kind: 'alert' }, measure2: { value: '15%', kind: 'good' } }
+    ];
+
+    buildComparisonTable = function () {
+        for (var i = 0; i < measurements.length; i++) {
+            var grid-x grid-margin-x = $('.comparison-row:first-child').clone();
+            var newHtml = row.html().split('{{title}}').join(measurements[i].title)
+                                    .split('{{value1}}').join(measurements[i].measure1.value)
+                                    .split('{{indicator1}}').join(measurements[i].measure1.kind)
+                                    .split('{{value2}}').join(measurements[i].measure2.value)
+                                    .split('{{indicator2}}').join(measurements[i].measure2.kind);
+            row.html(newHtml).appendTo('.comparison-table');
+        }
+        $('.comparison-row:first-child').remove();
+    }
+
+    buildComparisonTable();
+
+</script>

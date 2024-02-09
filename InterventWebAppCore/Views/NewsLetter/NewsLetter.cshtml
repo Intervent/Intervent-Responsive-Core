@@ -1,0 +1,317 @@
+﻿@model Intervent.Web.DTO.NewsletterDto
+@using InterventWebApp
+@{
+    ViewBag.Title = "AdminUsers";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="main-content-wrapper">
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell">
+                            <div class="primary-section-top">
+                                <div class="grid-x grid-margin-x">
+                                    <div class="cell small-6">
+                                        <h2>News letter</h2>
+                                    </div>
+                                    <div class="cell small-6 text-right">
+                                        <button id="add-newsletter-button" data-open="add-newsletter" class="button plus-btn">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cell">
+                            <div id="search-results" class="main-results-table-container newsletter-list-table"></div>
+                        </div>
+                        <div class="cell">
+                            <!-- pagination Start -->
+                            <div class="pagination-area main-results-table-container hide" id="pagination-centered">
+                                <ul>
+                                    <li id="numeric"></li>
+                                </ul>
+                                <!-- page-link Start -->
+                                <div class="page-link">
+                                    <label>@Translate.Message("L4041")</label>
+                                    <div class="grid-x">
+                                        <input type="text" id="jumptoPageNo">
+                                        <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                                    </div>
+                                </div>
+                                <!-- page-link End -->
+                            </div>
+                            <!-- pagination End -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="add-newsletter" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+
+    <div class="grid-container">
+        <div class="grid-x">
+            <div class="cell">
+                <form id="add-newsletter-data" data-abide novalidate class="form-component">
+                    <div class="grid-x">
+                        <div class="cell medium-12">
+                            <label for="name">
+                                Name
+                                <input type="hidden" id="Id" />
+                                <input type="text" id="name" required />
+                                <small class="form-error">Required</small>
+                            </label>
+                            <label class="input-group file-upload-group">
+                                <span class="upload-title">Pdf</span>
+                                <input class="input-group-field" type="text" value="" id="pdf" readonly required />
+                                <span class="input-group-button file-upload button">
+                                    Upload file
+                                    <input type="file" id="pdfUpload" class="upload" name="files" onchange="ValidateFileExtension();" placeholder="@Translate.Message("L2874")" />
+                                </span>
+                                <small class="form-error">Required</small>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-padding-y">
+                        <div class="cell small-6 text-left"><button class="small" type="submit">Save</button></div>
+                        <div class="cell small-6 text-right"><button class="button hollow" type="reset" id="closeNewsletter">Cancel</button></div>
+                    </div>
+                    <div class="notification-card text-center form-save-notification" hidden><span id="notificationCard">Saved successfully</span></div>
+                </form>
+                <form id="assign-newsletter" class="form-component" data-abide novalidate>
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-6">
+                            <label for="Orgs" class="org-list-label">
+                                Select Organization(s)
+                                <select id="Orgs" multiple data-prompt="Select"></select>
+                                <small class="form-error">Required</small>
+                            </label>
+                        </div>
+                        <div class="cell assign-notification-card text-center" hidden><span id="notificationCard">Assigned successfully</span></div>
+                        <div class="cell medium-text-left"><button class="button" id="AssignNewsLetter" type="submit">Assign</button></div>
+                    </div>
+                </form>
+                
+
+            </div>
+            <div class="grid-x grid-margin-x previous-assigned-section hide">
+                <div class="cell">
+                    <h3>Previously Assigned</h3>
+                    <div id="AssignedNewsletter" class="table-container prev-assigned-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+
+    $(document).ready(function () {
+        ListNewsletters();
+        $('#closeNewsletter').on('click', function () {
+            $("#AssignedNewsletter").empty();
+            $('#add-newsletter').foundation('close');
+			$("#add-newsletter").find('input:text, input:file, input:hidden').val('');
+            $(".previous-assigned-section").addClass("hide");
+        });
+
+        $('#add-newsletter-button').on("click", function () {
+            $('#AssignNewsLetter').prop("disabled", true);
+        });
+
+        $("#add-newsletter-data").foundation();
+        $("#add-newsletter-data").on('formvalid.zf.abide', function () {
+            var file = document.getElementById("pdfUpload").files[0];
+            var fileName = $("#pdf").val()
+            var name = $("#name").val();
+            if (fileName == "" || name == "") {
+                return false;
+            }
+
+            var id = $("#Id").val();
+            if (id == "")
+                id = 0;
+            var pdf = fileName;
+            var formData = new FormData();
+
+            formData.append("FileUpload", file);
+            formData.append("id", id);
+            formData.append("name", name);
+            formData.append("pdf", pdf);
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("AddEditNewsLetter", "NewsLetter")',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.Status) {
+                        $("#Id").val(data.NewsletterId);
+                        $('#AssignNewsLetter').prop("disabled", false);
+                        $(".form-save-notification").show('slow');
+                        setTimeout(function () {
+							$('.form-save-notification').hide('slow');
+                        }, 2000);
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    });
+    });
+
+    $.ajax({
+    type: "POST",
+    dataType: 'json',
+    url: "@Url.Action("ListOrganizations", "Portal")",
+    success: function (orgData) {
+        for (i = 0; i < orgData.Records.length; i++) {
+            $("#Orgs").append("<option value=" + orgData.Records[i].Id + ">" + orgData.Records[i].Name + "</option>");
+        }
+        $('#Orgs').foundationSelect();
+        $(document).foundation();
+    }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        RedirectToErrorPage(jqXHR.status);
+        });
+
+    function OpenAssignNewsletter(name, pdf, id) {
+        $('#AssignMessages').prop("disabled", false);
+        GetAssignedNewsletterList(id);
+        $('#add-newsletter').foundation('open');
+        $("#add-newsletter").find('input:hidden').val(id);
+        $("#add-newsletter").find('input:text').val(name);
+		$('#pdf').val(pdf);
+		$(".previous-assigned-section").removeClass("hide");
+    }
+
+    function ListNewsletters() {
+        $('#search-results').html("");
+        $.ajax({
+            url: "@Url.Action("ListNewsLetters", "NewsLetter")",
+            data: { page: currentPage, pageSize: pageSize, totalRecords: totalRecords },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    if (data.Records != null) {
+                        totalRecords = data.TotalRecords;
+                        totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+						var newsletterHtml = "<table class='table basic-table1'>";
+                        newsletterHtml += "<thead><tr><th>Name</th><th>PDF</th><th></th></tr></thead>";
+                        for (var i = 0; i < data.Records.length; i++) {
+                            var newsletter = data.Records[i];
+							newsletterHtml += "<tr><td>" + newsletter.Name + "</td><td>" + newsletter.Pdf + "</td><td><a class='anchor-blue' href='#' onclick='javascript:OpenAssignNewsletter(" + '"' + newsletter.Name + '"' + " , " + '"' + newsletter.Pdf + '",' + newsletter.Id + ")'><i class='fa fa-pencil fa-fw'></i></a></td></tr>";
+                        }
+                        newsletterHtml += "</table>";
+                        $('#search-results').html(newsletterHtml);
+                    }
+                    AddPager();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListRecipes();
+    }
+
+    function GetAssignedNewsletterList(id) {
+        $.ajax({
+            url: "@Url.Action("ListAssignedNewsLetters", "NewsLetter")",
+            type: "POST",
+            data: { newsletterId: id},
+            dataType: 'json',
+            success: function (data) {
+                if(data != null && data.Records.length > 0){
+                    $('#AssignedNewsletter').html('');
+                    var newsletterHtml = "";
+					newsletterHtml += "<table class='table basic-table2'>";
+					newsletterHtml += "<thead><tr><th><span>Id</span></th><th><span>Organization</span></th><th><span>Sent Date</span></th><th><span>Completed</span></th></tr></thead>"
+                    for (var i = 0; i < data.Records.length; i++) {
+                        var newsletter = data.Records[i];
+                        var completed = newsletter.Completed == true ? "Yes" : "No";
+                        newsletterHtml += "<tr><td>" + newsletter.Organization.Id + "</td>" + "<td>" + newsletter.Organization.Name + "</td>" + "<td>" + toLocalDateFormat(newsletter.Date) + "</td>" + "<td>" + completed  + "</td></tr>";
+                    }
+                    $('#AssignedNewsletter').html(newsletterHtml);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function ValidateFileExtension() {
+        var formData = new FormData();
+        var file = document.getElementById("pdfUpload").files[0];
+        if (!file) {
+            return false;
+        }
+        formData.append("FileUpload", file);
+        var extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+
+        if (!(extension && /^(pdf)$/.test(extension.toLowerCase()))) {
+            alert("Please upload PDF file.");
+            return;
+        }
+		else {
+            $('#pdf').val(file.name);
+        }
+    }
+    $("#assign-newsletter").foundation();
+    $("#assign-newsletter").on('formvalid.zf.abide', function () {
+        var organizationIds = "";
+        var newsLetterId = $("#Id").val();
+        if (newsLetterId == "")
+            newsLetterId = 0;
+        var selectIds = $("#Orgs").val();
+        if (selectIds != null && selectIds.length > 0) {
+            organizationIds = selectIds.join(',');
+        }
+
+        var orgIds = $("#Orgs").val();
+        var organizationIds = orgIds.join(',');
+        AssignOrRemoveNewsLetter(newsLetterId, organizationIds, false);
+
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    });
+    function AssignOrRemoveNewsLetter(newsLetterId, organizationIds, isRemove) {
+        $.ajax({
+            url: "@Url.Action("AssignOrRemoveNewsLetter", "NewsLetter")",
+            data: { newsLetterId: newsLetterId, organizationIds: organizationIds, isRemove: isRemove},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data.Status) {
+                    $("#Orgs:selected").prop("selected", false);
+                    var id = $("#Id").val();
+                    GetAssignedNewsletterList(id);
+                    $(".assign-notification-card").show('slow');
+                    setTimeout(function () {
+                        $('.assign-notification-card').hide('slow');
+                    }, 2000);
+                }
+            }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+
+</script>

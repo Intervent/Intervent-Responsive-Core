@@ -1,0 +1,37 @@
+﻿@using InterventWebApp;
+@using InterventWebApp
+
+<div class="grid-container">
+    <div class="grid-x grid-margin-x">
+        <div class="small-12 cell">
+            <h2>@Translate.Message("L209")</h2>
+            @if (Model.referrals != null && Model.referrals.Count > 0)
+            {
+                <p>
+                    @Translate.Message("L1648").
+                </p>
+                <div class="grid-x grid-margin-x">
+                    <div class="small-12 cell">
+                        <ul class="decorated purple">
+                            @for (int i = 0; i < Model.referrals.Count; i++)
+                            {
+                                <text>
+                                    <li>
+                                        <span>@Html.Raw(Model.referrals[i])</span>
+                                    </li>
+                                </text>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p>
+                    @Translate.Message("L2454")
+                </p>
+            }
+        </div>
+    </div>
+</div>
+<a class="close-button hide-for-print" data-close>&#215;</a>

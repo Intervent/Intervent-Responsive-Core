@@ -1,0 +1,245 @@
+﻿@model InterventWebApp.GroupsModel
+@using InterventWebApp
+@{
+    /**/
+
+    ViewBag.Title = "Groups";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="cell">
+				<div class="main-content-wrapper">
+					<div class="grid-x grid-margin-x">
+						<div class="cell">
+							<div class="primary-section-top">
+								<div class="grid-x grid-margin-x">
+									<div class="cell medium-7">
+										<h2>@Translate.Message("L331")</h2>
+									</div>
+									<div class="cell medium-5 text-right">
+										<button id="add-data-button" data-open="add-role-data" class="button"><i class="fa fa-plus"></i>@Translate.Message("L291") </button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="cell">
+							<div class="search-results" id="groups-container">
+								<div class="search-results main-results-table-container groups-table-list noscroll-table-list" id="groups">
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="add-role-data" class="add-role-data reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form id="add-role-data" data-abide novalidate class="form-component">
+        @Html.Hidden("selectedGroupId")
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12">
+                <h2>@Translate.Message("L315")</h2>
+            </div>
+            <div class="cell small-6">
+                <label>
+                    @Translate.Message("L228")
+                    <input type="text" value="" id="groupName" aria-errormessage="groupNameerror" required />
+                    <small class="form-error" id="groupNameerror">Required</small>
+                </label>
+            </div>
+            <div class="cell small-6">
+				<label>
+					@Translate.Message("L316")
+					@Html.DropDownListFor(m => m.RoleCode, Model.UserRoleCodes, new Dictionary<string, object> { { "aria-errormessage", "codeerror" }, { "required", true } })
+					<small class="form-error" id="codeerror">Required</small>
+				</label>
+            </div>
+            <div class="cell small-6">
+				<label>
+					@Translate.Message("L317")
+					@Html.DropDownListFor(m => m.AdminModule, Model.AdminModules, new Dictionary<string, object> { { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "Select" }, { "aria-errormessage", "moduleserror" }, { "required", true } })
+					<small class="form-error" id="moduleserror">Required</small>
+				</label>
+            </div>
+            <div class="cell small-6">
+				<label>
+					Organizations
+					@Html.DropDownListFor(m => m.Organization, Model.OrganizationList, new Dictionary<string, object> { { "id", "Organization" }, { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "Select" }, { "aria-errormessage", "moduleserror" } })
+					<small class="form-error" id="moduleserror">Required</small>
+				</label>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="submit">@Translate.Message("L968")</button></div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeRole">@Translate.Message("L967")</button></div>
+        </div>
+    </form>
+</div>
+
+<!-- Preloader-->
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+
+<script>
+    //Activate the detailed info
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+    $(document).ready(function () {
+        ListRoles();
+        $('#closeRole').on('click', function () {
+            var selectedOptions = document.getElementById("Organization").selectedOptions;
+            for (var i = 0; i < selectedOptions.length; i++) {
+                $("#select-Organization li[data-value='" + selectedOptions[i].value + "']").removeClass("selected");
+            }
+            $("#select-Organization").parents(".custom-dropdown-area").find("a.custom-dropdown-button").text("Select");
+            $('#add-role-data').foundation('close');
+        });
+    });
+
+    function ListRoles() {
+        $("#loader-wrapper").fadeIn();
+        $.ajax({
+            url: "@Url.Action("ListRoles", "Admin")",
+            data: { allUserswithRole: true },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    var groupsHtml = [];
+					groupsHtml.push("<table class='table basic-table1'><thead><tr><th><span>Name</span></th><th><span>Code</span></th><th><span></span></th></tr></thead>");
+                    for (var i = 0; i < data.Records.length; i++) {
+                        var group = data.Records[i];
+                        groupsHtml.push("<tr><td>" + group.Name + "</td><td>" + group.Code + "</td>" +
+                            "<td><a class='anchor-blue' onclick='ReadGroup(" + group.Id + ")'><i class='fa fa-pencil fa-fw'></i></a></tr>");
+                    }
+                    groupsHtml.push("</table>");
+                    $('#groups').html(groupsHtml.join(''));
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    function ReadGroup(id) {
+        $("#selectedGroupId").val(id);
+        $('[name="AdminModule"]').val('');
+        $('[name="Organization"]').val('');
+        UnSelectItems();
+        $.ajax({
+            url: "@Url.Action("ReadRole", "Admin")",
+            data: { id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    $("#groupName").val(data.Record.Name);
+                    $("#RoleCode").val(data.Record.Code);
+                    if (data.Record.AdminModules != null) {
+                        for (var i = 0; i < data.Record.AdminModules.length; i++) {
+                            $('#select-AdminModule li[data-value="' + data.Record.AdminModules[i].Id + '"]').trigger("click");
+                        }
+                    }
+                    for (i = 0; i < data.Organizations.length; i++) {
+                        $('#select-Organization li[data-value="' + data.Organizations[i].Value + '"]').trigger("click");
+                    }
+                    $('#add-role-data').foundation('open');
+
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    $("#add-data-button").on('click', function () {
+        $("#selectedGroupId").val('');
+        $("#groupName").val("");
+        $("#RoleCode").val("");
+        $('[name="AdminModule"]').val('');
+        $('[name="Organization"]').val('');
+        UnSelectItems();
+    })
+
+    $("#add-role-data").foundation();
+    $("#add-role-data").on('formvalid.zf.abide', function () {
+        var id = $("#selectedGroupId").val();
+        var name = $("#groupName").val();
+        var code = $("#RoleCode").val();
+        var adminModules = getAdminModules();
+        var organizations = getOrganizations();
+        $.ajax({
+            url: "@Url.Action("AddEditRole", "Admin")",
+            data: { id: id, name: name, code: code, adminModules: adminModules, organizations: organizations },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                ListRoles();
+                $('#closeRole').trigger("click");
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    });;
+
+    function getAdminModules() {
+        var adminModules = "";
+        var selectObject = $('[name="AdminModule"]')[0].selectedOptions;
+        for (var i = 0; i < selectObject.length; i++) {
+            if (adminModules == "") {
+                adminModules = selectObject[i].value
+            }
+            else {
+                adminModules = adminModules + "-" + selectObject[i].value;
+            }
+        }
+        return adminModules;
+    }
+
+    function getOrganizations() {
+        var organizations = "";
+        var selectObject = $('[name="Organization"]')[0].selectedOptions;
+        for (var i = 0; i < selectObject.length; i++) {
+            if (organizations == "") {
+                organizations = selectObject[i].value
+            }
+            else {
+                organizations = organizations + "-" + selectObject[i].value;
+            }
+        }
+        return organizations;
+    }
+
+    function UnSelectItems() {
+        $.ajax({
+            url: "@Url.Action("ListAdminModule", "Admin")",
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data != null) {
+                    for (var i = 0; i < data.length; i++) {
+                        $("#select-AdminModule li[data-value='" + data[i].Id + "']").removeClass("selected");
+                    }
+                    $("#select-AdminModule").parents(".custom-dropdown-area").find("a.custom-dropdown-button").text("Select");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+</script>

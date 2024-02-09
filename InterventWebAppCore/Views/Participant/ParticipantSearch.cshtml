@@ -1,0 +1,351 @@
+﻿@model InterventWebApp.ParticipantSearchModel
+@using InterventWebApp
+<!--ADMIN PAGE-->
+@{
+    ViewBag.Title = "ParticipantSearch";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants participant-advance-search admin-main-body">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="cell small-12">
+                    <h2>Search Participants</h2>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <div class="panel filters">
+                    <form data-abide="ajax" id="searchuser-form">
+                        <div class="grid-x grid-margin-x">
+                            <div class="small-12 medium-4 cell">
+                                <input type="text" placeholder="First Name..." id="FirstName" name="FirstName">
+                            </div>
+                            <div class="small-12 medium-4 end cell">
+                                <input type="text" placeholder="Last Name..." id="LastName" name="LastName">
+                            </div>
+                            <div class="small-12 medium-4 cell">
+                                @Html.DropDownListFor(x => x.Organization, Model.OrganizationList, "--Select Organization--", new Dictionary<string, object> { { "class", "primary-select" } })
+                            </div>
+
+                        </div>
+                        <div class="grid-x grid-margin-x">
+                            <div class="small-12 medium-4 cell">
+                                <input type="text" placeholder="Id" maxlength="9" id="Id" name="Id">
+                            </div>
+                            <div class="small-12 medium-4 cell">
+                                <input type="text" placeholder="Email" id="email" name="Email">
+                            </div>
+                            <div class="small-12 medium-4 cell">
+                                <input type="text" placeholder="Telephone" id="phone" name="phone">
+                            </div>
+
+                        </div>
+                        <div class="grid-x grid-margin-x">
+                            <div class="small-12 medium-4 cell">
+                                <input type="text" placeholder="Risk Code" id="RiskCode" name="RiskCode">
+                            </div>
+                            <div class="small-12 medium-4 cell">
+                                <input type="text" placeholder="HRA Completed (From)" id="HHraStartDate" name="HHraStartDate">
+                                <input id="HraStartDate" name="HraStartDate" type="hidden" />
+                            </div>
+                            <div class="small-12 medium-4 cell text-right">
+                                <input type="text" placeholder="HRA Completed (To)" id="HHraEndDate" name="HHraEndDate">
+                                <input id="HraEndDate" name="HraEndDate" type="hidden" />
+                                <button class="button" id="filter">
+                                    <div class="loading-spinner hide" show-if-submitting></div>
+                                    <i class="fa fa-filter"></i>
+                                    @Translate.Message("L963")
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <div class="search-results-container" id="search-results-container">
+            <div class="search-results" id="search-results"></div>
+            <div class="cell small-12">
+                <!-- pagination Start -->
+                <div class="pagination-area hide" id="pagination-centered">
+                    <ul>
+                        <li id="numeric"></li>
+                    </ul>
+                    <!-- page-link Start -->
+                    <div class="page-link">
+                        <label>@Translate.Message("L4041")</label>
+                        <div class="grid-x">
+                            <input type="text" id="jumptoPageNo">
+                            <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                        </div>
+                    </div>
+                    <!-- page-link End -->
+                </div>
+                <!-- pagination End -->
+            </div>
+        </div>
+    </div>
+</section>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $("#HHraStartDate").on("change", function () {
+        $('#HraStartDate').val(toSystemDateFormat($('#HHraStartDate').val()));
+    });
+    $("#HHraEndDate").on("change", function () {
+        $('#HraEndDate').val(toSystemDateFormat($('#HHraEndDate').val()));
+    });
+    //Activate the detailed info
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+
+    //display any datepickers
+    $(document).ready(function () {
+        $("#search-results-container").hide();
+        $("#HHraStartDate").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        }).on('change', function (selected) {
+            var endDate = new Date($("#HraEndDate").val());
+            var minDate = new Date($("#HraStartDate").val());
+            if (endDate < minDate) {
+                $('#HHraEndDate').fdatepicker('setDate', minDate);
+            }
+            $('#HHraEndDate').fdatepicker('setStartDate', minDate);
+            $("#HHraEndDate").trigger("change");
+        });
+        $("#HHraEndDate").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        });
+
+		$("#Id").on("keypress", function (e) {
+            if (e.which >31 && (e.which < 48 || e.which > 57)) {
+                return false;
+            }
+        });
+
+    });
+
+    $("#filter").on('click', function (e) {
+        $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+        $('[show-if-submitting]').removeClass('hide');
+        $('#search-results').html('');
+        startIndex = 0;
+        pageSize = 15;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        SearchUsers();
+        e.preventDefault();
+    });
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        SearchUsers();
+    }
+    function SearchUsers() {
+        var formdata = $("#searchuser-form").serialize() + '&page=' + currentPage + '&pageSize=' + pageSize + '&totalRecords=' + totalRecords;
+        $('#search-results').html("");
+        $.ajax({
+            type: 'POST',
+            url: "@Url.Action("SearchUsers", "Participant")",
+            dataType: "json",
+            async: true,
+            cache: true,
+            data: formdata,
+            success: function (data) {
+                totalRecords = data.TotalRecords;
+                totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                if (data.Records != null && totalRecords > 0) {
+                    displayusers(data.Records);
+                    $("#search-results-container").show();
+                    $('#pagination-centered').removeClass("hide");
+                }
+                else {
+                    $("#search-results-container").show();
+                    $('#search-results').append("<center>@Translate.Message("L2774")</center>");
+                    $('#pagination-centered').addClass("hide");
+                }
+                AddPager();
+                $('[show-if-submitting]').parent().prop('disabled', '');
+                $('[show-if-submitting]').addClass('hide');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    function displayusers(userData) {
+        var html = "";
+        html = html + "<div class='grid-x title'><div class='name small-11 medium-4 cell'>Name</div><div class='medium-2 cell hide-for-small-only'>Company</div><div class='medium-2 cell hide-for-small-only'>Date of Birth</div>" +
+                "<div class='medium-1 cell hide-for-small-only'>HRA</div><div class='name medium-1 cell hide-for-small-only'>Program</div>" +
+                "<div class='small-1 medium-1 cell'></div></div>";
+        for (i in userData) {
+            var user = userData[i];
+            var apptDate = "None";
+            var riskClass = "";
+            var programType = "";
+            var hraPercent = "";
+            var riskCode = "";
+            var UOMIVRisk = "";
+            var startDate = "None";
+            var completeDate = "None";
+            if (user.Date != null) {
+                apptDate = user.Date;
+            }
+            startDate = user.StartDate;
+            completeDate = user.CompleteDate;
+            if (user.RiskCode != null) {
+                riskCode = user.RiskCode;
+                var checkRisk = riskCode.substring(0, 1);
+                    if (checkRisk == "L") {
+                        riskClass = "low"
+                    }
+                    else if (checkRisk == "M") {
+                        riskClass = "medium"
+                    }
+                    else if (checkRisk == "H") {
+                        riskClass = "high"
+                    }
+                    if (user.UOMRisk <= 2)
+                        UOMIVRisk = user.UOMRisk + "L";
+                    else if (user.UOMRisk <= 4)
+                        UOMIVRisk = user.UOMRisk + "M";
+                    else
+                        UOMIVRisk = user.UOMRisk + "H";
+                    if (user.IVRisk < 2.5)
+                        UOMIVRisk = UOMIVRisk + " - " + user.IVRisk + "L";
+                    else if (user.IVRisk < 4.5)
+                        UOMIVRisk = UOMIVRisk + " - " + user.IVRisk + "M";
+                    else
+                        UOMIVRisk = UOMIVRisk + " - " + user.IVRisk + "H";
+                }
+            if (user.programType != null) {
+                if (user.programType == 1) {
+                    programType = "Self Help";
+                }
+                else if (user.programType == 2) {
+                    programType = "Coaching";
+                }
+            }
+            if (user.HRAId != null && user.HAPageSeqDone != null) {
+                var HRAPageSeq = user.HAPageSeq;
+                var HRAPageSeqDone = user.HAPageSeqDone;
+                $.ajax({
+                    url: "@Url.Action("GetHRACompletionPercent", "HRA")",
+                    type: 'POST',
+                    dataType: "json",
+                    async: false,
+                    data: { HRAPageSeq: HRAPageSeq, HRAPageSeqDone: HRAPageSeqDone },
+                    success: function (data) {
+                        if (data != "")
+                            hraPercent = data + "%";
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+            }
+            var medicalPlanCode = "None";
+            if (user.MedicalPlanCode != null && user.MedicalPlanCode != "") {
+                var medicalPlanEndDate = "";
+                if (user.MedicalPlanEndDate != null)
+                    medicalPlanEndDate = new Date(parseInt(user.MedicalPlanEndDate.substr(6))).toLocaleDateString();
+                $.ajax({
+                    url: "@Url.Action("GetMedicalEligibilityText", "Participant")",
+                    type: 'POST',
+                    dataType: "json",
+                    async: false,
+                    data: { code: user.MedicalPlanCode, endDate: medicalPlanEndDate },
+                    success: function (data) {
+                        if (data != null && data.Option != null) {
+                            medicalPlanCode = data.Option;
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+            }
+            var name = "first second"
+            html = html + "<div class='item-container'>" +
+                            "<div class='grid-x item'><div class='name small-11 medium-4  cell'>" + user.Name + "</a>" +
+                            "</div>" +
+                            "<div class='date medium-2 cell hide-for-small-only'>" + user.OrgName + "</div>" +
+                            "<div class='date medium-2 cell hide-for-small-only'>" + user.DOB+ "</div>" +
+                            "<div class='hra medium-1 cell hide-for-small-only'>" + hraPercent + "</div>" +
+                            "<div class='risk medium-1 cell hide-for-small-only'>" + programType + "</div>" +
+                            "<div class='control small-1 medium-1 cell'><i class='fa fa-chevron-right is-inactive'></i><i class='fa fa-chevron-down is-active'></i>" + "</div>" +
+                            "</div>" +
+                            "<div class='detailed-info hide'>" +
+                            "<div class='grid-x'>" +
+                            "<div class='small-12 cell show-for-small-only'>" +
+                            "<div class='detailed-content'>" +
+                            "<span class='element'>Date of Birth: </span><span class='content'>" + user.DOB + "</span>" +
+                            "</div>" +
+                            "<div class='detailed-content'>" +
+                            "<span class='element'>HRA: </span><span class='content'>" + hraPercent + "</span>" +
+                            "</div>" +
+                            "<div class='detailed-content'>" +
+                            "<span class='element'>Program: </span><span class='content'>" + programType + "</span>" +
+                            "</div>" +
+                            "<div class='detailed-content'>" +
+                            "<span class='element'>Company: </span><span class='content'>" + user.OrgName + "</span>" +
+                            "</div>" +
+                            "</div>" +
+                            "<div class='small-12 medium-4 cell'>" +
+                            "<div class='detailed-content'>" +
+                            "<span class='element'>Id: </span><span class='content'>" + user.Id + "</span>" +
+                            "</div>" +
+                            "<div class='detailed-content'>" +
+                            "<span class='element'>Email: </span><span class='content'>" + user.Email + "</span>" +
+                            "</div>" +
+                            "<div class='detailed-content'>" +
+                            "<span class='element'>Next Appointment Date: </span><span class='content'>" + apptDate + "</span>" +
+                            "</div>" +
+                            "<div class='detailed-content'>" +
+                            "<span class='element'>Go to Participant Info: </span><span class='content'><a href='../Participant/ParticipantProfile/" + user.Id + "'><i class='fa fa-user-plus'></i></a></span>" +
+                            "</div>" +
+                "</div>";
+            if (user.HRAId != null) {
+                html = html + "<div class='small-12 medium-4 end cell'>";
+                html = html + "<div class='detailed-content'><span class='element'>HRA started on: </span><span class='content'>" + startDate + "</span></div>";
+                html = html + "<div class='detailed-content'><span class='element'>HRA completed on: </span><span class='content'>" + completeDate + "</span></div>";
+                html = html + "<div class='detailed-content'><span class='element'>Risk: </span><div class='status-risk " + riskClass + "'></div></div>";
+                html = html + "<div class='detailed-content'><span class='element'>Risk Code: </span><span class='content'>(" + UOMIVRisk + ")</span>";
+                html = html + "<div class='content'> " + riskCode + "</div></div></div>";
+            }
+            html = html + "<div class='small-12 medium-4 cell'>";
+            html = html + "<div class='detailed-content'><span class='element'>Medical Plan: </span><span class='content'>" + medicalPlanCode + "</span></div>";
+            html = html + "<div class='detailed-content'><span class='element'>Last accessed on: </span><span class='content'>" + user.LastAccessedOn + "</span></div>";
+            if (user.DeclinedEnrollment != null) {
+                html = html + "<div class='detailed-content'><span class='element'>Declined Enrollment: </span><span class='content'>" + user.DeclinedEnrollment + "</span></div>";
+            }
+            if (user.DoNotTrack != null) {
+                html = html + "<div class='detailed-content'><span class='element'>Do Not Track: </span><span class='content'>" + user.DoNotTrack + "</span></div>";
+            }
+            html = html + "</div></div></div></div></div>";
+
+        }
+        $('#search-results').append(html);
+    }
+</script>

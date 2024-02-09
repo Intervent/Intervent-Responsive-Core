@@ -1,0 +1,814 @@
+﻿<!--ADMIN VIEW-->
+@using System.Web;
+@using InterventWebApp
+@model InterventWebApp.KitModel
+
+@{
+    ViewBag.Title = "KitDetails";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+}
+
+<section class="main kitdetails-section admin-main-body">
+    <div class="grid-container">
+        <div class="control-bar">
+            <div class="grid-x grid-margin-x">
+                <div class="cell small-8">
+                    <h2>Kit Details</h2>
+                </div>
+            </div>
+        </div>
+        <div class="main-column form-component">
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6">
+                    <label>
+                        Language
+                        @Html.DropDownList("language", ViewData["languageList"] as IEnumerable<SelectListItem>, new Dictionary<string, object> { { "onchange", "LanguageChange()" } })
+                    </label>
+                    <label>
+                        Name
+                        <input type="text" value="" id="name" onchange="EditKit()" />
+                    </label>
+                    <label>
+                        Description
+                        <input type="text" value="" id="description" onchange="EditKit()" />
+                    </label>
+                    <label>
+                        Key Concepts
+                        <textarea id="keyConcepts" onchange="EditKit()"></textarea>
+                    </label>
+                    <label>
+                        Inventory Id
+                        @*<textarea id="inventoryId" onchange="EditKit()"></textarea>*@
+                        <input type="text" id="inventoryId" onchange="EditKit()" />
+                    </label>
+                </div>
+                <div class="cell medium-6">
+                    <label>
+                        Topic
+                        <select id="topic" onchange="EditKit()" class="primary-select"></select>
+                    </label>
+                    <label>
+                        Audio
+                        <input type="text" value="" id="audio" onchange="EditKit()" />
+                    </label>
+                    <label>
+                        Publish Date
+                        <input type="text" value="" id="publishDate" onchange="PublishDateOnChange()" />
+                        <input id="HPublishDate" type="hidden" />
+                    </label>
+                    <label>
+                        Last Updated
+                        <input type="text" value="" id="lastUpdated" onchange="LastUpdatedDateOnChange()" />
+                        <input id="HLastUpdatedDate" type="hidden" />
+                    </label>
+                    <label class="input-group file-upload-group">
+                        <span class="upload-title">Pdf</span>
+                        <input class="input-group-field" type="text" value="" id="pdf" onchange="EditKit()" />
+                        <span class="input-group-button file-upload button">
+                            Upload
+                            <input type="file" id="imageUpload" class="upload" name="files" onchange="upload_files();" placeholder="@Translate.Message("L2874")" />
+                        </span>
+                    </label>
+                </div>
+                <div class="cell medium-6 text-left">
+                    <button id="save-trans-button" class="button kits-primary-btn">Save Translation</button>
+                </div>
+                <div class="cell medium-3 text-right">
+                    <button id="clone-kit-button" class="button kits-primary-btn hollow">Clone Kit</button>
+                </div>
+                <div class="cell medium-3 text-right">
+                    <button type="button" data-open="send-kit" class="button secondary small" onclick="AssignedKit()">Assign Kits</button>
+                </div>
+            </div>
+        </div>
+        <div class="main-column">
+            <div class="grid-x grid-margin-x">
+                <div class="small-12 cell">
+                    <div class="button-group button-group-spaced">
+                        <button id="add-step-button" data-open="add-step-data" class="button"><i class="fa fa-plus"></i> Add Step</button>
+                        <a href="@Url.Action("ViewKit", "Kit", new { id = Model.Id, preview = true })" class="button hollow">Preview</a>
+                        <a href="#promptList" class="button hollow">Prompts</a>
+                    </div>
+                    <div id="kitDetail-body" class="kitdetail-body"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-x grid-margin-x" id="promptList">
+            <div class="small-12 cell">
+                <div id="prompt-list-results" class="noscroll-table-list"></div>
+                <div class="cell text-right">
+                    <button id="add-prompt-button" data-open="add-prompt-data" class="button"><i class="fa fa-plus"></i>Add Prompt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="add-step-data" class="reveal large kits-form" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-x grid-margin-x form-component">
+        <div class="cell small-12">
+            <h2>Add Step</h2>
+        </div>
+        <div class="cell medium-6">
+            <label>
+                Language
+                @Html.DropDownList("steplanguage", ViewData["languageList"] as IEnumerable<SelectListItem>, new Dictionary<string, object> { { "onchange", "StepLanguageChange()" }, { "class", "primary-select" } })
+            </label>
+        </div>
+        <div class="cell medium-6">
+            <label>
+                Name
+                <input type="text" value="" id="stepName" />
+            </label>
+        </div>
+        <div class="cell medium-12">
+            <label>
+                Content
+                <textarea id="stepContent"></textarea>
+            </label>
+        </div>
+        <div class="cell medium-12">
+            <label>
+                Step Number
+                <input value="" id="stepNumber" />
+            </label>
+        </div>
+        <div class="cell medium-3">
+            <div class="tick-buttons">
+                <label for="IsActive">
+                    <input id="IsActive" type="checkbox" checked>
+                    <span class="checkmark"></span>
+                    Is Active
+                </label>
+            </div>
+        </div>
+        <div class="cell medium-3">
+            <div class="tick-buttons">
+                <label for="IsSubStep">
+                    <input id="IsSubStep" type="checkbox" checked>
+                    <span class="checkmark"></span>
+                    Is SubStep
+                </label>
+            </div>
+        </div>
+        <div class="cell medium-3">
+            <div class="tick-buttons">
+                <label for="IsAppendix">
+                    <input id="IsAppendix" type="checkbox" checked>
+                    <span class="checkmark"></span>
+                    Is Appendix
+                </label>
+            </div>
+        </div>
+        <div class="cell medium-3">
+            <div class="tick-buttons">
+                <label for="IsGoal">
+                    <input id="IsGoal" type="checkbox" checked>
+                    <span class="checkmark"></span>
+                    Is Goal/Notes
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="button" type="button" id="AddStep">Save</button></div>
+        <div class="cell medium-6  medium-order-1 medium-text-left"><button class="button hollow" type="reset" id="closeStep">Cancel</button></div>
+
+    </div>
+</div>
+<div id="add-quiz-data" class="reveal large kits-form" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+<div id="add-activity-data" class="reveal large kits-form" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+
+
+<div id="add-prompt-data" class="reveal large kits-form" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form id="prompt-data-form" data-abide novalidate class="form-component">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12">
+                <h2>Add/Edit Prompt</h2>
+            </div>
+            <div class="cell medium-12">
+                <label>
+                    Description
+                    <textarea id="promptDescription" required></textarea>
+                    <small class="form-error" id="DescriptionError">@Translate.Message("L480")</small>
+                </label>
+            </div>
+            <div class="cell medium-3">
+                <label>
+                    Reference Type
+                    @Html.DropDownList("promptRefTypeId", ViewData["refTypeList"] as SelectList, "--Select--", new Dictionary<string, object> { { "onchange", "RefTypeChange()" }, { "required", "required" } })
+                    <small class="form-error">@Translate.Message("L480")</small>
+                </label>
+            </div>
+            <div class="cell medium-6">
+                <label>
+                    Reference Id
+                    @Html.DropDownList("promptRefId", ViewData["refIdList"] as SelectList, "--Select--")
+                </label>
+            </div>
+            <div class="cell medium-3">
+                <label>
+                    Display Order
+                    <input type="text" value="" id="promptDisplayOrder" required />
+                    <small class="form-error">@Translate.Message("L480")</small>
+                </label>
+            </div>
+            <div class="cell medium-4 small-6">
+                <div class="tick-buttons">
+                    <label for="promptIsBottom">
+                        <input id="promptIsBottom" type="checkbox">
+                        <span class="checkmark"></span>
+                        Is Bottom
+                    </label>
+                </div>
+            </div>
+            <div class="cell medium-4 small-6">
+                <div class="tick-buttons">
+                    <label for="promptIsActive">
+                        <input id="promptIsActive" type="checkbox" checked>
+                        <span class="checkmark"></span>
+                        Is Active
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-text-left"><button class="button" type="submit" id="AddPrompt">Save</button></div>
+            <div class="cell medium-6 medium-text-right"><button class="button hollow" type="reset" id="closePrompt">Cancel</button></div>
+
+        </div>
+        <input type="hidden" id="hdnPromptId" value="" />
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </form>
+</div>
+
+
+<div id="send-kit" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-container">
+        <form id="assign-kit" class="form-component" data-abide novalidate>
+            <div class="grid-x">
+                <div class="cell form-component">
+                    <h2 class="text-center">Assign Kit</h2>
+                    <label for="Orgs">
+                        Select Organization(s)
+                        <select id="Orgs" multiple data-prompt="Select" required></select>
+                        <small class="form-error multiselect-error">Required</small>
+                    </label>
+                </div>
+                <div class="cell medium-6 medium-text-left">
+                    <button class="small" type="submit">
+                        <div class="loading-spinner hide" show-if-submitting></div>
+                        Assign
+                    </button>
+                </div>
+                <div class="cell medium-6 medium-text-right"><button class="small secondary" type="reset" id="closePopup">@Translate.Message("L967")</button></div>
+                <div class="cell assign-notification-card notification-card text-center" hidden><span id="notificationCard">Assigned successfully</span></div>
+            </div>
+        </form>
+        <button class="close-button" data-close aria-label="Close modal" type="button"><span aria-hidden="true">&times;</span></button>
+    </div>
+</div>
+<input type="hidden" id="hdnStepId" />
+
+<script>
+    var questionList = null;
+    var passiveQuestionList = null;
+    var stepActivity = null
+    var uploadButton = null;
+    var currentLang = $('#language').val();
+
+    function AssignedKit() {
+        $("#Orgs:selected").prop("selected", false);
+        $(".custom-dropdown-options").find("li").each(function () {
+            if ($(this).hasClass("selected"))
+                $(this).removeClass("selected");
+
+            $('.custom-dropdown-button').html("Select");
+        });
+    }
+    $(document).ready(function () {
+        $("#publishDate").fdatepicker({
+                format: "@Model.DateFormat.ToLower()",
+                endDate: new Date()
+            });
+        $("#lastUpdated").fdatepicker({
+                format: "@Model.DateFormat.ToLower()",
+                endDate: new Date()
+        });
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("ListOrganizations", "Portal")",
+            success: function (orgData) {
+                for (i = 0; i < orgData.Records.length; i++) {
+                    $("#Orgs").append("<option value=" + orgData.Records[i].Id + ">" + orgData.Records[i].Name + "</option>");
+                }
+                $('#Orgs').foundationSelect();
+                $(document).foundation();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+        $("#assign-kit").foundation();
+        $("#assign-kit").on('formvalid.zf.abide', function () {
+            $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+            $('[show-if-submitting]').removeClass('hide');
+            var selectIds = $("#Orgs").val();
+            if(selectIds == null || selectIds.length == 0)
+                return;
+
+            var organizationIds = selectIds.join(',');
+            var model = {};
+            model.KitId = @Model.Id;    
+            model.OrganizationIds = organizationIds;
+            var strData = JSON.stringify(model);
+            $.ajax({
+                url: "@Url.Action("AssignKit", "Kit")",
+                type: 'POST',
+                dataType: "json",
+                contentType: 'application/json, charset=utf-8',
+                data: strData,
+                success: function (data) {
+                    if (data.Record == true) {
+                        $(".assign-notification-card").show('slow');
+                        setTimeout(function () {
+                            $('.assign-notification-card').hide('slow');
+                        }, 2000);
+                        AssignedKit();
+                        $('[show-if-submitting]').parent().prop('disabled', '');
+                        $('[show-if-submitting]').addClass('hide');
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        });
+        GetRecipeDetails();
+    });
+
+    function PublishDateOnChange() {
+        $('#HPublishDate').val(toSystemDateFormat($('#publishDate').val()));
+        EditKit();
+    }
+
+    function LastUpdatedDateOnChange() {
+        $('#HLastUpdatedDate').val(toSystemDateFormat($('#lastUpdated').val()));
+        EditKit();
+    }
+
+    function LanguageChange() {
+        var lang = $('#language').val();
+      //  uploadButton.setData({ 'langCode': lang, action: 'kit', id: @Model.Id });
+
+        $("#name").val('');
+        $("#description").val('');
+        var audio = $("#audio").val('');
+        $("#pdf").val('');
+        $("#publishDate").val('');
+        $("#lastUpdated").val('');
+        $("#keyConcepts").val('');
+        GetKitDetails();
+    }
+
+    function StepLanguageChange() {
+        $('#stepContent').val('');
+        $('#stepName').val('');
+        ReadStep($('#hdnStepId').val(), $('#steplanguage').val());
+    }
+    $(document).ready(function () {
+        $('#closeStep').on('click', function () {
+            $('#add-step-data').foundation('close');
+        });
+        $('#closeActivity').on('click', function () {
+            $('#hdnPromptId').val('');
+            alert("anan");
+            $('#add-activity-data').foundation('close');
+        });
+        $('#closePrompt').on('click', function () {
+            $('#add-prompt-data').foundation('close');
+        });
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetKitTopics", "Kit")",
+            success: function (progData) {
+                $("#topic").append("<option value=''>--Select--</option>");
+                for (i = 0; i < progData.Options.length; i++) {
+                    $("#topic").append("<option value=" + progData.Options[i].Id + ">" + progData.Options[i].Name + "</option>");
+                }
+                GetKitDetails();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+
+        ListPrompts();
+        $('#promptRefId').empty();
+
+        uploadButton = upload_files();
+    });
+
+    $("#add-prompt-button").on('click', function () {
+        $('#hdnPromptId').val('');
+        $("#prompt-data-form").find('input:text, input:password, input:file, select, textarea').val('');
+        $("#prompt-data-form").find('input:radio, input:checkbox').prop('checked', false).prop('selected', false);
+        $("#prompt-data-form")[0].reset();
+    });
+
+    $("#save-trans-button").on('click', function () {
+        alert('test')
+    });
+
+    $("#clone-kit-button").on('click', function () {
+        $.ajax({
+            type: "POST",
+            data: { kitId : @Model.Id },
+            dataType: 'json',
+            url: "@Url.Action("CloneKit", "Kit")",
+            success: function (data) {
+                if (data) {
+                    alert("Kit has been copied successfully.");
+                }
+                else {
+                    alert("Something went wrong.");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    function ListPrompts() {
+        $('#hdnPromptId').val('');
+        $.ajax({
+            url: "@Url.Action("ListPrompts", "Kit")",
+            data: { id:@Model.Id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#prompt-list-results').html("");
+                if (data != null && data.Record != null) {
+                    var promptHtml = [];
+                    var promptData = [], firstDate;
+					var promptHtml = "<table class='table basic-table1'>";
+                    promptHtml += "<thead><tr><th>Updated Date</th><th>Description</th><th>Reference Type</th><th>Ref Id</th><th></th></tr></thead>"
+                    for (var i = 0; i < data.Record.PromptsinKits.length; i++) {
+                        var prompt = data.Record.PromptsinKits[i];
+                        var date = new Date(parseInt(prompt.DateUpdated.substr(6)));
+                        var refTypeTxt = prompt.RefType != null && prompt.RefType == 1 ? "Step" : "Activity";
+                        promptHtml += "<tr><td>" + date.toLocaleDateString() + "</td><td>" + prompt.Description + "</td>" +
+                                                "<td>" + refTypeTxt + "</td>" + "<td>" + prompt.RefId + "</td>" +
+                                                "<td><a onclick='EditPrompt(" + prompt.Id + ")'><i class='fa fa-file-o'></i></a></td>" +
+                                                "</tr>";
+                    }
+                    promptHtml += "</table>";
+                    $('#prompt-list-results').append(promptHtml);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function EditPrompt(id){
+        $("#prompt-data-form")[0].reset();
+        $.ajax({
+            url: "@Url.Action("ReadPrompt", "Kit")",
+            data: { id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    $('#hdnPromptId').val(data.Record.Id);
+                    $("#promptDescription").val(data.Record.Description);
+                    $("#promptRefTypeId").val(data.Record.RefType);
+                    if(data.Record.RefType > 0){
+                        RefTypeChange();
+                    }
+                    setTimeout(function()
+                    {
+                        $("#promptRefId").val(data.Record.RefId);
+                    }, 100);
+                    $("#promptIsBottom").prop('checked', data.Record.IsBottom);
+                    $("#promptIsActive").prop('checked', data.Record.IsActive);
+                    $("#promptDisplayOrder").val(data.Record.DisplayOrder);
+
+                    $('#add-prompt-data').foundation('open');
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+
+    function isValidForm()
+    {
+        var Description =  $("#promptDescription").val();
+        var RefType =  $("#promptRefTypeId").val();
+        var DisplayOrder = $("#promptDisplayOrder").val();
+
+        if(Description == undefined || Description == "" || Description.length == 0)
+            return false;
+
+        if(RefType == undefined || RefType == "")
+            return false;
+
+        if(DisplayOrder == undefined || DisplayOrder == "" || DisplayOrder.length == 0)
+            return false;
+
+        return true;
+    }
+
+    $("#AddPrompt").on('click', function (ev) {
+        if(!isValidForm())
+            return;
+
+        var Id =  $("#hdnPromptId").val();
+        var KitId =  $("#promptKitId").val();
+        var Description =  $("#promptDescription").val();
+        var RefId =  $("#promptRefId").val();
+        var RefType =  $("#promptRefTypeId").val();
+        var IsBottom = $('#promptIsBottom').is(":checked");
+        var IsActive = $('#promptIsActive').is(":checked");
+        var DisplayOrder = $("#promptDisplayOrder").val();
+
+        var model = {};
+        var data = {
+            'Id': Id,
+            'KitId': @Model.Id,
+            'Description': Description,
+            'RefId': RefId,
+            'RefType': RefType,
+            'IsBottom': IsBottom,
+            'IsActive': IsActive,
+            'DisplayOrder': DisplayOrder
+        };
+        model.Prompt = (data);
+        var strModelData = JSON.stringify(model);
+
+        $.ajax({
+            url: "@Url.Action("AddEditPrompts", "Kit")",
+            data: strModelData,
+            type: 'POST',
+            contentType: 'application/json, charset=utf-8',
+            dataType: "json",
+            success: function (data) {
+                ListPrompts();
+                $('#hdnPromptId').val('');
+                 $('#prompt-data-form')[0].reset();
+                $('#add-prompt-data').foundation('close');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        ev.preventDefault();
+    });
+
+
+    function RefTypeChange(){
+        var refTypeId = $('#promptRefTypeId').val();
+        if(refTypeId == 0){
+            $('#promptRefId').empty();
+            return;
+        }
+        $.ajax({
+            url: "@Url.Action("ReferenceIdListGet", "Kit")",
+            data: { kitId:@Model.Id, refTypeId:refTypeId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                var ddlRefId = $('#promptRefId');
+                ddlRefId.empty();
+                ddlRefId.append(
+                        $('<option></option>').val(0).html('--Select--')
+                    );
+                if(data!= null && data.Record.length > 0){
+                    $.each(data.Record, function (val, text) {
+                        ddlRefId.append(
+                            $('<option></option>').val(text.Value).html(text.Text)
+                        );
+                    });
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function EditKit() {
+        var lang = $('#language').val();
+        var name = $("#name").val();
+        var description = $("#description").val();
+        if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage" && (name == "" || description == "")) {
+            return;
+        }
+        var topic = $("#topic").val();
+        var audio = $("#audio").val();
+        var pdf = $("#pdf").val();
+        var publishDate = $("#HPublishDate").val();
+        var lastUpdated = $("#HLastUpdatedDate").val();
+        var keyConcepts = $("#keyConcepts").val();
+        var inventoryId = $("#inventoryId").val();
+
+        $.ajax({
+            url: "@Url.Action("EditKit", "Kit")",
+            data: { id: @Model.Id, name: name, description: description, topic: topic, keyConcepts: keyConcepts, audio: audio, pdf: pdf, inventoryId: inventoryId, language: lang, publishDate : publishDate, lastUpdated: lastUpdated },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    $("#add-step-button").on('click', function () {
+        $("#stepContent").val("");
+        $("#stepNumber").val("");
+        $('#hdnStepId').val("");
+        $("#stepName").val("");
+    })
+
+    $("#AddStep").on('click', function () {
+        var stepName = $("#stepName").val();
+        var stepContent = $("#stepContent").val();
+        var stepNumber = $("#stepNumber").val();
+        var id = $('#hdnStepId').val();
+        var active = $('#IsActive').is(':checked');
+        var subStep = $('#IsSubStep').is(':checked')
+        var appendix = $('#IsAppendix').is(':checked')
+        var goal = $('#IsGoal').is(':checked')
+        var lang = $("#steplanguage").val();
+
+        $.ajax({
+            url: "@Url.Action("AddEditStepinKit", "Kit")",
+            data: { kitId: @Model.Id, id: id, text: stepContent, stepNo: stepNumber, stepName: stepName, isActive: active, isSubStep: subStep, isAppendix: appendix, isGoal: goal, language: lang },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data.Record != null) {
+                    $('#add-step-data').foundation('close');
+                    GetKitDetails();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    function GetKitDetails() {
+        var lang = $('#language').val();
+        $.ajax({
+            url: "@Url.Action("GetKitDetails", "Kit")",
+            data: { id: @Model.Id, language: lang },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    if (data.Record != null) {
+                        $("#name").val(data.Record.Name);
+                        $("#description").val(data.Record.Description);
+                        $("#keyConcepts").val(data.Record.KeyConcepts);
+                        $("#topic").val(data.Record.Topic);
+                        $("#audio").val(data.Record.Audio);
+                        $("#pdf").val(data.Record.Pdf);
+                        $("#inventoryId").val(data.Record.InvId);
+                        if (data.Record.PublishedDate != null) {
+                            $("#publishDate").val(toLocalDateFormat(data.Record.PublishedDate));
+                            $("#publishDate").trigger("change");
+                        }
+                        if (data.Record.LastUpdated != null) {
+                            $("#lastUpdated").val(toLocalDateFormat(data.Record.LastUpdated));
+                            $("#lastUpdated").trigger("change");
+                        }
+                        $("#kitDetail-body").html("");
+                        var kitId =  @Model.Id;
+                        if (data.Record.StepsinKits != null) {
+                            var html = "";
+                            for (var i = 0; i < data.Record.StepsinKits.length; i++) {
+                                if (data.Record.StepsinKits[i].IsActive == true) {
+                                    html = "";
+                                    html = html + "<table id=stepinKit" + data.Record.StepsinKits[i].Id + "><thead><tr><th>Step No.</th><th style='width:80%'>Text</th><th>Edit</th></tr></thead>"
+                                    html = html + "<tr><td> " + data.Record.StepsinKits[i].StepNo + "</td><td>" + data.Record.StepsinKits[i].Text.substring(0, 200).replace(/</g, '&lt;').replace(/>/g, '&gt;') + "...</td><td><a class='anchor-blue' onclick='ReadStep(" + data.Record.StepsinKits[i].Id + ")'><i class='fa fa-pencil fa-fw'></i></a></td></tr>";
+                                    if (data.Record.StepsinKits[i].ActivitiesinSteps.length > 0) {
+                                        html = html + "<tr><td colspan='3'><table><tr><td colspan='3'><b>Activites for step" + data.Record.StepsinKits[i].StepNo + "</b></td></tr>";
+                                        for (var j = 0; j < data.Record.StepsinKits[i].ActivitiesinSteps.length; j++) {
+                                            if (data.Record.StepsinKits[i].ActivitiesinSteps[j].IsActive == true) {
+                                                var text = data.Record.StepsinKits[i].ActivitiesinSteps[j].TopText;
+                                                if (text == "")
+                                                    text = data.Record.StepsinKits[i].ActivitiesinSteps[j].BottomText;
+                                                html = html + "<tr><td> " + data.Record.StepsinKits[i].ActivitiesinSteps[j].SequenceNo + "</td><td>" + text.substring(0, 50).replace(/</g, '&lt;').replace(/>/g, '&gt;') + "...</td>";
+                                                html = html + "<td><a href='#' class='button hollow' data-open='add-activity-data' data-modal-path='../Activity/" + kitId + "/" + data.Record.StepsinKits[i].Id + "/" + data.Record.StepsinKits[i].ActivitiesinSteps[j].Id + "'><i class='fa fa-plus'></i>Edit Activity</a></td></tr>";
+                                            }
+                                        }
+                                    }
+                                    html = html + "</table>"
+									html = html + "<div class='button-group-spaced'><a href='#' class='button hollow' data-open='add-activity-data' data-modal-path='../Activity/" + kitId + "/" + data.Record.StepsinKits[i].Id + "'><i class='fa fa-plus'></i>Add Activity for Step " + data.Record.StepsinKits[i].StepNo + "</a>";
+                                    html = html + "<a href='#' class='button hollow' data-open='add-quiz-data' data-modal-path='../Quiz/" + data.Record.StepsinKits[i].Id + "'><i class='fa fa-plus'></i>Add/Edit Quiz for Step " + data.Record.StepsinKits[i].StepNo + "</a></div>";
+                                    $("#kitDetail-body").append(html);
+                                }
+                            }
+                        }
+                    } else if (data.Translation != null) {
+                        $("#name").val(data.Translation.Name);
+                        $("#description").val(data.Translation.Description);
+                        $("#keyConcepts").val(data.Translation.KeyConcepts);
+                        $("#audio").val(data.Translation.Audio);
+                        $("#pdf").val(data.Translation.Pdf);
+                        if (data.Record.PublishedDate != null) {
+                            $("#publishDate").val(toLocalDateFormat(data.Translation.PublishedDate));
+                            $("#publishDate").trigger("change");
+                        }
+                        if (data.Record.LastUpdated != null) {
+                            $("#lastUpdated").val(toLocalDateFormat(data.Translation.LastUpdated));
+                            $("#lastUpdated").trigger("change");
+                        }
+                    }
+                }
+                $("[data-open]").on('click', function(e){
+                    var attr_val = $(this).data("open");
+                    var attr_path = $(this).data("modal-path");
+                    if(attr_val && attr_path){
+                        e.preventDefault();
+                        var $modal1 = $('#'+attr_val);
+                        $.ajax(attr_path).done(function (resp) {
+                            $modal1.html(resp).foundation('open');
+                        });
+                    }
+                });
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function ReadStep(id, lang) {
+        $('#hdnStepId').val(id);
+        if (lang == undefined) {
+            $('#steplanguage').val("en-us");
+        }
+
+        $.ajax({
+            url: "@Url.Action("ReadStepinKit", "Kit")",
+            data: { id: id, language: lang},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    if (data.Record != null) {
+                        $("#stepContent").val(data.Record.Text);
+                        $("#stepNumber").val(data.Record.StepNo);
+                        $("#stepName").val(data.Record.Name);
+                        $( "#IsActive" ).prop( "checked", data.Record.IsActive );
+                        $( "#IsSubStep" ).prop( "checked", data.Record.IsSubStep );
+                        $( "#IsAppendix" ).prop( "checked", data.Record.IsAppendix );
+                        $( "#IsGoal" ).prop( "checked", data.Record.IsGoal );
+                        $('#add-step-data').foundation('open');
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function upload_files() {
+        var formData = new FormData();
+        var file = document.getElementById("imageUpload").files[0];
+        formData.append("FileUpload", file);
+        formData.append("id", @Model.Id);
+        formData.append("action", 'kit');
+        formData.append("langCode", $('#language').val());
+        if (file != null) {
+            var extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+            if (!(extension && /^(pdf)$/.test(extension.toLowerCase()))) {
+                alert("@Translate.Message("L3108")");
+                return;
+            }
+        }
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("UploadFile", "Common")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                 if (response.data != "Failed") {
+                    $('#pdf').val(response.data)
+                }
+            },
+            error: function (error) {
+                 alert("@Translate.Message("L2221")");
+            }
+        });
+    }
+</script>

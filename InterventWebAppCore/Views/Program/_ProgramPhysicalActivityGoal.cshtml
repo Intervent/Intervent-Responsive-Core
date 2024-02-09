@@ -1,0 +1,193 @@
+﻿@using InterventWebApp;
+@model PhysicalActivityGoalModel
+<div class="tab-title-container">
+    <h4>@Translate.Message("L271")</h4>
+    @if (!Model.ExerPlan.ToLower().Contains("g"))
+    {
+        <p>@Translate.Message("L532")</p>
+    }
+</div>
+
+<div class="nutrition-tips">
+    <h6>
+        @Translate.Message("L534")
+        <span data-open="exercise-guidelines-modal">@Translate.Message("L3971")</span>
+    </h6>
+    @if (Model.exGuidelines.Count > 0)
+    {
+        <div class="tips-slider">
+            @for (int i = 0; i < 5; i++)
+            {
+                <div class="tips-thumb">
+                    <div class="media">
+                        <img src="~/Images/program/tips-icon.svg" />
+                    </div>
+                    <div class="content">
+                        <ul>
+                            @Html.Raw(Model.exGuidelines[i])
+                        </ul>
+                    </div>
+                </div>
+
+            }
+        </div>
+    }
+</div>
+@if (!Model.ExerPlan.ToLower().Contains("g"))
+{
+    <div class="exercise-weekly-breakup">
+        <h6>@Translate.Message("L531")</h6>
+
+        <div class="weekly-breakup-container">
+            <div class="exercise-plan-box">
+                @*<div class="exercise-plan-title">
+                        <p>Get an Easy Start</p>
+                        <p><strong>Exercise 3 days in a Week</strong> <span>(for the next 4 weeks)</span></p>
+                    </div>*@
+
+                <div class="exercise-plan-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>@Translate.Message("L471")</th>
+                                <th>@Translate.Message("L472")</th>
+                                <th>@Translate.Message("L473")</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var disableClass = "";
+                                if (!Model.hasActivePortal)
+                                {
+                                    disableClass = "disabled";
+                                }
+                            }
+                            @for (int i = 0; i <= 11; i++)
+                            {
+                                <tr>
+                                    @if (i == 11)
+                                    {
+                                        <td>
+                                            <div class="tick-buttons">
+                                                <label for="Week12">
+                                                    <input type="checkbox" value="1" id="Week12" onchange="changeStatus(@(i+1));" @disableClass/>
+                                                    @(i + 1) @Translate.Message("L1634")
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <div class="tick-buttons">
+                                                <label for="Week@(i+1)">
+                                                    <input type="checkbox" value="1" id="Week@(i+1)" onchange="changeStatus(@(i+1));" @disableClass/>
+                                                    @(i + 1)
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                    }
+                                    @for (int j = 0; j <= 1; j++)
+                                    {
+                                        <td>@Model.ExerPlanArray[i, j]</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div id="rpe" class="reveal large rec-modal exercise" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    @Html.Partial("_RPE")
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+@if (Model.exGuidelines.Count > 0)
+{
+    <div class="reveal exercise-guidelines-modal guidelines-modal" id="exercise-guidelines-modal" data-reveal data-close-on-esc="false" data-close-on-click="false">
+        <h6>@Translate.Message("L534")</h6>
+        <ul class="guidelines-list">
+            @for (int i = 0; i < Model.exGuidelines.Count; i++)
+            {
+                @Html.Raw(Model.exGuidelines[i])
+            }
+        </ul>
+        <button class="close-button" data-close aria-label="Close modal" type="button"></button>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        var checkExerciseData = @Model.ExerPlanArray[0,0];
+        if (checkExerciseData != null) {
+            if (Boolean(@Model.ExerPlanArray[0, 2])) {
+                $("#Week1").parents("tr").addClass("is-complete");
+                $("#Week1").prop('checked', true);
+            }
+            if (Boolean(@Model.ExerPlanArray[1, 2])) {
+                $("#Week2").parents("tr").addClass("is-complete");
+                $("#Week2").prop('checked', true);
+            }
+            if (Boolean(@Model.ExerPlanArray[2, 2])) {
+                $("#Week3").parents("tr").addClass("is-complete");
+                $("#Week3").prop('checked', true);
+            }
+            if (Boolean(@Model.ExerPlanArray[3, 2])) {
+                $("#Week4").parents("tr").addClass("is-complete");
+                $("#Week4").prop('checked', true);
+            }
+            if (Boolean(@Model.ExerPlanArray[4, 2])) {
+                $("#Week5").parents("tr").addClass("is-complete");
+                $("#Week5").prop('checked', true);
+            }
+            if (Boolean(@Model.ExerPlanArray[5, 2])) {
+                $("#Week6").parents("tr").addClass("is-complete");
+                $("#Week6").prop('checked', true);
+            }
+            if (Boolean(@Model.ExerPlanArray[6, 2])) {
+                $("#Week7").parents("tr").addClass("is-complete");
+                $("#Week7").prop('checked', true);
+            }
+            if (Boolean(@Model.ExerPlanArray[7, 2])) {
+                $("#Week8").parents("tr").addClass("is-complete");
+                $("#Week8").prop('checked', true);
+            }
+            if (Boolean(@Model.ExerPlanArray[8, 2])) {
+                $("#Week9").parents("tr").addClass("is-complete");
+                $("#Week9").prop('checked', true);
+            }
+            if (Boolean(@Model.ExerPlanArray[9, 2])) {
+                $("#Week10").parents("tr").addClass("is-complete");
+                $("#Week10").prop('checked', true);
+            }
+            if (Boolean(@Model.ExerPlanArray[10, 2])) {
+                $("#Week11").parents("tr").addClass("is-complete");
+                $("#Week11").prop('checked', true);
+            }
+            if (Boolean(@Model.ExerPlanArray[11, 2])) {
+                $("#Week12").parents("tr").addClass("is-complete");
+                $("#Week12").prop('checked', true);
+            }
+        }
+    });
+
+
+    function changeStatus(week) {
+        $.ajax({
+            url: "@Url.Action("ChangeExercisePlanWeekStatus", "Program")",
+            data: {week},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+
+            }
+        });
+    }
+</script>

@@ -1,0 +1,70 @@
+﻿@using InterventWebApp
+@model InterventWebApp.FoodDiaryDetailsModel
+
+@while (Model.startDate <= Model.endDate)
+{
+    if (Model.startDate <= DateTime.Now)
+    {
+        <div class="food-cal-day-wrapper">
+            <span class="foodEntry food-cal-day" data-toggle='food-entry-@Model.startDate.DayOfWeek' id="@Model.startDate.DayOfWeek">@Model.startDate.DayOfWeek.ToString().Substring(0, 3) <input type="hidden" id="food-date-@Model.startDate.DayOfWeek" value="@Model.startDate.ToString("yyyy/MM/dd")" /> </span>
+            <div class='dropdown-pane cal-dropdown food-entry-modal edit-cal-entry' id='food-entry-@Model.startDate.DayOfWeek'>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="food-cal-day-wrapper">
+            <span class="foodEntry food-cal-day" data-toggle='food-entry-@Model.startDate.DayOfWeek' id="@Model.startDate.DayOfWeek">@Model.startDate.DayOfWeek.ToString().Substring(0, 3) <input type="hidden" id="food-date-@Model.startDate.DayOfWeek" value="@Model.startDate.ToString("yyyy/MM/dd")" /> </span>
+            <div class='dropdown-pane cal-dropdown food-entry-modal edit-cal-entry modal-empty'>
+                <div class="welcome-title">
+                    <p>@Translate.Message("L4482").</p>
+                </div>
+                <button class="close-button" data-close="" type="button">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+        </div>
+    }
+    <div hidden>@(Model.startDate = Model.startDate.AddDays(1))</div>
+}
+
+<script>
+    $(document).ready(function () {
+        $("[data-dropdown]").on('hide.zf.dropdown', function () {
+            if (reload)
+                LoadFoodDetails();
+        });
+
+        $(".edit-details-trigger").unbind("click").on("click", function () {
+            var target = $(this).data("toggle");
+            if ($("#" + target).is(":visible")) {
+                $("#" + target).hide();
+            }
+            else {
+                $(".food-dropdown-pane").hide();
+                $("#" + target).toggle();
+            }
+        });
+
+        $(".food-entry-item .button.hollow").on('click', function () {
+            $(".food-dropdown-pane").hide();
+        });
+
+        $('.modal-empty .close-button').on('click', function () {
+            $('.edit-cal-entry').removeClass('is-open');
+        });
+
+        $('.foodEntry').mouseenter(function (e) {
+            e.stopPropagation();
+            if (!$(this).siblings('.edit-cal-entry').hasClass('is-open')) {
+                $('.edit-cal-entry').removeClass('is-open');
+                $(this).siblings('.edit-cal-entry').addClass('is-open');
+            }
+            $(".edit-cal-entry:not(.modal-empty)").html('');
+            var id = $(this).attr('id');
+            $("#hdate-diary").val($("#food-date-" + id).val());
+            ListFoodDetails(e, "food-entry-" + id, true);
+        });
+    });
+
+</script>

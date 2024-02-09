@@ -1,0 +1,586 @@
+﻿@using InterventWebApp
+@model BiometricsData
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <div class="grid-x main-chart-header">
+            <div class="cell medium-6">
+                <h6>@Translate.Message("L4059"): </h6>
+                <div class="graph-selector-container" id="graph-selector-container">
+                    <span data-toggle="graph-date-filter" data-value="bp-week-data">@Translate.Message("L2741")</span>
+                    <div class="graph-selector dropdown-pane" id="graph-date-filter" data-dropdown data-close-on-click="true">
+                        <ul>
+                            <li data-value="bp-week-data">@Translate.Message("L2741")</li>
+                            <li data-value="bp-month-data">@Translate.Message("L2740")</li>
+                            <li data-value="bp-90days-data">@Translate.Message("L2739")</li>
+                            <li data-value="bp-yesterday-data">@Translate.Message("L2742")</li>
+                            <li data-value="bp-date-range">@Translate.Message("L2744")</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="graph-date-range hide">
+                    <form id="date-search">
+                        <div class="input-container">
+                            <label for="graph-start-date">
+                                <input type="text" name="graph-start-date" placeholder="@Translate.Message("L1445")" id="graph-start-date" autocomplete="off" />
+                                <input id="HStartDate" type="hidden" />
+                            </label>
+                            <label for="graph-end-date">
+                                <input type="text" name="graph-end-date" placeholder="@Translate.Message("L4001")" id="graph-end-date" autocomplete="off" />
+                                <input id="HEndDate" type="hidden" />
+                            </label>
+                        </div>
+                        <div class="button-group align-center">
+                            <button type="reset" class="button hollow" id="reset-date">@Translate.Message("L3967")</button>
+                            <button type="submit" class="button" id="submit-date">@Translate.Message("L963")</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="no-graph" class="cell main-graph-container hide">
+        <div class="cell main-chart ">
+            <div class="no-graph-info text-center">
+                <img src="~/Images/device/no-data.png" alt="Alternate Text">
+                <span>@Translate.Message("L4000")</span>
+            </div>
+        </div>
+    </div>
+    <div id="has-data" class="cell">
+        <div class="main-graph-container bp-graph-container">
+            <div class="units-list">
+                <ul>
+                    <li>
+                        <span class="unit-count"><span id="systolicAvg"></span>/<span id="diastolicAvg"></span> @Translate.Message("L4058")</span>
+                        <span class="units-tag green" id="RangeBP">@Translate.Message("L4010")</span>
+                        <i class="fa fa-info" data-toggle="bp-tooltip1"></i>
+                    </li>
+                </ul>
+                @*<p style="text-align:center">Last update <strong><span class="unit-count" id="lastUpdate"></span></strong></p>*@
+                <div class="dropdown-pane device-tooltip" data-position="top" data-alignment="center" id="bp-tooltip1" data-dropdown data-v-offset="12" data-auto-focus="true" data-hover="true" data-hover-pane="true">
+                    <p>@Translate.Message("L4060")</p>
+                </div>
+            </div>
+
+            <div id="bp-graph-data" class="cell main-chart"></div>
+
+            <div class="main-graph-summary grid-x grid-padding-x">
+                <div class="cell medium-3">
+                    <div class="callout callout-select" onclick="changeBPGraph();">
+                        @Html.Raw(String.Format(Translate.Message("L4005"), "<p><span id='systolicDiastolicCount'></span>", "</p>"))
+                    </div>
+                </div>
+                <div class="cell medium-9">
+                    <div class="grid-x grid-padding-x">
+                        <div class="cell medium-4">
+                            <div class="callout sys-bp" onclick="changeSPGraph(1);">
+                                <p>@Translate.Message("L4061") <span id="systolicRange1"></span> @Translate.Message("L4058")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="systolicRange1Count"></span>/<span name="systolicCount"></span></div>
+                            </div>
+                        </div>
+                        <div class="cell medium-4">
+                            <div class="callout sys-bp" onclick="changeSPGraph(2);">
+                                <p>@Translate.Message("L4061") <span id="systolicRange2"></span> @Translate.Message("L4058")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="systolicRange2Count"></span>/<span name="systolicCount"></span></div>
+                            </div>
+                        </div>
+                        <div class="cell medium-4">
+                            <div class="callout sys-bp" onclick="changeSPGraph(3);">
+                                <p>@Translate.Message("L4061") <span id="systolicRange3"></span> @Translate.Message("L4058")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="systolicRange3Count"></span>/<span name="systolicCount"></span></div>
+                            </div>
+                        </div>
+                        <div class="cell medium-4">
+                            <div class="callout dys-bp" onclick="changeDPGraph(1);">
+                                <p>@Translate.Message("L4062") <span id="diastolicRange1"></span> @Translate.Message("L4058")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="diastolicRange1Count"></span>/<span name="diastolicCount"></span></div>
+                            </div>
+                        </div>
+                        <div class="cell medium-4">
+                            <div class="callout dys-bp" onclick="changeDPGraph(2);">
+                                <p>@Translate.Message("L4062") <span id="diastolicRange2"></span> @Translate.Message("L4058")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="diastolicRange2Count"></span>/<span name="diastolicCount"></span></div>
+                            </div>
+                        </div>
+                        <div class="cell medium-4">
+                            <div class="callout dys-bp" onclick="changeDPGraph(3);">
+                                <p>@Translate.Message("L4062") <span id="diastolicRange3"></span> @Translate.Message("L4058")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="diastolicRange3Count"></span>/<span name="diastolicCount"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-graph-details bp-graph-details">
+            <h5>@Html.Raw(String.Format(Translate.Message("L4063"), "<span id='pastDays'>7</span>"))</h5>
+
+            <div class="bp-details-container">
+                <div class="bp-details">
+                    <div class="left-cell">
+                        <ul>
+                            <li>
+                                @Translate.Message("L4064")
+                                <p><span id="systolicMin"></span> @Translate.Message("L4034") <span id="systolicMax"></span> @Translate.Message("L4058")</p>
+                            </li>
+                            <li>
+                                @Translate.Message("L4065")
+                                <p><span id="avgSystolic"></span> @Translate.Message("L4058")</p>
+                            </li>
+                            <li>
+                                @Translate.Message("L4066")
+                                <p><span id="latestSystolic"></span> @Translate.Message("L4058")</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="right-cell">
+                        <ul>
+                            <li>
+                                @Translate.Message("L4067")
+                                <p><span id="diastolicMin"></span> @Translate.Message("L4034") <span id="diastolicMax"></span> @Translate.Message("L4058")</p>
+                            </li>
+                            <li>
+                                @Translate.Message("L4068")
+                                <p><span id="avgDiastolic"></span> @Translate.Message("L4058")</p>
+                            </li>
+                            <li @*class="bp-marked"*@>
+                                @Translate.Message("L4069")
+                                <p><span id="latestDiastolic"></span> @Translate.Message("L4058")</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="@Url.Content("~/Scripts/moment.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    $("#graph-start-date").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#graph-start-date').val()));
+    });
+    $("#graph-end-date").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#graph-end-date').val()));
+    });
+    $(document).ready(function () {
+        var bpgraphData, sysgraphData, diagraphData;
+        var srange1=0, srange2 = 0, srange3= 0, drange1=0, drange2 = 0, drange3= 0;
+        LoadBPData(7);
+
+        $(".graph-selector ul li").on("click", function () {
+            var showData = $(this).data("value");
+            var showText = $(this).text();
+            $(".graph-selector-container span").text(showText);
+            $(".graph-selector-container span").data('value', showData);
+            $("#graph-date-filter").foundation("close");
+            changeGraph();
+        });
+
+	    $('.main-graph-summary .callout').on('click', function () {
+		    $('.main-graph-summary .callout').removeClass('callout-select');
+		    $(this).addClass('callout-select');
+	    });
+
+        $("#graph-start-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()}).on('change', function (selected) {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#graph-end-date').fdatepicker('setDate', minDate);
+            }
+            $('#graph-end-date').fdatepicker('setStartDate', minDate);
+            $("#graph-end-date").trigger("change");
+        });
+        $("#graph-end-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()
+        });
+
+        $("#date-search").on('submit', function (ev) {
+            LoadBPData(0);
+            ev.preventDefault();
+            $(".graph-date-range").addClass("hide");
+        });
+
+		$(document).on('click', function(){
+			$('.graph-date-range').addClass("hide");
+		});
+		$('.graph-date-range, .datepicker, .graph-selector').on('click', function(e){
+			e.stopPropagation();
+		});
+    });
+
+    function changeGraph() {
+        if ($(".graph-selector-container span").data('value').includes("week-data")) {
+            $(".graph-date-range").addClass("hide");
+            LoadBPData(7);
+            $("#pastDays").html(7);
+        }
+        else if ($(".graph-selector-container span").data('value').includes("month-data")) {
+            $(".graph-date-range").addClass("hide");
+            LoadBPData(30);
+            $("#pastDays").html(30);
+        }
+        else if ($(".graph-selector-container span").data('value').includes("90days-data")) {
+            $(".graph-date-range").addClass("hide");
+            LoadBPData(90);
+            $("#pastDays").html(90);
+        }
+		else if ($(".graph-selector-container span").data('value').includes("date-range")) {
+			$(".graph-date-range").removeClass("hide");
+            $("#graph-start-date").val("");
+            $("#graph-end-date").val("");
+		}
+        else {
+            $(".graph-date-range").addClass("hide");
+            LoadBPData(1);
+            $("#pastDays").html(1);
+        }
+    }
+
+    function changeDPGraph(range){
+        var value = 0;
+        if(range == 1)
+            value = drange1;
+        if(range == 2)
+            value = drange2;
+        if(range == 3)
+            value = drange3;
+        var data = diagraphData.filter((x) => { return x.value > value; })
+        createDiaGraph(data);
+
+		var $listParent = $(".main-graph-container");
+		if($(window).width() < 640) {
+			windowScrollClass($listParent, 45, 500);
+		}
+		else {
+			windowScrollClass($listParent, 65, 500);
+		}
+    }
+
+    function changeSPGraph(range) {
+        var value = 0;
+        if(range == 1)
+            value = srange1;
+        if(range == 2)
+            value = srange2;
+        if(range == 3)
+            value = srange3;
+        var data = sysgraphData.filter((x) => { return x.value > value; })
+        createSysGraph(data);
+
+		var $listParent = $(".main-graph-container");
+		if($(window).width() < 640) {
+			windowScrollClass($listParent, 45, 500);
+		}
+		else {
+			windowScrollClass($listParent, 65, 500);
+		}
+    }
+
+	function windowScrollClass(element, offset, speed) {
+	    var $element = element;
+	    var speed = speed ? speed : 500;
+	    var offset = offset ? offset : 70;
+	    var scrollPos = $element.offset().top
+
+	    $("html, body").animate({
+		    scrollTop: scrollPos - offset
+	    }, speed);
+    }
+
+    function changeBPGraph() {
+        createBPGraph(bpgraphData);
+    }
+
+    function LoadBPData(days) {
+        var startDate, endDate;
+        if ($(".graph-selector-container span").data('value').includes("date-range")) {
+            startDate = $("#HStartDate").val();
+            endDate = $("#HEndDate").val();
+            var diffDays = Math.round((new Date(new Date(endDate) - new Date(startDate))) / 1000 / 60 / 60 / 24);
+            $("#pastDays").html(diffDays);
+        }
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            data: {days: days, startDate : startDate, endDate : endDate},
+            url: "@Url.Action("ListBiometricsData", "Devices")",
+            success: function (data) {
+                if (data.graphData == null) {
+                    $("#no-graph").removeClass("hide");
+                    $("#has-data").addClass("hide");
+                }
+                else {
+                    $("#no-graph").addClass("hide");
+                    $("#has-data").removeClass("hide");
+                    //let recentDate = moment(data.recentDate, "MMM DD,YYYY");
+                    //$("#lastUpdate").text(recentDate.format("MMM D"));
+                    $("#recentDate").text(data.recentDate);
+                    $("#systolicAvg").text(data.SystolicValue);
+                    $("#diastolicAvg").text(data.DiastolicValue);
+                    $("#RangeBP").removeClass("red green");
+                    if (data.SystolicValue < 120 && data.DiastolicValue < 80) {
+                        $("#RangeBP").addClass("green");
+                        $("#RangeBP").text("@Translate.Message("L4010")");
+                    }
+                    else {
+                        $("#RangeBP").addClass("red");
+                        $("#RangeBP").text("@Translate.Message("L4011")");
+                    }
+                    $("#avgSystolic").text(data.SystolicValue);
+                    $("#avgDiastolic").text(data.DiastolicValue);
+
+                    $("#systolicRange1").text(data.SystolicRange1Value);
+                    $("#systolicRange2").text(data.SystolicRange2Value);
+                    $("#systolicRange3").text(data.SystolicRange3Value);
+                    $("#diastolicRange1").text(data.DiastolicRange1Value);
+                    $("#diastolicRange2").text(data.DiastolicRange2Value);
+                    $("#diastolicRange3").text(data.DiastolicRange3Value);
+                    if (data.SystolicRange1Count == 0)
+                        $("#systolicRange1Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#systolicRange1Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#systolicRange1Count").text(data.SystolicRange1Count);
+                    if (data.SystolicRange2Count == 0)
+                        $("#systolicRange2Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#systolicRange2Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#systolicRange2Count").text(data.SystolicRange2Count);
+                    if (data.SystolicRange3Count == 0)
+                        $("#systolicRange3Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#systolicRange3Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#systolicRange3Count").text(data.SystolicRange3Count);
+                    if (data.DiastolicRange1Count == 0)
+                        $("#diastolicRange1Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#diastolicRange1Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#diastolicRange1Count").text(data.DiastolicRange1Count);
+                    if (data.DiastolicRange2Count == 0)
+                        $("#diastolicRange2Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#diastolicRange2Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#diastolicRange2Count").text(data.DiastolicRange2Count);
+                    if (data.DiastolicRange3Count == 0)
+                        $("#diastolicRange3Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#diastolicRange3Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#diastolicRange3Count").text(data.DiastolicRange3Count);
+                    $("#systolicMin").text(data.SystolicMin);
+                    $("#systolicMax").text(data.SystolicMax);
+                    $("#diastolicMin").text(data.DiastolicMin);
+                    $("#diastolicMax").text(data.DiastolicMax);
+                    $("#latestSystolic").text(data.LatestSystolic);
+                    $("#latestDiastolic").text(data.LatestDiastolic);
+                    $("#systolicDiastolicCount").text(data.SystolicCount);
+                    var els = document.getElementsByName("systolicCount");
+                    for (var i = 0; i < els.length; i++) {
+                        els[i].innerHTML = data.SystolicCount;
+                    }
+                    var els1 = document.getElementsByName("diastolicCount");
+                    for (var i = 0; i < els.length; i++) {
+                        els1[i].innerHTML = data.DiastolicCount;
+                    }
+                    bpgraphData = data.graphData;
+                    sysgraphData = data.systolicGraph;
+                    diagraphData = data.diastolicGraph;
+                    srange1 = data.SystolicRange1Value;
+                    srange2 = data.SystolicRange2Value;
+                    srange3 = data.SystolicRange3Value;
+                    drange1 = data.DiastolicRange1Value;
+                    drange2 = data.DiastolicRange2Value;
+                    drange3 = data.DiastolicRange3Value;
+                    createBPGraph(bpgraphData);
+                    //createSysGraph(sysgraphData);
+                    //createDiaGraph(diagraphData);
+                }
+                $("#systolicDiastolicCount").parents('div').trigger("click");
+            }
+        });
+    }
+
+    function createBPGraph(data) {
+        // Create chart instance for Month's data
+        var chart1 = am4core.create("bp-graph-data", am4charts.XYChart);
+        chart1.responsive.enabled = true;
+        chart1.data = data;
+
+        // Create axes
+        var dateAxis = chart1.xAxes.push(new am4charts.DateAxis());
+        dateAxis.startLocation = 0;
+        dateAxis.endLocation = 1;
+        dateAxis.renderer.cellStartLocation = 0;
+        dateAxis.renderer.cellEndLocation = 1;
+        dateAxis.renderer.grid.template.disabled = true;
+        dateAxis.dateFormats.setKey("day", "dd\nMMM");
+        dateAxis.renderer.labels.template.fill = am4core.color("#999999");
+        dateAxis.renderer.grid.template.location = 0;
+
+        var valueAxis = chart1.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.renderer.opposite = true;
+        valueAxis.renderer.labels.template.fill = am4core.color("#999999");
+        valueAxis.title.text = "@Translate.Message("L4058")";
+
+        var series = chart1.series.push(new am4charts.ColumnSeries());
+        series.dataFields.dateX = "date";
+        series.dataFields.openValueY = "open";
+        series.dataFields.valueY = "close";
+        series.sequencedInterpolation = true;
+        series.fillOpacity = 0;
+        series.strokeOpacity = 1;
+        series.columns.template.width = 0.01;
+
+        /* Add a single HTML-based tooltip to first series */
+        series.tooltipHTML = `<p style="font-size: 14px; margin-bottom: 4px; color: #bcbcbc;" > {dateX.formatDate('dd MMMM')} </p>
+            <ul>
+            <li style="color: #a367dc; font-size: 20px;">
+                <p style="font-size: 12px; margin-bottom: 10px; color: #bcbcbc;">@Translate.Message("L4070") <br><strong style="font-size: 16px; color: #fff;">{valueY}</strong> @Translate.Message("L4058")</p>
+            </li>
+            <li style="color: #67b7dc; font-size: 20px;">
+                <p style="font-size: 12px; margin-bottom: 0; color: #bcbcbc;">@Translate.Message("L4071") <br><strong style="font-size: 16px; color: #fff;">{openValueY}</strong> @Translate.Message("L4058")</p>
+            </li>
+            </ul>`;
+        series.tooltip.getFillFromObject = false;
+        series.tooltip.background.fill = am4core.color("#484848");
+        series.tooltip.pointerOrientation = "vertical";
+        series.tooltip.background.filters.clear();
+
+        var openBullet = series.bullets.create(am4charts.CircleBullet);
+        openBullet.locationY = 1;
+
+        var closeBullet = series.bullets.create(am4charts.CircleBullet);
+
+        closeBullet.fill = chart1.colors.getIndex(4);
+        closeBullet.stroke = closeBullet.fill;
+
+        /* Create a cursor */
+        chart1.cursor = new am4charts.XYCursor();
+    }
+
+
+
+    // Create chart instance for week
+    function createSysGraph(data) {
+        if (data.length == 0) {
+            appendEmptyData();
+        }
+        else {
+            var chart = am4core.create("bp-graph-data", am4charts.XYChart);
+            // Create axes
+            var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+            dateAxis.startLocation = 0;
+            dateAxis.endLocation = 1;
+            dateAxis.renderer.cellStartLocation = 0;
+            dateAxis.renderer.cellEndLocation = 1;
+            dateAxis.renderer.grid.template.disabled = true;
+            dateAxis.dateFormats.setKey("day", "dd\nMMM");
+            dateAxis.renderer.labels.template.fill = am4core.color("#999999");
+            dateAxis.renderer.grid.template.location = 0;
+
+            // Create value axis
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            valueAxis.renderer.opposite = true;
+            valueAxis.renderer.labels.template.fill = am4core.color("#999999");
+            valueAxis.renderer.minGridDistance = 100;
+
+            // Create series
+            var series = chart.series.push(new am4charts.LineSeries());
+            series.dataFields.valueY = "value";
+            series.dataFields.dateX = "date";
+            series.stroke = am4core.color("#f60077");
+            series.strokeWidth = 1;
+            series.tensionX = 1;
+            series.fill = am4core.color("#f60077");
+            series.fillOpacity = 0;
+            series.bullets.push(new am4charts.CircleBullet());
+            series.data = data;
+
+            /* Add a single HTML-based tooltip to first series */
+            series.tooltipHTML = `<p style="font-size: 14px; margin-bottom: 4px; color: #bcbcbc;" > {dateX.formatDate('dd MMMM')} </p>
+                <ul>
+                <li style="color: #f60077; font-size: 20px;">
+                    <p style="font-size: 12px; margin-bottom: 10px; color: #bcbcbc;">@Translate.Message("L4070") <br><strong style="font-size: 16px; color: #fff;">{valueY}</strong> @Translate.Message("L4058")</p>
+                </li>
+                </ul>`;
+            series.tooltip.getFillFromObject = false;
+            series.tooltip.background.fill = am4core.color("#484848");
+            series.tooltip.pointerOrientation = "vertical";
+            series.tooltip.background.filters.clear();
+
+            chart.cursor = new am4charts.XYCursor();
+        }
+    }
+
+    // Create chart instance for Systolic data
+    function createDiaGraph(data) {
+        if (data.length == 0) {
+            appendEmptyData();
+        }
+        else {
+            var chart = am4core.create("bp-graph-data", am4charts.XYChart);
+
+            // Create axes
+            var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+            dateAxis.startLocation = 0;
+            dateAxis.endLocation = 1;
+            dateAxis.renderer.cellStartLocation = 0;
+            dateAxis.renderer.cellEndLocation = 1;
+            dateAxis.renderer.grid.template.disabled = true;
+            dateAxis.dateFormats.setKey("day", "dd\nMMM");
+            dateAxis.renderer.labels.template.fill = am4core.color("#999999");
+            dateAxis.renderer.grid.template.location = 0;
+
+            // Create value axis
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            valueAxis.renderer.opposite = true;
+            valueAxis.renderer.labels.template.fill = am4core.color("#999999");
+            valueAxis.renderer.minGridDistance = 100;
+
+            // Create series
+            var series = chart.series.push(new am4charts.LineSeries());
+            series.dataFields.valueY = "value";
+            series.dataFields.dateX = "date";
+            series.stroke = am4core.color("#f60077");
+            series.strokeWidth = 1;
+            series.tensionX = 1;
+            series.fill = am4core.color("#f60077");
+            series.fillOpacity = 0;
+            series.bullets.push(new am4charts.CircleBullet());
+            series.data = data;
+
+            /* Add a single HTML-based tooltip to first series */
+            series.tooltipHTML = `<p style="font-size: 14px; margin-bottom: 4px; color: #bcbcbc;" > {dateX.formatDate('dd MMMM')} </p>
+            <ul>
+            <li style="color: #f60077; font-size: 20px;">
+                <p style="font-size: 12px; margin-bottom: 10px; color: #bcbcbc;">@Translate.Message("L4071") <br><strong style="font-size: 16px; color: #fff;">{valueY}</strong> @Translate.Message("L4058")</p>
+            </li>
+            </ul>`;
+            series.tooltip.getFillFromObject = false;
+            series.tooltip.background.fill = am4core.color("#484848");
+            series.tooltip.pointerOrientation = "vertical";
+            series.tooltip.background.filters.clear();
+
+            chart.cursor = new am4charts.XYCursor();
+        }
+    }
+
+    function appendEmptyData() {
+        var imageURL = "/Images/device/no-data.png";
+        var emptyStateHTML = "<div class='graph-card'><div class='no-data-msg-box' id='pa-no-data'><div><img src='../Images/device-no-data.svg' alt='' /><p>@Translate.Message("L4032")</p></div></div></div>";
+        $("#bp-graph-data").html("");
+        $("#bp-graph-data").append(emptyStateHTML);
+    }
+</script>

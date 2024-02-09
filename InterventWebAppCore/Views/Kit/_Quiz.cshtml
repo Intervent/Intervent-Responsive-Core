@@ -1,0 +1,344 @@
+﻿@model InterventWebApp.QuizModel
+
+<div class="grid-x grid-margin-x">
+    <div class="cell medium-6"><h2>Quiz</h2></div>
+    <div class="cell medium-6 text-right small-only-text-center">
+        <button id="add-quiz" class="button hollow"><i class="fa fa-plus"></i>Add Quiz</button>
+    </div>
+</div>
+<div id="quizBlock" class="kits-form">
+    <div id="quizDetail-body" class="grid-x grid-margin-x">
+        <div class="cell small-12"></div>
+    </div>
+    <div id="quizs" style="display:none;">
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>Language</label>
+                @Html.DropDownList("quizlanguage", Model.LanguageList, new Dictionary<string, object> { { "onchange", "QuizLanguageChange()" }, { "class", "primary-select" } })
+            </div>
+            <div class="cell medium-12">
+                <label>Quiz Text</label>
+                <textarea id="quizText"></textarea>
+            </div>
+			<div class="cell medium-12">
+				<div class="tick-buttons">
+					<label for="isActive">
+						<input id="isActive" type="checkbox" checked>
+						<span class="checkmark"></span>
+						Is Active
+					</label>
+				</div>
+			</div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+			<div class="cell medium-6 medium-order-2 medium-text-right">
+				<button type="button" class="small" id="addQuiz">Save</button>
+			</div>
+			<div class="cell medium-6 medium-order-1 medium-text-left">
+				<button class="button hollow" type="reset" id="closeQuiz">Cancel</button>
+			</div>
+            
+        </div>
+    </div>
+</div>
+<div id="qoptionBlock" class="kits-form">
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-6"><h2>Options</h2></div>
+        <div class="cell medium-6 text-right small-only-text-center">
+            <button id="add-qoption" class="button hollow"><i class="fa fa-plus"></i>Add Options</button>
+        </div>
+    </div>
+    <div id="qoptionDetail-body" class="grid-x grid-margin-x">
+        <div class="cell small-12"></div>
+    </div>
+    <div id="qoptions" style="display:none;">
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>Language</label>
+                @Html.DropDownList("quizOptionlanguage", Model.LanguageList, new Dictionary<string, object> { { "onchange", "qOptionLanguageChange()" }, { "class", "primary-select" } })
+            </div>
+            <div class="cell medium-12">
+                <label>Option</label>
+                <input type="text" id="txtQoptions" />
+            </div>
+			<div class="cell medium-3 small-6">
+				<div class="tick-buttons">
+					<label for="isAnswer">
+						<input type="checkbox" id="isAnswer" />
+						<span class="checkmark"></span>
+						Quiz answer?
+					</label>
+				</div>
+			</div>
+			<div class="cell medium-3 small-6">
+				<div class="tick-buttons">
+					<label for="isoptionActive">
+						<input id="isoptionActive" type="checkbox" checked>
+						<span class="checkmark"></span>
+						Is Active
+					</label>
+				</div>
+			</div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right">
+                <button class="small" type="button" id="addQoptions">Save</button>
+            </div>
+            <div class="cell medium-6 medium-order-1 medium-text-left">
+                <button class="small secondary" type="reset" id="closeQoption">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="hdnQuizId" />
+<input type="hidden" id="hdnQoptionId" />
+<script>
+    $(document).ready(function () {
+        $('#closeQuiz').on('click', function () {
+            $('#quizs').hide();
+        });
+        $('#closeQoption').on('click', function () {
+            $('#qoptions').hide();
+        });
+        @*$.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetInputTypes", "Kit")",
+            success: function (progData) {
+                $("#quizType").append("<option value=''>-- Select --</option>");
+                for (i = 0; i < progData.Options.length; i++) {
+                    $("#quizType").append("<option value=" + progData.Options[i].Value + ">" + progData.Options[i].DisplayText + "</option>");
+                }
+            }
+        });*@
+        hideQuiz();
+        clearQuiz();
+        $.ajax({
+            url: "@Url.Action("ReadQuizinKit", "Kit")",
+            data: { stepId: @Model.stepId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    if (data.Record != null) {
+                        listQuiz(data.Record);
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    function qOptionLanguageChange() {
+        var lang = $('#quizOptionlanguage').val();
+        var qoId = $('#hdnQoptionId').val();
+        var qId = $('#hdnQuizId').val();
+        var option = null
+        for (var i = 0; i < quizList.length; i++) {
+            if (quizList[i].Id == qId) {
+                 for (var j = 0; j < quizList[i].optionsforQuiz.length; j++) {
+                     if (quizList[i].optionsforQuiz[j].Id == qoId) {
+                         option = quizList[i].optionsforQuiz[j]
+                     }
+                }
+            }
+        }
+        if (option != null) {
+            if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage") {
+                for (var j = 0; j < option.LanguageTextValue.length; j++) {
+                    if (option.LanguageTextValue[j].LanguageCode == lang) {
+                        $("#txtQoptions").val(option.LanguageTextValue[j].Text)
+                    }
+                }
+
+            } else {
+                $("#txtQoptions").val(option.OptionText)
+            }
+        }
+    }
+    function QuizLanguageChange() {
+        var lang = $('#quizlanguage').val();
+        var qId = $('#hdnQuizId').val();
+        var quiz = null
+        
+        for (var i = 0; i < quizList.length; i++) {
+            if (quizList[i].Id == qId) {
+                quiz = quizList[i]
+            }
+        }
+        if (quiz != null) {
+            if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage") {
+                for (var j = 0; j < quiz.LanguageTextValue.length; j++) {
+                    if (quiz.LanguageTextValue[j].LanguageCode == lang) {
+                        $("#quizText").val(quiz.LanguageTextValue[j].Text)
+                    }
+                }
+
+            } else {
+                $("#quizText").val(quiz.QuizText)
+            }
+        }
+    }
+
+
+    $('#add-quiz').on('click', function () {
+        $('#hdnQuizId').val('');
+        $('#quizText').val('');
+        $('#isActive').prop('checked', true);
+
+        //$('#quizType').val('');
+        $('#quizs').show();
+        $('#qoptionBlock').hide();
+
+    });
+
+    $('#add-qoption').on('click', function () {
+        $('#txtQoptions').val('');
+        $('#isAnswer').prop('checked', false);
+        $('#isoptionActive').prop('checked', true);
+
+        $('#hdnQoptionId').val('');
+        $('#qoptionBlock').show();
+        $('#qoptions').show();
+    });
+
+    var radioType = @Convert.ToInt32(Intervent.Web.DataLayer.QuestionType.radiobutton);
+
+    $("#addQuiz").on('click', function () {
+        var activityId = $('#hdnActivityId').val();
+        if (activityId != '') {
+            var quizText = $("#quizText").val();
+            var isActive = $('#isActive').is(":checked");
+            var lang = $('#quizlanguage').val();
+
+            //var quizType = $("#quizType").val();
+            $.ajax({
+                url: "@Url.Action("AddEditQuiz", "Kit")",
+                data: { stepId: @Model.stepId, id: $('#hdnQuizId').val(), quizText: quizText, quizType: radioType, isActive: isActive, language:lang },
+                type: 'POST',
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    if (data.Record != null) {
+                        //if ($('#quizType').val() != 1 && $('#quizType').val() != '') {
+
+                        listQuiz(data.Record.quizinKit);
+                        $('#qoptionBlock').hide();
+                        $('#quizs').hide();
+                        //}
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+    });
+
+    $('#addQoptions').on('click', function () {
+        $.ajax({
+            url: "@Url.Action("AddEditOptionsforQuiz", "Kit")",
+            data: {
+                quizId: $('#hdnQuizId').val(), quizOption: $('#txtQoptions').val(), id: $('#hdnQoptionId').val(), isDefault: $('#isAnswer').is(":checked"), isActive: $('#isoptionActive').is(":checked"), language: $('#quizOptionlanguage').val() },
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.Record != null) {
+
+                    RenderQoptionList(data.Record.optionsforQuiz);
+                    for (var i = 0; i < quizList.length; i++) {
+                        if (quizList[i].Id == $('#hdnQuizId').val()) {
+                            quizList[i].optionsforQuiz.length = 0
+                            for (var j = 0; j < data.Record.optionsforQuiz.length; j++) {
+                                quizList[i].optionsforQuiz.push(data.Record.optionsforQuiz[j]);
+                            }
+                        }
+                    }
+                    $('#qoptions').hide();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    function listQuiz(quizs) {
+        var html = "";
+        quizList = quizs;
+        $("#quizDetail-body").html('');
+		html = html + "<table class='cell medium-12'><thead><tr><th>Quiz</th><th style='text-align: center;'>Edit</th><th style='text-align: center;'>Qoptions</th></tr></thead>"
+        for (var i = 0; i < quizs.length; i++) {
+			html = html + "<tr><td>" + quizs[i].QuizText + "</td><td align='center'><a class='anchor-blue' onclick='ReadQuiz(" + quizs[i].Id + ")'><i class='fa fa-pencil fa-fw'></i></a></td>";
+            //if (quizs[i].QuizType != 1) {
+			html = html + "<td align='center'><a class='anchor-blue' onclick='listQoption(" + quizs[i].Id + ")'><i class='fa fa-th-list'></i></a></td></tr>";
+            //}
+            //else
+            //    html = html + "<td><i></i></td></tr>";
+        }
+        html = html + "</table>"
+        $("#quizDetail-body").html(html);
+    }
+
+    function listQoption(quizId) {
+        for (var i = 0; i < quizList.length; i++) {
+            if (quizList[i].Id == quizId) {
+                $('#hdnQuizId').val(quizList[i].Id);
+                RenderQoptionList(quizList[i].optionsforQuiz);
+                break;
+            }
+        }
+        $('#qoptionBlock').show();
+        $('#quizs').hide();
+        $('#qoptions').hide();
+    }
+
+    function RenderQoptionList(qoptions){
+
+        var html = "";
+        $("#qoptionDetail-body").html('');
+        html = html + "<table class='cell medium-12'><thead><tr><th>Option</th><th>Is Answer?</th><th>Edit</th></tr></thead>"
+        for (var i = 0; i < qoptions.length; i++) {
+            html = html + "<tr><td> " + qoptions[i].OptionText + "</td><td>" +  qoptions[i].IsDefault + "</td><td><a class='anchor-blue' onclick='ReadQoption(" + qoptions[i].Id + ", \"" + qoptions[i].OptionText + "\"," + qoptions[i].IsDefault + "," + qoptions[i].IsActive + ")'><i class='fa fa-pencil fa-fw'></i></a></td></tr>";
+        }
+        html = html + "</table>"
+        $("#qoptionDetail-body").html(html);
+    }
+
+    function ReadQuiz(id) {
+        for (var i = 0; i < quizList.length; i++) {
+            if (quizList[i].Id == id) {
+                $('#quizText').val(quizList[i].QuizText);
+                $("#isActive" ).prop( "checked", quizList[i].IsActive );
+                // $('#quizType').val(quizList[i].QuizType);
+                $('#hdnQuizId').val(quizList[i].Id);
+                $('#quizs').show();
+                $('#qoptionBlock').hide();
+            }
+        }
+    }
+
+    function ReadQoption(id, text, isDefault, isActive) {
+
+        $('#qoptions').show();
+        $('#txtQoptions').val(text);
+        $("#isAnswer" ).prop( "checked", isDefault );
+        $("#isoptionActive" ).prop( "checked", isActive );
+
+        $('#hdnQoptionId').val(id);
+    }
+
+    function hideQuiz() {
+        $('#qoptionBlock').hide();
+    }
+
+    function clearQuiz() {
+        $('#quizs').hide();
+        $('#quizText').val('');
+        $("#isActive" ).prop( "checked", true );
+        //$('#quizType').val('');
+    }
+</script>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+    <span aria-hidden="true">&times;</span>
+</button>

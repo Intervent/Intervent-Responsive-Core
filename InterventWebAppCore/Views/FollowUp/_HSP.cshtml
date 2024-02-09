@@ -1,0 +1,103 @@
+﻿@using Intervent.Web.DTO;
+@using InterventWebApp;
+@model FU_HSAModel
+
+
+<h2 class="text-center">@Translate.Message("L2122")</h2>
+<form data-abide novalidate id="hsp-form">
+    <div class="row">
+        <div class="columns">
+            <div id="q1" class="question">
+                <div class="qHeader">
+                    <div class="qNumber">1.</div>
+                    <div class="qText">
+                        @Translate.Message("L88")
+                    </div>
+                </div>
+                <div class="qBody">
+                    @Html.DropDownListFor(m => m.HealthCondition.StateOfHealth, Model.StateOfHealthList, "--" + Translate.Message("L421") + "--", new { @required = "required" })
+                    <div class="qOption">
+                        <small class="form-error">@Translate.Message("L480")</small>
+                    </div>
+                </div>
+            </div>
+            <div id="q10" class="question">
+                <div class="qHeader">
+                    <div class="qNumber">2.</div>
+                    <div class="qText">
+                        @Translate.Message("L111")
+                    </div>
+                </div>
+                <div class="qBody">
+                    @Html.DropDownListFor(m => m.HealthCondition.ProductivityLoss, Model.ProductivityLossList, "--" + Translate.Message("L421") + "--", new { @required = "required" })
+                    <div class="qOption">
+                        <small class="form-error">@Translate.Message("L480")</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right">
+            <button class="small" type="submit">@Translate.Message("L481")</button>
+        </div>
+        <div class="cell medium-6 medium-order-1 medium-text-left">
+            <button class="small secondary" type="reset" id="closeHSP">@Translate.Message("L967")</button>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    $(document).ready(function () {
+        @if (Model.readOnly)
+         {
+             @: $("#hsp-form :input").prop("disabled", true);
+             @: $('#closeHSP').attr('disabled', false);
+        }
+        $('#closeHSP').on('click', function () {
+            @if (Model.readOnly)
+            {
+                @: $("#hsp-form :input").prop("disabled", true);
+                @: $('#closeHSP').attr('disabled', false);
+                        }
+            $('#survey-hsp').foundation('close');
+            removeForm('hsp-form');
+            RealignPage();
+        });
+        $("#hsp-form").foundation();
+        $('#hsp-form')
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                if (invalid_fields) {
+                    var scrollTo = $('#' + invalid_fields[0].id).parent('div').position().top;
+                    $('#hsp-form').parents('.reveal-overlay').animate({
+                        scrollTop: scrollTo
+                    }, 400);
+                }
+            })
+            .on('formvalid.zf.abide', function () {
+                $.ajax({
+                    url: "@Url.Action("HSP", "FollowUp")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#hsp-form").serialize(),
+                    success: function (data) {
+                        if (data != null && data.PageSeqDone != null) {
+                            removeForm('hsp-form');
+                            if (pages.indexOf("YL") < 0)
+                                pages = pages + ".@PageName.YL.ToString().";
+                            UpdateFollowUpStatus();
+                            $('#survey-hsp').foundation('close');
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+            })
+            // to prevent form from submitting upon successful validation
+            .on("submit", function (ev) {
+                ev.preventDefault();
+
+            })
+    });
+</script>
+<a class="close-button" data-close onclick="removeForm('hsp-form')">&#215;</a>

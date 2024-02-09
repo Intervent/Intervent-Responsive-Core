@@ -1,0 +1,336 @@
+﻿<!--USER VIEW-->
+
+@using InterventWebApp
+@using Intervent.Web.DTO;
+@model InterventWebApp.WebinarDashboardModel
+
+@{
+    ViewBag.Title = "Webinars";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main webinar-page">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="main-container">
+                    <section class="main-page-title text-center">
+                        <h1>@Translate.Message("L4429")</h1>
+                        <p>@Translate.Message("L4430")</p>
+                    </section>
+
+                    <section class="full-page-slider-wrapper webinar-slider-wrapper">
+                        <div class="slider-title text-center">
+                            <h2>@Html.Raw(string.Format(Translate.Message("L4431"), "<strong>", "</strong>"))</h2>
+                        </div>
+                        @if (Model.upcomingWebinars != null && Model.upcomingWebinars.Count() > 0)
+                        {
+                            <div class="slider-main-container">
+                                <div class="alert-box success hide" id="register-webinar-response" data-closable>
+                                    <div id="webinar-alert">@Translate.Message("L4432")</div>
+                                </div>
+                                <div class="webinar-slider">
+                                    @foreach (var upcomingWebinar in Model.upcomingWebinars.OrderByDescending(x => x.startDate).ToList())
+                                    {
+                                        <div class="slider-item">
+                                            <div class="slider-body">
+                                                <div class="webinar-timing recursive-timing">
+                                                    <span class="time">@Translate.Message("L4433") @upcomingWebinar.startTime @upcomingWebinar.endTime </span> | <span class="day">@upcomingWebinar.dateDetails</span>
+                                                </div>
+
+                                                <div class="webinar-description">
+                                                    <h3>@upcomingWebinar.topic</h3>
+                                                    @if (!string.IsNullOrEmpty(upcomingWebinar.agenda))
+                                                    {
+                                                        <p>@Html.Raw(upcomingWebinar.agenda.Replace("\n", "<br/>"))</p>
+                                                        if (@upcomingWebinar.agenda.Length > 300)
+                                                        {
+                                                            <p><span class="text-blue" data-toggle="coach-know-more-@upcomingWebinar.id">@Translate.Message("L3646")</span></p>
+                                                        }
+                                                        <div class="reveal large webinar-reveal" id="coach-know-more-@upcomingWebinar.id" data-reveal>
+                                                            <button class="close-button text-blue" data-close aria-label="Close modal" type="button">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                            @Html.Raw(upcomingWebinar.agenda.Replace("\n", "<br/>"))
+                                                        </div>
+                                                    }
+
+                                                    @if (!string.IsNullOrEmpty(upcomingWebinar.handout) && upcomingWebinar.type == (int)WebinarTypes.Webinar)
+                                                    {
+                                                        <div class="handout-download-container">
+                                                            <p><a href="~/pdf/@upcomingWebinar.handout" target="_blank"><span class="text-blue">@Translate.Message("L4513")</span></a></p>
+                                                        </div>
+                                                    }
+                                                    else if (upcomingWebinar.type == (int)WebinarTypes.RecurringWebinarFixedTime && upcomingWebinar.occurrences.Any(y => !string.IsNullOrEmpty(y.Handout)))
+                                                    {
+                                                        <div class="handout-download-container">
+                                                            <p><a data-open="webinar-schedule-@upcomingWebinar.webinarId"><span class="text-blue">@Translate.Message("L4513")</span></a></p>
+                                                        </div>
+                                                    }
+                                                    <div class="webinar-presentor-details">
+                                                        <div class="presentor-img"><img src="../@upcomingWebinar.presentedByImageUrl" alt=""></div>
+                                                        <div class="presentor-name">
+                                                            <span>@Translate.Message("L4434") </span>
+                                                            @upcomingWebinar.presentedByName
+                                                            @if (!string.IsNullOrEmpty(upcomingWebinar.presentedByBio))
+                                                            {
+                                                                <span class="text-blue" data-open="coach-bio-@upcomingWebinar.id">@Translate.Message("L4439")</span>
+                                                                <div class="reveal webinar-reveal" id="coach-bio-@upcomingWebinar.id" data-reveal>
+                                                                    <button class="close-button text-blue" data-close aria-label="Close modal" type="button">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                    @upcomingWebinar.presentedByBio
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="webinar-action-btns">
+                                                        @if (!upcomingWebinar.isRegistered)
+                                                        {
+                                                            <a id="register-@upcomingWebinar.id" onclick="registerforWebinar(@upcomingWebinar.id, @upcomingWebinar.webinarId)" class="button">@Translate.Message("L4435")</a>
+                                                            <p class="success-msg hide" id="success-registered-@upcomingWebinar.id">
+                                                                <img src="~/Images/webinar/success-msg-tick.svg" alt="" />
+                                                                <span> @Translate.Message("L4436").</span>
+                                                                <span id="join-url-@upcomingWebinar.id" class="hide"><a id="user-join-url-@upcomingWebinar.id" class="anchor-blue" href="" target="_blank">@Translate.Message("L4582")</a></span>
+                                                            </p>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="success-msg" id="success-registered-@upcomingWebinar.id">
+                                                                <img src="~/Images/webinar/success-msg-tick.svg" alt="" />
+                                                                <span>@Translate.Message("L4436"). </span>
+                                                                @if (!string.IsNullOrEmpty(upcomingWebinar.userJoinUrl))
+                                                                {
+                                                                    <span><a class="anchor-blue" href="@upcomingWebinar.userJoinUrl" target="_blank">@Translate.Message("L4582")</a></span>
+                                                                }
+
+                                                            </p>
+                                                        }
+                                                        <p>@Translate.Message("L4437")</p>
+                                                        @if (upcomingWebinar.type == (int)WebinarTypes.RecurringWebinarFixedTime)
+                                                        {
+                                                            <p class="recursive-notes"><strong>*</strong>@Translate.Message("L4579") <a data-open="webinar-schedule-@upcomingWebinar.webinarId" class="anchor-blue">@Translate.Message("L4578")</a></p>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slider-main-img show-for-medium">
+                                                <img src="../@upcomingWebinar.webinarImageUrl" alt="Slider Image">
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                            </div>
+
+                            if (Model.upcomingWebinars.Any(x => x.occurrences != null && x.occurrences.Count() > 0))
+                            {
+                                foreach (WebinarDetails webinarDetails in Model.upcomingWebinars.Where(x => x.occurrences != null && x.occurrences.Count() > 0).ToList())
+                                {
+                                    <div class="reveal large webinar-schedule-modal" id="webinar-schedule-@webinarDetails.webinarId" data-reveal>
+                                        <h3>@Translate.Message("L4580")</h3>
+                                        <div class="table-container">
+                                            <table class="table basic-table2">
+                                                <thead>
+                                                    <tr>
+                                                        <th><span>@Translate.Message("L561")</span></th>
+                                                        <th><span>@Translate.Message("L725")</span></th>
+                                                        <th><span>@Translate.Message("L473")</span></th>
+                                                        <th><span>@Translate.Message("L4581")</span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (WebinarOccurrence occurrence in webinarDetails.occurrences.OrderBy(x => Convert.ToDateTime(x.Date)))
+                                                    {
+                                                        <tr>
+                                                            <td>@occurrence.Date</td>
+                                                            <td>@occurrence.Time</td>
+                                                            <td>@occurrence.Duration</td>
+                                                            @if (!string.IsNullOrEmpty(occurrence.Handout))
+                                                            {
+                                                                <td><a href="~/pdf/@occurrence.Handout" target="_blank"><span class="text-blue">@Translate.Message("L4514")</span></a></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>-</td>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <button class="close-button" data-close aria-label="Close modal" type="button">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <div class="slider-main-container">
+                                <div class="webinar-slider modal-slider">
+                                    <div class="flex-container align-center text-center">
+                                        <div>
+                                            <img src="~/Images/webinar/no-webinar.svg" alt="" />
+                                            <p>@Translate.Message("L4438")</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        }
+                    </section>
+
+                    @if (Model.completedWebinars != null && Model.completedWebinars.Count() > 0)
+                    {
+                        <section class="webinar-list-wrapper" data-equalizer="foo">
+                            <div class="section-title text-center">
+                                <h3>@Translate.Message("L4441")</h3>
+                            </div>
+                            <div class="section-cards-container grid-x grid-margin-x" data-equalizer="bar" data-equalize-on="medium">
+                                @foreach (var completedWebinar in Model.completedWebinars.OrderByDescending(x => x.startDate).ToList())
+                                {
+                                    <div class="cell medium-6 large-4">
+                                        <div class="card-item">
+                                            @if (!string.IsNullOrEmpty(completedWebinar.webinarVideoId))
+                                            {
+                                                <div class="card-header" data-open="webinar-video-@completedWebinar.webinarVideoId" data-reset-on-close="true">
+                                                    <div class="card-img">
+                                                        <img src="http://img.youtube.com/vi/@completedWebinar.webinarVideoId/maxresdefault.jpg" alt="" />
+                                                        <div class="player-icon"><img src="~/Images/webinar/card-play-icon.png" alt="" /></div>
+
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="card-header">
+                                                    <div class="card-img">
+                                                        <img src="../Images/webinar/placeholder-image.svg" alt="Webinar image" class="place-holder-img" />
+
+                                                    </div>
+                                                </div>
+                                            }
+                                            <div class="card-body">
+                                                <div class="card-title" title="Hand Hygiene Myths and How to Address Them">@completedWebinar.topic</div>
+                                                <div class="card-description" data-equalizer-watch="bar">
+                                                    @if (!string.IsNullOrEmpty(completedWebinar.agenda))
+                                                    {
+                                                        <p>@Html.Raw(completedWebinar.agenda.Replace("\n", "<br/>"))</p>
+                                                        if (completedWebinar.agenda.Length > 40)
+                                                        {
+                                                            <p><span class="text-blue" data-open="card-agenda-@completedWebinar.id">@Translate.Message("L3646")</span></p>
+                                                            <div class="reveal webinar-reveal" id="card-agenda-@completedWebinar.id" data-reveal>
+                                                                <button class="close-button text-blue" data-close aria-label="Close modal" type="button">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                                @Html.Raw(completedWebinar.agenda.Replace("\n", "<br/>"))
+                                                            </div>
+                                                        }
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(completedWebinar.handout))
+                                                    {
+                                                        <div class="handout-download-container">
+                                                            <p><a href="~/pdf/@completedWebinar.handout" target="_blank"><span class="text-blue">@Translate.Message("L4514")</span></a></p>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="card-footer" data-equalizer-watch="foo">
+                                                <div class="card-details">
+                                                    <div class="details-left">
+                                                        <img src="../@completedWebinar.presentedByImageUrl" alt="" />
+                                                    </div>
+                                                    <div class="details-right">
+                                                        <p class="coach-details">
+                                                            <span>@Translate.Message("L4434"):</span>
+                                                            @completedWebinar.presentedByName
+                                                        </p>
+                                                        <div class="coach-info">
+                                                            @if (!string.IsNullOrEmpty(completedWebinar.presentedByBio))
+                                                            {
+                                                                <p class="text-blue" data-open="coach-bio-@completedWebinar.id">@Translate.Message("L4439")</p>
+                                                                <div class="reveal webinar-reveal" id="coach-bio-@completedWebinar.id" data-reveal>
+                                                                    <button class="close-button text-blue" data-close aria-label="Close modal" type="button">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                    @completedWebinar.presentedByBio
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="text-right">
+                                                    <i class="fa fa-calendar-o"></i> @string.Format(Translate.Message("L4440"), completedWebinar.daysCount)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="reveal" data-reveal data-close-on-click="false" data-close-on-esc="false" data-reset-on-close="true" id="webinar-video-@completedWebinar.webinarVideoId">
+                                        <div class="flex-video">
+                                            <iframe width="640" height="480" src="https://www.youtube.com/embed/@completedWebinar.webinarVideoId" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                        </div>
+                                        <button class="close-button" data-close><span aria-hidden="true">&times;</span></button>
+                                    </div>
+                                }
+                            </div>
+                        </section>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/slick.min.js")"></script>
+<script>
+    $(document).ready(function () {
+        $(".webinar-slider:not(.modal-slider)").slick({
+            dots: true,
+            infinite: false,
+            speed: 300,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+			adaptiveHeight: true
+        });
+    });
+
+    function injectJS() {
+        var frame = $('iframe');
+        var contents = frame.contents();
+        var body = contents.find('body').attr("oncontextmenu", "return false");
+        var body = contents.find('body').append('<div>New Div</div>');
+    }
+
+    function registerforWebinar(id, webinarId) {
+        $("#register-2").attr("disabled", true);
+            $.ajax({
+            url: "@Url.Action("RegisterUserforWebinar", "Webinar")",
+            type: 'POST',
+            dataType: "json",
+                data: { id: id, webinarId: webinarId},
+				success: function (data) {
+                    if (data.Status == true) {
+                        $('#register-' + id + '').hide();
+                        $('#success-registered-' + id + '').removeClass("hide");
+                        if (data.JoinUrl != '' && data.JoinUrl != null) {
+                            $('#join-url-' + id + '').removeClass("hide");
+                            document.getElementById('user-join-url-' + id + '').href = data.JoinUrl;
+                        }
+                    }
+                    else {
+                        $('#register-webinar-response').removeClass('hide');
+                        setTimeout(function () {
+                            $('#register-webinar-response').addClass('hide');
+                        }, 2000);
+                        $("#register-2").attr("disabled", false);
+                    }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+</script>

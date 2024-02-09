@@ -1,0 +1,181 @@
+﻿@using InterventWebApp
+@model InterventWebApp.RiskChart
+<script>
+    @if (Model != null)
+    {
+        var risk = Model;
+        if (risk.riskName == "PA")
+        {
+            @: CreateAMChart('chart-exer', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@Html.Raw(risk.currentText)', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+        }
+        else if (risk.riskName == "Tobacco")
+        {
+            if (risk.startValue != null)
+            {
+                 @: CreateThreeChartAMChart('chart-tob', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateAMChart('chart-tob', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)',  '@Html.Raw(risk.label)', '@risk.includeChar');
+            }
+        }
+        else if (risk.riskName == "Obese")
+        {
+            if (risk.startValue != null)
+            {
+                @: CreateFiveChartAMChart('chart-overweight', '@risk.goalValue0', '@Html.Raw(risk.goalText0)', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@risk.goalValue2', '@Html.Raw(risk.goalText2)',  '@Html.Raw(risk.label)', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateFourChartAMChart('chart-overweight', @risk.goalValue0, '@Html.Raw(risk.goalText0)', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear',  @risk.goalValue1, '@Html.Raw(risk.goalText1)', @risk.goalValue2, '@Html.Raw(risk.goalText2)',  '@Html.Raw(risk.label)');
+            }
+        }
+        else if (risk.riskName == "CAC")
+        {
+            @: CreateCACChart('chart-cac', @risk.currentValue, '@Html.Raw(risk.currentText)', '@Html.Raw(risk.label)');
+        }
+        else if (risk.riskName == "PAI")
+        {
+            @: CreatePAIChart('chart-pai', @risk.currentValue, '@Html.Raw(risk.currentText)', '@Html.Raw(risk.label)');
+        }
+        else if (risk.riskName == "ADA")
+        {
+            @: CreateADAChart('chart-ada', @risk.currentValue, '@Html.Raw(risk.currentText)', '@Html.Raw(risk.label)');
+        }
+        else if (risk.riskName == "CHD")
+        {
+            if (risk.startValue != null)
+            {
+                @: CreateThreeChartAMChart('chart-chd', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateAMChart('chart-chd', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+            }
+        }
+        else if (risk.riskName == "10-Year")
+        {
+            if (risk.startValue != null)
+            {
+                @: CreateThreeChartAMChart('chart-tenyear', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateAMChart('chart-tenyear', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+            }
+        }
+        else if (risk.riskName == "Lifetime")
+        {
+            if (risk.startValue != null)
+            {
+                @: CreateThreeChartAMChart('chart-lifetime', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateAMChart('chart-lifetime', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+            }
+        }
+        else if (risk.riskName == "SBP")
+        {
+            if (risk.startValue != null)
+            {
+                 @: CreateThreeChartAMChart('chart-sbp', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateAMChart('chart-sbp', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+            }
+        }
+        else if (risk.riskName == "DBP")
+        {
+            if (risk.startValue != null)
+            {
+                @: CreateThreeChartAMChart('chart-dbp', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateAMChart('chart-dbp', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+            }
+        }
+        else if (risk.riskName == "LDL")
+        {
+            if (risk.startValue != null)
+            {
+                @: CreateThreeChartAMChart('chart-ldl', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear',  '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateAMChart('chart-ldl', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+            }
+        }
+        else if (risk.riskName == "HDL")
+        {
+            if (risk.startValue != null)
+            {
+                @: CreateThreeChartAMChart('chart-hdl', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateAMChart('chart-hdl', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+            }
+        }
+        else if (risk.riskName == "Trig")
+        {
+            if (risk.startValue != null)
+            {
+                @: CreateThreeChartAMChart('chart-trig', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateAMChart('chart-trig', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+            }
+        }
+        else if (risk.riskName == "Chol")
+        {
+            if (risk.startValue != null)
+            {
+                @: CreateThreeChartAMChart('chart-tc', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateAMChart('chart-tc', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+            }
+         }
+        else if (risk.riskName == "Glucose")
+        {
+            if (risk.goalValue0 == 0)
+            {
+                if (risk.startValue != null)
+                {
+                    @: CreateThreeChartAMChart('chart-glucose', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+                }
+                else
+                {
+                    @: CreateAMChart('chart-glucose', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+                }
+            }
+            else
+            {
+                if (risk.startValue != null)
+                {
+                    @: CreateFourAMChart('chart-glucose', '@risk.goalValue0', '@Html.Raw(risk.goalText0)', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@Translate.Message("L3890")');
+                }
+                else
+                {
+                    @: CreateThreeWTwoGoalChart('chart-glucose', @risk.goalValue0, '@Html.Raw(risk.goalText0)', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+                }
+            }
+        }
+        else if (risk.riskName == "A1C")
+        {
+            if (risk.startValue != null)
+            {
+                @: CreateThreeChartAMChart('chart-a1c', '@risk.startValue', '@Html.Raw(risk.startText)', '@risk.color3', '@risk.startYear', '@risk.currentValue', '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', '@risk.goalValue1', '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar', '@Translate.Message("L3890")');
+            }
+            else
+            {
+                @: CreateAMChart('chart-a1c', @risk.currentValue, '@Html.Raw(risk.currentText)', '@risk.color1', '@risk.currentYear', @risk.goalValue1, '@Html.Raw(risk.goalText1)', '@Html.Raw(risk.label)', '@risk.includeChar');
+            }
+         }
+    }
+</script>

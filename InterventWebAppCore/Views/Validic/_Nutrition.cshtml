@@ -1,0 +1,183 @@
+﻿@using InterventWebApp
+
+<section class="main search-participants">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <h2>@Translate.Message("L272")</h2>
+            </div>
+        </div>
+        <div class="filters grid-x grid-margin-x">
+            <div class="small-12 medium-4 cell">
+                <select id="nutritiondays" onchange="daysOptions()">
+                    <option>--@Translate.Message("L421")--</option>
+                    <option value="90">@Translate.Message("L2739")</option>
+                    <option value="30">@Translate.Message("L2740")</option>
+                    <option value="7">@Translate.Message("L2741")</option>
+                    <option value="2">@Translate.Message("L2742")</option>
+                    <option value="1">@Translate.Message("L2743")</option>
+                    <option value="0" selected="selected">@Translate.Message("L2744")</option>
+                </select>
+            </div>
+            <div class="small-12 medium-4 cell">
+                <input type="text" placeholder="From" id="nutritionStartDate" name="nutritionStartDate" value="@DateTime.Now.AddDays(-180).ToString("MM/dd/yyyy")">
+            </div>
+            <div class="small-12 medium-4 cell">
+                <input type="text" placeholder="To" id="nutritionEndDate" name="nutritionEndDate" value="@DateTime.Now.ToString("MM/dd/yyyy")">
+            </div>
+            <div class="small-12 medium-6 cell">
+                <button class="secondary-color button small" id="filter-nutrition-data">
+                    <div class="loading-spinner hide" show-if-submitting></div>
+                    <i class="fa fa-filter"></i>
+                    @Translate.Message("L963")
+                </button>
+            </div>
+            <div class="small-12 cell scroll-x">
+                <table id="nutrition-results" class="table"></table>
+                <ul class="pagination text-center" id="pagination-centered" hidden>
+                    <li id="first" aria-disabled="true"><a>&laquo;</a></li>
+                    <li id="previous" class="pagination-previous" aria-disabled="true"><a>&lt;</a></li>
+                    <li id="numeric"></li>
+                    <li id="next" class="pagination-next"><a>&gt;</a></li>
+                    <li id="last"><a>&raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>
+<script src="@Url.Content("~/Scripts/amcharts/gauge.js")"></script>
+<script src="@Url.Content("~/Scripts/Pager.js")"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 10;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $(document).ready(function () {
+        $("#nutritionStartDate").fdatepicker({
+            endDate: new Date()
+        }).on('change', function (selected) {
+            var endDate = new Date($("#nutritionEndDate").val());
+            var minDate = new Date($("#nutritionStartDate").val());
+            if (endDate < minDate) {
+                $('#nutritionEndDate').fdatepicker('setDate', minDate);
+            }
+            $('#nutritionEndDate').fdatepicker('setStartDate', minDate);
+        });
+        $("#nutritionEndDate").fdatepicker({
+            endDate: new Date()
+        });
+    });
+    function daysOptions() {
+        if ($("#nutritiondays").val() == 0) {
+            $("#nutritionStartDate").val("@DateTime.Now.AddDays(-180).ToString("MM/dd/yyyy")");
+            $("#nutritionEndDate").val("@DateTime.Now.ToString("MM/dd/yyyy")");
+            $('#nutritionEndDate').fdatepicker('setStartDate', new Date($("#nutritionStartDate").val()));
+            $("#nutritionStartDate").removeAttr('readonly');
+            $("#nutritionEndDate").removeAttr('readonly');
+        }
+        else {
+            $("#nutritionStartDate").val("");
+            $("#nutritionEndDate").val("");
+            $("#nutritionStartDate").attr('readonly', 'readonly');
+            $("#nutritionEndDate").attr('readonly', 'readonly');
+        }
+    }
+    $("#filter-nutrition-data").click(function () {
+        $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+        $('[show-if-submitting]').removeClass('hide');
+        startIndex = 0;
+        pageSize = 10;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        ListNutritionData();
+    });
+    function ListNutritionData() {
+        var StartDate = $("#nutritionStartDate").val();
+        var EndDate = $("#nutritionEndDate").val();
+        var Days = $("#nutritiondays").val();
+        $.ajax({
+            url: "@Url.Action("ListNutritionData", "Validic")",
+            data: { externalId: $("#ExternalId").val(), Days: Days, StartDate: StartDate, EndDate: EndDate, page: currentPage, pageSize: pageSize, totalRecords: totalRecords },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    if (data.Nutrition != null) {
+                        $('#nutrition-results').html("");
+                        var nutrition = data.Nutrition;
+                        totalRecords = data.TotalRecords;
+                        totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                        if (nutrition.length > 0) {
+                            displayNutritionData(nutrition);
+                            $('#pagination-centered').show();
+                        }
+                        else {
+                            $('#nutrition-results').append('<center>@Translate.Message("L2774")</center>');
+                            $('#pagination-centered').hide();
+                        }
+                            //var sleep = data.Sleep;
+                            //var sleepHtml = "";
+                            //var sleepDiv = "sleep-chart", sleepName = "sleep Chart";
+                            //if (data.Sleep.Count > 0) {
+                            //    $('#sleep-results').show();
+                            //    sleepHtml += "<table class='table'>";
+                            //    sleepHtml += "<tr><th>awake</th><th>deep</th><th>light</th><th>rem</th><th>source_name</th><th>times_woken</th><th>timestamp</th><th>total_sleep</th><th>user_id</th><th>utc_offset</th></tr>";
+                            //    for (var item in data.Record.sleep) {
+                            //        sleepHtml += "<tr>";
+                            //        sleepHtml += "<td>" + item.awake + "</td>";
+                            //        sleepHtml += "<td>" + item.deep + "</td>";
+                            //        sleepHtml += "<td>" + item.light + "</td>";
+                            //        sleepHtml += "<td>" + item.rem + "</td>";
+                            //        sleepHtml += "<td>" + item.source_name + "</td>";
+                            //        sleepHtml += "<td>" + item.times_woken + "</td>";
+                            //        sleepHtml += "<td>" + item.timestamp + "</td>";
+                            //        sleepHtml += "<td>" + item.total_sleep + "</td>";
+                            //        sleepHtml += "<td>" + item.user_id + "</td>";
+                            //        sleepHtml += "<td>" + item.utc_offset + "</td>";
+                            //        sleepHtml += "</tr>";
+                            //    }
+                            //    sleepHtml += "<tr></tr>";
+                            //    sleepHtml += "</table>"
+                            //}
+                            //$('#sleep-results').append(sleepHtml);
+                            //buildnutritionChart(nutritionDiv, nutrition.BMI, nutritionName, 'lbs', [0, 18.5, 25.0, 30.0, maxLimit], limitColor, nutrition.recentnutrition);
+                    }
+                }
+                AddPager();
+                $('[show-if-submitting]').parent().prop('disabled', '');
+                $('[show-if-submitting]').addClass('hide');
+            }
+        });
+    }
+    function displayNutritionData(nutrition) {
+        $('#nutrition-results').html("");
+        var nutritionHtml = "";
+        nutritionHtml += "<tr><th>@Translate.Message("L2784")</th><th>@Translate.Message("L2785")</th><th>@Translate.Message("L2786")</th><th>@Translate.Message("L2787")</th><th>@Translate.Message("L2788")</th><th>@Translate.Message("L2789")</th><th>@Translate.Message("L2790")</th><th>@Translate.Message("L2791")</th><th>@Translate.Message("L2792")</th></tr>";
+        for (var i = 0; i < nutrition.length; i++) {
+            nutritionHtml += "<tr>";
+            nutritionHtml += "<td>" + nutrition[i].calories + "</td>";
+            nutritionHtml += "<td>" + nutrition[i].carbohydrates + "</td>";
+            nutritionHtml += "<td>" + nutrition[i].fat + "</td>";
+            nutritionHtml += "<td>" + nutrition[i].fiber + "</td>";
+            nutritionHtml += "<td>" + nutrition[i].meal + "</td>";
+            nutritionHtml += "<td>" + nutrition[i].protein + "</td>";
+            nutritionHtml += "<td>" + nutrition[i].sodium + "</td>";
+            nutritionHtml += "<td>" + nutrition[i].source_name + "</td>";
+            nutritionHtml += "<td>" + new Date(nutrition[i].timestamp).toLocaleDateString() + "</td>";
+            nutritionHtml += "</tr>";
+        }
+        nutritionHtml += "<tr></tr>";
+        $('#nutrition-results').append(nutritionHtml);
+    }
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListNutritionData();
+    }
+    $("#loader-wrapper").fadeOut();
+</script>

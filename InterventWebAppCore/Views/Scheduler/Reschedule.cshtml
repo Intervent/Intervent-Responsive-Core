@@ -1,0 +1,466 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+
+@model InterventWebApp.RescheduleModel
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main my-coach main-white" id="reschedule-main">
+    <div class="appt-footer">
+        <div class="grid-container">
+            <div class="grid-x">
+                <div class="cell appt-welcome">
+                    <div class="grid-x">
+                        <div class="cell">
+                            <h1>@Translate.Message("L3760")</h1>
+                        </div>
+                        @if (Model.coach != null)
+                        {
+                            <div class="cell">
+                                <div class="scheduled-coach text-center">
+                                    <div class="coach-profile-img"><img src="~/ProfilePictures/@Model.coach.Picture" alt="" /></div>
+                                    <p>
+                                        @Model.coach.FirstName @Model.coach.LastName
+                                        @if (Model.coach.AdminProperty != null)
+                                        {
+                                            <a href="#" onclick="seeBio('@Model.coach.AdminProperty.Profile', '@Model.coach.Picture')">@Translate.Message("L3754")</a>
+                                        }
+                                    </p>
+                                </div>
+                                <img src="~/Images/appointment-booking/running-woman.svg" alt="" />
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!--Welcome section ends-->
+
+                <div class="cell appt-list-container">
+                    <div class="appt-type-toggle">
+                        <div class="switch slider-switch">
+                            <input type="checkbox" name="schedule-type-selector" id="schedule-list-selector" class="switch-input" value="" />
+                            <label class="switch-paddle" for="schedule-list-selector">
+                                <span class="switch-inactive" aria-hidden="true">@Translate.Message("L3761")</span>
+                                <span class="switch-active" aria-hidden="true">@Translate.Message("L3762")</span>
+                            </label>
+                        </div>
+
+                        <div class="show-for-small-only click-card-detail">
+                            <p><span id="coaching">@Translate.Message("L3763")</span></p>
+                            <p class="hide"><span id="pastCoaching">@Translate.Message("L3764")</span></p>
+                        </div>
+                    </div>
+                    <!--Scheduler toggle button ends-->
+
+                    <div class="appt-list" id="upcoming-appt">
+                        <div class="appt-empty-state hide" id="noCoaching">
+                            <div class="appt-list-item appt-list-blank">
+                                <div class="media">
+                                    <img src="~/Images/person-icon-1.svg" alt="">
+                                </div>
+                                <div class="content">
+                                    <p>@Translate.Message("L3782")</p>
+                                </div>
+                            </div>
+                            <h3 class="heading">@Translate.Message("L3783")</h3>
+                            <div class="appt-list-item appt-list-other">
+                                <div class="appt-details">
+                                    <div class="appt-order">@Translate.Message("L3784")</div>
+                                    <div class="new-cal-box" id="upcoming-new-appt"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Empty upcoming appt state ends-->
+
+                        <div id="upcoming-appointment">
+                        </div>
+                    </div>
+                    <div class='appt-list hide' id='past-appt'>
+                        <div class="appt-empty-state hide" id="noPastCoaching">
+                            <div class="appt-list-item appt-list-blank">
+                                <div class="media">
+                                    <img src="~/Images/person-icon-2.svg" alt="">
+                                </div>
+                                <div class="content">
+                                    <p>@Translate.Message("L3785")</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Empty history appt state ends-->
+
+                        <div id="past-appointment">
+                        </div>
+                    </div>
+                </div>
+                <!--Appointment list ends-->
+
+                <div class="cell appt-confirmation-message text-center hide" id="appt-cnf">
+                    <h2 id="confirmMessage"><strong>@Translate.Message("L3765")</strong></h2>
+                    <img src="~/Images/appointment-booking/appt-confirm-tick.svg" alt="" />
+                </div>
+                <!--Confirmation title section ends-->
+
+                <div class="appt-scheduled-detail hide">
+                    <h4>@Translate.Message("L3670")</h4>
+
+                    <div class="grid-x grid-margin-x align-center">
+
+                        <div class="cell medium-7 small-11">
+                            <div class="coach-card">
+                                <div class="coach-card-head">
+                                    <div class="coach-profile-img"><img id="coachImage" alt="" src="~/ProfilePictures/@Model.coach.Picture" /></div>
+                                    <div class="coach-profile-detail">
+                                        <p id="coachName">@Model.coach.FirstName @Model.coach.LastName </p>
+                                        <p><a href="#" data-open="coach-bio">@Translate.Message("L3754")</a></p>
+                                    </div>
+                                </div>
+                                <div class="coach-card-body">
+                                    <div class="schedule-detail-left">
+                                        <div class="coach-lang">
+                                            <p><span>@Translate.Message("L3671")</span></p>
+                                            <p id="coachLanguages">@Model.Languages</p>
+                                        </div>
+                                        <div class="coach-expertise">
+                                            <p><span>@Translate.Message("L3672")</span></p>
+                                            <div id="coachSpecialities">@Model.Speciality</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="schedule-detail-right">
+                                        <div id="apptDate"></div>
+                                        <div id="apptTime"></div>
+                                        <div class="button-set">
+                                            <a href="@Url.Action("Stream", "Participant", new { ForceParticipant = true })" class="button small">@Translate.Message("L2995")</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modify-appt"><a href="@Url.Action("Reschedule", "Scheduler")" id="appt-modify">@Translate.Message("L3768")</a></div>
+                        </div>
+                    </div>
+                </div>
+                <!--Appointment confirmation details ends-->
+            </div>
+        </div>
+    </div>
+</section>
+<div id="coach-data" class="reveal large report-modal appt-bio-modal" data-reveal>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-4 medium-2">
+                <div class="coach-profile-img"><img id="profileImage" src="" alt="Profile Image" /></div>
+            </div>
+            <div class="cell small-8 medium-10">
+                <span id="coachBio"></span>
+            </div>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div data-reveal class="reveal confirmation-conflict" id="confirmation-conflict">
+    <div class="text-center">
+        <img src="~/Images/appointment-booking/error_exclamation.svg" alt="Error Exclamation" />
+        <p id="schedule-appointment-alert"></p>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div id="coach-bio" class="reveal large report-modal appt-bio-modal" data-reveal>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            @if (Model.coach != null && Model.coach.AdminProperty != null)
+            {
+                <div class="cell small-4 medium-2">
+                    <div class="coach-profile-img"><img id="profileImage" src="~/ProfilePictures/@Model.coach.Picture" alt="Profile Image" /></div>
+                </div>
+                <div class="cell small-8 medium-10">
+                    <span id="bioText">@Model.coach.AdminProperty.Profile</span>
+                </div>
+            }
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<script>
+    var url = '@Model.BaseUrl';
+$(document).ready(function(){
+    ListAppointment();
+	var coachId = '@Model.coach.Id';
+	$(document).foundation();
+	$("#schedule-list-selector").on("click", function () {
+		$(this).toggleClass("is-active");
+		$(".appt-list, .click-card-detail p").toggleClass("hide");
+	});
+
+	$(".appt-confirm-btn button").on("click", function(){
+		$(".appt-welcome, .appt-list-container, .appt-confirmation-message, .appt-scheduler-container").toggleClass("hide")
+	});
+});
+
+    function windowScrollClass(element, offset, speed) {
+	    var $element = element;
+	    var speed = speed ? speed : 500;
+	    var offset = offset ? offset : 70;
+	    var scrollPos = $element.offset().top
+
+	    $("html, body").animate({
+		    scrollTop: scrollPos - offset
+	    }, speed);
+    }
+
+	function toggleAccordion(element, cancelBtn) {
+	    var $listParent = element.closest(".appt-list-item");
+
+	    if($listParent.hasClass("is-active")) {
+            $listParent.removeClass("is-active");
+
+	    }
+	    else {
+		    $(".appt-list-item").removeClass("is-active");
+            $listParent.addClass("is-active");
+            if ($listParent.hasClass("apptedit")) {
+                $('.appt-list-content.apptedit').empty();
+            }
+	    }
+
+	    if (!cancelBtn) {
+		    windowScrollClass($listParent, 80, 700);
+	    }
+    }
+
+    function ListAppointment()
+	{
+		console.log("click goes here");
+        var weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        var rating = ["", "<span class='is-active'></span><span></span><span></span><span></span><span></span>", "<span class='is-active'></span><span class='is-active'></span><span></span><span></span><span></span>", "<span class='is-active'></span><span class='is-active'></span><span class='is-active'></span><span></span><span></span>", "<span class='is-active'></span><span class='is-active'></span><span class='is-active'></span><span class='is-active'></span><span></span>", "<span class='is-active'></span><span class='is-active'></span><span class='is-active'></span><span class='is-active'></span><span class='is-active'></span>"];
+		$.ajax({
+			url: "@Url.Action("ShowAppointments", "Scheduler")",
+			type: 'POST',
+			dataType: "json",
+			async: false,
+            success: function (data) {
+				if (data != null) {
+					var usersHtml = [];
+                    $('#upcoming-appointment').html("");
+                    if (data.upcomingApt != null && data.upcomingApt.length > 0) {
+                        $('#noCoaching').addClass("hide");
+                        for (var i = 0; i < data.upcomingApt.length; i++) {
+                            var Appointment = data.upcomingApt[i];
+                            var date = new Date(Appointment.Date);
+                            var date1 = new Date();
+                            var Difference_In_Time = date - date1;
+                            var Difference_In_Days = Math.floor(Difference_In_Time / (1000 * 3600 * 24));
+                            var alternateCoach = ""; var meetingLink = "";
+                            var currentCoach = '@Model.coach.Id';
+                            if (Appointment.VideoRequired) {
+                                var link = "https://zoom.us/j/" + Appointment.CoachMeetingId;
+                                meetingLink = "<div class='appt-detail-section'><p class='appt-time'>&nbsp;</p><a href='" + link +"'><span class='text-blue'>@Translate.Message("L4600")</span></a></div>";
+                            }
+                            if (currentCoach != Appointment.CoachId)
+                            {
+                                alternateCoach = "<div class='appt-desc'><span>@Translate.Message("L3786") : <strong>" + Appointment.CoachName + "</strong></span><span class='link' onclick='seeBio(\"" + Appointment.CoachBio + "\",\"" + Appointment.CoachPic + "\");'>@Translate.Message("L3754")</span></div>";
+                            }
+                            usersHtml.push("<div class='appt-list-item apptedit' id='" + Appointment.Id + "'><div class='appt-list-title'><div class='appt-edit-title'><p>@Translate.Message("L2166")</p><button class='button hollow cancel-btn'></button></div><div class='appt-details'>"
+                                + "<div class='appt-order'>" + ordinal_suffix_of(Appointment.Order) + " @Translate.Message("L3769")</div><div class='appt-detail-section'><p class='appt-date'>" + date.toDateString().split(' ').slice(1, 3).join(' ') + ", " + date.toDateString().split(' ').slice(3) + "</p><span class='appt-day'>" + weekday[date.getDay()] + "</span>"
+                                + "<span class='appt-due'>@Translate.Message("L3778") " + Difference_In_Days + " @Translate.Message("L3781")</span></div><div class='appt-detail-section'><p class='appt-time'>" + Appointment.StartTime + "</p>"
+                                + "<span class='appt-timezone'><img src='~/Images/appointment-booking/global-time-icon.svg' alt='' /> " + Appointment.UserTimeZone + "</span></div>" + meetingLink + "</div>"
+                                + "<div class='appt-edit-container'><div class='appt-edit'><button class='button'>@Translate.Message("L2166")</button></div><div class='appt-edit'><button class='button hollow cancel-btn'>@Translate.Message("L3770")</button></div></div></div>"
+                                + alternateCoach + "<div class='appt-list-content apptedit'></div></div>");
+                        }
+                        $('#upcoming-appointment').html(usersHtml);
+                    }
+                    else {
+                        var coachingId = '@Model.coach.Id';
+                        $('#noCoaching').removeClass("hide");
+                        $('#coaching').html("");
+		                $.ajax({
+                            type: 'POST',
+                            data: { coachId: coachingId },
+                            url: '@Url.Action("RescheduleCalendar", "Scheduler")',
+                            success: function (data) {
+                                $("#upcoming-new-appt").html("");
+                                $("#upcoming-new-appt").html(data);
+                            }
+                        });
+
+                    }
+                    var pastHtml = "";
+                    if (data.pastApt != null && data.pastApt.length > 0) {
+                        $('#noPastCoaching').addClass("hide");
+                        for (var i = 0; i < data.pastApt.length; i++) {
+                            var Appointment = data.pastApt[i];
+                            var date = new Date(Appointment.Date);
+                            var date1 = new Date();
+                            var Difference_In_Time = date1 - date;
+                            var Difference_In_Days = Math.floor(Difference_In_Time / (1000 * 3600 * 24));
+                            var alternateCoach = "";
+                            var currentCoach = '@Model.coach.Id';
+                            if (currentCoach != Appointment.CoachId)
+                            {
+                                alternateCoach = "<div class='appt-desc'><span>@Translate.Message("L3786") : <strong>" + Appointment.CoachName + "</strong></span><span class='link' onclick='seeBio(\"" + Appointment.CoachBio + "\",\"" + Appointment.CoachPic + "\");'>@Translate.Message("L3754")</span></div>";
+                            }
+                            $('#past-appointment').html("");
+                            if (Appointment.AppointmentFeedback == null || Appointment.AppointmentFeedback.Rating == 0) {
+                                pastHtml = pastHtml + "<div class='appt-list-item'><div class='appt-list-title'><div class='appt-details' data-open='feedback-appt'><div class='appt-order'>" + ordinal_suffix_of(Appointment.Order) + " @Translate.Message("L3769")</div><div class='appt-detail-section'>"
+                                    + "<p class='appt-date' > " + date.toDateString().split(' ').slice(1, 3).join(' ') + ", " + date.toDateString().split(' ').slice(3) + "</p> <span class='appt-day'>" + weekday[date.getDay()] + "</span><span class='appt-due'>" + Difference_In_Days + " @Translate.Message("L3771")</span></div> <div class='appt-detail-section'><p class='appt-time'>" + Appointment.StartTime + "</p><span class='appt-timezone'><img src='~/Images/appointment-booking/global-time-icon.svg' alt='' /> " + Appointment.UserTimeZone + "</span>"
+                                    + "</div></div> <div class='appt-edit-container'><div class='appt-feedback appt-edit'><a href='#' class='button'>@Translate.Message("L3772")</a></div><div class='appt-edit'><a href='#' class='button hollow cancel-btn'>@Translate.Message("L3770")</a>"
+                                    + "</div></div></div>" + alternateCoach + "<div class='appt-list-content'><div class='feedback-form-content'><h3>@Translate.Message("L3773")</h3><div class='appt-feedback-rate'><div class='feedback-stars rating-" + Appointment.Id + "'>"
+                                    + "<span></span><span></span><span></span><span></span><span></span><p class='rate-val-poor rate-val'>@Translate.Message("L93")</p><p class='rate-val-good rate-val'>@Translate.Message("L89")</p></div><small class='form-error star-" + Appointment.Id + "'>@Translate.Message("L3774")</small></div>"
+                                    + "<div class='appt-feedback-form'><form><textarea id='textarea-" + Appointment.Id + "'  placeholder='@Translate.Message("L3775").'></textarea><div class='button'onclick='submitFeedback(" + Appointment.Id + ")'>@Translate.Message("L3776")</div></form></div></div></div></div></div>";
+                            }
+                            else {
+                                pastHtml = pastHtml + "<div class='appt-list-item'><div class='appt-list-title'><div class='appt-details' data-open='review-appt'><div class='appt-order'>" + ordinal_suffix_of(Appointment.Order) + " @Translate.Message("L3769")</div><div class='appt-detail-section'>"
+                                    + "<p class='appt-date'>" + date.toDateString().split(' ').slice(1, 3).join(' ') + ", " + date.toDateString().split(' ').slice(3) + "</p><span class='appt-day'>" + weekday[date.getDay()] + "</span><span class='appt-due'>" + Difference_In_Days + " @Translate.Message("L3771")</span></div><div class='appt-detail-section'><p class='appt-time'>" + Appointment.StartTime + "</p>"
+                                    + "<span class='appt-timezone'><img src='~/Images/appointment-booking/global-time-icon.svg' alt='' />" + Appointment.UserTimeZone + "</span></div></div><div class='appt-edit-container'><div class='appt-feedback appt-edit'>"
+                                    + "<div class='feedback-stars'>" + rating[Appointment.AppointmentFeedback.Rating] + "</div><div class='view-feedback'><a href='#'>@Translate.Message("L3788")</a></div>"
+                                    + "</div><div class='appt-edit'><a href='#' class='button hollow cancel-btn'>@Translate.Message("L3770")</a></div></div></div>" + alternateCoach + "<div class='appt-list-content'><div class='feedback-form-content'>"
+                                    + "<h3>@Translate.Message("L3773")</h3><div class='appt-feedback-rate appt-see-details'><div class='feedback-stars' unselectable='true'>" + rating[Appointment.AppointmentFeedback.Rating] + ""
+                                    + "<p class='rate-val-poor rate-val'>@Translate.Message("L93")</p><p class='rate-val-good rate-val'>@Translate.Message("L89")</p></div></div><div class='appt-feedback-msg'><p>" + Appointment.AppointmentFeedback.Comments + "</p></div></div></div></div>";
+                            }
+                        }
+                        $('#past-appointment').append(pastHtml);
+                    }
+                    else {
+                        $('#noPastCoaching').removeClass("hide");
+                        $('#pastCoaching').html("");
+                    }
+				}
+			},
+            complete: function () {
+				$(".appt-edit a").on("click", function (ev) {
+					ev.preventDefault();
+					toggleAccordion($(this));
+				});
+
+				var $stars = $(".appt-feedback-rate .feedback-stars span");
+				$stars.on("click", function () {
+					$(this).addClass("is-active");
+					$(this).prevAll().addClass("is-active");
+					$(this).nextAll().removeClass("is-active");
+				});
+
+				var $listParent;
+				$(".appt-edit button, .appt-edit-title button").on("click", upcoming_appt_btn);
+				$("#upcoming-appointment .appt-details").on("click", upcoming_appt_acc_edit);
+			}
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function upcoming_appt_btn(ev) {
+		ev.preventDefault();
+
+		if (!$(this).hasClass("cancel-btn")) {
+			toggleAccordion($(this));
+		}
+		else {
+			toggleAccordion($(this), true);
+        }
+        $listParent = $(this).closest(".appt-list-item");
+        var apptId = $(this).closest(".appt-list-item")[0].id;
+        var coachingId = '@Model.coach.Id';
+		if(!$(this).hasClass("cancel-btn")) {
+            $.ajax({
+                type: 'POST',
+                async: true,
+                data: { coachId: coachingId, apptId: apptId },
+                url: '@Url.Action("RescheduleCalendar", "Scheduler")',
+                success: function (data) {
+                    $listParent.find(".appt-list-content").html("");
+                    $listParent.find(".appt-list-content").html(data);
+                }
+            });
+		}
+		else {
+			$listParent.find(".appt-list-content").html("");
+		}
+	}
+
+	function upcoming_appt_acc_edit() {
+        console.log("clicked here");
+        if ($(window).width() <= 640) {
+			toggleAccordion($(this));
+			$listParent = $(this).closest(".appt-list-item");
+            var coachingId = '@Model.coach.Id';
+            var apptId = $(this).closest(".appt-list-item")[0].id;
+			if(!$(this).hasClass("cancel-btn")) {
+				$.ajax({
+                    type: 'POST',
+                    async: true,
+                    data: { coachId: coachingId, apptId: apptId },
+                    url: '@Url.Action("RescheduleCalendar", "Scheduler")',
+                    success: function (data) {
+                        $listParent.find(".appt-list-content").html("");
+                        $listParent.find(".appt-list-content").html(data);
+                    }
+                });
+			}
+			else {
+				$listParent.find(".appt-list-content").html("");
+			}
+		}
+    }
+
+    function submitFeedback(id) {
+        var comments = $("#textarea-" + id + "").val();
+        var rating = $(".rating-" + id + "").find(".is-active").length;
+        if (rating != 0) {
+            $.ajax({
+                url: "@Url.Action("AddAppointmentFeedback", "Scheduler")",
+                data: { id: id, rating: rating, comments: comments },
+                type: 'POST',
+                dataType: "json",
+			    async: false,
+                success: function (data) {
+                    ListAppointment();
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+        else {
+            $(".star-" + id + "").addClass("is-visible");
+            return false;
+        }
+    }
+
+    function seeBio(bio, picture) {
+        $('#coachBio').html(bio);
+        $("#profileImage").attr("src", url + "/ProfilePictures/" + picture);
+        $('#coach-data').foundation('open');
+    }
+
+    function ordinal_suffix_of(i) {
+        var j = i % 10,
+            k = i % 100;
+        if (j == 1 && k != 11) {
+            return i + "st";
+        }
+        if (j == 2 && k != 12) {
+            return i + "nd";
+        }
+        if (j == 3 && k != 13) {
+            return i + "rd";
+        }
+        return i + "th";
+    }
+
+    $(function () {
+        var $ppc = $('.progress-pie-chart'),
+            percent = parseInt($ppc.data('percent')),
+            deg = 360 * percent / 100;
+        if (percent > 50) {
+            $ppc.addClass('gt-50');
+        }
+        $('.ppc-progress-fill').css('transform', 'rotate(' + deg + 'deg)');
+        $('.ppc-percents span').html(percent);
+    });
+</script>

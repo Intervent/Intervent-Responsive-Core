@@ -1,0 +1,23 @@
+﻿<select id="scheduler-select" name="scheduler-select" class="override-select primary-select">
+    <option value="appointments" @(ViewData["Kind"] == "appointments" ? "selected='selected'" : "")>View Appointments</option>
+    <option value="coach-calendar" @(ViewData["Kind"] == "coach-calendar" ? "selected='selected'" : "")>Coach Calendar</option>
+    <option value="availability" @(ViewData["Kind"] == "availability" ? "selected='selected'" : "")>Set Coach Availability</option>
+</select>
+
+<script>
+    $('#scheduler-select').on('change', function(e) {
+        if($(this).val() !== '@ViewData["Kind"]') {
+            switch($(this).val()) {
+                case 'availability':
+                    location.href = '../Scheduler/SetCoachAvailability';
+                    break;
+                case 'coach-calendar':
+                    location.href = '../Scheduler/CoachCalendar';
+                    break;
+                case 'appointments':
+                    location.href = '../Scheduler/ViewAppointments';
+                    break;
+            }
+        }
+    });
+</script>

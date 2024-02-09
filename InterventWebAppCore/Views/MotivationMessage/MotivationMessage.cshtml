@@ -1,0 +1,347 @@
+﻿@using InterventWebApp
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<section class="main search-participants admin-main-body">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="main-content-wrapper">
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell">
+                            <div class="primary-section-top">
+                                <div class="grid-x grid-margin-x">
+                                    <div class="cell small-6">
+                                        <h2>Messages</h2>
+                                    </div>
+                                    <div class="cell small-6 text-right">
+                                        <button id="create-motivation-message-button" data-open="create-message-modal" class="button plus-btn right">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div id="search-results" class="main-results-table-container motivation-message-list noscroll-table-list"></div>
+                        </div>
+                        <div class="cell">
+                            <!-- pagination Start -->
+                            <div class="pagination-area main-results-table-container hide" id="pagination-centered">
+                                <ul>
+                                    <li id="numeric"></li>
+                                </ul>
+                                <!-- page-link Start -->
+                                <div class="page-link">
+                                    <label>@Translate.Message("L4041")</label>
+                                    <div class="grid-x">
+                                        <input type="text" id="jumptoPageNo">
+                                        <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                                    </div>
+                                </div>
+                                <!-- page-link End -->
+                            </div>
+                            <!-- pagination End -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="create-message-modal" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <button class="close-button" data-close="" aria-label="Close modal" type="button">
+        <span aria-hidden="true">×</span>
+    </button>
+	<div class="grid-container">
+		<div class="grid-x">
+			<div class="cell">
+				<form id="add-edit-motivation-message" data-abide novalidate class="form-component">
+					<div class="grid-x">
+						<div class="cell medium-12">
+							<input type="hidden" id="motivationMsgId" name="Id" required />
+							<label for="subject" id="subject-label" class="message-field">
+								<span class="f-label">Subject: </span>
+								<input type="text" id="subject" name="Subject" value="" maxlength="100" required />
+								<small class="form-error">Required</small>
+							</label>
+
+							<label for="message-body" class="message-field">
+								<textarea id="message-body" name="MessageContent" rows="6" placeholder="Type message content here" required></textarea>
+								<small class="form-error">Required</small>
+							</label>
+						</div>
+					</div>
+					<div class="grid-x grid-padding-y">
+						<div class="cell small-6 text-left"><button class="small" type="submit">Save</button></div>
+						<div class="cell small-6 text-right"><button class="small secondary" type="reset" id="closeMessages">Cancel</button></div>
+					</div>
+					<div class="notification-card text-center form-save-notification" hidden><span id="notificationCard">Saved successfully</span></div>
+				</form>
+				<form id="assign-motivation-message" class="form-component" data-abide novalidate>
+					<div class="grid-x grid-margin-x">
+						<div class="cell medium-6">
+							<label for="message-type" class="options-main-label">
+								Message type
+								<select multiple data-prompt="Select" id="message-type" class="message-select-list" required>
+									<option value="1">Email</option>
+									<option value="2">Text message</option>
+									<option value="3">Dashboard message</option>
+								</select>
+								<small class="form-error multiselect-error">Required</small>
+							</label>
+						</div>
+						<div class="cell medium-6">
+							<label for="org-list" class="org-list-label">
+								Select Organization(s)
+								<select multiple id="org-list" data-prompt="Select" required class="message-select-list"></select>
+								<small class="form-error multiselect-error">Required</small>
+							</label>
+						</div>
+						<div class="cell assign-notification-card notification-card text-center" hidden><span id="notificationCard">Assigned successfully</span></div>
+						<div class="cell medium-text-left"><button class="button" type="submit" id="AssignMessages">Assign</button></div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<div class="grid-x grid-margin-x previous-assigned-section hide">
+            <div class="cell">
+                <div class="remove-notification-card text-center notification-card" hidden><span id="notificationCard">Removed successfully</span></div>
+                <h3>Previously assigned list</h3>
+                <div id="AssignedMessages" class="table-container prev-assigned-list"></div>
+            </div>
+		</div>
+	</div>
+    <button class="close-button" data-close aria-label="Close modal" id="close-model" type="button"><span aria-hidden="true">&times;</span></button>
+</div>
+
+<input type="hidden" id="Url" value="@ViewData["BaseUrl"]" />
+
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+	var totalPages = 0;
+    var formChange = false;
+    var url = $('#Url').val();
+
+    $(document).ready(function () {
+        ListMotivationMessages();
+        $('#add-edit-motivation-message :input').on('change', function () { formChange = true; });
+
+        $('#create-motivation-message-button').on("click", function () {
+            $('#AssignMessages').prop("disabled", true);
+            formChange = true;
+        });
+        $("#add-edit-motivation-message").foundation();
+        $("#add-edit-motivation-message").on('formvalid.zf.abide', function () {
+        if (formChange) {
+            $.ajax({
+                url: "@Url.Action("AddEditMotivationMessage", "MotivationMessage")",
+                data: $("#add-edit-motivation-message").serialize(),
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.Record.Status) {
+                        $("#motivationMsgId").val(data.Record.MotivationMessageId);
+                        $('#AssignMessages').prop("disabled", false);
+                        $(".form-save-notification").show('slow');
+                        setTimeout(function () {
+							$('.form-save-notification').hide('slow');
+                        }, 2000);
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+        else {
+			$(".form-save-notification").show('slow');
+			setTimeout(function () {
+				$('.form-save-notification').hide('slow');
+            }, 2000);
+        }
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    });
+        $("#assign-motivation-message").foundation();
+        $("#assign-motivation-message").on('formvalid.zf.abide', function () {
+            var orgIds = $("#org-list").val();
+            var msgTypes = $("#message-type").val();
+            var motivationMsgId = $("#motivationMsgId").val();
+            var organizationIds = orgIds.join(',');
+            var messageTypes = msgTypes.join(',');
+            AssignOrRemoveMotivationMessage(motivationMsgId, null, organizationIds, messageTypes, false);
+
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    });
+
+        $('#closeMessages').on('click', function () {
+			$("#AssignedMessages").empty();
+            $('#create-message-modal').foundation('close');
+			$("#add-message-form").find('input:hidden, input:text, textarea').val('');
+            $(".previous-assigned-section").addClass("hide");
+            currentPage = 0;ListMotivationMessages();
+		});
+
+
+		$("#add-message-form").on('forminvalid.zf.abide', function () {
+		}).on('formvalid.zf.abide', function () {
+			AddEditMessage();
+		}).on("submit", function (ev) {
+			ev.preventDefault();
+		});
+    });
+
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "@Url.Action("ListOrganizations", "Portal")",
+        success: function (orgData) {
+            for (i = 0; i < orgData.Records.length; i++) {
+                $("#org-list").append("<option value=" + orgData.Records[i].Id + ">" + orgData.Records[i].Name + "</option>");
+            }
+			$('.message-select-list').foundationSelect();
+
+            $(document).foundation();
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        RedirectToErrorPage(jqXHR.status);
+    });
+
+    function AssignOrRemoveMotivationMessage(motivationMsgId, assignedMessageId, organizationIds, messageTypes, isRemove) {
+        $.ajax({
+            url: "@Url.Action("AssignOrRemoveMotivationMessage", "MotivationMessage")",
+            data: { MessageId: motivationMsgId, AssignedMessageId:assignedMessageId, OrganizationIds: organizationIds, MessageTypes: messageTypes, isRemove: isRemove},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data.Record) {
+                    $("#message-type:selected, #org-list:selected").prop("selected", false);
+                    GetAssignedMessagesList(motivationMsgId);
+                    var cardName = isRemove ? "remove" : "assign";
+                    $("." + cardName +"-notification-card").show('slow');
+                    setTimeout(function () {
+                        $('.' + cardName +'-notification-card').hide('slow');
+                    }, 2000);
+                }
+            }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+    function editMotivationMessage(id) {
+
+            $('#AssignMessages').prop("disabled", false);
+            $("#motivationMsgId").val(id);
+            $.ajax({
+            url: "@Url.Action("GetMotivationMessage", "MotivationMessage")",
+            data: { id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    if (data.Record != null) {
+                        $("#subject").val(data.Record.Subject);
+                        $("#message-body").val(data.Record.MessageContent);
+                    }
+                }
+            }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+            GetAssignedMessagesList(id);
+            $('#create-message-modal').foundation('open');
+            $("#message-type:selected, #org-list:selected").prop("selected", false);
+
+            $(".custom-dropdown-options").find("li").each(function () {
+                if ($(this).hasClass("selected"))
+                    $(this).removeClass("selected");
+
+                $('.custom-dropdown-button').html("Select");
+            });
+
+            $("select").find("option").each(function () {
+                if ($(this).prop('selected')) {
+                    $(this).prop('selected', false);
+                }
+            });
+        }
+
+    function ListMotivationMessages() {
+        $('#search-results').html("");
+        $.ajax({
+            url: "@Url.Action("ListMotivationMessages", "MotivationMessage")",
+            data: { page: currentPage, pageSize: pageSize, totalRecords: totalRecords },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    if (data.Records != null && data.Records.length > 0) {
+                        totalRecords = data.TotalRecords;
+                        totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                        var messagesHtml = "<table class='table basic-table1'>";
+                        messagesHtml += "<thead><tr><th>Subject</th><th>Message</th><th></th></tr></thead>";
+                        for (var i = 0; i < data.Records.length; i++) {
+                            var message = data.Records[i];
+                            messagesHtml += "<tr><td>" + message.Subject + "</td><td>" + message.MessageContent + "</td><td><a class='anchor-blue' href='#' onClick='editMotivationMessage(\"" + message.Id + "\")'><i class='fa fa-pencil fa-fw'></i></a></td></tr>";
+                        }
+                        messagesHtml += "</table>";
+                        $('#search-results').html(messagesHtml);
+                    }
+                    else {
+                        $('#search-results').html("<div id='no-graph' class='cell main-graph-container'><div class='cell main-chart'><div class='no-graph-info text-center'><img src='" + url +"/Images/device/no-data.png' alt='Alternate Text'><span>@Translate.Message("L2774")</span></div></div></div>");
+                }
+                    AddPager();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+		ListMotivationMessages();
+    }
+
+    function GetAssignedMessagesList(id) {
+        $.ajax({
+            type: "POST",
+			data: { motivationMessageId: id},
+            url: "@Url.Action("ListAssignedMotivationMessages", "MotivationMessage")",
+            dataType: 'json',
+            success: function (data) {
+                if (data != null && data.Records.length > 0) {
+                    $(".previous-assigned-section").removeClass("hide");
+                    $('#AssignedMessages').html('');
+                    var messagesHtml = "";
+                    messagesHtml += "<table class='table basic-table2'>";
+                    messagesHtml += "<thead><tr><th><span>Organization</span></th><th><span>Sent Date</span></th><th><span>Completed</span></th><th><span>Type</span></th><th><span></span></th></tr></thead>"
+                    for (var i = 0; i < data.Records.length; i++) {
+                        var message = data.Records[i];
+                        var completed = message.Completed == true ? "Yes" : "No";
+                        messagesHtml += "<tr><td>" + message.Organization.Name + "</td>" + "<td>" + toLocalDateFormat(message.Date) + "</td>" + "<td>" + completed + "</td>" + "<td>" + message.MessageType + "</td>";
+                        if (message.Completed != true) {
+                            messagesHtml += "<td><a class='anchor-blue' onclick='AssignOrRemoveMotivationMessage(" + '"' + message.MessagesID + '"' + "," + '"' + message.Id + '"' + ", " + '""' + "," + '""' + ", " + '"' + true + '"' + ");'><i class='fa fa-times'></i></a></td>";
+                        }
+                        messagesHtml += "</tr>";
+                    }
+                    $('#AssignedMessages').html(messagesHtml);
+                }
+                else
+                {
+                    $(".previous-assigned-section").addClass("hide");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+	}
+
+</script>

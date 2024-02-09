@@ -1,0 +1,79 @@
+﻿@model InterventWebApp.CancelAppointmentModel
+@using InterventWebApp
+<form data-abide id="cancel-appointment-form" novalidate>
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <h2 class="title">@Translate.Message("L727") </h2>
+            <div>
+                <label for="reason">@Translate.Message("L728")</label>
+                @Html.DropDownListFor(x => x.reason, Model.reasons, "-- Select --", new { @class = "primary-select", @required = "required" })
+                <small class="form-error">Required</small>
+                @Html.HiddenFor(x => x.Id)
+            </div>
+            <div>
+                <label for="comments">@Translate.Message("L975")</label>
+                @Html.TextAreaFor(x => x.comments)
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell">Comments will be added as Notes of type Other</div>
+            </div>
+        </div>
+    </div>
+    @Html.HiddenFor(m => m.getAppt)
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="submit" id="cancelAppointment">@Translate.Message("L968")</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeModal">@Translate.Message("L967")</button></div>
+    </div>
+</form>
+<a class="close-button" data-close>&#215;</a>
+<script type="text/javascript">
+    var formsubmit = true;
+    $(document).ready(function () {
+        $('#closeModal').on('click', function () {
+            $('#cancel-appointment').foundation('close');
+        });
+    });
+
+    $('#cancel-appointment-form').foundation();
+    $('#cancel-appointment-form')
+        .on('formvalid.zf.abide', function () {
+            if (formsubmit == true) {
+                $.ajax({
+                    url: "@Url.Action("CancelAppointment", "Scheduler")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#cancel-appointment-form").serialize(),
+                    success: function (data) {
+                        $('#cancel-appointment').foundation('close');
+                        if (getAppt == "True") {
+                            $.ajax({
+                                type: 'POST',
+                                url: '@Url.Action("Appointments", "Scheduler")',
+                                success: function (data) {
+                                    $("#profile-content").html(data);
+                                }
+                            }).fail(function (jqXHR, textStatus, errorThrown) {
+                                RedirectToErrorPage(jqXHR.status);
+                            });
+                        }
+                        UpdateAppointmentUI();
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("Appointments", "Scheduler")',
+                            success: function (data) {
+                                $("#profile-content").html(data);
+                            }
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+                    },
+                    error: function () {
+                        alert("An Error occurred, please refresh the page and try again.");
+                    }
+                });
+                formsubmit = false;
+            }
+        }).on("submit", function(ev) {
+            ev.preventDefault();
+        });
+</script>

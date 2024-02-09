@@ -1,0 +1,175 @@
+﻿@model InterventWebApp.SearchFreeSlotModel
+@using InterventWebApp
+<!--ADMIN PAGE-->
+<section class="main search-participants">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <h2>@Translate.Message("L1261")</h2>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <div class="panel filters">
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 medium-4 cell">
+                            <label>Start Date</label>
+                            <input type="text" placeholder="Start Date..." id="StartDate" value="@CommonUtility.dateFormater(DateTime.Now.AddTicks(-1), false, Context.Session.GetString(SessionContext.DateFormat))">
+                        </div>
+                        <div class="small-12 medium-4 end cell">
+                            <label>End Date</label>
+                            <input type="text" placeholder="End Date..." id="EndDate" value="@CommonUtility.dateFormater(DateTime.Now.AddDays(7).AddTicks(-1), false, Context.Session.GetString(SessionContext.DateFormat))">
+                        </div>
+                        <div class="small-12 medium-4 cell">
+                            @Html.LabelFor(model => model.Day)
+                            @Html.DropDownListFor(x => x.Day, Model.DaysList, "--Select a Day--")
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 medium-4 end cell">
+                            @Html.LabelFor(model => model.Time)
+                            @Html.DropDownListFor(x => x.Time, Model.Times, "--Select Time--")
+                        </div>
+                        <div class="small-12 medium-4 end cell">
+                            @Html.LabelFor(model => model.Coach)
+                            @Html.DropDownListFor(x => x.Coach, Model.Coaches, "--Select a Coach--")
+                        </div>
+                        <div class="small-12 medium-4 end cell">
+                            <label>Participant Time Zone</label>
+                            @Html.DropDownListFor(x => x.TimeZone, Model.TimeZones, "--Select TimeZone--")
+                        </div>
+                        <div class="small-12 medium-4 end cell">
+                            <label>Specialization</label>
+                            @Html.DropDownListFor(x => x.Specialization, Model.Specializations, "--Select Specialization--")
+                        </div>
+                        <div class="small-12 medium-4 end cell">
+                            <label>Languages</label>
+                            @Html.DropDownListFor(x => x.Language, Model.Languages, "--Select Language--")
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 medium-3 cell">
+                            <label>
+                                @Html.CheckBoxFor(x => x.Video) Video Coaching
+                            </label>
+                        </div>
+                        <div class="small-12 medium-3 cell">
+                            <label>
+                                @Html.CheckBoxFor(x => x.ThirtyMinutes) Thirty Minutes Slot
+                            </label>
+                        </div>
+                        <div class="small-12 medium-3 cell">
+                            <label>
+                                @Html.CheckBoxFor(x => x.OnlyHealthCoach)Show only Health Coaches
+                            </label>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 medium-5 end cell">
+                            <button class="button" id="search">
+                                <div class="loading-spinner hide" show-if-submitting></div>
+                                <i class="fa fa-filter"></i>
+                                Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="search-results"></div>
+    </div>
+
+</section>
+
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>
+<script type="text/javascript">
+    $('.override-select').foundationSelect();
+    var nowDate = new Date();
+    var compDate = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), 0, 0, 0, 0);
+    compDate.setDate(compDate.getDate() - 1)
+    $(document).ready(function () {
+        $("#StartDate").fdatepicker({
+            format: "@Model.dateFormat.ToLower()",
+            onRender: function (date) {
+                return date.valueOf() < compDate.valueOf() ? 'disabled' : '';
+            }
+        }).on('change', function (selected) {
+            var endDate = new Date(toSystemDateFormat($("#EndDate").val()));
+            var minDate = new Date(toSystemDateFormat($("#StartDate").val()));
+            if (endDate < minDate) {
+                $('#EndDate').fdatepicker('setDate', minDate);
+            }
+            $('#EndDate').fdatepicker('setStartDate', minDate);
+            $("#EndDate").trigger("change");
+
+        });
+        $("#EndDate").fdatepicker({
+            format: "@Model.dateFormat.ToLower()",
+            onRender: function (date) {
+                return date.valueOf() < compDate.valueOf() ? 'disabled' : '';
+            }
+        });
+        $("#search").on('click', function () {
+            $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+            $('[show-if-submitting]').removeClass('hide');
+            var coachID = $("#Coach").val();
+            var TimeZone = $("#TimeZone").val();
+            var endDate = toSystemDateFormat($("#EndDate").val() + ' ' + $("#Time").val(), "12hour");
+            var startDate = toSystemDateFormat($("#StartDate").val() + ' ' + $("#Time").val(), "12hour");
+            var day = $("#Day").val();
+            var thirtyMinutes = $('#ThirtyMinutes').prop('checked');
+            var video = $('#Video').prop('checked');
+            var healthcoach = $('#OnlyHealthCoach').prop('checked');
+            var startTime = $("#Time").val();
+            var specialities = $("#Specialization").val();
+            var languages = $("#Language").val();
+            $.ajax({
+                url: "@Url.Action("SearchFreeSlot", "Scheduler")",
+                type: 'POST',
+                dataType: "json",
+                data: { StartDateTime: startDate, EndDateTime: endDate, startTime: startTime, coachID: coachID, TimeZone: TimeZone, day: day, thirtyMinutes: thirtyMinutes, languages: languages, video: video, specialities: specialities, healthcoach:healthcoach},
+                success: function (data) {
+                    $("#search-results").html("");
+                    if (data != null && data.Records != null && data.Records.length > 0) {
+                        var html = "";
+                        if (data.Records.length >= 1000)
+                            html = "<p class='callout red'>Your search returned a large number of results. So, we filtered it to first 1000 records. Please narrow your search.</p>";
+                        var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                        var length = 15;
+                        if (thirtyMinutes)
+                            length = 30;
+                        var html = html + "<table class='table'>";
+                        html += "<tr><th>Date</th><th>Name</th><th></th></tr>"
+                        for (var i = 0; i < data.Records.length; i++) {
+                            var url = '@Html.Raw(Url.Action("ScheduleAppointmentByAdmin", "Scheduler"))';
+                            html += "<tr>" +
+                                "<td>" + days[new Date(data.Records[i].StartTimeString).getDay()] + ",  " + toLocalDateFormat(data.Records[i].StartTimeString, "12hour") + "</td>" +
+                                "<td>" + data.Records[i].CoachName + "</td>" +
+                                "<td><a href='' data-open='book-appointment' data-modal-path='" + url + "?coachId=" + data.Records[i].CoachId + "&timeZone=" + String(TimeZone) + "&minutes=" + length + "&startTime=" + data.Records[i].StartTimeString + "'>Book</a></td>" +
+                                "</tr>"
+                        };
+                        html += "</table>";
+                        $("#search-results").append(html);
+                        $(document).foundation();
+
+                    }
+                    else {
+                        $("#search-results").append("<center>@Translate.Message("L2774")</center>");
+                    }
+                    $('[show-if-submitting]').parent().prop('disabled', '');
+                    $('[show-if-submitting]').addClass('hide');
+                    $("[data-open]").on('click', function (e) {
+                        showmodal($(this), e)
+                    });
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        })
+    });
+</script>
+

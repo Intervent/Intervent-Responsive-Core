@@ -1,0 +1,24 @@
+﻿@model InterventWebApp.SupplementGoalModel
+@using InterventWebApp
+
+<div class="grid-container">
+    <div class="grid-x grid-margin-x">
+        <div class="small-12 cell avoid-page-break-inside">
+            <h2>@Translate.Message("L1014")</h2>
+            <div class="grid-x grid-margin-x">
+                <div class="small-12 cell">
+                    @if (Model.supplementGoalContent.Count > 0)
+                    {
+                        <ul class="decorated blue">
+                            @for (int i = 0; i < Model.supplementGoalContent.Count; i++)
+                            {
+                                @Html.Raw(Model.supplementGoalContent[i])
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<a class="close-button hide-for-print" data-close>&#215;</a>

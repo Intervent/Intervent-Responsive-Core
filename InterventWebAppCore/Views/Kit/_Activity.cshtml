@@ -1,0 +1,1037 @@
+﻿@model InterventWebApp.ActivityModel
+@using InterventWebApp
+<div class="grid-x grid-margin-x">
+    <div class="cell small-12">
+        <h2>Add Activity </h2>
+    </div>
+    <div class="cell medium-6">
+        <label>Language</label>
+        @Html.DropDownList("activitylanguage", Model.LanguageList, new Dictionary<string, object> { { "onchange", "ActivityLanguageChange()" }, { "class", "primary-select" } })
+    </div>
+    <div class="cell medium-12">
+        <label>Top Content</label>
+        <textarea id="topContent" onchange="editActivity()"></textarea>
+    </div>
+    <div class="cell medium-12">
+        <label>Bottom Content</label>
+        <textarea id="bottomContent" onchange="editActivity()"></textarea>
+    </div>
+    <div class="cell medium-3 small-6">
+        <label>Sequence</label>
+        <input type="number" value="" id="sequence" onchange="editActivity()" />
+    </div>
+	<div class="cell medium-4">
+		<div class="tick-buttons">
+			<label for="withinStep">
+				<input type="checkbox" id="withinStep" onchange="editActivity()" />
+				<span class="checkmark"></span>
+				Within the Step / Previous Activity?
+			</label>
+		</div>
+	</div>
+	<div class="cell medium-2 small-6">
+		<div class="tick-buttons">
+			<label for="isActive">
+				<input id="isActive" type="checkbox" checked onchange="editActivity()" />
+				<span class="checkmark"></span>
+				Is Active
+			</label>
+		</div>
+	</div>
+	<div class="cell medium-3 small-6">
+		<div class="tick-buttons">
+			<label for="allowUpdate">
+				<input id="allowUpdate" type="checkbox" checked onchange="editActivity()" />
+				<span class="checkmark"></span>
+				Allow update
+			</label>
+		</div>
+	</div>
+</div>
+<div id="questionBlock">
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-6"><h2>Questions</h2></div>
+        <div class="cell medium-6 text-right small-only-text-center">
+            <button id="add-question" class="button hollow"><i class="fa fa-plus"></i> Add Question</button>
+        </div>
+    </div>
+    <div id="questionDetail-body" class="grid-x grid-margin-x table-container">
+        <div class="cell small-12"></div>
+    </div>    
+    <div id="questions" style="display:none;">
+        <div class="grid-x grid-margin-x button-set">
+			<div class="cell">
+				<div class="tick-buttons">
+					<label for="chkPassive">
+						<input id="chkPassive" type="checkbox" onchange="editPassive()" />
+						<span class="checkmark"></span>
+						Add Existing Question
+					</label>
+				</div>
+			</div>
+        </div>
+        <div id="dvPassive" style="display:none">
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6">
+                    <label>Language</label>
+                    @Html.DropDownList("passivequestionlanguage", Model.LanguageList, new Dictionary<string, object> { { "onchange", "PassiveLanguageChange()" }, { "class", "primary-select" } })
+                </div>
+                <div class="cell medium-12 search">
+                    <label>Question Text</label>
+                    <input type="text" id="passiveQuestionText">
+                </div>
+                <div class="cell medium-12 search">
+                    <button type="button" class="button" id="search">@Translate.Message("L963")</button>
+                </div>
+                <div class="cell medium-12" id="dvPassiveQuestion" style="display:none">
+                    <input type="hidden" id="hdnPassiveQuestionId" />
+                    <div class="cell">
+                        <label>Question Text</label>
+                        <textarea value="" id="passiveQuestion" class="small"></textarea>
+                    </div>
+                    <div class="cell medium-3 small-6">
+                        <label>Sequence</label>
+                        <input type="number" value="" id="passiveSequence" class="small" />
+                    </div>
+					<div class="cell medium-3 small-6">
+						<div class="tick-buttons">
+							<label for="passiveIsActive">
+								<input type="checkbox" value="" id="passiveIsActive" class="small" />
+								<span class="checkmark"></span>
+								Is Active
+							</label>
+						</div>						
+					</div>
+                </div>
+            </div>
+
+            <div class="grid-x grid-margin-x">
+				<div class="cell medium-6 medium-order-2 medium-text-right">
+					<button class="button hollow" type="reset" id="closePassiveQuestion">@Translate.Message("L967")</button>
+				</div>
+				<div class="cell medium-6 medium-order-1 medium-text-left">
+					<button type="button" class="small" id="addPassiveQuestion">@Translate.Message("L968")</button>
+				</div>
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-12 table-container" id="searchResult">
+                </div>
+            </div>
+        </div>
+        <div id="dvActive">
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6">
+                    <label>Language</label>
+                    @Html.DropDownList("questionlanguage", Model.LanguageList, new Dictionary<string, object> { { "onchange", "QuestionLanguageChange()" }, { "class", "primary-select" } })
+                </div>
+                <div class="cell medium-12">
+                    <label>Question Text</label>
+                    <textarea id="questionText"></textarea>
+                </div>
+                <div class="cell medium-6">
+                    <label>Question Type</label>
+                    <select id="questionType" class="primary-select"></select>
+                </div>
+                <div class="cell medium-6">
+                    <label>Sequence</label>
+                    <input type="number" value="" id="activitySequence" />
+                </div>
+				<div class="cell medium-3 small-6">
+					<div class="tick-buttons">
+						<label for="activityIsVertical">
+							<input id="activityIsVertical" type="checkbox" checked />
+							<span class="checkmark"></span>
+							Show Vertical
+						</label>
+					</div>
+				</div>
+				<div class="cell medium-3 small-6">
+					<div class="tick-buttons">
+						<label for="activityIsActive">
+							<input id="activityIsActive" type="checkbox" checked />
+							<span class="checkmark"></span>
+							Is Active
+						</label>
+					</div>
+				</div>
+				<div class="cell medium-3 small-6">
+					<div class="tick-buttons">
+						<label for="activityIsRequired">
+							<input id="activityIsRequired" type="checkbox" />
+							<span class="checkmark"></span>
+							Is Required
+						</label>
+					</div>
+				</div>
+            </div>
+            <div class="grid-x grid-margin-x button-set">
+                <div class="cell medium-6 medium-text-left">
+                    <button type="button" class="small" id="addQuestion">@Translate.Message("L968")</button>
+                </div>
+                <div class="cell medium-6 medium-text-right">
+                    <button class="small secondary" type="reset" id="closeQuestion">@Translate.Message("L967")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="optionBlock" class="optionBlock">
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-6"><h2>Options</h2></div>
+        <div class="cell medium-6 text-right small-only-text-center">
+            <button id="add-option" class="button hollow"><i class="fa fa-plus"></i>Add Options</button>
+        </div>
+    </div>
+    <div id="optionDetail-body" class="grid-x grid-margin-x table-container">
+        <div class="cell small-12"></div>
+    </div>
+   
+    <div id="options" style="display:none;">
+		<div class="grid-x grid-margin-x">
+			<div class="cell medium-6">
+				<label>Language</label>
+				@Html.DropDownList("optionlanguage", Model.LanguageList, new Dictionary<string, object> { { "onchange", "OptionLanguageChange()" }, { "class", "primary-select" } })
+			</div>
+		</div>
+		<div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>Options</label>
+                <input type="text" id="txtOptions" />
+            </div>
+            <div class="cell medium-3">
+                <label>Points</label>
+                <input type="number" id="txtPoints" />
+            </div>
+            <div class="cell medium-3">
+                <label>Sequence</label>
+                <input type="number" id="txtSequence" />
+            </div>
+			<div class="cell medium-4" id="dvOptionIsAnswer" style="display:none;">
+				<div class="tick-buttons">
+					<label for="optionIsAnswer">
+						<input id="optionIsAnswer" type="checkbox" />
+						<span class="checkmark"></span>
+						Is Answer
+					</label>
+				</div>
+			</div>
+			<div class="cell medium-4" id="dvOptionIsActive" style="display:none;">
+				<div class="tick-buttons">
+					<label for="optionIsActive">
+						<input id="optionIsActive" type="checkbox" />
+						<span class="checkmark"></span>
+						Is Active
+					</label>
+				</div>
+			</div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right">
+                <button class="small" type="button" id="addOptions">@Translate.Message("L968")</button>
+            </div>
+            <div class="cell medium-6 medium-order-1 medium-text-left">
+                <button class="small secondary" type="reset" id="closeOption">@Translate.Message("L967")</button>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x" id="subQuestiondv">
+            <div class="cell medium-12">
+                <h2>Sub Questions</h2>
+            </div>
+            <div class="cell medium-12 table-container" id="subQuestions">
+            </div>
+            <div class="cell medium-12">
+                <button id="add-sub-question" class="button hollow"><i class="fa fa-plus"></i>Add Sub Question</button>
+            </div>
+        </div>
+        <div id="dvSubQuestion">
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6">
+                    <label>Language</label>
+                    @Html.DropDownList("subquestionlanguage", Model.LanguageList, new Dictionary<string, object> { { "onchange", "QuestionLanguageChange()" }, { "class", "primary-select" } })
+                </div>
+                <div class="cell medium-12">
+                    <label>Question Text</label>
+                    <textarea id="subquestionText"></textarea>
+                </div>
+                <div class="cell medium-6">
+                    <label>Question Type</label>
+                    <select id="subquestionType" class="primary-select"></select>
+                </div>
+                <div class="cell medium-6">
+                    <label>Sequence</label>
+                    <input type="number" value="" id="subactivitySequence" />
+                </div>
+				<div class="cell medium-3">
+					<div class="tick-buttons">
+						<label for="subactivityIsVertical">
+							<input id="subactivityIsVertical" type="checkbox" checked />
+							<span class="checkmark"></span>
+							Show Vertical
+						</label>
+					</div>
+				</div>
+				<div class="cell medium-3">
+					<div class="tick-buttons">
+						<label for="subactivityIsActive">
+							<input id="subactivityIsActive" type="checkbox" checked />
+							<span class="checkmark"></span>
+							Is Active
+						</label>
+					</div>
+				</div>
+				<div class="cell medium-3">
+					<div class="tick-buttons">
+						<label for="subactivityIsRequired">
+							<input id="subactivityIsRequired" type="checkbox" />
+							<span class="checkmark"></span>
+							Is Required
+						</label>
+					</div>
+				</div>
+            </div>
+            <div class="grid-x grid-margin-x button-set">
+                <div class="cell medium-6 medium-text-left">
+                    <button type="button" class="small" id="subaddQuestion">@Translate.Message("L968")</button>
+                </div>
+                <div class="cell medium-6 medium-text-right">
+                    <button class="small secondary" type="reset" id="subcloseQuestion">@Translate.Message("L967")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    Html.RenderPartial("_tableedit", Model);
+}
+<div class="grid-x grid-margin-x button-set" id="divAddActivity">
+    <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="AddActivity">@Translate.Message("L583")</button></div>
+    <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeActivity">@Translate.Message("L967")</button></div>
+</div>
+<input type="hidden" id="hdnActivityId" />
+<input type="hidden" id="hdnQuestionId" />
+<input type="hidden" id="subhdnQuestionId" />
+<input type="hidden" id="hdnOptionId" />
+<script>
+    $(document).ready(function () {
+        $('#dvSubQuestion').hide();
+
+        $('#closeQuestion').on('click', function () {
+            $('#questions').hide();
+        });
+
+        $('#subcloseQuestion').on('click', function () {
+            $('#dvSubQuestion').hide();
+        });
+
+        $('#closeOption').on('click', function () {
+            $('#options').hide();
+        });
+
+        $('#closeActivity').on('click', function () {
+            $('#add-activity-data').foundation('close');
+        });
+
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetInputTypes", "Kit")",
+            success: function (progData) {
+                $("#questionType").append("<option value=''>-- Select --</option>");
+                $("#subquestionType").append("<option value=''>-- Select --</option>");
+                $("#tableQuestionType").append("<option value=''>-- Select --</option>");
+                for (i = 0; i < progData.Options.length; i++) {
+                    $("#questionType").append("<option value=" + progData.Options[i].Value + ">" + progData.Options[i].DisplayText + "</option>");
+					if (progData.Options[i].DisplayText == "textbox" || progData.Options[i].DisplayText == "number" || progData.Options[i].DisplayText == "floatnumber" || progData.Options[i].DisplayText == "textarea")
+                        $("#subquestionType").append("<option value=" + progData.Options[i].Value + ">" + progData.Options[i].DisplayText + "</option>");
+                    if (progData.Options[i].Value == 1 || progData.Options[i].Value == 3 || progData.Options[i].Value == 8 || progData.Options[i].Value == 9)
+                        $("#tableQuestionType").append("<option value=" + progData.Options[i].Value + ">" + progData.Options[i].DisplayText + "</option>");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+
+        clearActivity();
+        clearQuestion();
+        if(@Model.ActivityId > 0){
+            $.ajax({
+                url: "@Url.Action("ReadActivityinStep", "Kit")",
+                data: { id: @Model.ActivityId },
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data != null) {
+                        if (data.Record != null && data.Record.Activity != null) {
+                            stepActivity = data.Record.Activity
+                            $("#topContent").val(data.Record.Activity.TopText);
+                            $("#bottomContent").val(data.Record.Activity.BottomText);
+                            document.getElementById("withinStep").checked = data.Record.Activity.WithinStep;
+                            document.getElementById("isActive").checked = data.Record.Activity.IsActive;
+                            document.getElementById("allowUpdate").checked = data.Record.Activity.AllowUpdate;
+                            $('#sequence').val(data.Record.Activity.SequenceNo);
+                            $('#hdnActivityId').val(data.Record.Activity.Id);
+                            $('#questionBlock').show();
+                            listQuestion(data.Record.Activity.QuestionsinActivities, data.Record.PassiveQuestions);
+                            $("#divAddActivity").hide();
+                        }
+                    }
+                    else{
+                        $('#questionBlock').hide();
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+    });
+
+    function ActivityLanguageChange() {
+        var lang = $('#activitylanguage').val();
+        if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage") {
+            if (stepActivity.TopTextLanguageValue != null) {
+                for (var j = 0; j < stepActivity.TopTextLanguageValue.length; j++) {
+                    if (stepActivity.TopTextLanguageValue[j].LanguageCode == lang) {
+                        $('#topContent').val(stepActivity.TopTextLanguageValue[j].Text);
+                    }
+
+                }
+
+            }
+            if (stepActivity.BottomTextLanguageValue != null) {
+                for (var j = 0; j < stepActivity.BottomTextLanguageValue.length; j++) {
+                    if (stepActivity.BottomTextLanguageValue[j].LanguageCode == lang) {
+                        $('#bottomContent').val(stepActivity.BottomTextLanguageValue[j].Text);
+                    }
+
+                }
+
+            }
+        } else {
+            $('#topContent').val(stepActivity.TopText);
+            $('#bottomContent').val(stepActivity.BottomText);
+        }
+    }
+
+    function OptionLanguageChange() {
+        var lang = $('#optionlanguage').val();
+        var id = $('#hdnOptionId').val()
+
+        var qid = $('#hdnQuestionId').val()
+        if (id != "") {
+            if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage") {
+                for (var i = 0; i < questionList.length; i++) {
+                    if (questionList[i].Id == qid) {
+                        for (var o = 0; o < questionList[i].OptionsforActivityQuestions.length; o++) {
+                            if (questionList[i].OptionsforActivityQuestions[o].Id == id) {
+                                for (var j = 0; j < questionList[i].OptionsforActivityQuestions[o].LanguageTextValue.length; j++) {
+                                    if (questionList[i].OptionsforActivityQuestions[o].LanguageTextValue[j].LanguageCode == lang) {
+                                        $('#txtOptions').val(questionList[i].OptionsforActivityQuestions[o].LanguageTextValue[j].Text);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            else {
+                for (var i = 0; i < questionList.length; i++) {
+                    if (questionList[i].Id == qid) {
+                        for (var o = 0; o < questionList[i].OptionsforActivityQuestions.length; o++) {
+                            if (questionList[i].OptionsforActivityQuestions.Id == id) {
+                                $('#txtOptions').val(questionList[i].OptionsforActivityQuestions[o].OptionText);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function PassiveLanguageChange() {
+        var lang = $('#passivequestionlanguage').val();
+        var id = $('#hdnPassiveQuestionId').val()
+        if (id != "") {
+            if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage") {
+                for (var i = 0; i < passiveQuestionList.length; i++) {
+                    if (questionList[i].Id == id && passiveQuestionList[i].LanguageTextValue != null) {
+                        for (var j = 0; j < passiveQuestionList[i].LanguageTextValue.length; j++) {
+                            if (passiveQuestionList[i].LanguageTextValue[j].LanguageCode == lang) {
+                                $('#passiveQuestion').val(passiveQuestionList[i].LanguageTextValue[j].Text);
+                            }
+                        }
+                    }
+                }
+
+            } else {
+                for (var i = 0; i < passiveQuestionList.length; i++) {
+                    if (passiveQuestionList[i].Id == id) {
+                        $('#passiveQuestion').val(passiveQuestionList[i].QuestionText);
+                    }
+                }
+            }
+        }
+    }
+
+    function QuestionLanguageChange() {
+        var lang = $('#questionlanguage').val();
+        var id = $('#hdnQuestionId').val()
+        if (id != "") {
+            if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage") {
+                for (var i = 0; i < questionList.length; i++) {
+                    if (questionList[i].Id == id && questionList[i].LanguageTextValue != null) {
+                        for (var j = 0; j < questionList[i].LanguageTextValue.length; j++) {
+                            if (questionList[i].LanguageTextValue[j].LanguageCode == lang) {
+                                $('#questionText').val(questionList[i].LanguageTextValue[j].Text);
+                            }
+                        }
+                    }
+                }
+
+            }
+            else {
+                for (var i = 0; i < questionList.length; i++) {
+                    if (questionList[i].Id == id) {
+                        $('#questionText').val(questionList[i].QuestionText);
+                    }
+                }
+            }
+        }
+    }
+
+    function LanguageChange() {
+        $("#questionText").val("");
+    }
+
+    $('#add-question').on('click', function () {
+        clearQuestion();
+        $('#questions').show();
+        $('.optionBlock').hide();
+        $('#dvActive').show();
+        // $('#dvPassive').show();
+
+    });
+    $('#add-sub-question').on('click', function () {
+        if ($('#hdnOptionId').val() != 0) {
+            $('#dvSubQuestion').show();
+            $('#subhdnQuestionId').val('');
+            $('#subquestionText').val('');
+            $('#subquestionType').val('');
+            $('#subactivitySequence').val('');
+            $('#subactivityIsActive').prop('checked', true);
+            $('#subactivityIsRequired').prop('checked', false);
+            $('#subactivityIsVertical').prop('checked', true);
+        }
+    });
+
+    $('#add-option').on('click', function () {
+        $('#txtOptions').val('');
+        $('#txtPoints').val('');
+        $('#txtSequence').val('');
+        $('#hdnOptionId').val('');
+
+        $('#optionIsActive').prop('checked', true);
+        $('#optionBlock').show();
+        $('#options').show();
+    });
+
+    $("#AddActivity").on('click', function () {
+        var topContent = $("#topContent").val();
+        var bottomContent = $("#bottomContent").val();
+        var stepId = @Model.StepId;
+        var inStep = $('#withinStep').is(":checked");
+        var isActive = $('#isActive').is(":checked");
+        var allowUpdate = $('#allowUpdate').is(":checked");
+        var sequence = $("#sequence").val();
+        var lang = $('#activitylanguage').val();
+        $.ajax({
+            url: "@Url.Action("AddEditActivityinStep", "Kit")",
+            data: { stepId: stepId, id: null, topText: topContent, bottomText: bottomContent, withinStep: inStep, isActive: isActive, allowUpdate: allowUpdate, sequence: sequence, language : lang },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data.Record != null) {
+                    $('#questionBlock').show();
+                    $('#hdnActivityId').val(data.Record.activityId);
+                    $("#divAddActivity").hide();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+   
+
+    function editPassive(){
+        var isPassive = $('#chkPassive').is(":checked");
+        if(isPassive){
+            $('#dvPassive').show();
+            $('#dvActive').hide();
+        }
+        else{
+            $('#dvPassive').hide();
+            $('#dvActive').show();
+        }
+    }
+
+    function editActivity() {
+        var id = $('#hdnActivityId').val();
+        if (id != null && id != "") {
+            var topContent = $("#topContent").val();
+            var bottomContent = $("#bottomContent").val();
+            var lang = $('#activitylanguage').val();
+            if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage" && (topContent == "" && bottomContent == "")) {
+                return;
+            }
+            var stepId = @Model.StepId;
+            var inStep = $('#withinStep').is(":checked");
+            var isActive = $('#isActive').is(":checked");
+            var allowUpdate = $('#allowUpdate').is(":checked");
+            var sequence = $("#sequence").val();
+
+            $.ajax({
+                url: "@Url.Action("AddEditActivityinStep", "Kit")",
+                data: { stepId: stepId, id: id, topText: topContent, bottomText: bottomContent, withinStep: inStep, isActive: isActive, allowUpdate: allowUpdate, sequence: sequence, language :lang },
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.Record != null) {
+                        $('#questionBlock').show();
+                        $('#hdnActivityId').val(data.Record.activityId);
+                        $("#divAddActivity").hide();
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+    }
+
+    $("#search").on('click', function () {
+        search('', 1, null, false);
+    });
+
+    function search(relative, questionType, activityId, checkAll){
+        var questionText = $(relative + "#passiveQuestionText").val();
+        var kitId = @Model.KitId;
+        $.ajax({
+            url: "@Url.Action("SearchQuestion", "Kit")",
+            data: { kitId: kitId, searchText: questionText, questionType: questionType, activityId: activityId },
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.Record != null) {
+                    var html ="";
+                    html = html + "<table class='cell medium-12'><thead><tr><th>Question Type</th><th>Text</th><th>Step Name</th><th>";
+                    if(!checkAll)
+                        html += "Add";
+                    else
+                        html += '<input type="checkbox" id="checkAll"/> Id';
+                    html += "</th></tr></thead>";
+                    for (var i = 0; i < data.Record.length; i++) {
+                        html = html + "<tr><td>" + data.Record[i].QuestionText + "</td><td>" + data.Record[i].QuestionTypeText + "</td><td>" + data.Record[i].StepName + "<td>";
+                        if(!checkAll)
+							html += "<a class='anchor-blue' onclick='AddPassiveQuestion(" + data.Record[i].QuestionId + ")'>Select</a>";
+                        else
+                            html += '<input type="checkbox" class="resultSelect" id="' + data.Record[i].QuestionId  + '"/> ' + data.Record[i].QuestionId ;
+                        html += "</td>";
+                    }
+                    html = html + "</table>"
+                    if(checkAll){
+                        html += '<input type="radio" name="operation" id="+"/>Add(+) <input type="radio" name="operation" id="-"/>Subtract(-) <input type="radio" name="operation" id="*"/>Multiplication(*) <input type="radio" name="operation" id="/"/>Division(/) <br/>';
+                        html += "<button onclick='evaluateExp()'>Evaluate</button>";
+                    }
+                    $(relative + "#searchResult").html(html);
+                    $("#checkAll").on('change', function () {
+                        $(".resultSelect").prop('checked', $(this).prop("checked"));
+                    });
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function renderExpression(options)
+    {
+        $("#optionDetail-body").html('');
+        var html = "<label>Expression</label><input type='text' id='expressionText'></input><button onclick='saveExpression()'>Save</button>";
+        $("#optionDetail-body").html(html);
+        $('body').on('click', '#optionDetail-body #search', function() {
+            // do something
+            search("#optionDetail-body ", null, $('#hdnActivityId').val(), true);
+        });
+        if(options != null && options.length > 0){
+            $('#expressionText').val(options[0].OptionText);
+            $('#hdnOptionId').val(options[0].Id);
+        }
+        else{
+            $('#expressionText').val('');
+            $('#hdnOptionId').val('');
+        }
+    }
+
+    function saveExpression(){
+        addOption($('#expressionText').val(), null, null, true);
+    }
+
+    function evaluateExp()
+    {
+        var selected = $("input[type='radio'][name='operation']:checked");
+        var expression = "";
+        if (selected.length > 0) {
+            var selection = selected.attr('id')
+            $('.resultSelect').each(
+            function (index) {
+                var input = $(this);
+                if (input.is(":checked")) {
+                    var id = input.attr('id');
+                    expression += selection + id;
+                }
+            });
+            if(expression.length > 0){
+                if($('#expressionText').val().length  <= 0)
+                    expression = expression.substring(1, expression.length);
+                else
+                    expression = $('#expressionText').val() + expression;
+            }
+        }
+        $('#expressionText').val(expression);
+    }
+
+
+
+
+    function AddPassiveQuestion(questionId)
+    {
+        $('#hdnPassiveQuestionId').val(questionId);
+        $('#passiveQuestion').val('');
+        $('#passiveSequence').val('1');
+        $('#passiveIsActive').prop('checked', true);
+        $('#dvPassiveQuestion').show();
+        $('#searchResult').hide();
+    }
+
+    $('#addPassiveQuestion').on('click', function(){
+        var questionId = $("#hdnPassiveQuestionId").val();
+        var sequence = $("#passiveSequence").val();
+        var question = $('#passiveQuestion').val();
+        var activityId = $('#hdnActivityId').val();
+        var isActive = $('#passiveIsActive').is(":checked");
+
+        $.ajax({
+            url: "@Url.Action("AddPassiveQuestionsInActivity", "Kit")",
+            data: { activityId: activityId, questionId: questionId, questionText: question, sequence: sequence, isActive: isActive, language: $('#passivequestionlanguage').val() },
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                listQuestion(data.Record.questionsinActivity, data.Record.passiveQuestions);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    $('#closePassiveQuestion').on('click', function(){
+        $('#questions').hide();
+    });
+
+    $("#addQuestion").on('click', function () {
+        var activityId = $('#hdnActivityId').val();
+        if (activityId != '') {
+            var questionText = $("#questionText").val();
+            var questionType = $("#questionType").val();
+            var sequence = $('#activitySequence').val();
+            var isActive = $('#activityIsActive').is(":checked");
+            var isRequired = $('#activityIsRequired').is(":checked");
+            var isVertical = $('#activityIsVertical').is(":checked");
+            var lang = $("#questionlanguage").val()
+            $.ajax({
+                url: "@Url.Action("AddEditQuestioninActivity", "Kit")",
+                data: { activityId: activityId, id: $('#hdnQuestionId').val(), questionText: questionText, questionType: questionType, isActive: isActive, sequence: sequence, isVertical: isVertical, language: lang, isRequired : isRequired},
+                type: 'POST',
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    if (data.Record != null) {
+                        questionsList = data.Record.questionsinActivity;
+                        listQuestion(data.Record.questionsinActivity, data.Record.passiveQuestions);
+                        $('.optionBlock').hide();
+                        $('#questions').hide();
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+    });
+
+    $('#addOptions').on('click', function () {
+        addOption($('#txtOptions').val(), $('#txtPoints').val(), $('#txtSequence').val(), false);
+    });
+
+    function addOption(option, points, sequence, expression)
+    {
+        var isAnswer = null;
+        var isActive = false
+        if( $('#dvOptionIsAnswer').is(":visible"))
+            isAnswer = $('#optionIsAnswer').is(":checked");
+        if ($('#dvOptionIsActive').is(":visible"))
+            isActive = $('#optionIsActive').is(":checked");
+        else
+            isActive = true;
+        $.ajax({
+            url: "@Url.Action("AddEditOptions", "Kit")",
+            data: {
+                questionId: $('#hdnQuestionId').val(), questionOption: option, id: $('#hdnOptionId').val(), isAnswer: isAnswer, isActive: isActive, sequence: sequence, points: points, language: $("#optionlanguage").val() },
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.Record != null) {
+                    if(!expression)
+                        RenderOptionList(data.Record.options);
+                    else
+                        renderExpression(data.Record.options);
+                    for (var i = 0; i < questionList.length; i++) {
+                        if (questionList[i].Id == $('#hdnQuestionId').val()) {
+                            questionList[i].OptionsforActivityQuestions.length = 0
+                            for (var j = 0; j < data.Record.options.length; j++) {
+                                questionList[i].OptionsforActivityQuestions.push(data.Record.options[j]);
+                            }
+                        }
+                    }
+                    $('#options').hide();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+
+
+    function listQuestion(questions, passiveQuestions) {
+        var html = "";
+        questionList = questions;
+        passiveQuestionList = passiveQuestions;
+        $("#questionDetail-body").html('');
+        html = html + "<table class='cell medium-12'><thead><tr><th>Question</th><th>Type</th><th>Edit</th><th style='text-align: center;'>Options</th></tr></thead>"
+        questions = questions.filter((x) => { return x.ParentId == null; })
+        for (var i = 0; i < questions.length; i++) {
+            if(questions[i].IsActive == true){
+                html = html + "<tr><td>" + questions[i].QuestionText + "</td><td>" + questions[i].QuestionTypeText + "</td><td><a class='anchor-blue' onclick='ReadQuestion(" + questions[i].Id + ")'><i class='fa fa-pencil fa-fw'></i></a></td>";
+                if (questions[i].QuestionType != 1 && questions[i].QuestionType != 8 && questions[i].QuestionType != 9 ) {
+					html = html + "<td align='center'><a class='anchor-blue' onclick='listOption(" + questions[i].Id + ", " +  questions[i].QuestionType + ")'><i class='fa fa-th-list'></i></a></td></tr>";
+                }
+                else
+                    html = html + "<td><i></i></td></tr>";
+            }
+        }
+        for (var i = 0; i < passiveQuestions.length; i++) {
+            if(passiveQuestions[i].IsActive == true)
+            {
+                html = html + "<tr><td>" + passiveQuestions[i].QuestionText + "</td><td>Passive</td><td><a onclick='ReadPassiveQuestion(" + passiveQuestions[i].QuestionId + ")'><i class='fa fa-pencil fa-fw'></i></a></td><td><i></i></td></tr>";
+            }
+        }
+        html = html + "</table>"
+        $("#questionDetail-body").html(html);
+    }
+
+    function listOption(questionId, questionType) {
+        var options = null;
+        $("#tableChkOptionBlock").hide();
+        $('#optionBlock').show();
+        $('#questions').hide();
+        $('#options').hide();
+        for (var i = 0; i < questionList.length; i++) {
+            if (questionList[i].Id == questionId) {
+               $('#hdnQuestionId').val(questionList[i].Id);
+                options = questionList[i].OptionsforActivityQuestions;
+                break;
+            }
+        }
+        $('#optionIsAnswer').prop('checked', false);
+        if(questionType == 5){
+            renderExpression(options);
+        }
+        else if (questionType == 6) {
+            $("#tableoptionBlock").show();
+            $('#dvAddColumn').hide();
+            $("#subColumnDv").hide();
+            $('#optionBlock').hide();
+            $(".table7").hide();
+            readRow();
+            return
+        }
+        else if (questionType == 7) {
+            $("#tableChkOptionBlock").show();
+            $('#dvAddQues').hide();
+            $(".table6").hide();
+            $('#optionBlock').hide();
+            readChkTable();
+            return
+        }
+        else if(options != null){
+            if(questionType == 2)
+                $('#dvOptionIsAnswer').show();
+            else
+                $('#dvOptionIsAnswer').hide();
+            RenderOptionList(options);
+        }
+    }
+
+    function RenderOptionList(options){
+        var html = "";
+        $("#optionDetail-body").html('');
+        html = html + "<table id='optioninQuestion' class='cell medium-12'><thead><tr><th>Option</th><th>Edit</th></tr></thead>"
+        for (var i = 0; i < options.length; i++) {
+			html = html + "<tr><td> " + options[i].OptionText + "</td><td><a class='anchor-blue' onclick='ReadOption(" + options[i].Id + "," + options[i].IsAnswer + ", \"" + options[i].OptionText + "\"," + options[i].SequenceNo + "," + options[i].Points + "," + options[i].IsActive + ")'><i class='fa fa-pencil fa-fw'></i></a></td></tr>";
+        }
+        html = html + "</table>"
+        $("#optionDetail-body").html(html);
+    }
+
+    function ReadQuestion(id) {
+        for (var i = 0; i < questionList.length; i++) {
+            if (questionList[i].Id == id) {
+                $('#questions').show();
+                $('#questionlanguage').val("en-us");
+                $('#questionText').val(questionList[i].QuestionText);
+                $('#questionType').val(questionList[i].QuestionType);
+                $('#hdnQuestionId').val(questionList[i].Id);
+                $('#activitySequence').val(questionList[i].SequenceNo);
+                document.getElementById("activityIsVertical").checked = questionList[i].ShowVertical;
+                document.getElementById("activityIsActive").checked = questionList[i].IsActive;
+                document.getElementById("activityIsRequired").checked = questionList[i].IsRequired;
+                $('.optionBlock').hide();
+            }
+        }
+    }
+
+    function ReadSubQuestion(id) {
+        $('#dvSubQuestion').show();
+        for (var i = 0; i < questionList.length; i++) {
+            if (questionList[i].Id == id) {
+                $('#subquestionlanguage').val("en-us");
+                $('#subquestionText').val(questionList[i].QuestionText);
+                $('#subquestionType').val(questionList[i].QuestionType);
+                $('#subhdnQuestionId').val(questionList[i].Id);
+                $('#subactivitySequence').val(questionList[i].SequenceNo);
+                document.getElementById("subactivityIsVertical").checked = questionList[i].ShowVertical;
+                document.getElementById("subactivityIsActive").checked = questionList[i].IsActive;
+                document.getElementById("subactivityIsRequired").checked = questionList[i].IsRequired;
+            }
+        }
+    }
+
+    function ReadPassiveQuestion(questionId, language){
+        for (var i = 0; i < passiveQuestionList.length; i++) {
+            if (passiveQuestionList[i].QuestionId == questionId) {
+                $("#hdnPassiveQuestionId").val(questionId);
+                $("#passiveSequence").val(passiveQuestionList[i].SequenceNo);
+                $('#passiveQuestion').val(passiveQuestionList[i].QuestionText);
+                $('#hdnActivityId').val(passiveQuestionList[i].ActivityId);
+                $('#passiveIsActive').prop('checked', passiveQuestionList[i].IsActive);
+                $('#dvPassiveQuestion').show();
+                $('#dvPassive').show();
+                $('#questions').show();
+                $('#dvActive').hide();
+                $('.search').hide();
+            }
+        }
+    }
+
+    function ReadOption(id, isAnswer, text, sequence, points, isActive) {
+        $('#dvSubQuestion').hide();
+        $('#optionlanguage').val("en-us");
+        $('#options').show();
+        $('#txtOptions').val(text);
+        $('#txtPoints').val(points);
+        $('#txtSequence').val(sequence);
+        if(isAnswer != null && isAnswer == true)
+            $('#optionIsAnswer').prop('checked', true);
+        else
+            $('#optionIsAnswer').prop('checked', false);
+        if (isActive == true)
+            $('#optionIsActive').prop('checked', true);
+        else
+            $('#optionIsActive').prop('checked', false);
+        $('#hdnOptionId').val(id);
+        var newList = questionList.filter((x) => { return x.ParentId == id; })
+        $('#subQuestiondv').show();
+        $("#subQuestions").html("");
+        var html ="";
+        html = html + "<table class='cell medium-12'><thead><tr><th>Question</th><th>Type</th><th>Edit</th><th>Options</th></tr></thead>";
+        for (var j = 0; j < newList.length; j++) {
+			html = html + "<tr><td>" + newList[j].QuestionText + "</td><td>" + newList[j].QuestionTypeText + "</td><td><a class='anchor-blue' onclick='ReadSubQuestion(" + newList[j].Id + ")'><i class='fa fa-pencil fa-fw'></i></a></td>";
+            if (newList[j].QuestionType != 1 && newList[j].QuestionType != 8 && newList[j].QuestionType != 9 ) {
+				html = html + "<td><a class='anchor-blue' onclick='listOption(" + newList[j].Id + ", " + newList[j].QuestionType + ")'><i class='fa fa-th-list'></i></a></td></tr>";
+            }
+            else {
+                html = html + "<td><i></i></td></tr>";
+            }
+        }
+        html = html + "</table>";
+        $("#subQuestions").html(html);
+    }
+
+    function clearActivity() {
+        $('#hdnActivityId').val("");
+        $('#topContent').val("");
+        $('#bottomContent').val("");
+        $('#withinStep').prop('checked', false);
+        $('#isActive').prop('checked', true);
+        $('#allowUpdate').prop('checked', true);
+        $('#sequence').val("1");
+        $('#questionBlock').hide();
+        $('.optionBlock').hide();
+    }
+
+    function clearQuestion() {
+        $('#hdnQuestionId').val('');
+        $('#questions').hide();
+        $('#questionText').val('');
+        $('#questionType').val('');
+        $('#activitySequence').val('1');
+        $('#activityIsActive').prop('checked', true);
+        $('#activityIsVertical').prop('checked', true);
+    }
+
+    
+
+    $('#subaddQuestion').on('click', function () {
+        var activityId = $('#hdnActivityId').val();
+        if (activityId != '') {
+            var questionText = $("#subquestionText").val();
+            var questionType = $("#subquestionType").val();
+            var sequence = $('#subactivitySequence').val();
+            var isActive = $('#subactivityIsActive').is(":checked");
+            var isRequired = $('#subactivityIsRequired').is(":checked");
+            var isVertical = $('#subactivityIsVertical').is(":checked");
+            var lang = $("#subquestionlanguage").val();
+            var parentId = $("#hdnOptionId").val();
+            $.ajax({
+                url: "@Url.Action("AddEditQuestioninActivity", "Kit")",
+                data: { activityId: activityId, id: $('#subhdnQuestionId').val(), questionText: questionText, questionType: questionType, isActive: isActive, sequence: sequence, isVertical: isVertical, language: lang, parentId : parentId, isRequired : isRequired},
+                type: 'POST',
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    questionsList = data.Record.questionsinActivity;
+                    $('#dvSubQuestion').hide();
+                    listQuestion(data.Record.questionsinActivity, data.Record.passiveQuestions);
+                    ReadOption(parentId);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+    });
+</script>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+    <span aria-hidden="true">&times;</span>
+</button>

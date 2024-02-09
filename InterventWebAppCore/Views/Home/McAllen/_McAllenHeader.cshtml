@@ -1,0 +1,106 @@
+﻿@using InterventWebApp
+
+<div class="intro-header @ViewData["headerStyle"]">
+    <div class="contain-to-grid">
+        <div class="compass-menu">
+            <div class="menu-top">
+                <div class="menu-icon"><i class="fa fa-bars"></i></div>
+                <div class="menu-logo name logo"><a href="~/Home/McAllen/McAllen"><h1>@Translate.Message("L424")</h1><span>@Translate.Message("L425")</span></a></div>
+                <div class="menu-login">
+                    @{ var languages = CommonUtility.GetPortalLanguages(Convert.ToInt16(ViewData["OrgId"].ToString())); }
+                    @if (languages.Count() > 1)
+                    {
+                        <a class="language-selection" data-toggle="language-dropdown" aria-expanded="false">@Translate.GetCurrentLanguageName()</a>
+                        <ul id="language-dropdown" class="dropdown-pane" data-dropdown data-close-on-click="true">
+                            @foreach (var language in languages)
+                            {
+                                <li><a href="#" data-lang="@language.LanguageCode">@Translate.Message(language.LanguageItem)</a></li>
+                            }
+                        </ul>
+                    }
+                    <a href="" onclick="$('#sign-up-modal').foundation('open'); return false;">
+                        <i class="fa fa-user hide-for-small-only"></i> @Translate.Message("L443")
+                    </a>
+                </div>
+            </div>
+            <div class="menu-content">
+                <div class="menu-header">
+                    <div class="menu-close"><i class="fa fa-times"></i></div>
+                    <div class="menu-logo name logo"><h1>@Translate.Message("L424")</h1><span>@Translate.Message("L425")</span></div>
+                    <div class="menu-login">
+                        <a href="" onclick="$('#sign-up-modal').foundation('open'); return false;">
+                            <i class="fa fa-user hide-for-small-only"></i> @Translate.Message("L443")
+                        </a>
+                    </div>
+                </div>
+                <ul>
+                    <li><a href="~/Home/McAllen">@Translate.Message("L1347")</a></li>
+                    <li><a href="~/Home/McAllenInfo">@Translate.Message("L2028")</a></li>
+                    <li><a href="~/Home/McAllenInfo#cardiacscore">@Translate.Message("L2029")</a></li>
+                    <li><a href="~/Home/McAllenInfo#healthassessment">@Translate.Message("L535")</a></li>
+                    <li><a href="~/Home/McAllenInfo#coachedprogram">@Translate.Message("L2030")</a></li>
+                    <li><a href="~/Home/McAllenInfo#selfhelpprograms">@Translate.Message("L1913")</a></li>
+                    <li><a href="~/Home/McAllenInfo#hearchhospital">@Translate.Message("L2032")</a></li>
+                    <li><a href="~/Home/McAllenInfo#cardiosmart">@Translate.Message("L2033")</a></li>
+                    <li><a href="~/Home/McAllenInfo#successstories">@Translate.Message("L1351")</a></li>
+                </ul>
+            </div>
+            <div class="menu-overlay hide"></div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_Login", new ViewDataDictionary(ViewData) { { "ShowSignUp", "True" } })
+
+@Html.Partial("_ForgotPassword")
+@Html.Partial("_EmailConfirmation")
+@Html.Partial("_ResendConfirmEmail")
+
+<script type="text/javascript">
+    $(".intro-header").sticky({ topSpacing: 0 });
+    //menu v2
+    function showMenu() {
+        $('.menu-content').addClass('active');
+        $('.menu-overlay').removeClass('hide');
+    }
+
+    function hideMenu() {
+        $('.menu-content').removeClass('active');
+        $('.menu-overlay').addClass('hide');
+    }
+
+    $('.menu-icon').on('click', function () {
+        showMenu();
+    });
+
+    $('.menu-close').on('click', function () {
+        hideMenu();
+    });
+
+    $('.menu-overlay').on('click', function () {
+        hideMenu();
+    });
+
+    $('.menu-content li a').on('click', function () {
+        hideMenu();
+    });
+
+    function changeLanguage(language) {
+        $.ajax({
+            url: "@Url.Action("ChangeLanguage", "Home")",
+            dataType: "json",
+            data: { language: language },
+            success: function (data) {
+                window.location.reload();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            DisplayError(jqXHR.status);
+        });
+    }
+
+    $(document).on('click', '#language-dropdown li a', function() {
+        changeLanguage($(this).attr('data-lang'));
+    });
+</script>
+
+

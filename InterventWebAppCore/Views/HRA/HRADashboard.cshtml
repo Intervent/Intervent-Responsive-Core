@@ -1,0 +1,230 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+@model InterventWebApp.HRAModel
+
+@{
+	Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main health-assessment">
+	<!--NEW-->
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="medium-10 cell">
+				<h1>
+                    @Translate.Message(Model.AssessmentName)
+				</h1>
+			</div>
+			<div class="medium-2 cell text-right">
+				<!--progress bar-->
+				<div class="progress progress-bar radius">
+					<span id="meterIcon" class="progress-meter progress-@Model.hraPercent"></span>
+					<div id="meterText" class="meter-text">@Model.hraPercent% @Translate.Message("L536")</div>
+				</div>
+			</div>
+			<div class="small-12 cell">
+				@if (Model.readOnly && !Model.AdminId.HasValue)
+				{
+					<div class="panel hra-main-message">
+						<p>
+                            @string.Format(Translate.Message("L2086"), Translate.Message(Model.AssessmentName).ToLower(), Model.HRAValidity, Model.OrgContactEmail)
+						</p>
+					</div>
+				}
+				<div class="tiles">
+					<ul class="grid-x large-up-2 small-up-1">
+						@{string status = string.Empty;}
+						<li id="medicalList" class="tile cell">
+							<a href="#" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("MedicalConditions", "HRA", new { adminview = false, hraid = Model.HRAId}))">
+								<h2>1. @Translate.Message("L483")</h2>
+								<span class="status"></span>
+							</a>
+						</li>
+						<li id="otherRisksList" class="tile cell">
+							<a href="#" data-open="survey-modal" class="inactive-link" data-modal-path="@Html.Raw(Url.Action("OtherRiskFactors", "HRA",new { hraid = Model.HRAId }))">
+								<h2>2. @Translate.Message("L484")</h2>
+								<span class="status"></span>
+							</a>
+						</li>
+						<li id="hspList" class="tile cell">
+							<a href="#" data-open="survey-modal" class="inactive-link" data-modal-path="@Html.Raw(Url.Action("HSP", "HRA",new { hraid = Model.HRAId }))">
+								<h2>3. @Translate.Message("L485")</h2>
+								<span class="status"></span>
+							</a>
+						</li>
+						<li id="examsList" class="tile cell">
+							<a href="#" data-open="survey-modal" class="inactive-link" data-modal-path="@Html.Raw(Url.Action("ExamsandShots", "HRA",new { hraid = Model.HRAId }))">
+								<h2>4. @Translate.Message("L486")</h2>
+								<span class="status"></span>
+							</a>
+						</li>
+						<li id="interestList" class="tile cell">
+							<a href="#" data-open="survey-modal" class="inactive-link" data-modal-path="@Html.Raw(Url.Action("Interests", "HRA",new { hraid = Model.HRAId }))">
+								<h2>5. @Translate.Message("L487")</h2>
+								<span class="status"></span>
+							</a>
+						</li>
+						<li id="yournumbersList" class="tile cell">
+							<a href="#" data-open="health-number-survey-modal" class="inactive-link" data-modal-path="@Html.Raw(Url.Action("HealthNumbers", "HRA",new { hraid = Model.HRAId }))">
+								<h2>6. @Translate.Message("L488")</h2>
+								<span class="status"></span>
+							</a>
+						</li>
+					</ul>
+				</div>
+                @if (Model.HasActivePortal)
+                {
+				    <div class="button-set text-center" id="complete-button">
+					    <a class="button small" href="../Participant/SelectProgram">@Translate.Message("L537")</a>
+				    </div>
+                }
+			</div>
+		</div>
+	</div>
+</section>
+
+<div id="survey-modal" class="reveal large hra-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div id="health-number-survey-modal" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div id="lab-modal" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div class="alert-box success hide" id="lab-order-error" data-closable>
+	<div id="labError"></div>
+</div>
+
+@section scripts
+{
+	<script type="text/javascript">
+
+        //update status
+        function UpdateHRAStatus(page) {
+            if (page == "MC") {
+                if (!$("#medicalList").hasClass("complete")) {
+                    $("#medicalList").addClass("complete green");
+                }
+                if ($('#otherRisksList a').hasClass("inactive-link")) {
+                    $("#otherRisksList a").removeClass("inactive-link");
+                }
+            }
+            else if (page == "OR") {
+                if (!$("#otherRisksList").hasClass("complete")) {
+                    $("#otherRisksList").addClass("complete green");
+                }
+                if ($('#hspList a').hasClass("inactive-link")) {
+                    $("#hspList a").removeClass("inactive-link");
+                }
+            }
+            else if (page == "YL") {
+                if (!$("#hspList").hasClass("complete")) {
+                    $("#hspList").addClass("complete green");
+                }
+                if ($('#examsList a').hasClass("inactive-link")) {
+                    $("#examsList a").removeClass("inactive-link");
+                }
+            }
+            else if (page == "EC") {
+                if (!$("#examsList").hasClass("complete")) {
+                    $("#examsList").addClass("complete green");
+                }
+                if ($('#interestList a').hasClass("inactive-link")) {
+                    $("#interestList a").removeClass("inactive-link");
+                }
+            }
+            else if (page == "IN") {
+                if (!$("#interestList").hasClass("complete")) {
+                    $("#interestList").addClass("complete green");
+                }
+                if ($('#yournumbersList a').hasClass("inactive-link")) {
+                    $("#yournumbersList a").removeClass("inactive-link");
+                }
+            }
+            else if (page == "YN") {
+                if (!$("#yournumbersList").hasClass("complete")) {
+                    $("#yournumbersList").addClass("complete green");
+                }
+            }
+             $.ajax({
+                    url: "@Url.Action("GetHRACompletionPercent", "HRA")",
+                    type: 'POST',
+                    dataType: "json",
+                    success: function (data) {
+                        $("#meterText").text(data + "% @Translate.Message("L536")");
+                        $("#meterIcon").width(data + "%");
+                        if (data == 100) {
+                            $("#complete-button").show();
+                        }
+                        else {
+                            $("#complete-button").hide();
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                $("html, body").animate({
+                    scrollTop: 0
+                }, "fast");
+        }
+        $(document).ready(function () {
+            @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("MC"))
+            {
+                @: $("#medicalList").addClass("complete green");
+                @: $("#otherRisksList a").removeClass("inactive-link");
+            }
+            @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("OR"))
+            {
+                @: $("#otherRisksList").addClass("complete green");
+                @: $("#hspList a").removeClass("inactive-link");
+            }
+            @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("YL"))
+            {
+                @: $("#hspList").addClass("complete green");
+                @: $("#examsList a").removeClass("inactive-link");
+            }
+            @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("EC"))
+            {
+                @: $("#examsList").addClass("complete green");
+                @: $("#interestList a").removeClass("inactive-link");
+            }
+            @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("IN"))
+            {
+                @: $("#interestList").addClass("complete green");
+                @: $("#yournumbersList a").removeClass("inactive-link");
+            }
+            @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("YN"))
+            {
+                @: $("#yournumbersList").addClass("complete green");
+            }
+            @if (Model.hraPercent == 100)
+            {
+                @: $("#complete-button").show();
+            }
+            else
+            {
+                @: $("#complete-button").hide();
+            }
+
+			$(".reveal-overlay").scroll(function () {
+				if ($(".tooltip").is(":visible")) {
+					$(".has-tip").foundation('hide');
+				}
+			});
+        });
+        $('[data-reveal]').on('closed.zf.reveal', function () {
+            $(".inner-survey-modal").remove();
+        });
+        function removeForm(formName) {
+            console.log('removed by default modal function');
+            /*$("#" + formName).remove();
+            $(".reveal-overlay").hide();   */
+        }
+           function RealignPage() {
+            $("html, body").animate({
+                scrollTop: 0
+            }, "fast");
+        }
+	</script>
+}

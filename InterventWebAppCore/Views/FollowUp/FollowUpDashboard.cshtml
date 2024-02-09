@@ -1,0 +1,190 @@
+﻿@using InterventWebApp
+@using Intervent.Web.DTO
+@model FollowUpDto
+
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main health-assessment">
+    <!--NEW-->
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="medium-10 cell">
+                <h1>@Translate.Message("L2450")</h1>
+            </div>
+            <div class="medium-2 cell text-right">
+                <!--progress bar-->
+                <div class="progress progress-bar radius">
+                    <span id="meterIcon" class="progress-meter progress-@Model.PercentComplete"></span>
+                    <div id="meterText" class="meter-text">@Model.PercentComplete% @Translate.Message("L536")</div>
+                </div>
+            </div>
+
+            <div class="small-12 cell">
+                <div class="panel">
+                    <p>@Translate.Message("L2106")</p>
+                </div>
+                <div class="tiles">
+                    <ul class="grid-x large-up-2 small-up-1">
+                        @{string status = string.Empty;}
+                        <li id="medicalList" class="tile cell">
+                            <a href="#" data-open="survey-medical-conditions" data-modal-path="@Html.Raw(Url.Action("MedicalConditions", "FollowUp",new { followupid = Model.Id }))">
+                                <h2>1. @Translate.Message("L483")</h2>
+                                <span class="status"></span>
+                            </a>
+                        </li>
+                        <li id="otherRisksList" class="tile cell">
+                            <a href="#" data-open="survey-risk-factors" class="inactive-link" data-modal-path="@Html.Raw(Url.Action("OtherRiskFactors", "FollowUp",new { followupid = Model.Id }))">
+                                <h2>2. @Translate.Message("L484")</h2>
+                                <span class="status"></span>
+                            </a>
+                        </li>
+                        <li id="hspList" class="tile cell">
+                            <a href="#" data-open="survey-hsp" class="inactive-link" data-modal-path="@Html.Raw(Url.Action("HSP", "FollowUp",new { followupid = Model.Id }))">
+                                <h2>3. @Translate.Message("L2122")</h2>
+                                <span class="status"></span>
+                            </a>
+                        </li>
+                        <li id="yournumbersList" class="tile cell">
+                            <a href="#" data-open="survey-health-numbers" class="inactive-link" data-modal-path="@Html.Raw(Url.Action("HealthNumbers", "FollowUp",new { followupid = Model.Id }))">
+                                <h2>4. @Translate.Message("L488")</h2>
+                                <span class="status"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="button-set text-center" id="complete-button">
+                    <a class="button small" href="../Reports/FollowupReportDashboard">@Translate.Message("L537")</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<input id="PageSeqDone" type="hidden" value="@Model.PageSeqDone" />
+
+<div id="survey-medical-conditions" class="reveal large health-assessment-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div id="survey-risk-factors" class="reveal large health-assessment-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div id="survey-hsp" class="reveal large health-assessment-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div id="survey-health-numbers" class="reveal large health-assessment-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        var pages = "";
+        pages = $("#PageSeqDone").val();
+        //update status
+        function UpdateFollowUpStatus() {
+            if (pages.length > 0) {
+                var pageList = pages.split('.');
+                for (var i = 0; i < pageList.length; i++) {
+                    var page = pageList[i];
+                    if (page == "@PageName.MC.ToString()") {
+                        if (!$("#medicalList").hasClass("complete")) {
+                            $("#medicalList").addClass("complete green");
+                        }
+                        if ($('#otherRisksList a').hasClass("inactive-link")) {
+                            $("#otherRisksList a").removeClass("inactive-link");
+                        }
+                    }
+                    else if (page == "@PageName.OR.ToString()") {
+                        if (!$("#otherRisksList").hasClass("complete")) {
+                            $("#otherRisksList").addClass("complete green");
+                        }
+                        if ($('#hspList a').hasClass("inactive-link")) {
+                            $("#hspList a").removeClass("inactive-link");
+                        }
+                    }
+                    else if (page == "@PageName.YL.ToString()") {
+                        if (!$("#hspList").hasClass("complete")) {
+                            $("#hspList").addClass("complete green");
+                        }
+                        if ($('#yournumbersList a').hasClass("inactive-link")) {
+                            $("#yournumbersList a").removeClass("inactive-link");
+                        }
+                    }
+                    else if (page == "@PageName.YN.ToString()") {
+                        if (!$("#yournumbersList").hasClass("complete")) {
+                            $("#yournumbersList").addClass("complete green");
+                        }
+                    }
+                }
+            }
+            $.ajax({
+                    url: "@Url.Action("GetFollowUpCompletionPercent", "FollowUp")",
+                    type: 'POST',
+                    dataType: "json",
+                    async:false,
+                    data: { },
+                    success: function (data) {
+                        $("#meterText").text(data + "% Complete");
+                        $("#meterIcon").width(data + "%");
+                        if (data == 100) {
+                            $("#complete-button").show();
+                        }
+                        else {
+                            $("#complete-button").hide();
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+						});
+
+            $("html, body").animate({
+                scrollTop: 0
+            }, "fast");
+        }
+
+        function RealignPage() {
+            $("html, body").animate({
+                scrollTop: 0
+            }, "fast");
+        }
+
+        $(document).ready(function () {
+            @if (Model.PageSeqDone != null && Model.PageSeqDone.Contains(PageName.MC.ToString()))
+            {
+                @: $("#medicalList").addClass("complete green");
+                @: $("#otherRisksList a").removeClass("inactive-link");
+            }
+            @if (Model.PageSeqDone != null && Model.PageSeqDone.Contains(PageName.OR.ToString()))
+            {
+                @: $("#otherRisksList").addClass("complete green");
+                @: $("#hspList a").removeClass("inactive-link");
+            }
+            @if (Model.PageSeqDone != null && Model.PageSeqDone.Contains(PageName.YL.ToString()))
+            {
+                @: $("#hspList").addClass("complete green");
+                @: $("#yournumbersList a").removeClass("inactive-link");
+            }
+            @if (Model.PageSeqDone != null && Model.PageSeqDone.Contains(PageName.YN.ToString()))
+            {
+                @: $("#yournumbersList").addClass("complete green");
+            }
+            @if(Model.PercentComplete ==100)
+            {
+                @: $("#complete-button").show();
+            }
+            else
+            {
+                @: $("#complete-button").hide();
+            }
+
+			$(".reveal-overlay").scroll(function () {
+				if ($(".tooltip").is(":visible")) {
+					$(".has-tip").foundation('hide');
+				}
+			});
+        });
+
+        function removeForm(formName) {
+            $("#" + formName).remove();
+        }
+    </script>
+}

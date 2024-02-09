@@ -1,0 +1,62 @@
+﻿@model InterventWebApp.FormModel
+
+@using InterventWebApp
+<div class="dashboard-content participant-log cell">
+    <div class="control-bar">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 medium-6 cell">
+                <h2>Forms</h2>
+            </div>
+        </div>
+    </div>
+	<div class="actions send-report-wrapper">
+		<div class="content-table table-overflow-container">
+			<table id="search-results" class="table basic-table2">
+				@if (Model.userForms != null & Model.userForms.Count > 0)
+				{
+					<thead><tr><th><span>Form Name</span></th><th><span>View Attachment</span></th><th><span>Approve</span></th></tr></thead>
+					foreach (var userform in Model.userForms)
+					{
+						<tr>
+							@switch (userform.FormTypeId)
+							{
+								case (int)FormTypes.PatientReleaseForm:
+									<td>@Translate.Message("L2218")</td>
+									break;
+								case (int)FormTypes.MedicalClearanceForm:
+									<td>@Translate.Message("L2410")</td>
+									break;
+								case (int)FormTypes.KnowYourNumbersForm:
+									<td>@Translate.Message("L2411")</td>
+									break;
+								case (int)FormTypes.TestimonialForm:
+									<td>@Translate.Message("L2425")</td>
+									break;
+								case (int)FormTypes.TobaccoReleaseForm:
+									<td>@Translate.Message("L1288")</td>
+									break;
+							}
+							<td><a href='../../FormUploads/@userform.Form' target='_blank'><i class='fa fa-leanpub'></i></a></td>
+							<td><input type="checkbox" id="Approve-@userform.Id" onclick="ApproveForm(@userform.Id)" @(userform.Approved ? "checked='checked' disabled" : string.Empty) /></td>
+						</tr>
+					}
+				}
+			</table>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+    function ApproveForm(id) {
+        $.ajax({
+            url: "@Url.Action("ApproveForm", "Participant")",
+            data: { Id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                document.getElementById("Approve-" + id + "").disabled = true;
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+</script>

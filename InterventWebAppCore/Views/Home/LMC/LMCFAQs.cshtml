@@ -1,0 +1,315 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+
+@Html.Partial("LMC/_LMCHeader")
+
+<section class="lmc-faq-wrapper lmc-index">
+    <div class="faq-bg1">
+        <div class="faq-bg2">
+            <div class="faq-bg3">
+                <div class="grid-container">
+                    <div class="grid-x">
+                        <div class="cell large-12">
+                            <div class="faq-tabs-container">
+                                <ul class="tabs" data-tabs id="faq-tabs">
+                                    <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">@Translate.Message("L3237")</a></li>
+                                    <li class="tabs-title"><a data-tabs-target="panel2" href="#panel2">@Translate.Message("L3238")</a></li>
+                                </ul>
+
+                                <div class="tabs-content" data-tabs-content="faq-tabs">
+                                    <div class="tabs-panel is-active" id="panel1">
+                                        <ul class="accordion" data-accordion>
+                                            <li class="accordion-item is-active" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3574")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p><b><i>@Translate.Message("L3314")</i></b></p>
+                                                    <p>@Html.Raw(Translate.Message("L3315"))</p>
+                                                    <p><b><i>@Translate.Message("L3575")</i></b></p>
+                                                    <p>@Html.Raw(Translate.Message("L3576"))</p>
+                                                    <p><b><i>@Translate.Message("L3577")</i></b></p>
+                                                    <p>@Translate.Message("L3578")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3239")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3240")</p>
+                                                    <p>@Translate.Message("L3241")</p>
+                                                    <p>@Translate.Message("L3242")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3243")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3244")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3245")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3246")</p>
+                                                    <ul>
+                                                        <li>@Translate.Message("L3247")</li>
+                                                        <li>@Translate.Message("L3248")</li>
+                                                        <li>@Translate.Message("L3249")</li>
+                                                        <li>@Translate.Message("L3579")</li>
+                                                        <li>@Translate.Message("L3580")</li>
+                                                        <li>@Translate.Message("L3250")</li>
+                                                        <li>@Translate.Message("L3581")</li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3251")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3252")</p>
+                                                    <ul>
+                                                        <li>@Translate.Message("L3253")</li>
+                                                        <li>@Translate.Message("L3254")</li>
+                                                    </ul>
+                                                    <p>@Translate.Message("L3255")</p>
+                                                    <p>@Translate.Message("L3256")</p>
+                                                    <p>@Translate.Message("L3257") <a href="@Url.Action("Canrisk", "Home")">@Translate.Message("L3258").</a></p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3259")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Html.Raw(Translate.Message("L3260"))</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3261")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3262")</p>
+                                                    <p>@Translate.Message("L3263")</p>
+                                                    <p>@Translate.Message("L3264")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3265")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Html.Raw(Translate.Message("L3266"))</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3267")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3268")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3269")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3270")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3271")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3272")</p>
+                                                    <p>@Translate.Message("L3273")</p>
+                                                    <p>@Translate.Message("L3274")</p>
+                                                    <ul>
+                                                        <li>@Translate.Message("L3275")</li>
+                                                        <li>
+                                                            @Translate.Message("L3276")
+                                                            <ul>
+                                                                <li>@Translate.Message("L3277")</li>
+                                                                <li>@Translate.Message("L3278")</li>
+                                                                <li>@Translate.Message("L3279")</li>
+                                                                <li>@Translate.Message("L3280")</li>
+                                                                <li>@Translate.Message("L3281")</li>
+                                                                <li>@Translate.Message("L3282")</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li>@Translate.Message("L3283")</li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3284")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3285")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3286")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3287")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3288")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3289")</p>
+                                                    <ul>
+                                                        <li>@Translate.Message("L3290")</li>
+                                                        <li>@Translate.Message("L3291")</li>
+                                                        <li>@Translate.Message("L3292")</li>
+                                                        <li>@Translate.Message("L3293")</li>
+                                                        <li>@Translate.Message("L3294")</li>
+                                                        <li>@Translate.Message("L3295")</li>
+                                                    </ul>
+                                                    <p>@Translate.Message("L3296")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3297")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3298")</p>
+                                                    <p>@Translate.Message("L3582")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3299")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3300") <a href="@Url.Action("Canrisk", "Home")" target="_blank">@Translate.Message("L3258")</a>. @Translate.Message("L3301")</p>
+                                                    <ul>
+                                                        <li>@Translate.Message("L3302")</li>
+                                                        <li>@Html.Raw(Translate.Message("L3305"))
+                                                            <ul>
+                                                                <li>@Translate.Message("L3852")</li>
+                                                                <li>@Translate.Message("L3853")</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li>
+                                                            @Translate.Message("L3583")
+                                                            <ul>
+                                                                <li>@Translate.Message("L3303")</li>
+                                                                <li>@Translate.Message("L3304")</li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                    <p>@String.Format(Translate.Message("L3306"), TempData.Peek("OrgContactNumber").ToString())</p>
+                                                    @*TODO: Make it bold*@
+                                                    <p><b><i>@Translate.Message("L3307")</i></b></p>
+                                                    <a href="#" onclick="$('#moreinformation').foundation('open'); return false;">@Translate.Message("L3340")</a>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3308")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3309")</p>
+                                                    <p>@Translate.Message("L3310")</p>
+                                                    <p>@Translate.Message("L3311")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3312")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3313")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3316")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3317")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3318")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3319")</p>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="tabs-panel" id="panel2">
+                                        <ul class="accordion" data-accordion>
+                                            <li class="accordion-item is-active" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3321")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3322")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3323")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3324")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3325")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3326")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3327")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3585")</p>
+                                                    <p>@Translate.Message("L3328")</p>
+                                                    <p>@Translate.Message("L3329")</p>
+                                                    <p>@Translate.Message("L3330")</p>
+                                                    <p>@Html.Raw(Translate.Message("L3331"))</p>
+                                                    <p>@Html.Raw(Translate.Message("L3332"))</p>
+                                                    <p>@Translate.Message("L3586")</p>
+                                                    <p>@Translate.Message("L3587")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3333")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3334")</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3335")</a>
+                                                @*TODO: Make it bold*@
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>@Translate.Message("L3336")</p>
+                                                    <p>@Html.Raw(Translate.Message("L3337"))</p>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="moreinformation" class="reveal small" data-reveal data-close-on-click="true">
+            <video class="margin-top-1" width="100%" height="100%" controls>
+                <source src="../Videos/LMC FAQs.mp4" type="video/mp4">
+                @Translate.Message("L3650")
+            </video>
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    <div class="lmc-faq-bottom"></div>
+</section>

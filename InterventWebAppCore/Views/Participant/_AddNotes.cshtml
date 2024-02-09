@@ -1,0 +1,204 @@
+﻿@using InterventWebApp;
+@model InterventWebApp.NotesModel
+<!--ADMIN VIEW-->
+<form id="add-activity-form" data-abide novalidate>
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <h2>Add New Note</h2>
+        </div>
+        <div class="cell medium-6">
+            <label>
+                Note Type
+                @Html.DropDownListFor(m => m.Note.Type, Model.NoteTypes, "--Select Note Type--", new Dictionary<string, object> { { "required", "required" }, { "onchange", "showRefferalType();"} })
+                <small class="form-error">@Translate.Message("L480")</small>
+            </label>
+        </div>
+        <div class="cell medium-6">
+            <label>Date</label>
+            @Html.TextBoxFor(m => m.Note.NotesDate, new Dictionary<string, object> { { "required", "required" } })
+            <small class="form-error">@Translate.Message("L480")</small>
+            <input id="HNotesDate" type="hidden">
+        </div>
+        <div class="cell small-12" id="referralDiv" hidden>
+            Referral Type
+            @Html.DropDownListFor(m => m.Note.RefId, Model.ReferralTypes, "--Select Referral Type--")
+            <small class="form-error" id="referralError" hidden>Required</small>
+        </div>
+        <div class="cell small-12">
+            <label>Details</label>
+            @Html.TextAreaFor(m => m.Note.Text, new Dictionary<string, object> { { "rows", "2" }, { "placeholder", "Brief summary of your discussion with the participant." }, { "required", "required" } })
+            <small class="form-error">@Translate.Message("L480")</small>
+        </div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="submit" id="AddNote">Save</button></div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeNumbers">Cancel</button></div>
+        </div>
+        @Html.HiddenFor(x => x.Note.Id)
+        @Html.HiddenFor(x => x.Note.RefId2)
+</form>
+
+<div id="add-note" class="reveal large" data-reveal data-options="close_on_background_click: false; close_on_esc: false">
+    <form id="add-note" data-abide novalidate>
+        <a class="close-button" data-close aria-label="Close">&#215;</a><!--add note alert-->
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <!--make changes to NoteContent.js if the id for header and content are changed-->
+                <h2 id="note-header"></h2>
+                <span id="note-content"></span>
+                <label>
+                    <select id="NoteappId" hidden required>
+                        @if (Model.Appointments != null)
+                        {
+                            <option value="">--Select Appointment--</option>
+                            <option value="Additional Appoointment">Additional Appointment</option>
+                            for (var i = 0; i < Model.Appointments.Count(); i++)
+                            {
+                                <option value="@Model.Appointments[i].Id">@Model.Appointments[i].Date @Model.Appointments[i].StartTime</option>
+                            }
+                        }
+                    </select>
+                    <small class="form-error">Required</small>
+                </label>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right hide" id="ApptAddNote"><button class="small" type="submit">Confirm</button></div>
+            <div class="cell medium-6 medium-order-2 medium-text-right hide" id="saveNote"><button class="small" type="button">Yes</button></div>
+            <div class="cell medium-6 medium-order-1 medium-text-left" id="cancelNote"><button class="small secondary" type="reset">Cancel</button></div>
+        </div>
+    </form>
+</div>
+<script src="@Url.Content("~/Scripts/NoteContent.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+    var apptId;
+    var savenotes = true;
+    $("#Note_NotesDate").on("change", function () {
+        $('#HNotesDate').val(moment(this.value, "@Model.dateFormat.ToUpper() hh:mm A").format('YYYY/MM/DD hh:mm A'));
+    });
+    $(document).ready(function () {
+        $('#NotesDate').fdatepicker({
+            format: "@Model.dateFormat.ToLower()"
+        });
+        $('#closeNumbers').on('click', function () {
+            $('#add-note-entry').foundation('close');
+        });
+        @if (Model.DisableFields)
+        {
+            @: $("[name='Note.Type']").prop("disabled", true);
+            @: $("#Note_NotesDate").attr("readonly", true);
+            if(Model.Note.Type == 6 && Model.Note.RefId != null)
+            {
+                @: $("#referralDiv").show();
+            }
+        }
+
+
+        $("#add-note").foundation();
+        $('#add-note')
+            .on('formvalid.zf.abide', function () {
+            $("#Apptform-error").addClass('hide');
+            $("#add-note #NoteappId").hide();
+            $("#saveNote").removeClass('hide');
+            $("#cancelChatNote").removeClass('hide');
+            if($('#add-activity-form #Note_Type').val() == 1){
+                $("#add-note #note-header").text("Did you complete a telephonic coaching session with the participant?");
+                $("#add-note #note-content").text("Please make sure this is a coaching note. Not coaching attempts or outreach attempts");
+            }
+            else if($('#add-activity-form #Note_Type').val() == 7){
+                $("#add-note #note-header").text("Are you sure this is a 'Biometric Review' Note?");
+                $("#add-note #note-content").text("Please make sure this is a Biometric Review Only Note.");
+            }
+            $("#ApptAddNote").addClass('hide');
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        })
+
+        $('#add-activity-form').foundation();
+        $('#add-activity-form')
+            .on('forminvalid.zf.abide', function () {
+           })
+            .on('formvalid.zf.abide', function () {
+                if (($('#add-activity-form #Note_Type').val() == 6) && $('#Note_RefId').val() == "") {
+                    $("#referralError").show();
+                    return;
+                }
+               $("#saveNote").removeClass('hide');
+               $("#add-note #NoteappId").hide();
+               $("#ApptAddNote").addClass('hide');
+               $('#add-note').foundation('open');
+               var Type = $('#add-activity-form #Note_Type').val();
+               @{ var count = Model.Appointments!= null ? Model.Appointments.Count() : 0;
+                  var noteid = Model.Note != null ? Model.Note.Id : 0; }
+               GenerateNoteContent(Type, '#add-note #note-header', '#add-note #note-content', '@Model.AppId', '@count', '@noteid');
+            }).on("submit", function (ev) {
+                ev.preventDefault();
+            })
+        $("#Note_NotesDate").val(moment($('#Note_NotesDate').val()).format("@Model.dateFormat.ToUpper() hh:mm A"));
+        $("#Note_NotesDate").trigger("change");
+    });
+    $('#cancelNote').on('click', function () {
+        $('#add-note').foundation('close');
+        $('#add-note-entry').foundation('open');
+    });
+
+    $("#saveNote").on('click', function () {
+       if (savenotes) {
+        $('#add-note').foundation('close');
+            savenotes = false;
+            saveNote();
+        }
+    })
+
+    function saveNote() {
+        if (!apptId)
+            apptId = $("#NoteappId").val();
+        if(($('#add-activity-form #Note_Type').val() == 7) && apptId)
+            $('#Note_RefId2').val(apptId);
+        if ($('#add-activity-form #Note_Type').val() == 1) {
+            @if (!(Model.userinProgramId.HasValue && Model.programType.HasValue && Model.programType.Value == 2)){
+                @: alert("Please enroll the user in a coaching program before saving a coach note.");
+                @: return;
+            }
+            else {
+                @:$("#Note_RefId2").val(apptId);
+            }
+        }
+
+        $("[name='Note.Type']").prop("disabled", false);
+        $('#Note_NotesDate').val($('#HNotesDate').val());
+        $.ajax({
+            url: "@Url.Action("AddEditNotes", "Participant")",
+            type: 'POST',
+            dataType: "json",
+            data: $("#add-activity-form").serialize().replace(/"/g, '\\"'),
+            success: function (data) {
+                $("[name='Note.Type']").prop("disabled", true);
+                if (data.success) {
+                    $('#add-note-entry').foundation('close');
+                    GetNotes();
+                    if ($('#add-activity-form #Note_Type').val() == 4) {
+                        $("#activityList option[value='4']").remove();
+                    }
+                    if ($('#add-activity-form #Note_Type').val() == 1) {
+                        $("#activityList option[value='1']").remove();
+                    }
+                    if ($('#add-activity-form #Note_Type').val() ==7) {
+                        $("#activityList option[value='7']").remove();
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function showRefferalType() {
+        if (($('#add-activity-form #Note_Type').val() == 6)) {
+            $("#referralDiv").show();
+        }
+        else {
+            $("#referralDiv").hide();
+        }
+    }
+</script>

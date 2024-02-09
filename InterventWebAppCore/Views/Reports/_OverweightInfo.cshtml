@@ -1,0 +1,74 @@
+﻿@using InterventWebApp;
+<div class="grid-x grid-margin-x">
+  <div class="cell">
+    <h2>@Translate.Message("L505")</h2>
+    <form data-abide="ajax" id="diabetesinfo-form" novalidate="novalidate">
+      @*<h4>@Translate.Message("L733")</h4>*@
+      <p>@Translate.Message("L734")</p>
+      <p>@Html.Raw(Translate.Message("L735"))</p>
+      <table width="100%">
+        <tr>
+          <th></th>
+          <th>@Translate.Message("L736")</th>
+        </tr>
+        <tr>
+          <td>@Translate.Message("L737")</td>
+          <td>@Translate.Message("L738")</td>
+        </tr>
+        <tr>
+          <td>@Translate.Message("L739")</td>
+          <td>@Translate.Message("L740")</td>
+        </tr>
+        <tr>
+          <td>@Translate.Message("L741")</td>
+          <td>@Translate.Message("L742")</td>
+        </tr>
+        <tr>
+          <td>@Translate.Message("L743")</td>
+          <td>@Translate.Message("L744")</td>
+        </tr>
+        <tr>
+          <td>@Translate.Message("L745")</td>
+          <td>@Translate.Message("L746")</td>
+        </tr>
+        <tr>
+          <td>@Translate.Message("L747")</td>
+          <td>@Translate.Message("L748")</td>
+        </tr>
+      </table>
+      <h4>@Translate.Message("L749") @Model.BMI</h4>
+      <p>@Translate.Message("L750")</p>
+      <p>@Translate.Message("L751")</p>
+      <table width="100%">
+        <tr>
+          <th></th>
+          <th>@Translate.Message("L752")</th>
+        </tr>
+        <tr>
+          <td>@Translate.Message("L753")</td>
+          <td>@Translate.Message("L754")</td>
+        </tr>
+        <tr>
+          <td>@Translate.Message("L755")</td>
+          <td>@Translate.Message("L756")</td>
+        </tr>
+      </table>
+      @if (Model.Waist != null)
+      {
+        <h4>@Translate.Message("L757") @Model.Waist</h4>
+      }
+      else
+      {
+        <h4>@Translate.Message("L758")</h4>
+      }
+      <p>@Translate.Message("L759")</p>
+      <ul>
+        <li>@Translate.Message("L760")</li>
+        <li>@Translate.Message("L761")</li>
+      </ul>
+    </form>
+  </div>
+</div>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>

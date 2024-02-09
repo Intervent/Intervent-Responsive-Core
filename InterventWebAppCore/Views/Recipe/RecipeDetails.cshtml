@@ -1,0 +1,537 @@
+﻿<!--ADMIN VIEW-->
+@using System.Text.Json;
+@model InterventWebApp.RecipeDetailModel
+@using InterventWebApp
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<section class="main search-participants admin-main-body">
+    <div class="grid-container">
+        <div data-alert id="data-saved" class="callout alert-box alert notification-callout" hidden>
+            <span>Your data has been successfully saved</span>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="main-content-wrapper">
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell">
+                            <div class="primary-section-top">
+                                <div class="grid-x grid-margin-x">
+                                    <div class="cell medium-8">
+                                        <h2>@Translate.Message("L414")</h2>
+                                    </div>
+                                    <div class="cell medium-4 text-right">
+                                        <a href="~/Recipe/RecipeList" type="button" class="button small right">Return</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cell">
+                            <div class="main-results-table-container">
+                                <form id="frmRecipe" class="form-component">
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="cell">
+                                            <label>
+                                                Name
+                                                <input type="text" value="" id="name" />
+                                            </label>
+                                        </div>
+
+                                        <div class="cell medium-4">
+                                            <label>
+                                                Language
+                                                @Html.DropDownList("language", ViewData["languageList"] as IEnumerable<SelectListItem>, new Dictionary<string, object> { { "onchange", "LanguageChange()" } })
+                                            </label>
+                                        </div>
+
+                                        <div class="cell medium-4">
+                                            <label>
+                                                Yield
+                                                <input type="text" value="" id="yield" />
+                                            </label>
+                                        </div>
+
+                                        <div class="cell medium-4">
+                                            <label>
+                                                Serving Size
+                                                <input type="text" value="" id="servingsize" />
+                                            </label>
+                                        </div>
+
+                                        <div class="cell medium-4">
+                                            <label>
+                                                Carbohydrate
+                                                <input type="text" value="" id="carbohydrate" />
+                                            </label>
+                                        </div>
+
+                                        <div class="cell medium-4">
+                                            <label>
+                                                Fat
+                                                <input type="text" value="" id="fat" />
+                                            </label>
+                                        </div>
+
+                                        <div class="cell medium-4">
+                                            <label>
+                                                Calories
+                                                <input type="text" value="" id="calories" />
+                                            </label>
+                                        </div>
+
+                                        <div class="cell medium-8">
+                                            <div class="grid-x">
+                                                <div class="cell">
+                                                    <label>
+                                                        ImageURL
+                                                        <input class="input-group-field" type="text" value="" id="imageURL" readonly />
+                                                    </label>
+                                                </div>
+
+                                                <div class="cell text-left">
+                                                    <span class="input-group-button file-upload button">
+                                                        @Translate.Message("L415")
+                                                        <input type="file" id="imageUpload" class="upload" name="files" onchange="upload_files();" />
+                                                    </span>
+
+                                                    <a id="removelink" href="" class="button hollow" onclick="return removepicture();">@Translate.Message("L416")</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="cell medium-4">
+                                            <div class="tick-buttons">
+                                                <label for="isActive">
+                                                    <input id="isActive" type="checkbox" checked>
+                                                    <span class="checkmark"></span>
+                                                    Is Active
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="cell medium-6">
+                                            <label>
+                                                Direction
+                                                <textarea id="direction"></textarea>
+                                            </label>
+                                        </div>
+
+                                        <div class="cell medium-6">
+                                            <label>
+                                                Ingredients
+                                                <textarea id="ingredients"></textarea>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="Id" value="" />
+
+                                    <div class="grid-x grid-margin-x recipe-edit-button-set">
+                                        <div class="cell medium-4 text-left">
+                                            <button type="button" id="edit-recipe-button" class="button">@Translate.Message("L968")</button>
+                                        </div>
+                                        <div class="cell medium-4 text-center">
+                                            <button id="add-tag-button" type="button" data-open="add-tag-data" class="button" onclick="openTag(@Model.Id)"><i class="fa fa-plus"></i>@Translate.Message("L417")</button>
+                                        </div>
+                                        <div class="cell medium-4 text-right">
+                                            <button type="button" data-open="send-recipe" class="button secondary small" onclick="GetAssignedRecipesList()">Send Recipe</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<div id="add-file-data" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+	</div>
+	<div id="add-tag-data" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+		<div class="grid-container">
+			<div class="grid-x grid-margin-x">
+				<div class="cell small-12">
+					<h3>@Translate.Message("L417")</h3>
+					<div class="noscroll-table-list">
+				        <table width="100%" class="table basic-table2">
+					        <thead>
+						        <tr>
+							        <th><span>@Translate.Message("L419")</span></th>
+							        <th><span>@Translate.Message("L421")</span></th>
+						        </tr>
+					        </thead>
+					        <tbody>
+						        @for (int i = 0; i < Model.RecipeTags.Count; i++)
+						        {
+							        <tr>
+								        <td>@Model.RecipeTags[i].Name</td>
+								        <td>
+									        <div class="tick-buttons">
+										        <label for="@Model.RecipeTags[i].Id">
+											        <input name="tags" type="checkbox" id="@Model.RecipeTags[i].Id" value="@Model.RecipeTags[i].Id">
+											        <span class="checkmark"></span>
+										        </label>
+									        </div>										
+								        </td>
+							        </tr>
+						        }
+					        </tbody>
+				        </table>
+                    </div>
+				</div>
+			</div>
+
+			<div class="grid-x grid-margin-x button-set">
+				<div class="cell medium-6 medium-text-left"><button class="small" type="button" id="addTag">@Translate.Message("L968")</button></div>
+				<div class="cell medium-6 medium-text-right"><button class="small secondary" type="reset" id="closeTag">@Translate.Message("L967")</button></div>
+				<input type="hidden" id="tagId" value="" />
+			</div>
+		</div>
+	</div>
+
+	<div id="send-recipe" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+        <div class="grid-container">
+            <form id="assign-recipe" class="form-component" data-abide novalidate>
+                <div class="grid-x">
+                    <div class="cell form-component">
+                        <h2 class="text-center">Assign Recipe</h2>
+                        <label for="Orgs">
+                            Select Organization(s)
+                            <select id="Orgs" multiple data-prompt="Select" required></select>
+                            <small class="form-error multiselect-error">Required</small>
+                        </label>
+                    </div>
+                    <div class="cell medium-6 medium-text-left"><button class="small" type="submit">Assign</button></div>
+                    <div class="cell medium-6 medium-text-right"><button class="small secondary" type="reset" id="closePopup">@Translate.Message("L967")</button></div>
+                    <div class="cell assign-notification-card notification-card text-center" hidden><span id="notificationCard">Assigned successfully</span></div>
+                </div>
+                </form>
+                @*<div class="grid-x grid-margin-x">
+                <div class="cell">
+                    <h3>Previously Assigned</h3>
+                    <div id="AssignedRecipes" class="table-container"></div>
+                </div>
+            </div>*@
+                <div class="grid-x grid-margin-x previous-assigned-section hide">
+                    <div class="cell">
+                        <div class="notification-card text-center" hidden><span id="notificationCard">Assigned successfully</span></div>
+                        <h3>Previously assigned list</h3>
+                        <div id="AssignedRecipes" class="table-container prev-assigned-list"></div>
+                    </div>
+                </div>
+                <button class="close-button" data-close aria-label="Close modal" type="button"><span aria-hidden="true">&times;</span></button>
+        </div>
+	</div>
+
+</section>
+<script>
+    var recipeId = @Model.Id;
+    var recipeTags = @Html.Raw(JsonSerializer.Serialize(Model.SelectedTags));
+
+    function LanguageChange() {
+        var lang = $('#language').val();
+
+        $("#name").val('');
+        $("#yield").val('');
+        $("#servingsize").val('');
+        $("#carbohydrate").val('');
+        $("#fat").val('');
+        $("#calories").val('');
+         $("#imageURL").val('');
+         var IsActive = $('#isActive').is(":checked");
+         $("#direction").val('');
+         $("#ingredients").val('');
+        GetRecipeDetails();
+    }
+
+    function GetRecipeDetails() {
+        var lang = $('#language').val();
+        $.ajax({
+            url: "@Url.Action("GetRecipeDetails", "Recipe")",
+            data: { id: @Model.Id, language: lang },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    if (data.Record != null) {
+                        $("#name").val(data.Record.Name);
+                        $("#yield").val(data.Record.Yield);
+                        $("#servingsize").val(data.Record.ServingSize);
+                        $("#carbohydrate").val(data.Record.Carbohydrate);
+                        $("#fat").val(data.Record.Fat);
+                        $("#calories").val(data.Record.Calories);
+                        $("#imageURL").val(data.Record.ImageURL);
+                        $("#isActive").prop("checked", data.Record.IsActive);
+                        $("#direction").val(data.Record.Direction);
+                        $("#ingredients").val(data.Record.Ingredients);
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    $(document).ready(function () {
+        $('#closeTag').on('click', function () {
+            $('#add-tag-data').foundation('close');
+        });
+        $('#closePopup').on('click', function () {
+            $('#send-recipe').foundation('close');
+        });
+
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("ListOrganizations", "Portal")",
+            success: function (orgData) {
+                for (i = 0; i < orgData.Records.length; i++) {
+                    $("#Orgs").append("<option value=" + orgData.Records[i].Id + ">" + orgData.Records[i].Name + "</option>");
+                }
+                $('#Orgs').foundationSelect();
+                $(document).foundation();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+        $("#assign-recipe").foundation();
+        $("#assign-recipe").on('formvalid.zf.abide', function () {
+            var selectIds = $("#Orgs").val();
+            if(selectIds == null || selectIds.length == 0)
+                return;
+
+            var organizationIds = selectIds.join(',');
+            var model = {};
+            model.RecipeId = @Model.Id;
+            model.OrganizationIds = organizationIds;
+            var strData = JSON.stringify(model);
+            $.ajax({
+                url: "@Url.Action("AssignRecipe", "Recipe")",
+                type: 'POST',
+                dataType: "json",
+                contentType: 'application/json, charset=utf-8',
+                data: strData,
+                success: function (data) {
+                    if (data.Record == true) {
+                        $(".assign-notification-card").show('slow');
+                        setTimeout(function () {
+                            $('.assign-notification-card').hide('slow');
+                        }, 2000);
+                        $("#Orgs:selected").prop("selected", false);
+                        $(".custom-dropdown-options").find("li").each(function () {
+                            if ($(this).hasClass("selected"))
+                                $(this).removeClass("selected");
+
+                            $('.custom-dropdown-button').html("Select");
+                        });
+                        GetAssignedRecipesList();
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        });
+        GetRecipeDetails();
+    });
+
+    function upload_files() {
+        var formData = new FormData();
+        var file = document.getElementById("imageUpload").files[0];
+        formData.append("FileUpload", file);
+        formData.append("id", @Model.Id);
+        formData.append("action", 'recipe');
+        var extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+
+        if (!(extension && /^(jpg|png|jpeg|gif|svg)$/.test(extension.toLowerCase()))) {
+            alert("@Translate.Message("L3109")");
+            return;
+        }
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("UploadFile", "Common")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.message != "Failed") {
+                    showHideImage(response.data, 'add');
+                }
+            },
+            error: function (error) {
+                 alert("@Translate.Message("L3109")");
+            }
+        });
+    }
+
+    function GetAssignedRecipesList() {
+        $("#Orgs:selected").prop("selected", false);
+        $(".custom-dropdown-options").find("li").each(function () {
+            if ($(this).hasClass("selected"))
+                $(this).removeClass("selected");
+
+            $('.custom-dropdown-button').html("Select");
+        });
+        $.ajax({
+            url: "@Url.Action("ListAssignedRecipes", "Recipe")",
+            type: "POST",
+            data: { recipeId:@Model.Id },
+            dataType: 'json',
+            success: function (data) {
+                if (data != null && data.Records.length > 0) {
+                    $(".previous-assigned-section").removeClass("hide");
+                    $('#AssignedRecipes').html('');
+                    var recipeHtml = "";
+                    recipeHtml += "<table class='table basic-table2'>";
+                    recipeHtml += "<thead><tr><th><span>Recipe Name</span></th><th><span>Organization</span></th><th><span>Sent Date</span></th><th><span>Completed</span></th></tr></thead>"
+                    for (var i = 0; i < data.Records.length; i++) {
+                        var recipe = data.Records[i];
+                        recipeHtml += "<tr><td>" + $("#name").val() + "</td>" + "<td>" + recipe.Name + "</td>" + "<td>" + toLocalDateFormat(recipe.Date) + "</td>" + "<td>" + recipe.Completed + "</td></tr>";
+                    }
+                    $('#AssignedRecipes').html(recipeHtml);
+                }
+                else
+                {
+                    $(".previous-assigned-section").addClass("hide");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    $("#edit-recipe-button").on('click', function (ev) {
+        $("#data-saved").addClass('hide');
+        var lang = $('#language').val();
+        var name = $("#name").val();
+        if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage" && (name == "")) {
+            return;
+        }
+        var yieldVal = $("#yield").val();
+        var servingsize = $("#servingsize").val();
+        var carbohydrate = $("#carbohydrate").val();
+        var fat = $("#fat").val();
+        var calories = $("#calories").val();
+        var direction = $("#direction").val();
+        var ingredients = $("#ingredients").val();
+        var imageUrl = $('#imageURL').val();
+        var isActive = $('#isActive').is(":checked");
+
+        $.ajax({
+            url: "@Url.Action("EditRecipe", "Recipe")",
+            data: { id: @Model.Id, name: name, yield: yieldVal, servingsize: servingsize, carbohydrate: carbohydrate, fat: fat, isActive: isActive, calories: calories, imageUrl: imageUrl, direction: direction, ingredients: ingredients,  language: lang },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $("#data-saved").removeClass('hide');
+                $('#data-saved').show();
+                setTimeout(function () {
+                    $('#data-saved').hide();
+                }, 1000);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+        ev.preventDefault();
+    });
+
+    function removepicture() {
+        var image = $('#imageURL').val();
+        var cleanup = /\"|\'|\)/g;
+        var imageName = image.split('/').pop().replace(cleanup, '');
+        $.ajax({
+            url: "@Url.Action("RemovePicture", "Account")",
+            type: 'POST',
+            dataType: "json",
+            data: { picture: imageName },
+            success: function (data) {
+                if (data == "success") {
+                    showHideImage(data, 'remove');
+                };
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        return false;
+    }
+
+    function showHideImage(data, action)
+    {
+        if(action == 'remove')
+            $('#imageURL').val('');
+        else
+            $('#imageURL').val(data);
+    }
+
+    $("#addTag").on('click', function () {
+        var tagIds = new Array();
+        $("input[name='tags']:checked").each(function(){
+            tagIds.push(this.value);
+        });
+        $.ajax({
+            url: "@Url.Action("AddEditTag", "Recipe")",
+            data: { recipeId: @Model.Id, tagIds: tagIds },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                recipeTags = data.Record;
+                $('#add-tag-data').foundation('close');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    function openTag(id){
+        $("input:checkbox[name='tags']:checked").each(function () {
+            this.checked = false;
+        })
+        for (var j = 0; j < recipeTags.length; j++) {
+            var tag = recipeTags[j];
+            var checkControls =$("input:checkbox[name='tags']");
+            for (var i = 0; i < checkControls.length; i++) {
+                if(tag.TagId == parseInt(checkControls[i].value)){
+                    checkControls[i].checked = true;
+                }
+            }
+        }
+    }
+
+    function GetAssignedMessagesList(id) {
+        $.ajax({
+            type: "POST",
+			data: { motivationMessageId: id},
+            url: "@Url.Action("ListAssignedMotivationMessages", "MotivationMessage")",
+            dataType: 'json',
+            success: function (data) {
+                if (data != null && data.Records.length > 0) {
+                    $(".previous-assigned-section").removeClass("hide");
+                    $('#AssignedMessages').html('');
+                    var messagesHtml = "";
+                    messagesHtml += "<table class='table basic-table2'>";
+                    messagesHtml += "<thead><tr><th><span>Organization</span></th><th><span>Sent Date</span></th><th><span>Completed</span></th><th><span>Type</span></th><th><span></span></th></tr></thead>"
+                    for (var i = 0; i < data.Records.length; i++) {
+                        var message = data.Records[i];
+                        var completed = message.Completed == true ? "Yes" : "No";
+                        messagesHtml += "<tr><td>" + message.Organization.Name + "</td>" + "<td>" + toLocalDateFormat(message.Date) + "</td>" + "<td>" + completed + "</td>" + "<td>" + message.MessageType + "</td>";
+                        if (message.Completed != true) {
+                            messagesHtml += "<td><a class='anchor-blue' onclick='AssignOrRemoveMotivationMessage(" + '"' + message.MessagesID + '"' + "," + '"' + message.Id + '"' + ", " + '""' + "," + '""' + ", " + '"' + true + '"' + ");'><i class='fa fa-times'></i></a></td>";
+                        }
+                        messagesHtml += "</tr>";
+                    }
+                    $('#AssignedMessages').html(messagesHtml);
+                }
+                else
+                {
+                    $(".previous-assigned-section").addClass("hide");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+	}
+</script>

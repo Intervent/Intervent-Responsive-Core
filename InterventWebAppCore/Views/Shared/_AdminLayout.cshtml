@@ -1,0 +1,271 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	@*Set the viewport width to device width for mobile *@
+	<meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+	<title>INTERVENT | Better Health for Life™</title>
+	<link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+	<link href="@Url.Content("~/Content/css/jquery.jscrollpane.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+	@if (ViewBag.Details == "CRM")
+	{
+		<link href="@Url.Content("~/Content/css/eligibility.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+		<link href="@Url.Content("~/Content/css/crm.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+	}
+	else if (ViewBag.Details == "Organization")
+	{
+		<link href="@Url.Content("~/Content/css/organization.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+	}
+	else if (ViewBag.Details == "Message")
+	{
+		<link href="@Url.Content("~/Content/css/messaging.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+	}
+	else if (ViewBag.Details == "EligibilityPage")
+	{
+		<link href="@Url.Content("~/Content/css/eligibility.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+	}
+	else if (ViewBag.Details == "ParticipantInfoPage")
+	{
+		<link href="@Url.Content("~/Content/css/eligibility.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+		<link href="@Url.Content("~/Content/css/Site.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+	}
+	else
+	{
+		<link href="@Url.Content("~/Content/css/Site.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+	}
+	<link href="@Url.Content("~/Content/css/font-awesome.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" />
+	<link href='https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,600,500,700,800,900' rel='stylesheet' type='text/css'>
+	<script src="@Url.Content("~/Scripts/jquery-3.6.1.min.js")?v=@CommonUtility.GetRandom()"></script>
+	<script src="https://code.jquery.com/jquery-migrate-3.4.0.js"></script>
+	<script src="@Url.Content("~/Scripts/modernizr-2.8.3.js")?v=@CommonUtility.GetRandom()"></script>
+	<script src="@Url.Content("~/Scripts/foundation/fastclick.js")?v=@CommonUtility.GetRandom()"></script>
+	<script src="@Url.Content("~/Scripts/moment.js")?v=@CommonUtility.GetRandom()"></script>
+	<script type="text/javascript" src="@Url.Content("~/Scripts/ErrorHandler.js")?v=@CommonUtility.GetRandom()"></script>
+
+	@*@Styles.Render("~/Content/css")*@
+
+	@RenderSection("head", required: false)
+
+	@*@Scripts.Render("~/bundles/modernizr")*@
+
+</head>
+<body class="user-layout">
+    @{ Html.RenderPartial("_Session"); }
+    <div data-sticky-container>
+        <div class="contain-to-grid" data-sticky data-stick-to="top" data-margin-top="0" data-sticky-on="small">
+            <nav class="top-bar" data-topbar role="navigation">
+                <div class="title-bar hide-for-large" data-responsive-toggle="responsive-menu" data-hide-for="large">
+                    <button class="menu-icon" type="button" data-toggle="responsive-menu"></button>
+                </div>
+
+                <div class="flex-container align-middle mobile-sidebar-trigger">
+                    <a href="#" class="device-sidebar-btn hide-for-large">
+                        <img src="~/Images/participant/mobile_navigation_icon.svg" alt="" class="hide" />
+                    </a>
+
+                    <h1 class="menu-text"><a href="~/Admin/AdminDashboard">INTERVENT</a></h1>
+                </div>
+
+                <div class="top-bar-menu-items" id="responsive-menu">
+                    <div class="top-bar-right large-order-2">
+                        <ul class="menu vertical large-horizontal" data-responsive-menu="drilldown large-dropdown" data-auto-height="true">
+                            <li class="has-dropdown">
+                                <a href="#">@User.FullName()</a>
+                                <ul class="menu vertical">
+                                    <li>
+                                        <a id="profilepic" href="" data-open="admin-profile" data-modal-path="@Html.Raw(Url.Action("AdminProfile", "Admin", new { Id = HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.AdminId) }))">
+                                            My Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="" data-open="change-password" data-modal-path="@Html.Raw(Url.Action("ChangePassword", "Account"))">
+                                            Change Password
+                                        </a>
+                                    </li>
+                                    <li><a href="@Url.Action("Stream", "Participant", new { ForceParticipant = true, myself = true })">My Program</a></li>
+                                    <li><a href="@Url.Action("Logout", "Account")">Sign Out</a></li>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                    <div class="top-bar-left large-order-1"></div>
+                </div>
+
+                @*<ul class="title-area">
+                        <li class="name">
+                            <h1><a href="~/Admin/AdminDashboard">INTERVENT</a></h1>
+                        </li>
+                        <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+                    </ul>*@
+
+                @*<section class="top-bar-section">
+                        <!-- Right Nav Section -->
+                        <ul class="right">
+                            <li class="has-dropdown">
+                                <a href="#">@User.FullName()</a>
+                                <ul class="dropdown">
+                                    <li>
+                                        <a id="profilepic" href="" data-open="admin-profile" data-modal-path="@Html.Raw(Url.Action("AdminProfile", "Admin", new { Id = @Model.AdminId] }))">
+                                            My Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="" data-open="change-password" data-modal-path="@Html.Raw(Url.Action("ChangePassword", "Account"))" data-reveal data-options="close_on_background_click: false; close_on_esc: false">
+                                            Change Password
+                                        </a>
+                                    </li>
+                                    <li><a href="@Url.Action("Stream", "Participant", new { ForceParticipant = true, myself = true })">My Program</a></li>
+                                    <li><a href="@Url.Action("Logout", "Account")">Sign Out</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <!-- Left Nav Section -->
+                        <ul class="left"></ul>
+                    </section>*@
+            </nav>
+            <div class="admin-menu" id="admin-mobile-menu"></div>
+
+        </div>
+    </div>
+    <input id="userDateFormat" type="hidden" value="@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToUpper()">
+    <input id="errorUrl" type="hidden" value="@Url.Action("Error","Account")" />
+    <input id="notFoundUrl" type="hidden" value="@Url.Action("NotFoundError","Account")" />
+    <input id="notAuthorizedUrl" type="hidden" value="@Url.Action("NotAuthorized","Account")" />
+    <div id="change-password" class="reveal small" data-reveal></div>
+    <div id="admin-profile" class="reveal large padded-modal-container" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+    <script src="@Url.Content("~/Scripts/js/foundation.min.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/app.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/foundation-datepicker.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/foundation-select.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/jquery-ui.min.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/jquery.mousewheel.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/jquery.jscrollpane.min.js")?v=@CommonUtility.GetRandom()"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/DateFormatter.js")?v=@CommonUtility.GetRandom()"></script>
+    <script>
+        function UpdateProfileStatus() {
+        }
+    </script>
+
+    @RenderBody()
+
+    <footer>
+        <div class="grid-container">
+			<div class="grid-x grid-margin-x footer-content">
+				<div class="cell large-6 small-6">
+					<div class="flex-container align-left">
+						<div>Copyright © @DateTime.Now.Year INTERVENT</div>
+						<div><a href="~/Home/ServiceAgreement?modal=false" target="_blank">@Translate.Message("L440")</a></div>
+						<div><a href="~/Home/ServiceAgreement?modal=false#privacy" target="_blank">@Translate.Message("L2436")</a></div>
+					</div>
+				</div>
+				<div class="cell large-6 small-6">
+					<div class="flex-container align-right">
+						@*<div><span data-tooltip class="tip-top" data-tooltip-class="tooltip footer-tooltip" data-allow-html="true" data-alignment="left" title="@Translate.Message("L3150"): @(Model.OrgContactEmail] != null ? Model.OrgContactEmail].ToString() : "info@myintervent.com" ) <br> @Translate.Message("L3149"): @(Model.OrgContactNumber] != null ? Model.OrgContactNumber].ToString() : "1-855-494-1093" )  "><a href="#">@Translate.Message("L2435")</a></span></div>*@
+                        @if (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.OrgContactNumber) != null)
+						{
+                            <div><a><img src="~/Images/footer-call-icon.png" alt="" /> @HttpContextAccessor.HttpContext.Session.GetString(SessionContext.OrgContactNumber) </a></div>
+						}
+                        <div><a href=""><img src="~/Images/footer-mail-icon.png" alt="" /> @(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.OrgContactEmail) != null ? HttpContextAccessor.HttpContext.Session.GetString(SessionContext.OrgContactEmail) : "info@myintervent.com")</a></div>
+					</div>
+				</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        $('.override-select').foundationSelect();
+		function showmodal(elem, e) {
+            var attr_val = elem.data("open");
+            var attr_path = elem.data("modal-path");
+            if (attr_val && attr_path) {
+                e.preventDefault();
+				var $modal1 = $('#' + attr_val);
+				$modal1.addClass('no-padding');
+				$.ajax(attr_path).done(function (resp) {
+					$modal1.html(resp).removeClass('no-padding');
+				});
+			}
+		}
+
+	    LoadMenu();
+        $(document).ready(function () {
+            $("[data-open]").on('click', function(e){
+				showmodal($(this), e);
+			});
+
+            $("[data-reveal]").on("open.zf.reveal", function() {
+                $(document).ready(function () {
+					if ($('[data-tabs]').length) {
+						$('[data-tabs]').foundation();
+					}
+                });
+			});
+		});
+
+        function LoadMenu() {
+			$('#admin-menu').html('<div id="loader" class="section-loader"></div>');
+			
+            $.ajax({
+                url: "@Url.Action("AdminMenu", "Admin")",
+                type: 'POST',
+                success: function (data) {
+                    if ($("#admin-menu").length != 0 && $(window).width() >= 1024) {
+                        $('#admin-menu').html(data);
+                    }
+                    else {
+                        $('#admin-mobile-menu').html(data);
+                        enableAccMenu();
+                    }
+                },
+				complete: function () {
+					$(".device-sidebar-btn img").removeClass("hide");
+
+                    $(document).on("click", ".device-sidebar-btn", function (e) {
+	    				e.preventDefault();
+                        $(".mobile-sidebar").toggleClass("is-active");
+                    });
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+    </script>
+
+    @*Use the Scripts section to define page specific scripts*@
+    @RenderSection("scripts", required: false)
+
+    <script>
+        $('ul.menu').on('open.zf.drilldown', function () {
+            var chk_ht = $("ul.is-drilldown-submenu.is-active").height();
+            $(this).parents(".top-bar-menu-items").height(chk_ht);
+        });
+        $('ul.menu').on('hide.zf.drilldown', function () {
+            $(this).parents(".top-bar-menu-items").height("auto");
+        });
+
+        // Patch for a Bug in v6.3.1
+        $(window).on('changed.zf.mediaquery', function () {
+            $('.is-dropdown-submenu.invisible').removeClass('invisible');
+        });
+
+        $("button.menu-icon").on('click', function () {
+            $("li.is-drilldown-submenu-parent").attr("aria-expanded", "false");
+
+            $("ul.is-drilldown-submenu").removeClass("is-active").addClass("invisible");
+            $("ul.is-drilldown-submenu").attr("aria-hidden", "true");
+
+            $(this).parents(".top-bar").find(".top-bar-menu-items").height("auto");
+        });
+        $(document).foundation();
+    </script>
+</body>
+
+</html>

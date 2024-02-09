@@ -1,0 +1,134 @@
+﻿@model InterventWebApp.CRMProfileModel
+@using InterventWebApp
+
+<div class="cell large-4">
+    <div class="crm-form-title align-justify align-middle flex-container">
+        <h2>Profile details</h2>
+        <a href="#" id="edit-profile" onclick="EditCRMContact(@Model.CRM_Contact.Id)">Edit</a>
+    </div>
+
+    <div class="profile-details-container create-profile-form">
+        <p class="crm-id">CRM ID: <span id="crm-val">@Model.CRM_Contact.Id</span> <span class="copy-crm"><img src="~/Images/crm/copy-icon.svg" alt="Copy CRM" /></span></p>
+        <ul>
+            <li>
+                <span>First Name</span>
+                <p>@Model.CRM_Contact.FirstName </p>
+            </li>
+            <li>
+                <span>Last Name</span>
+                <p>@Model.CRM_Contact.LastName</p>
+            </li>
+            @*<li>
+            <span>POGO Serial Number</span>
+            <p>@(Model.CRM_Contact.PogoMeterNumber != null ? Model.CRM_Contact.PogoMeterNumber : "")</p>
+        </li>*@
+            <li>
+                <span>Email</span>
+                <p>@(Model.CRM_Contact.Email != null ? Model.CRM_Contact.Email : "")</p>
+            </li>
+            <li>
+                <span>Phone Number</span>
+                <p>@Model.CRM_Contact.PhoneNumber1</p>
+            </li>
+            @if (Model.userId.HasValue)
+            {
+                <li>
+                    <span>User Id </span>
+                    <p>
+                        <a onclick="ViewParticipant('@Model.userId');"><b>@Model.userId</b></a>
+                    </p>
+                </li>
+            }
+            @if (!string.IsNullOrEmpty(Model.CRM_Contact.UniqueId))
+            {
+                <li>
+                    <span>Unique Id </span>
+                    <p>
+                        <a onclick="GetEligibility('@Model.eligibilityId');"><b>@Model.CRM_Contact.UniqueId</b></a>
+                    </p>
+                </li>
+            }
+            <li>
+                <span>Notes</span>
+                <p class="crm-notes-content">@Model.CRM_Contact.Notes</p>
+            </li>
+            <li class="profile-detais hide">
+                <span>Gender</span>
+                <p>@(Model.CRM_Contact.Gender != null ? Model.CRM_Contact.Gender.Value == 1 ? "Male" : "Female" : "")</p>
+            </li>
+            <li class="profile-detais hide">
+                <span>Date of Birth</span>
+                <p>@(Model.CRM_Contact.DOB != null ? Model.CRM_Contact.DOB.Value.ToString(Model.DateFormat) : "")</p>
+            </li>
+            <li class="profile-detais hide">
+                <span>Phone Number 2</span>
+                <p>@(Model.CRM_Contact.PhoneNumber2 != null ? Model.CRM_Contact.PhoneNumber2 : "")</p>
+            </li>
+            <li class="profile-detais hide">
+                <span>Phone Number 3</span>
+                <p>@(Model.CRM_Contact.PhoneNumber3 != null ? Model.CRM_Contact.PhoneNumber3 : "")</p>
+            </li>
+            <li class="profile-detais hide">
+                <span>Address</span>
+                <p>@(Model.CRM_Contact.Address != null ? Model.CRM_Contact.Address : "")</p>
+                <p>@(Model.CRM_Contact.City != null ? Model.CRM_Contact.City : "")</p>
+                <p>@(Model.CRM_Contact.States != null ? Model.CRM_Contact.States.Name : "")</p>
+                <p>@(Model.CRM_Contact.Zip != null ? Model.CRM_Contact.Zip : "")</p>
+            </li>
+            <li class="profile-detais hide">
+                <span><a href="#" data-open="profile-change-log-modal" onclick="ViewProfileChangeLog(@Model.CRM_Contact.Id, '@Model.CRM_Contact.FirstName', '@Model.CRM_Contact.LastName');"><b>View Profile Change Log</b></a></span>
+            </li>
+        </ul>
+        <div class="show-more-profile">
+            <span>More details</span>
+        </div>
+    </div>
+</div>
+
+<div id="eligibility-profile" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+<div id="spouse-eligibility-profile" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+<div id="associate-eligibility-profile" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+<div id="add-spouse-eligibility" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+
+<script>
+
+    $(document).ready(function () {
+
+        $(".show-more-profile span").on("click", function () {
+            $("li.profile-detais").toggleClass("hide");
+            $(this).text($(this).text() == 'More details' ? 'Less details' : 'More details');
+        });
+
+		$("span.copy-crm").on("click", function() {
+		  var $temp = $("<input>");
+		  $("body").append($temp);
+		  $temp.val($("#crm-val").text()).select();
+		  document.execCommand("copy");
+		  $temp.remove();
+		  showAlertMessage("CRM code copied");
+        });
+        $('#eligibility-profile').foundation();
+    });
+
+    function GetEligibility(eligibilityId) {
+        $.ajax({
+            url: '@Url.Action("GetEligibilityDetails", "Participant")',
+            type: 'GET',
+            data: { eligibilityId: eligibilityId },
+            success: function (data) {
+                $("#eligibility-profile").html(data);
+            },
+            complete: function () {
+                $('#eligibility-profile').foundation('open');
+				$("#eligibility-profile #loader-wrapper").fadeOut();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function ViewParticipant(Id) {
+        var link = '@Url.Action("ParticipantProfile", "Participant", new { Id = "PId", fromCRMProfile = true })';
+        window.location.href = link.replace("PId", Id)
+    }
+</script>

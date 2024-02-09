@@ -1,0 +1,125 @@
+﻿@using InterventWebApp
+@model InterventWebApp.LoginModel
+
+<!--Login Modal-->
+@{string className = ViewData["LMCClass"] != null ? ViewData["LMCClass"].ToString() : "";}
+<div id="login-modal" class="reveal medium @className" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-12">
+                <h2 class="text-center">@Translate.Message("L426")</h2>
+                <div data-alert id="login-error" class="callout hide">
+                    <a href="#" class="close">&times;</a>
+                </div>
+            </div>
+            <div class="cell">
+                <form id="login-form" data-abide novalidate>
+                    <div class="grid-x grid-margin-x login-modal-confirmed hide">
+                        <div class="small-12 cell">
+                            <p class="success">@Translate.Message("L462")</p>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x password-changed hide">
+                        <div class="small-12 cell">
+                            <p class="success">@Translate.Message("L1630")</p>
+                        </div>
+                    </div>
+                    <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 cell">
+                            @Html.TextBoxFor(m => m.UserName, new Dictionary<string, object> { { "placeholder", @Translate.Message("L986") }, { "required", "required" }, { "id", "loginEmail" } })
+                            <small class="form-error">@Translate.Message("L463")</small>
+                        </div>
+
+                        <div class="small-12 cell password-field-box">
+                            @Html.PasswordFor(m => m.Password, new Dictionary<string, object> { { "placeholder", @Translate.Message("L466") }, { "required", "required" } })
+                            <span class="toggle-password fa fa-fw fa-eye"></span>
+                            <small class="form-error">@Translate.Message("L464")</small>
+                        </div>
+
+                        <div class="small-12 cell">
+                            <button type="submit" class="expanded button pink">
+                                <div class="loading-spinner hide" show-if-submitting></div>
+                                @Translate.Message("L426")
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="small-12 cell text-center">
+                @if (ViewData["ShowSignUp"].ToString() == "True")
+                {
+                    <a href="#" onclick="$('#sign-up-modal').foundation('open'); return false;">@Translate.Message("L443")</a>
+                    @: |
+                }
+                <a href="#" onclick="$('#forgot-password-modal').foundation('open'); return false;">
+                    @if (ViewData["ForgotPasswordText"] != null)
+                    {
+                        <span>@Translate.Message(ViewData["ForgotPasswordText"].ToString())</span>
+                    }
+                    else
+                    {
+                        <span>@Translate.Message("L465") </span>
+                    }
+                </a>
+            </div>
+            <a class="close-button" data-close>&#215;</a>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    //LOGIN FORM
+    $(document).ready(function () {
+        $('#login-form').foundation();
+        $('#login-form')
+            //When Not Valid
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                console.log(invalid_fields);
+            })
+            //When Valid
+            .on('formvalid.zf.abide', function () {
+                $("#loader-wrapper").removeClass("hide");
+                $("#loader-wrapper").fadeIn();
+                $("#login-form").find('input[name="Password"]').val(window.btoa(Math.random().toString(36).substring(2, 8) + $("#login-form").find('input[name="Password"]').val()));
+                $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+                $('[show-if-submitting]').removeClass('hide');
+                $.ajax({
+                    url: "@Url.Action("Login", "Account")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#login-form").serialize(),
+                    success: function (data) {
+                        $("#login-form").find('input[name="Password"]').val("");
+                        if (data == "success") {
+                            $('#login-modal').foundation('close');
+                            window.location.href = "@Url.Action("Stream", "Participant")";
+                        }
+                        else if (data == "confirmEmail") {
+                            var email = $("#loginEmail").val();
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                            $('#resend-email-modal').find("#email").text(email);
+                            $('#resend-email-modal').find("#emailId").val(email)
+                            $('#resend-email-modal').foundation('open');
+                        }
+                        else {
+                            $("#login-error").html(data);
+                            $('#login-modal').find('#login-error').removeClass('hide');
+                            $("#loader-wrapper").fadeOut();
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        DisplayError(jqXHR.status);
+                    });
+            })
+            // to prevent form from submitting upon successful validation
+            .on("submit", function (ev) {
+                ev.preventDefault();
+            });
+    });
+</script>

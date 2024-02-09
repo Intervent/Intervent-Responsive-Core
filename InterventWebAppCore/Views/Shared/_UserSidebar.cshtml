@@ -1,0 +1,255 @@
+﻿@model InterventWebApp.ParticipantDashboardModel
+@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div class="side-column" data-equalizer-watch>
+    @if (WebinarUtility.ListUserWebinars(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value).webinars.Count() > 0)
+    {
+        <a href="~/Webinar/DashBoard">
+            <div class="dashboard-item purple">
+                <div class="icon-container">
+                    <i class="fa fa-users"></i>
+                </div>
+                <div class="description">
+                    <div class="title">@Translate.Message("L4512")</div>
+                </div>
+            </div>
+        </a>
+    }
+    <a href="~/Lab/MyLabs">
+        <div class="dashboard-item pink">
+            <div class="icon-container">
+                <i class="fa fa-file-text-o"></i>
+            </div>
+            <div class="description">
+                <div class="title">
+                    &nbsp;
+                    <div class="caption">@Translate.Message("L1263")</div>
+                    <div class="hovered">@Translate.Message("L1263")</div>
+                </div>
+            </div>
+        </div>
+    </a>
+    @if (Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)) && Model.ShowSelfScheduling)
+    {
+        <a href="~/Participant/MyCoach">
+            <div class="dashboard-item pink">
+                <div class="icon-container">
+                    <i class="fa fa-user"></i>
+                </div>
+                <div class="description">
+                    <div class="title">
+                        &nbsp;
+                        <div class="hovered">@Translate.Message("L769")</div>
+                        <div class="caption">@Translate.Message("L1613")</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    }
+    @if (Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)) && (Model.IsRescheduling || (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ProgramType).HasValue && HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ProgramType).Value == 2)))
+    {
+        <a href="~/Scheduler/Reschedule">
+            <div class="dashboard-item pink">
+                <div class="icon-container">
+                    <i class="fa fa-user"></i>
+                </div>
+                <div class="description">
+                    <div class="title">
+                        &nbsp;
+                        <div class="hovered">@Translate.Message("L3787")</div>
+                        <div class="caption">@Translate.Message("L3787")</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    }
+    @if (Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)) && !HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserinProgramId).HasValue && (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SelfHelpProgram) != null && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SelfHelpProgram)) == true)
+    && (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.CoachingProgram) == null || Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.CoachingProgram)) == false))
+    {
+        <a href="~/Program/CurrentPrograms">
+            <div class="dashboard-item pink">
+                <div class="icon-container">
+                    <i class="fa fa-user"></i>
+                </div>
+                <div class="description">
+                    <div class="title">
+                        &nbsp;@Translate.Message("L443")
+                    </div>
+                </div>
+            </div>
+        </a>
+    }
+    @if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserinProgramId).HasValue)
+    {
+        <a href="~/Program/MyProgram/">
+            <div class="dashboard-item green">
+                <div class="icon-container">
+                    <i class="fa fa-paper-plane-o"></i>
+                </div>
+                <div class="description">
+                    <div class="title">
+                        &nbsp;
+                        <div class="caption">@Translate.Message("L934")</div>
+                        <div class="hovered">@Translate.Message("L1614")</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    }
+    @if (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HRACompleteDate) != null)
+    {
+        <a href="~/Reports/ReportsDashboard">
+            <div class="dashboard-item red">
+                <div class="icon-container">
+                    <i class="fa fa-heartbeat"></i>
+                </div>
+                <div class="description">
+                    <div class="title">@Translate.Message("L1064")</div>
+                </div>
+            </div>
+        </a>
+        if (((HttpContextAccessor.HttpContext.Session.GetString(SessionContext.CoachingProgram) != null && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.CoachingProgram)) == true) ||
+           (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SelfHelpProgram) != null && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SelfHelpProgram)) == true)) &&
+           ((HttpContextAccessor.HttpContext.Session.GetString(SessionContext.ShowProgramOption) != null && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.ShowProgramOption)) == true)
+           || HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserinProgramId).HasValue))
+        {
+            <a href="~/Reports/recommendationsdashboard">
+                <div class="dashboard-item green">
+                    <div class="icon-container">
+                        <i class="fa fa-comment-o"></i>
+                    </div>
+                    <div class="description">
+                        <div class="title">@Translate.Message("L927")</div>
+                    </div>
+                </div>
+            </a>}
+    }
+    else if (Model.externalReportId.HasValue)
+    {
+        <a href="#" data-open="journal-options" data-modal-path="@Html.Raw(Url.Action("ExternalReports", "Participant"))" onclick="$('#close-report').removeClass('hide');" >
+            <div class="dashboard-item green">
+                <div class="icon-container">
+                    <i class="fa fa-comment-o"></i>
+                </div>
+                <div class="description">
+                    <div class="title">@Translate.Message("L927")</div>
+                </div>
+            </div>
+        </a>
+    }
+    else if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.HasHRA).Value == (int)HRAStatus.Optional)
+    {
+
+        <a href="#" data-open="complete-hra">
+            <div class="dashboard-item green">
+                <div class="icon-container">
+                    <i class="fa fa-comment-o"></i>
+                </div>
+                <div class="description">
+                    <div class="title">@Translate.Message("L927")</div>
+                </div>
+            </div>
+        </a>
+    }
+    @if (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.FollowUpCompleteDate) != null)
+    {
+        <a href="~/Reports/FollowupReportDashboard">
+            <div class="dashboard-item blue">
+                <div class="icon-container">
+                    <i class="fa fa-line-chart"></i>
+                </div>
+                <div class="description">
+                    <div class="title">@Translate.Message("L2103")</div>
+                </div>
+            </div>
+        </a>
+    }
+    @if (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.Challenges) != null && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.Challenges)) == true)
+    {
+        <a href="~/Challenge/Activities">
+            <div class="dashboard-item pink">
+                <div class="icon-container">
+                    <i class="fa fa-trophy"></i>
+                </div>
+                <div class="description">
+                    <div class="title">
+                        &nbsp;
+                        <div class="caption">@Translate.Message("L1615")</div>
+                        <div class="hovered">@Translate.Message("L1616")</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    }
+    <a href="~/Drug/MedicationDashboard">
+        <div class="dashboard-item pink">
+            <div class="icon-container">
+                <i class="fa fa-medkit"></i>
+            </div>
+            <div class="description">
+                <div class="title">@Translate.Message("L1061")</div>
+            </div>
+        </div>
+    </a>
+    <a href="~/Recipe/Recipes">
+        <div class="dashboard-item orange">
+            <div class="icon-container">
+                <i class="fa fa-cutlery"></i>
+            </div>
+            <div class="description">
+                <div class="title">@Translate.Message("L662")</div>
+            </div>
+        </div>
+    </a>
+    <a href="#" data-open="journal-options" data-modal-path="@Html.Raw(Url.Action("Journals", "Journal"))">
+        <div class="dashboard-item pink">
+            <div class="icon-container">
+                <i class="fa fa-book"></i>
+            </div>
+            <div class="description">
+                <div class="title">@Translate.Message("L558")</div>
+            </div>
+        </div>
+    </a>
+    @if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserinProgramId).HasValue && !ExternalUtility.IsValidIntuityUserId(null, HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId)) && HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue)
+    {
+        <a href="~/Devices">
+            <div class="dashboard-item blue">
+                <div class="icon-container">
+                    <i class="fa fa-cogs"></i>
+                </div>
+                <div class="description">
+                    <div class="title">@Translate.Message("L1617")</div>
+                </div>
+            </div>
+        </a>
+    }
+    @if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value == 2 && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)))
+    {
+        <a href="#" data-open="edlogics">
+            <div class="dashboard-item orange">
+                <div class="icon-container">
+                    <i class="fa fa-gamepad"></i>
+                </div>
+                <div class="description">
+                    <div class="title">@Translate.Message("L2847")</div>
+                </div>
+            </div>
+        </a>
+    }
+    @if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value == 56 && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)))
+    {
+        <a href="https://www.myedlogics.com/demo" target="_blank">
+            <div class="dashboard-item orange">
+                <div class="icon-container">
+                    <i class="fa fa-gamepad"></i>
+                </div>
+                <div class="description">
+                    <div class="title">@Translate.Message("L2847")</div>
+                </div>
+            </div>
+        </a>
+    }
+</div>

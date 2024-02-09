@@ -1,0 +1,79 @@
+﻿@using InterventWebApp
+
+<div data-sticky-container class="header-blue">
+    <div class="contain-to-grid sticky" data-sticky data-stick-to="top" data-margin-top="0" data-sticky-on="small">
+        <div class="menu-white-bg"></div>
+        <nav class="top-bar lmc-nav-bar" data-topbar role="navigation">
+            <div class="title-bar" data-responsive-toggle="lmc-mobile-menu" data-hide-for="large">
+                <button class="menu-icon" type="button" data-toggle="lmc-mobile-menu"></button>
+            </div>
+            <h1 class="menu-text"><a href="~/Home/tlc"><img src="~/Images/lmc/lmc-logo.png" /></a></h1>
+            <div class="lmc-menu-items" id="lmc-mobile-menu">
+                <ul class="menu vertical large-horizontal main-menu" data-responsive-menu="accordion large-dropdown">
+                    <li class="small-order-1"><a href="~/Home/tlcPrograms">@Translate.Message("L3597")</a></li>
+                    <li class="curve-bg small-order-1"><a href="#"><img src="~/Images/footer-call-icon.png" alt="" /> @TempData.Peek("OrgContactNumber").ToString()</a></li>
+                    <li class="@ViewData["MenuClass"] white-bg large-order-1 small-order-2 hide-for-small-only"><a href="~/Home/tlc"><img src="~/Images/lmc/menu-signin-icon.png" alt="" /> @Translate.Message("L2084")</a></li>
+                    <li class="lmc-menu-hidden white-bg large-order-1 small-order-2 show-for-small-only"><a data-open="login-modal"><img src="~/Images/lmc/menu-signin-icon.png" alt="" /> @Translate.Message("L2084")</a></li>
+                    <li class="white-bg large-order-2 small-order-1">
+                        @{ var languages = CommonUtility.GetPortalLanguages(Convert.ToInt16(ViewData["OrgId"].ToString())); }
+                        @if (languages.Count() > 1)
+                        {
+                            <a href="#">@Translate.GetCurrentLanguageName()<i class="fa fa-chevron-down"></i></a>
+                            <ul id="language-dropdown" class="menu vertical">
+                                @foreach (var language in languages)
+                                {
+                                    <li class="is-submenu-item"><a href="#" data-lang="@language.LanguageCode">@Translate.Message(language.LanguageItem)</a></li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<div id="lmc-mobile-signup" class="reveal lmc-form" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    @Html.Partial("_UpdatedSignUp")
+    <a class="close-button" data-close id="close">&#215;</a>
+</div>
+
+@Html.Partial("_ResetPassword", new ViewDataDictionary(ViewData) { { "LMCClass", "lmc-forgot-password" } })
+
+@Html.Partial("_EmailConfirmation", new ViewDataDictionary(ViewData) { { "LMCClass", "lmc-forgot-password" } })
+
+@Html.Partial("_ForgotPassword", new ViewDataDictionary(ViewData) { { "LMCClass", "lmc-forgot-password" } })
+
+@Html.Partial("_NewLogin", new ViewDataDictionary(ViewData) { { "ShowSignUp", "True" } })
+
+@Html.Partial("_ResendConfirmEmail", new ViewDataDictionary(ViewData) { { "LMCClass", "lmc-forgot-password" } })
+
+<script>
+    $(document).ready(function () {
+        $("button.menu-icon").on('click', function () {
+            $(this).toggleClass("menu-icon-close");
+        });
+
+		/*$("li.white-bg").on('click', function(){
+			if($(window).width() < 769){
+				$(this).find("ul.menu").toggle();
+			}
+		});*/
+    });
+    function changeLanguage(language) {
+        $.ajax({
+            url: "@Url.Action("ChangeLanguage", "Home")",
+            dataType: "json",
+            data: { language: language },
+            success: function (data) {
+                window.location.reload();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            DisplayError(jqXHR.status);
+        });
+    }
+
+    $(document).on('click', '#language-dropdown li a', function () {
+        changeLanguage($(this).attr('data-lang'));
+    });
+</script>

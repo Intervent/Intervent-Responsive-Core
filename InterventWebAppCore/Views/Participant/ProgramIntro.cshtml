@@ -1,0 +1,504 @@
+﻿@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewBag.Title = "Program Intro";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    ViewBag.Details = "ProgramIntro";
+}
+@model InterventWebApp.UserProfileModel
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ProgramIntro</title>
+</head>
+<body>
+    <section class="main initial-info-fillup">
+        <div class="grid-container">
+            <div class="grid-x">
+                <div class="cell medium-4 col-left">
+                    <div class="info-tabs-list card">
+                        <p><a href="@Url.Action("InitialDashboardNew", "Participant")" class="back-btn">@Translate.Message("L4515")</a></p>
+
+                        <div class="info-tabs">
+                            @{var basicDetails = "";
+                            var contactDetails = ""; }
+                            @if (Model.basicDetailsCompeleted)
+                            {
+                            basicDetails = "is-visited";
+                            }
+                            @if (Model.contactDetailsCompeleted)
+                            {
+                            contactDetails = "is-visited";
+                            }
+                            <ul class="tabs tabs-main" data-tabs id="initial-info-tabs">
+                                <li class="tabs-title @basicDetails" id="basic-details">
+                                    <a href="#panel1" aria-selected="true"><img src="../Images/participant/basic_details.svg" alt="Basic Details" /><div><span>@Translate.Message("L4516") 1</span>@Translate.Message("L2938")</div></a>
+                                </li>
+                                <li class="tabs-title @contactDetails" id="contact-details">
+                                    <a data-tabs-target="panel2" href="#panel2"><img src="../Images/participant/contact_details.svg" alt="Contact details" /><div><span>@Translate.Message("L4516") 2</span>@Translate.Message("L4517")</div></a>
+                                </li>
+                                @* <li class="tabs-title">
+                                    <a data-tabs-target="panel3" href="#panel3"><img src="../Images/participant/additional_details.svg" alt="Additional details" /><div><span>Part 3</span>Additional Details</div></a>
+                                </li> *@
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cell medium-8 col-right">
+                    <div class="info-tabs-content card">
+                        <div class="tabs-content create-profile-form" data-tabs-content="initial-info-tabs">
+                            <div class="tabs-panel tabs-panel-main" id="panel1">
+                                <div class="title-wrapper">
+                                    <h3>@Translate.Message("L4518")</h3>
+                                </div>
+
+                                <form id="basic-details-form" data-abide novalidate>
+                                    <div class="form-content">
+                                        <div class="grid-x grid-margin-x grid-margin-y">
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L938")
+                                                </label>
+                                                @Html.TextBoxFor(m => m.user.FirstName, new { @required = "required", @pattern = "[a-zA-Z]+" })
+                                                <small class="form-error">@Translate.Message("L432")</small>
+                                            </div>
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L939")
+                                                </label>
+                                                @Html.TextBoxFor(m => m.user.LastName, new { @required = "required", @pattern = "[a-zA-Z]+" })
+                                                <small class="form-error">@Translate.Message("L433")</small>
+                                            </div>
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L884")
+                                                </label>
+                                                @Html.DropDownListFor(m => m.user.Gender, Model.GenderList, "", new { @required = "required" })
+                                                <small class="form-error">@Translate.Message("L946").</small>
+                                            </div>
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L226")
+                                                </label>
+                                                @Html.TextBoxFor(x => x.user.DOB, new Dictionary<string, object> { { "class", "fdatepicker input-date" }, { "required", "required" } })
+                                                <small class="form-error">@Translate.Message("L1903")</small>
+                                                <input id="dobDate" type="hidden">
+                                            </div>
+                                            <div class="cell medium-4">
+                                                <label>
+                                                    @Translate.Message("L948")
+                                                </label>
+                                                @Html.TextBoxFor(m => m.user.Address, new { @placeholder = Translate.Message("L1620"), @required = "required" })
+                                                <small class="form-error">@Translate.Message("L949").</small>
+                                            </div>
+                                            <div class="cell medium-4">
+                                                <label>
+                                                    @Translate.Message("L4267")
+                                                </label>
+                                                @Html.TextBoxFor(m => m.user.Address2, new { @placeholder = Translate.Message("L4267") })
+                                            </div>
+                                            <div class="cell medium-4">
+                                                <label>
+                                                    @Translate.Message("L964")
+                                                </label>
+                                                @Html.TextBoxFor(m => m.user.City, new { @placeholder = Translate.Message("L1621"), @required = "required" })
+                                                <small class="form-error">@Translate.Message("L965").</small>
+                                            </div>
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L989")
+                                                </label>
+                                                @Html.DropDownListFor(m => m.user.Country, Model.Countries, "", new { @required = "required" })
+                                                <small class="form-error">@Translate.Message("L988").</small>
+                                            </div>
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L966")
+                                                </label>
+                                                @Html.DropDownListFor(m => m.user.State, Model.States, "", new { @required = "required" })
+                                                <small class="form-error">@Translate.Message("L970").</small>
+                                            </div>
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L971")
+                                                </label>
+                                                @Html.TextBoxFor(m => m.user.Zip, new { @placeholder = Translate.Message("L971"), @required = "required" })
+                                                <small class="form-error">@Translate.Message("L990").</small>
+                                            </div>
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L2183")
+                                                </label>
+                                                @Html.DropDownListFor(m => m.user.Unit, Model.Units, "", new { @required = "required" })
+                                                <small class="form-error">@Translate.Message("L2184")</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="initial-form-next text-right">
+                                        <button type="submit" class="button next-back" for="panel2">@Translate.Message("L871")</button>
+                                    </div>
+                                </form>
+                            </div>
+                            @*Tab one ends*@
+
+                            <div class="tabs-panel tabs-panel-main" id="panel2">
+                                <div class="title-wrapper">
+                                    <h3>@Translate.Message("L4519")</h3>
+                                </div>
+
+                                <form id="contact-details-form" data-abide novalidate>
+                                    <div class="form-content">
+                                        <div id="signup-error" class="callout alert hide" data-closable>
+                                            @Translate.Message("L2180")
+                                        </div>
+                                        <div class="grid-x grid-margin-x grid-margin-y">
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L972")
+                                                </label>
+                                                @Html.TextBoxFor(m => m.user.HomeNumber, new { @type = "tel", @required = "required" })
+                                                <small class="form-error">@Translate.Message("L4520")</small>
+                                            </div>
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L974")
+                                                </label>
+                                                @Html.TextBoxFor(m => m.user.CellNumber, new { @type = "tel" })
+                                                <small class="form-error">@Translate.Message("L4521")</small>
+                                            </div>
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L986")
+                                                </label>
+                                                @Html.TextBoxFor(m => m.user.Email, new { @type = "email", @required = "required" })
+                                                <small class="form-error">@Translate.Message("L434")</small>
+                                            </div>
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L586")
+                                                </label>
+                                                @Html.DropDownListFor(m => m.user.TimeZoneId, Model.TimeZones, "", new { @required = "required" })
+                                                <small class="form-error">@Translate.Message("L587").</small>
+                                            </div>
+                                            <div class="cell medium-6">
+                                                <label>
+                                                    @Translate.Message("L978")
+                                                </label>
+                                                @Html.DropDownListFor(m => m.user.LanguagePreference, Model.LanguagePreferences, "", new { @required = "required" })
+                                                <small class="form-error">@Translate.Message("L1340").</small>
+                                            </div>
+                                            @if (Model.ProviderDropDown)
+                                            {
+                                                <div class="cell medium-6">
+                                                    <label>
+                                                        @Translate.Message("L4508")
+                                                    </label>
+                                                    @Html.DropDownListFor(m => m.user.UserDoctorInfoes[0].ProviderId, Model.ProvidersList, "", new Dictionary<string, object> { { "Name", "user.UserDoctorInfoes[0].ProviderId" } })
+                                                </div>
+                                            }
+                                            <div class="medium-8 cell">
+                                                <label>@Translate.Message("L585")</label>
+                                                @Html.RadioButtonFor(M => M.user.Text, 1, new Dictionary<string, object> { { "id", "TextYes" }, { "Name", "user.Text" }, { "data-validator", "validateText" } })
+                                                <label>@Translate.Message("L2")</label>
+                                                @Html.RadioButtonFor(M => M.user.Text, 2, new Dictionary<string, object> { { "id", "TextNo" }, { "Name", "user.Text" }, { "data-validator", "validateText" } })
+                                                <label>@Translate.Message("L3")</label>
+                                                <small class="form-error error" id="textError">@Translate.Message("L480")</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="initial-form-next space-between">
+                                        <a href="#" class="back-btn next-back" for="panel1">@Translate.Message("L3169")</a>
+                                        <button type="submit" class="button next-back">@Translate.Message("L871")</button>
+                                    </div>
+                                    @Html.HiddenFor(m => m.ProviderDropDown)
+                                </form>
+                            </div>
+                            @*Tab two ends*@
+
+                            @*<div class="tabs-panel tabs-panel-main" id="panel3">
+                                <div class="title-wrapper space-between">
+                                    <h3>How can we keep in touch with you?</h3>
+                                    <ul class="tabs smart-tabs-wrapper" data-tabs id="example-tabs">
+                                        <li class="tabs-title is-active"><a href="#panel4" aria-selected="true">Imperial</a></li>
+                                        <li class="tabs-title"><a data-tabs-target="panel5" href="#panel5">Metric</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="initial-info-form initial-form2">
+                                    <div class="tabs-content" data-tabs-content="example-tabs">
+                                        <div class="tabs-panel is-active" id="panel4">
+                                            <div class="grid-x grid-margin-x body-info single-row-lable">
+                                                <div class="cell medium-4">
+                                                    <label>
+                                                        Height <span>(without shoes)</span>
+                                                        <div class="grid-x">
+                                                            <div class="cell medium-8 small-9">
+                                                                <input type="text" class="text" placeholder="Foot" />
+                                                            </div>
+                                                            <div class="cell medium-4 small-3">
+                                                                <span>ft</span>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <div class="cell medium-4">
+                                                    <label>
+                                                        Weight <span>(without shoes)</span>
+                                                        <div class="grid-x">
+                                                            <div class="cell medium-8 small-9">
+                                                                <input type="text" class="text" placeholder="Pounds" />
+                                                            </div>
+                                                            <div class="cell medium-4 small-3">
+                                                                <span>lbs</span>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <div class="cell medium-4">
+                                                    <label>
+                                                        Waist Circumference
+                                                        <div class="grid-x">
+                                                            <div class="cell medium-8 small-9">
+                                                                <input type="text" class="text" placeholder="Inches" />
+                                                            </div>
+                                                            <div class="cell medium-4 small-3">
+                                                                <span>in</span>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="grid-x grid-margin-x">
+                                                <div class="cell snall-12">
+                                                    <label>
+                                                        Any other heart condition?
+                                                        <div class="heart-condition-wrapper">
+                                                            <div class="form-type-checkbox">
+                                                                <input type="radio" id="heartYes" name="heartCondition" value="Yes">
+                                                                <label class="radio-label" for="heartYes">Yes</label>
+                                                            </div>
+                                                            <div class="form-type-checkbox">
+                                                                <input type="radio" id="heartNo" name="heartCondition" value="No">
+                                                                <label class="radio-label" for="heartNo">No</label>
+                                                            </div>
+                                                            <div class="form-type-checkbox">
+                                                                <input type="radio" id="heartNotSure" name="heartCondition" value="Not Sure">
+                                                                <label class="radio-label" for="heartNotSure">Not Sure</label>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="grid-x grid-margin-x">
+                                                <div class="cell medium-6">
+                                                    <label>
+                                                        Are you currently taking any medications or receiving any medical treatment?
+                                                        <div class="heart-condition-wrapper">
+                                                            <div class="form-type-checkbox">
+                                                                <input type="radio" id="medicationsYes" name="medications" value="Yes">
+                                                                <label class="radio-label" for="medicationsYes">Yes</label>
+                                                            </div>
+                                                            <div class="form-type-checkbox">
+                                                                <input type="radio" id="medicationsNo" name="medications" value="No">
+                                                                <label class="radio-label" for="medicationsNo">No</label>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="grid-x grid-margin-x">
+                                                <div class="cell medium-12">
+                                                    <label>
+                                                        Anything important you need to tell us <span>(Optional)</span>
+                                                        <textarea id="w3review" name="w3review" rows="5" cols="50"></textarea>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tabs-panel" id="panel5">
+                                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="initial-form-next space-between">
+                                    <a href="#" class="back-btn next-back" for="panel2">Back</a>
+                                    <button class="button">Next</button>
+                                </div>                                
+                            </div>
+                            Tab three ends*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="reveal reveal-new text-center" id="exampleModal1" data-reveal>
+        <img src="../Images/icon_thumbsup.svg" alt="ThumbsUp" />
+        <h1>Hi <strong><span id=firstName></span> <span id="lastName"></span></strong></h1>
+        @if (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SelfScheduling) != null && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SelfScheduling)) == false)
+        {
+
+            <p>@Translate.Message("L4523")</p>
+        }
+        else
+        {
+            <p>@Translate.Message("L4522")</p>
+        }
+        <div class="button-wrapper">
+            @if (Model.ShowSelfScheduling)
+            {
+                <button class="button-group align-center" onclick="LoadMyCoach()">@Translate.Message("L4524")</button>
+            }
+            else if (Model.ShowProgram)
+            {
+                <button class="button-group align-center" onclick="LoadProgram()">@Translate.Message("L4525")</button>
+            }
+            else
+            {
+                <input type="hidden" id="notEligible">
+            }
+            @*<button class="hollow button" onclick="doLater()">Do This Later</button>*@
+        </div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/AgeValidation.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/NoZipCountries.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    Foundation.Abide.defaults.validators['validateText'] = function ($el, required, parent) {
+        if ($("input[name='user.Text']:checked").length == 0)
+            return false;
+        else if ($('#TextYes').is(':checked') && $("#user_CellNumber").val() == "") {
+            document.getElementById('textError').innerText = "@Html.Raw(Translate.Message("L1624")).";
+            return false;
+        }
+        else
+            return true;
+    };
+    var element = document.getElementById("user_Zip");
+    $("#user_DOB").on("change", function () {
+        $('#dobDate').val(toSystemDateFormat(this.value));
+    });
+    $(document).ready(function () {
+        if ('@Model.user.DOB' != '')
+            $("#user_DOB").val(toLocalDateFormat('@Model.user.DOB'));
+        $("#user_DOB").trigger("change");
+        $('#basic-details').trigger("click");
+        var date = new Date();
+        date = date.setDate(date.getDate() - 4745);
+        $('.fdatepicker').fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date(date),
+            pickTime: false
+        });
+        @if(Model.user.UserDoctorInfoes != null && Model.user.UserDoctorInfoes[0].ProviderId != null)
+        {
+            @:$('#user_UserDoctorInfoes_0__ProviderId').val(@Model.user.UserDoctorInfoes[0].ProviderId);
+        }
+        $('.next-back').on('click', function () {
+            if ($(this).hasClass('back-btn')) {
+                if ($('.tabs-main .tabs-title.is-active').prev().length > 0) {
+                    $('.tabs-main .tabs-title.is-active').prev().trigger("click");
+                }
+            }
+        });
+        $('#basic-details-form').foundation();
+        $('#basic-details-form')
+            .on('forminvalid.zf.abide', function () {
+              var invalid_fields = $(this).find('[data-invalid]');
+              console.log(invalid_fields);
+          })
+            .on('formvalid.zf.abide', function () {
+                $('#user_DOB').val($('#dobDate').val());
+                $.ajax({
+                    url: "@Url.Action("UpdateProfile", "Account")",
+                    data: $("#basic-details-form").serialize() + '&basicDetails=true&contactDetails=false',
+                    type: 'POST',
+                    dataType: "json",
+                    success: function (data) {
+                        $('#basic-details').addClass('is-visited');
+                        $('#firstName').html($('#user_FirstName').val());
+                        $('#lastName').html($('#user_LastName').val());
+                        if ($('.tabs-main .tabs-title.is-active').next().length > 0) {
+                            $('.tabs-main .tabs-title.is-active').next().trigger("click");
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                $("#loader-wrapper").fadeOut();
+            })
+            // to prevent form from submitting upon successful validation
+            .on("submit", function (ev) {
+                ev.preventDefault();
+
+            })
+
+        $('#contact-details-form').foundation();
+        $('#contact-details-form')
+            .on('forminvalid.zf.abide', function () {
+              var invalid_fields = $(this).find('[data-invalid]');
+              console.log(invalid_fields);
+          })
+            .on('formvalid.zf.abide', function () {
+                $('#contact-details-form').find('#signup-error').addClass('hide');
+                $.ajax({
+                    url: "@Url.Action("UpdateProfile", "Account")",
+                    data: $("#contact-details-form").serialize() + '&basicDetails=false&contactDetails=true',
+                    type: 'POST',
+                    dataType: "json",
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#contact-details').addClass('is-visited');
+                            if ($('.tabs-main .tabs-title.is-active').next().length > 0) {
+                                $('.tabs-main .tabs-title.is-active').next().trigger("click");
+                            }
+                            if ($("#notEligible").length == 0)
+                                $('#exampleModal1').foundation('open');
+                            else
+                                doLater();
+                        }
+                        else {
+                            $('#contact-details-form').find('#signup-error').removeClass('hide');
+                            $('#contact-details-form').find('#signup-error').text(data);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                $("#loader-wrapper").fadeOut();
+            })
+            // to prevent form from submitting upon successful validation
+            .on("submit", function (ev) {
+                ev.preventDefault();
+
+            })
+
+        $('#user_Country').on('change', function () {
+        CountryChange('user_Country', 'user_Unit', 'user_State', 'user_Zip', "@Url.Action("ListStates", "Common")", 'user_Race', "@Url.Action("ListRace", "Common")", true, "@Url.Action("CheckIfCountryHasZipCode", "Common")");
+    });
+
+    });
+
+    function LoadMyCoach() {
+         window.location.href = "@Url.Action("MyCoach", "Participant", new { initialStage = true })";
+    }
+
+    function LoadProgram() {
+        window.location.href = "../Participant/Stream"
+    }
+
+    function doLater() {
+        window.location.href = "@Url.Action("Stream", "Participant")";
+    }
+
+</script>

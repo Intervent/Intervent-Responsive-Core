@@ -1,0 +1,570 @@
+﻿@model InterventWebApp.TaskManagementModel
+@using InterventWebApp
+
+@{
+    ViewBag.Title = "Task Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<section class="main search-participants admin-main-body">
+	<div class="control-bar">
+		<div class="grid-container">
+			<div class="grid-x grid-margin-x">
+				<div class="cell small-6">
+					<h2>Tasks</h2>
+				</div>
+				<div class="cell small-6 text-right">
+					<button id="add-task-button" data-open="add-task-data" class="button"><i class="fa fa-plus"></i>Add</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="small-12 cell">
+				<div class="panel filters">
+					<div class="grid-x grid-margin-x">
+						<div class="small-12 medium-6 cell">
+                            <input type="text" placeholder="Start Date..." id="StartDate" value="@CommonUtility.dateFormater(DateTime.Now.AddDays(-7), false, Context.Session.GetString(SessionContext.DateFormat))">
+							<input id="HStartDate" type="hidden" />
+						</div>
+						<div class="small-12 medium-6 end cell">
+                            <input type="text" placeholder="End Date..." id="EndDate" value="@CommonUtility.dateFormater(DateTime.Now, false, Context.Session.GetString(SessionContext.DateFormat))">
+							<input id="HEndDate" type="hidden" />
+						</div>
+					</div>
+					<div class="grid-x grid-margin-x">
+						<div class="small-12 medium-6 cell">
+							@Html.DropDownListFor(x => x.Task, Model.TaskList, "--Select Task--", new { @class = "override-select primary-select", multiple = "multiple" })
+						</div>
+						<div class="small-12 medium-6 cell">
+							@Html.DropDownListFor(x => x.Owner, Model.OwnerList, "--Select Owner--", new { @class = "form-control primary-select" })
+						</div>
+					</div>
+					<div class="grid-x grid-margin-x">
+						<div class="small-12 medium-6 cell">
+							@Html.DropDownListFor(x => x.Status, Model.StatusList, "--Select Status--", new { @class = "form-control primary-select" })
+						</div>
+						<div class="small-12 medium-6 end cell">
+							@Html.DropDownListFor(x => x.OrganizationList, Model.OrganizationList, "--Select Organization--", new { @class = "chzn-select override-select primary-select", multiple = "multiple" })
+						</div>
+						<div class="small-12 medium-6 medium-offset-6 cell flex-container align-justify">
+							<button class="button small" id="search">
+								<div class="loading-spinner hide" id="filter-spinner"></div>
+								<i class="fa fa-filter"></i>
+								Filter
+							</button>
+							<button class="secondary-color small" id="download">
+								<div class="loading-spinner hide" id="download-spinner"></div>
+								<i class="fa fa-download"></i>
+								Download
+							</button>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="grid-x grid-margin-x">
+			<div class="small-12 medium-6 cell">
+				<button id="change-status-button" data-open="ChangeStatus" class="small left hide">
+					<i class="fa fa-check"></i>
+					Update Status
+				</button>
+			</div>
+		</div>
+		<div class="grid-x grid-margin-x">
+			<div class="cell small-12 ">
+				<div id="search-results" class="table-container"></div>
+			</div>
+			<div class="cell small-12">
+				<!-- pagination Start -->
+				<div class="pagination-area hide" id="pagination-centered">
+					<ul>
+						<li id="numeric"></li>
+					</ul>
+					<!-- page-link Start -->
+					<div class="page-link">
+						<label>@Translate.Message("L4041")</label>
+						<div class="grid-x">
+							<input type="text" id="jumptoPageNo">
+							<button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+						</div>
+					</div>
+					<!-- page-link End -->
+				</div>
+				<!-- pagination End -->
+			</div>
+		</div>
+	</div>
+</section>
+<div id="add-task-data" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form id="add-task-data" data-abide novalidate class="form-component">
+        @Html.Hidden("selectedTaskId")
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12">
+                <h2>Add/Edit Task</h2>
+            </div>
+            <div class="cell medium-12">
+				<label>
+					Task Type
+					<select id="taskType" aria-errormessage="taskTypeerror" required></select>
+					<small class="form-error" id="taskTypeerror">Required</small>
+				</label>
+            </div>
+            <div class="cell medium-12">
+				<label>
+					Status
+					<select id="taskStatus" aria-errormessage="taskStatuserror" required></select>
+					<small class="form-error" id="taskStatuserror">Required</small>
+				</label>
+            </div>
+            <div class="cell medium-12">
+				<label>
+					Assigned To
+					<select id="assignTo" aria-errormessage="assignToerror" required></select>
+					<small class="form-error" id="assignToerror">Required</small>
+				</label>
+            </div>
+            <div class="cell medium-12">
+				<label>
+					Comments
+					<textarea id="taskComment"></textarea>
+				</label>
+            </div>
+            <div class="cell medium-12" id="user-div">
+				<label>
+					User
+					<input type="text" class="user-picker typeahead tt-input" value="" placeholder="Search for a participant by name" id="UserText" />
+				</label>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="submit">Save</button></div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeProgram">Cancel</button></div>
+        </div>
+    </form>
+</div>
+@Html.Hidden("UserId")
+<div id="ChangeStatus" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form id="Taskstatus-form">
+        <h2 class="text-center">Update Task Status</h2>
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-12">
+                @Html.DropDownListFor(x => x.Status, Model.StatusList, "--Select Status--", new Dictionary<string, object> { { "id", "GroupStatus" }, { "class", "form-control" } })
+            </div>
+        </div>
+        <button class="secondary-color small right" id="Updatestatus" type="button">
+            <i class="fa fa-check"></i>
+            Update Status
+        </button>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </form>
+</div>
+
+<script src="@Url.Content("~/Scripts/typeahead.jquery.min.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/downloadcsv.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    var TaskidSeries = [];
+    var formsubmit = true;
+    var download = false;
+
+
+
+    $("#StartDate").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#StartDate').val()));
+    });
+    $("#EndDate").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#EndDate').val()));
+    });
+
+    $("#change-status-button").on('click', function () {
+        $("#Taskstatus-form").find('select').val('');
+    })
+
+    function ChangeStatus() {
+        TaskidSeries = [];
+        var data = document.getElementsByName("stausChkbox");
+        $('#change-status-button').addClass('hide');
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].checked == true)
+                TaskidSeries.push(data[i].id);
+            else
+                $("#selectall").prop('checked', false);
+        }
+        if (TaskidSeries.length > 1) {
+            $('#change-status-button').removeClass('hide');
+        }
+    }
+
+
+    function SelectAllTask() {
+        TaskidSeries = [];
+        var data = document.getElementsByName("stausChkbox");
+        $('#change-status-button').addClass('hide');
+        var chkStatus = $("#selectall").prop('checked');
+
+        for (var i = 0; i < data.length; i++) {
+            data[i].checked = chkStatus;
+            TaskidSeries.push(data[i].id);
+        }
+
+        if (!chkStatus)
+            TaskidSeries = [];
+
+        if (TaskidSeries.length > 1) {
+            $('#change-status-button').removeClass('hide');
+        }
+    }
+
+    $('#Updatestatus').on('click', function () {
+        var taskids = TaskidSeries.join(',');
+        var status = $("#GroupStatus").val();
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            data: { taskids: taskids, status: status },
+            url: "@Url.Action("AdminTaskStausBulkUpdate", "Admin")",
+            success: function (tasks) {
+                TaskidSeries = [];
+                $('#change-status-button').addClass('hide');
+                GetTasks();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $('#ChangeStatus').foundation('close');
+    });
+
+
+    //display any datepickers
+    $(document).ready(function () {
+        $(".custom-dropdown-button")[0].text = "--Select Task--";
+        $(".custom-dropdown-button")[1].text = "--Select Organization--";
+    @if (Model.tempData != null) {
+        @: currentPage = @Model.tempData.page;
+        @: totalRecords = @Model.tempData.totalRecords;
+        @:$("#StartDate").val('@CommonUtility.dateFormater(Model.tempData.startDate.Value, false, Context.Session.GetString(SessionContext.DateFormat))');
+        @:$("#EndDate").val('@CommonUtility.dateFormater(Model.tempData.endDate.Value, false, Context.Session.GetString(SessionContext.DateFormat))');
+        @: var tasks = document.getElementById('Task');
+        foreach(var task in Model.tempData.TaskIndex)
+        {
+            if (task > 0)
+            {
+                @: tasks.options[@task].selected = true;
+                @: $("#Task").find("option[@task]").prop("selected", "selected");
+            }
+        }
+        foreach (var task in Model.tempData.Task)
+        {
+            if (task > 0)
+            {
+                @: $("li[data-value='@task']").trigger('click');
+                @: $("li[data-value='@task']").addClass("selected");
+            }
+        }
+        @: $("#Owner").val(@Model.tempData.Owner);
+        @: $("#Status").val('@Model.tempData.TaskStatus');
+        @: var orgs = document.getElementById('OrganizationList');
+        if (@Model.tempData.organizations != null)
+        {
+            foreach (var org in Model.tempData.organizationIndex)
+            {
+                if (org != 0)
+                {
+                    @:  orgs.options[@org].selected = true;
+                    @: $("#OrganizationList").find("option[@org]").prop("selected", "selected");
+                }
+            }
+            foreach (var org in Model.tempData.organizations)
+            {
+                if (org != 0)
+                {
+                    @: $("li[data-value='@org']").trigger('click');
+                    @: $("li[data-value='@org']").addClass("selected");
+                }
+            }
+        }
+        @: $('#StartDate').trigger("change");
+        @: $('#EndDate').trigger("change");
+        @: GetTasks();
+    }
+        //Activate the detailed info
+        $(document).on('click', '.item', function () {
+            if ($(this).find('.control').hasClass('active')) {
+                $(this).parent().find('.detailed-info').addClass('hide');
+                $(this).find('.control').removeClass('active');
+            } else {
+                $(this).parent().find('.detailed-info').removeClass('hide');
+                $(this).find('.control').addClass('active');
+            }
+        });
+        $('#StartDate').fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        }).on('change', function (selected) {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#EndDate').fdatepicker('setDate', minDate);
+            }
+            $('#EndDate').fdatepicker('setStartDate', minDate);
+            $('#EndDate').trigger("change");
+        });
+        $('#EndDate').fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        });
+        $('#closeProgram').on('click', function () {
+            $('#add-task-data').foundation('close');
+        });
+        $('#StartDate').trigger("change");
+        $('#EndDate').trigger("change");
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("ListTaskType", "Admin")",
+            success: function (tasks) {
+                for (i = 0; i < tasks.Options.length; i++) {
+                    $("#taskType").append("<option value=" + tasks.Options[i].Value + ">" + tasks.Options[i].DisplayText + "</option>");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetUsersByRole", "Admin")",
+            data: { allUserswithRole: true, page:null, pageSize: null, totalRecords:null },
+            success: function (data) {
+                for (i = 0; i < data.Records.length; i++) {
+                    $("#assignTo").append("<option value=" + data.Records[i].Id + ">" + data.Records[i].Name + "</option>");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("ListTaskStatus", "Admin")",
+            success: function (data) {
+                for (i = 0; i < data.Options.length; i++) {
+                    $("#taskStatus").append("<option value=" + data.Options[i].Value + ">" + data.Options[i].DisplayText + "</option>");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+
+        //typehead
+        var users = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('Name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace
+            , remote: {
+                url: '../Admin/ListUsers?name=%QUERY',
+                wildcard: "%QUERY"
+            },
+            limit: Number.MAX_VALUE
+        });
+
+        users.initialize();
+
+        $('.typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 3
+        }, {
+            name: 'users',
+            displayKey: 'Name',
+            source: users.ttAdapter(),
+            limit: 10
+        })
+		$('.typeahead').bind('typeahead:selected', function (ev, user) {
+            $("#UserId").val(user.Id);
+        });
+    });
+
+    $("#search").on('click', function () {
+        $('#filter-spinner').parent().prop('disabled', 'disabled');
+        $('#filter-spinner').removeClass('hide');
+        startIndex = 0;
+        pageSize = 15;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        download = false;
+        GetTasks();
+    });
+
+    $('#download').on('click', function () {
+        $('#download-spinner').parent().prop('disabled', 'disabled');
+        $('#download-spinner').removeClass('hide');
+        download = true;
+        GetTasks();
+    });
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        GetTasks();
+    }
+    function uncheckAll() {
+        $("#selectall").prop('checked', false);
+        SelectAllTask();
+    }
+
+    function GetTasks() {
+        var startDate = $("#HStartDate").val();
+        var endDate = $("#HEndDate").val();
+        var taskTypeId = $("#Task").val();
+        var ownerId = $("#Owner").val();
+        var status = $("#Status").val();
+        var selectIds = $("#OrganizationList").val();
+        var organizationIds = '';
+        if (selectIds != null)
+            organizationIds = selectIds.join(',');
+
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetTaskList", "Admin")",
+            async: true,
+            cache: true,
+            data: {
+                StartDate: startDate, endDate: endDate, taskTypeId: taskTypeId, ownerId: ownerId, status: status, page: currentPage, pageSize: pageSize, totalRecords: totalRecords, organizationIds: organizationIds, download: download
+            },
+            success: function (data) {
+                if (data.Records != null) {
+                    if(download){
+                        var filename = 'taskslist_' + new Date().toLocaleDateString() + '.csv';
+                        downloadCSV(data.Records, filename);
+                        download = false;
+                    }
+                    else{
+                        $('#search-results').html("");
+                        totalRecords = data.TotalRecords;
+                        if (totalRecords > 0) {
+                            totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                            displayTasks(data.Records);
+                            $('#pagination-centered').removeClass("hide");
+                        }
+                        else {
+                            $('#search-results').append("<center>@Translate.Message("L2774")</center>");
+                            $('#pagination-centered').addClass("hide");
+                        }
+                        AddPager();
+                        $('#filter-spinner').parent().prop('disabled', '');
+                        $('#filter-spinner').addClass('hide');
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function displayTasks(data) {
+        var tasksHtml = [];
+
+		var tasksHtml = "<table class='table basic-table1'>";
+		tasksHtml += "<thead><tr><th><input type='checkbox' class='risk' id='selectall' title='Select all' onclick='SelectAllTask()' /></th><th>Id</th><th>Name</th><th>Task</th><th>Status</th><th>Created On</th><th></th></tr></thead>"
+        for (i in data) {
+            var task = data[i];
+            var taskName = task.Task;
+            if ((task.Task.length) > 20) {
+                taskName = task.Task.substr(0, 20) + "..";
+            }
+
+            tasksHtml += "<tr><td><input type='checkbox' name='stausChkbox' id=" + task.Id + " onclick='ChangeStatus()'></td><td><a style='text-decoration: underline;color:deepskyblue;' onclick='ViewParticipant(" + task.UserId + ")'>" + task.UserId + "</td>" + "<td>" + task.User + "</td>" + "<td>" + taskName + "</td>" + "<td>" + task.Status + "</td>" +
+				"<td>" + toLocalDateFormat(task.StartDate) + "</td><td><span class='element'><a class='anchor-blue' id='" + task.Id + "' onclick='ReadTask(" + task.Id + ")'><i class='fa fa-pencil fa-fw'></i></a></span></td>" +
+                        "</tr>";
+        }
+
+        tasksHtml += "</table>";
+        $('#search-results').append(tasksHtml);
+    }
+
+    function ReadTask(id) {
+        $("#selectedTaskId").val(id);
+        $("#user-div").hide();
+        $("#UserId").val('');
+        $.ajax({
+            url: "@Url.Action("ReadTask", "Admin")",
+            data: { taskId: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    $("#taskType").val(data.TypeId);
+                    $("#assignTo").val(data.Owner);
+                    $("#taskStatus").val(data.Status);
+                    $("#taskComment").val(data.Comment);
+                    $('#add-task-data').foundation('open');
+                    formsubmit = true;
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    $("#add-task-data").foundation();
+    $('#add-task-data')
+        .on('formvalid.zf.abide', function () {
+            if (!$("#selectedTaskId").val() && !$("#UserId").val())
+                alert("User is Required");
+            else
+            {
+                var taskId = $("#selectedTaskId").val();
+                var taskTypeId = $("#taskType").val();
+                var owner = $("#assignTo").val();
+                var status = $("#taskStatus").val();
+                var comment = $("#taskComment").val();
+                var user = $("#UserId").val();
+                if (formsubmit == true) {
+                    $.ajax({
+                        url: "@Url.Action("AddEditTask", "Admin")",
+                        data: { id: taskId, taskTypeId: taskTypeId, status: status, user: user, owner: owner, comment: comment },
+                        type: 'POST',
+                        dataType: "json",
+                        success: function (data) {
+                            $("#search").trigger("click");
+                            $('#add-task-data').foundation('close');
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                    formsubmit = false;
+                }
+            }
+        })
+        .on("submit", function (ev) {
+            ev.preventDefault();
+        });
+
+    $("#add-task-button").on('click', function () {
+        formsubmit = true;
+        $("#selectedTaskId").val('');
+        $("#taskType").val('');
+        $("#assignTo").val('');
+        $("#taskStatus").val('');
+        $("#taskComment").val('');
+        $("#UserText").val('');
+        $("#UserId").val('');
+        $("#user-div").show();
+    });
+    function ViewParticipant(Id) {
+        var link = '@Url.Action("ParticipantProfile", "Participant", new { Id = "PId", fromAdminTasks= true})';
+        window.location.href = link.replace("PId", Id);
+    }
+
+</script>

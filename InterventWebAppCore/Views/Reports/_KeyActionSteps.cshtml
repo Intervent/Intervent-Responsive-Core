@@ -1,0 +1,57 @@
+﻿<!--USER VIEW-->
+@model Intervent.Web.DTO.ListKeyActionStepsResponse
+@using InterventWebApp
+
+<div class="grid-x grid-margin-x key-action-steps">
+    <div class="cell">
+        <h2>@Translate.Message("L1155")</h2>
+        <p class="highlighted">
+            @Translate.Message("L234")
+        </p>
+    </div>
+    <div class="cell">
+        <h3>@Translate.Message("L235")</h3>
+        <div class="small-12 cell">
+            <ul class="decorated blue">
+                @{
+                    var gapActionItems = Model.gapActionSteps.ToList();
+                }
+                @if (gapActionItems.Count() != 0)
+                {
+                    for (int i = 0; i < gapActionItems.Count; i++)
+                    {
+                        <text>
+                            <li>
+                                <span>@Html.Raw(Translate.Message(gapActionItems[i].name))</span>
+                            </li>
+                        </text>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="cell">
+        <h3>@Translate.Message("L1683")</h3>
+        <div class="small-12 cell">
+            <ul class="decorated blue">
+                @{
+                    var lifetimeActionSteps = Model.lifetimeActionSteps.ToList();
+                }
+                @if (lifetimeActionSteps.Count() != 0)
+                {
+                    for (int i = 0; i < lifetimeActionSteps.Count; i++)
+                    {
+                        <text>
+                            <li>
+                                <span>@Html.Raw(Translate.Message(lifetimeActionSteps[i].name))</span>
+                            </li>
+                        </text>
+                    }
+                }                    
+            </ul>
+        </div>
+    </div>
+</div>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>

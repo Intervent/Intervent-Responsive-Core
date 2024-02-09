@@ -1,0 +1,65 @@
+﻿@using InterventWebApp
+@model MSInfoModel
+
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <h2>@Translate.Message("L148")</h2>
+        <form data-abide="ajax" id="msinfo-form" novalidate="novalidate">
+            @*<h4>@Translate.Message("L775")</h4>*@
+            <p>@Translate.Message("L776")</p>
+            <p>@string.Format(Translate.Message("L778"), Translate.Message(Model.AssessmentName).ToLower())</p>
+            <p>@Translate.Message("L779")</p>
+            <table>
+                <tr>
+                    <th>@Translate.Message("L780")</th>
+                    <th>@Translate.Message("L781")</th>
+                </tr>
+                <tr>
+                    <td>@Translate.Message("L782")</td>
+                    <td>
+                        <p>@Translate.Message("L783")</p>
+                        <ul>
+                            <li>@Translate.Message("L784")</li>
+                            <li>@Translate.Message("L785")</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Translate.Message("L786")</td>
+                    <td>@Translate.Message("L787")</td>
+                </tr>
+                <tr>
+                    <td>@Translate.Message("L788")</td>
+                    <td>
+                        <ul>
+                            <li>@Translate.Message("L789")</li>
+                            <li>@Translate.Message("L790")</li>
+                            <li>@Translate.Message("L791")</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Translate.Message("L792")</td>
+                    <td>@Translate.Message("L793")</td>
+                </tr>
+                <tr>
+                    <td>@Translate.Message("L794")</td>
+                    <td>@Translate.Message("L795")</td>
+                </tr>
+            </table>
+            <p>@Translate.Message("L796")</p>
+            <ul>
+                <li>@Translate.Message("L797")</li>
+                <li>@Translate.Message("L798")</li>
+            </ul>
+            <p>@Translate.Message("L799")</p>
+            <ul>
+                <li>@Translate.Message("L800")</li>
+                <li>@Translate.Message("L801").ToLower()</li>
+            </ul>
+        </form>
+    </div>
+</div>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>

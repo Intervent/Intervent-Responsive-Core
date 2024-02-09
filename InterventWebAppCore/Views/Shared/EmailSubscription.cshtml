@@ -1,0 +1,112 @@
+﻿@model InterventWebApp.EmailSubscriptionModel
+
+@{
+	ViewBag.Title = "EmailSubscription";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+
+<div data-sticky-container class="header-blue">
+	<div class="contain-to-grid sticky" data-sticky data-stick-to="top" data-margin-top="0" data-sticky-on="small">
+		<div class="menu-white-bg"></div>
+		<div class="grid-container">
+			<div class="grid-x grid-margin-x">
+				<div class="cell">
+					<nav class="top-bar lmc-nav-bar" data-topbar role="navigation">
+						<div class="title-bar" data-responsive-toggle="lmc-mobile-menu" data-hide-for="large">
+							<button class="menu-icon" type="button" data-toggle="lmc-mobile-menu"></button>
+						</div>
+						<h1 class="menu-text"><img src="~/Images/lmc/lmc-logo.png" /></h1>
+						<div class="lmc-menu-items" id="lmc-mobile-menu">
+							<ul class="menu vertical large-horizontal main-menu" data-responsive-menu="accordion large-dropdown">
+								<li class="curve-bg small-order-1"></li>
+
+								<li class="white-bg large-order-2 small-order-1">
+									<a>&nbsp;</a>
+								</li>
+							</ul>
+						</div>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<section class="main unsubscribe-dashboard">
+	<div class="grid-container">
+		<div class="grid-x align-center">
+			<div class="cell medium-8">
+				<div class="unsubscribe-content">
+					<h3>Manage email preferences</h3>
+					<p>Choose the email you want. We will keep you updated based on your preferences below:</p>
+					<div class="form-component">
+						<label>
+							Name
+							<span>@Model.name</span>
+						</label>
+
+						<label>
+							Email Address
+							<span>@Model.emailId</span>
+						</label>
+
+						<label class="options-main-label">Email Preferences</label>
+						<div class="flex-container flex-dir-column">
+							@foreach (var data in Model.emailCategory)
+							{
+								<div class="tick-buttons">
+									<input type="checkbox" name="email-preference-@data.Id" value="@data.Id" id="essential-warning-@data.Id" @(Model.unsubscribedEmail != null && Model.unsubscribedEmail.Split(';').Contains(data.Id.ToString()) ? "checked" : "") />
+									<label for="essential-warning-@data.Id">
+										<span>@data.Description</span><span class="checkmark"></span>
+									</label>
+								</div>
+							}
+						</div>
+						@Html.HiddenFor(m => m.userId)
+						<button id="save-btn" type="submit" class="button">
+							<div class="loading-spinner hide" show-if-submitting></div>
+							Submit
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<div data-alert id="email-subscription-status" class="alert-box success hide alert-dismissible">
+	<span></span>
+	<a class="close-button" id="mailSent" data-close="">×</a>
+</div>
+
+<script>
+	$('#save-btn').on('click', function () {
+		$('[show-if-submitting]').parent().prop('disabled', true);
+		$('[show-if-submitting]').removeClass('hide');
+        var unsubscribeList = "";
+        @foreach(var data in Model.emailCategory)
+        {
+            @:if ($("input[name='email-preference-@data.Id']:checked").length == 1) {
+                @:unsubscribeList += @data.Id + ";";
+            @:}
+        }
+        $.ajax({
+            url: "@Url.Action("UpdateUserSubscription", "Account")",
+            type: 'POST',
+            dataType: "json",
+            data: { userId: $("#userId").val(), unsubscribeList: unsubscribeList },
+            success: function (data) {
+				$('[show-if-submitting]').parent().prop('disabled', false);
+				$('[show-if-submitting]').addClass('hide');
+				$("#email-subscription-status").removeClass("hide").find('span').text(data);				
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+	});
+
+	$(".alert-box a.close-button").on('click', function (e) {
+		e.preventDefault();
+		$(this).parent('.alert-box').addClass('hide');
+	});
+</script>

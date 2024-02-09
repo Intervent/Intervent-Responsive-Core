@@ -1,0 +1,75 @@
+﻿@using InterventWebApp;
+@model InterventWebApp.RecommendationsModel
+
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<section class="main follow-up-grid recommendations action-plan-container @(ViewData["isPdf"] != null ? "pdf-print" : "")">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x tabular report-dashboard cac-score">
+            <div class="cell">
+                <h2>@Translate.Message("L695")</h2>
+                <div class="panel">
+                    <p>
+                        @Translate.Message("L696") <a style='color:deepskyblue' href='@Url.Action("ReportsDashboard", "Reports")#mrf'>@Translate.Message("L697")</a>.
+                    </p>
+                    <p>
+                        @Translate.Message("L10")
+                    </p><p>
+                        @Translate.Message("L1005")
+                    </p>
+                    @if (Model.pregnant == 1)
+                    {
+                        <p>
+                            @Translate.Message("L2020")
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tile-item with-padding remove-margin rec-modal exercise force-new-page">
+        @Url.Action("ExerciseRecommendation", "Reports", new { fromKit = false })
+    </div>
+    <div class="tabular tile-item with-padding force-new-page report-dashboard rec-modal cac-score">
+        @Url.Action("NutritionRecommendation", "Reports")
+    </div>
+    <div class="tabular tile-item with-padding force-new-page report-dashboard rec-modal cac-score">
+        @Url.Action("SupplementRecommendation", "Reports")
+    </div>
+	<div class="tile-item with-padding rec-modal">
+		@Url.Action("StressRecommendation", "Reports")
+	</div>
+	<div class="tile-item with-padding rec-modal">
+		@Url.Action("TobaccoRecommendation", "Reports")
+	</div>
+    <div class="tile-item with-padding rec-modal force-new-page">
+        @Url.Action("ExamsRecommendation", "Reports")
+    </div>
+    <div class="tile-item with-padding rec-modal force-new-page">
+        @Url.Action("Referrals", "Reports")
+    </div>
+</section>
+
+
+
+<script>
+    function doPrint() {
+        window.open("@Url.Action("PrintableReports", "Reports")" + '?view=DrSummary&generatePDF=false');
+    }
+
+    $(document).ready(function () {
+        var isPdf = false;
+        @if (ViewData["isPdf"] != null)
+        {
+            @: isPdf = true;
+                }
+
+        if(isPdf){
+            $('.hide-for-print').hide();
+            $('.show-for-print').removeClass('show-for-print');
+            $('.user-layout').addClass('user-layout-print')
+        }
+    });
+</script>

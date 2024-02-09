@@ -1,0 +1,1425 @@
+@using InterventWebApp;
+@model InterventWebApp.HRASummaryModel
+
+
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/FollowUpChart.js")?v=@CommonUtility.GetRandom()"></script>
+
+@if (Model != null && Model.hasSummary)
+{
+    <div class="nav-to-top">
+        <a href="#" class="button"><i class="fa fa-chevron-up"></i></a>
+    </div>
+    <!--Brief Summary and Goals-->
+    <div class='grid-x collapse summary-row'>
+        <div class='small-9 medium-7 cell summary-name'><i class='fa fa-file-text-o'></i><div class='summary-title'>@Translate.Message("L493")</div></div>
+        <div class='small-3 medium-5 cell summary-content'>
+            <button class='side-button' onclick='toggleSummary(this)'><i class='fa fa-angle-right'></i></button>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x tile-item hide brief-summary" id="Summary">
+        <div class="cell bg-wrapper tabular">
+            <div class="grid-x collapse">
+                <div class="cell small-12 large-6">
+                    <div class="simple-data blue">
+                        <div class="title"><i class="fa fa-hourglass-2"></i>@Translate.Message("L668")</div>
+                        <div class="value">@Model.ageInfo.Age</div>
+                    </div>
+                </div>
+                <div class="cell small-12 large-6">
+                    <div class="simple-data mirrored" id="heart-age-chart">
+                        @if (Model.ageInfo.arterialAge.HasValue)
+                        {
+                            <div class="title"><i class="fa fa-heart"></i>Arterial age</div>
+                            if (Model.ageInfo.Age >= 45 && Model.ageInfo.Age < 85)
+                            {
+                                <div class="value">@Model.ageInfo.arterialAge.Value</div>
+                            }
+                            else
+                            {
+                                <span>--</span>
+                            }
+                        }
+                        else
+                        {
+                            <div class="title"><i class="fa fa-heart"></i>@Translate.Message("L495")</div>
+                            if (Model.ageInfo.heartAge != "0")
+                            {
+                                var heartAge = Convert.ToInt32(Model.ageInfo.heartAge.Substring(0, 2));
+                                var includeText = "";
+                                if (Model.ageInfo.heartAge.Length > 2)
+                                {
+                                    if (Model.ageInfo.heartAge.Substring(2, 1) == "+")
+                                    {
+                                        includeText = ">";
+                                    }
+                                    else if (Model.ageInfo.heartAge.Substring(2, 1) == "-")
+                                    {
+                                        includeText = "<";
+                                    }
+                                }
+                                <div class="value">@includeText@heartAge</div>
+                            }
+                            else
+                            {
+                                <div class="value">-</div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell small-12 large-6">
+                    <div class="simple-data" id="my-score">
+                        <a href="" data-open="score-details-modal" data-modal-path="@Html.Raw(Url.Action("scorecard", "Reports", new { hraid = Model.hraid } ))">
+                            <div class="title"><i class="fa fa-dashboard" aria-hidden="true" data-tooltip aria-haspopup="true" title=@Model.wellnessScoreInfo.wellnessScore></i>@Translate.Message("L496")</div>
+                        </a>
+                        <div class="value">@Model.wellnessScoreInfo.newWellnessScore</div>
+                    </div>
+                </div>
+                <div class="cell small-12 large-6">
+                    <div class="simple-data mirrored" id="peer-score">
+                        <div class="title"><i class="fa fa-dashboard"></i>@Translate.Message("L497")</div>
+                        @if (Model.PeerAverage.HasValue)
+                        {
+                            <div class="value">@Model.PeerAverage.Value</div>
+                        }
+                        else
+                        {
+                            <div class="value">@Translate.Message("L1149")</div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell small-12 large-6">
+                    <div class="simple-data separated red">
+                        <a class="title" href="#mrf"><i class="fa fa-stethoscope"></i>@Translate.Message("L498")</a>
+                        <div class="value">@Model.healthMeasurementRisks</div>
+                    </div>
+                </div>
+                <div class="cell small-12 large-6">
+                    <div class="simple-data separated mirrored red">
+                        <a class="title" href="#lf"><i class="fa fa-dashboard"></i>@Translate.Message("L499")</a>
+                        <div class="value">@Model.lifetimeRisks</div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell small-12 large-6">
+                    <div class="simple-data separated red">
+                        <a class="title" href="#mf"><i class="fa fa-dashboard"></i>@Translate.Message("L5")</a>
+                        <div class="value">@Model.otherModifiableRisks</div>
+                    </div>
+                </div>
+                <div class="cell small-12 large-6">
+                    <div class="simple-data separated mirrored green">
+                        <a href="" data-open="key-action-steps" data-modal-path="@Html.Raw(Url.Action("KeyActionSteps", "Reports", new { hraid = Model.hraid }))">
+                            <div class="title"><i class="fa fa-star"></i>@Translate.Message("L1155")</div>
+                        </a>
+                        <div class="value">@Model.keyActionSteps</div>
+                    </div>
+                </div>
+            </div>
+            @if (Model.HRAVer.HasValue && Model.HRAVer.Value == (int)HRAVersions.ActivateVersion)
+            {
+                <div class="grid-x collapse">
+                    <div class="cell small-12 large-6">
+                        <div class="simple-data separated blue">
+                            <a class="title"><i class="fa fa-male"></i>Estimated CRF</a>
+                            <div class="value">@Model.CRF</div>
+                        </div>
+                    </div>
+                    <div class="cell small-12 large-6">
+                        <div class="simple-data separated mirrored @Model.risks.paRisk.color">
+                            <a class="title" href="#pai"><i class="fa fa-male"></i>PA-I</a>
+                            <div class="value">@Model.PAISummary</div>
+                        </div>
+                    </div>
+                </div>
+                if (Model.MeasuredCRF.HasValue)
+                {
+                    <div class="grid-x collapse">
+                        <div class="cell small-12 large-6">
+                            <div class="simple-data separated" id="measured-crf">
+                                <a class="title"><i class="fa fa-male"></i>Measured CRF</a>
+                                <div class="value">@Model.MeasuredCRF.Value</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            @if (!CommonUtility.IsIntegratedWithLMC(Model.integrationWith))
+            {
+                <div class="grid-x collapse">
+                    <div class="cell small-12 large-6">
+                        <div class="simple-data separated" id="ada-color">
+                            <a class="title" href="#glucoseRisk"><i class="fa fa-male"></i>ADA Risk Score</a>
+                            @if (!Model.risks.adaRisk.isDiaborPreDiab)
+                            {
+                                <div class="value">@Model.risks.adaRisk.riskChartADA.currentValue</div>
+                            }
+                            else
+                            {
+                                <div class="value">(@Model.risks.adaRisk.riskChartADA.currentValue)</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="grid-x collapse text-center">
+                <div class="cell small-12">
+                    <button class="secondary" onclick="window.open('../AdminCheckRisk?hraid=@Model.hraid')">What If...</button>
+                </div>
+            </div>
+            <a name="mrf"></a>
+            <div class="report-item">
+                <!--Heart disease and stroke-->
+                @if (Model.risks.hdsRisk.risk == 1)
+                {
+                    <h4 class="title-risk"><i class="fa fa-frown-o"></i> @Translate.Message("L501")</h4>
+                }
+                else if (Model.risks.hdsRisk.risk == 2)
+                {
+                    <h4 class="title-no-risk"><i class="fa fa-smile-o"></i> @Translate.Message("L501")</h4>
+                }
+                else
+                {
+                    <h4 class="title-meh"><i class="fa fa-meh-o"></i> @Translate.Message("L501")</h4>
+                }
+                @if (!string.IsNullOrEmpty(Model.risks.hdsRisk.riskText))
+                {
+                    <p>@Html.Raw(Model.risks.hdsRisk.riskText)</p>
+                }
+                <div class="grid-x grid-margin-x">
+                    @if (Model.CAC.HasValue)
+                    {
+                        <p>@Html.Raw(Model.risks.hdsRisk.calciumRiskText)</p>
+                        <div class="cell medium-6 medium-centered">
+                            <div class="report-chart" id="chart-cac"></div>
+                        </div>
+                        @Html.Partial("_ChartsforReport", Model.risks.hdsRisk.calciumRiskChart)
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(Model.risks.hdsRisk.chdRiskText))
+                        {
+                            <p>@Model.risks.hdsRisk.chdRiskText</p>
+                        }
+                        if (Model.risks.hdsRisk.chdRiskChart != null)
+                        {
+                            <div class="cell medium-6 medium-centered">
+                                <div class="report-chart" id="chart-chd"></div>
+                            </div>
+                            @Html.Partial("_ChartsforReport", Model.risks.hdsRisk.chdRiskChart)
+                        }
+                    }
+                    @if (!string.IsNullOrEmpty(Model.risks.hdsRisk.tenYearRiskText))
+                    {
+                        <p>@Html.Raw(Model.risks.hdsRisk.tenYearRiskText)</p>
+                    }
+                    @if (Model.risks.hdsRisk.tenYearRiskChart != null)
+                    {
+                        <div class="cell medium-6 medium-centered">
+                            <div class="report-chart" id="chart-tenyear"></div>
+                        </div>
+                        @Html.Partial("_ChartsforReport", Model.risks.hdsRisk.tenYearRiskChart)
+                    }
+                    @if (!string.IsNullOrEmpty(Model.risks.hdsRisk.lifetimeRiskText))
+                    {
+                        <p>@Html.Raw(Model.risks.hdsRisk.lifetimeRiskText)</p>
+                    }
+                    @if (Model.risks.hdsRisk.lifetimeRiskChart != null)
+                    {
+                        <div class="cell medium-6 medium-centered">
+                            <div class="report-chart" id="chart-lifetime"></div>
+                        </div>
+                        @Html.Partial("_ChartsforReport", Model.risks.hdsRisk.lifetimeRiskChart)
+                    }
+                </div>
+
+                <!--Blood pressure-->
+                @if (Model.risks.bpRisk.risk == 1)
+                {
+                    <h4 class="title-risk"><i class="fa fa-frown-o"></i> @Translate.Message("L503")</h4>
+                }
+                else if (Model.risks.bpRisk.risk == 2)
+                {
+                    <h4 class="title-no-risk"><i class="fa fa-smile-o"></i> @Translate.Message("L503")</h4>
+                }
+                else
+                {
+                    <h4 class="title-meh"><i class="fa fa-meh-o"></i> @Translate.Message("L503")</h4>
+                }
+                @if (!string.IsNullOrEmpty(Model.risks.bpRisk.riskText))
+                {
+                    <p>@Html.Raw(Model.risks.bpRisk.riskText)</p>
+                }
+                @if (Model.risks.bpRisk.sbpRiskChart != null && Model.risks.bpRisk.dbpRiskChart != null)
+                {
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-6">
+                            @if (Model.risks.bpRisk.sbpRiskChart != null)
+                            {
+                                <div class="report-chart" id="chart-sbp"></div>
+                                @Html.Partial("_ChartsforReport", Model.risks.bpRisk.sbpRiskChart)
+                            }
+                        </div>
+                        <div class="cell medium-6">
+                            @if (Model.risks.bpRisk.dbpRiskChart != null)
+                            {
+                                <div class="report-chart" id="chart-dbp"></div>
+                                @Html.Partial("_ChartsforReport", Model.risks.bpRisk.dbpRiskChart)
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!--Cholesterol-->
+                @if (Model.risks.ctRisk.risk == 1)
+                {
+                    <h4 class="title-risk"><i class="fa fa-frown-o"></i> @Translate.Message("L1231")</h4>
+                }
+                else if (Model.risks.ctRisk.risk == 2)
+                {
+                    <h4 class="title-no-risk"><i class="fa fa-smile-o"></i> @Translate.Message("L1231")</h4>
+                }
+                else
+                {
+                    <h4 class="title-meh"><i class="fa fa-meh-o"></i> @Translate.Message("L1231")</h4>
+                }
+                @if (!string.IsNullOrEmpty(Model.risks.ctRisk.riskText))
+                {
+                    <p>@Model.risks.ctRisk.riskText</p>
+                }
+                <div class="grid-x grid-margin-x">
+                    <div class="cell medium-6">
+                        @if (Model.risks.ctRisk.ldlRiskChart != null)
+                        {
+                            <div class="report-chart" id="chart-ldl"></div>
+                            @Html.Partial("_ChartsforReport", Model.risks.ctRisk.ldlRiskChart)
+                        }
+                    </div>
+                    <div class="cell medium-6">
+                        @if (Model.risks.ctRisk.hdlRiskChart != null)
+                        {
+                            <div class="report-chart" id="chart-hdl"></div>
+                            @Html.Partial("_ChartsforReport", Model.risks.ctRisk.hdlRiskChart)
+                        }
+                    </div>
+                    <div class="cell medium-6">
+                        @if (Model.risks.ctRisk.trigRiskChart != null)
+                        {
+                            <div class="report-chart" id="chart-trig"></div>
+                            @Html.Partial("_ChartsforReport", Model.risks.ctRisk.trigRiskChart)
+                        }
+                    </div>
+                    <div class="cell medium-6">
+                        @if (Model.risks.ctRisk.tcRiskChart != null)
+                        {
+                            <div class="report-chart" id="chart-tc"></div>
+                            @Html.Partial("_ChartsforReport", Model.risks.ctRisk.tcRiskChart)
+                        }
+                    </div>
+                </div>
+
+                <!--Weight-->
+                @if (Model.risks.overweightRisk.risk > 0)
+                {
+                    <h4 class="title-risk"><i class="fa fa-frown-o"></i> @Translate.Message("L504")</h4>
+                }
+                else if (Model.risks.overweightRisk.risk == 0)
+                {
+                    <h4 class="title-no-risk"><i class="fa fa-smile-o"></i> @Translate.Message("L504")</h4>
+                }
+                else
+                {
+                    <h4 class="title-meh"><i class="fa fa-meh-o"></i> @Translate.Message("L504")</h4>
+                }
+                @if (!string.IsNullOrEmpty(Model.risks.overweightRisk.riskText))
+                {
+                    <p>
+                        @Html.Raw(Model.risks.overweightRisk.riskText)
+                    </p>
+                }
+                @if (Model.risks.overweightRisk.riskChart != null)
+                {
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-8 medium-centered">
+                            <div class="report-chart" id="chart-overweight"></div>
+                        </div>
+                        @Html.Partial("_ChartsforReport", Model.risks.overweightRisk.riskChart)
+                    </div>
+                }
+
+                <!--Diabetes-->
+                @if (Model.risks.diabetesRisk.risk == 1)
+                {
+                    <h4 id="diabetesRisk" class="title-risk"><i class="fa fa-frown-o"></i> @Translate.Message("L506")</h4>
+                }
+                else if (Model.risks.diabetesRisk.risk == 2)
+                {
+                    <h4 id="diabetesRisk" class="title-no-risk"><i class="fa fa-smile-o"></i> @Translate.Message("L506")</h4>
+                }
+                else
+                {
+                    <h4 id="diabetesRisk" class="title-meh"><i class="fa fa-meh-o"></i> @Translate.Message("L506")</h4>
+                }
+                @if (!string.IsNullOrEmpty(Model.risks.diabetesRisk.riskText))
+                {
+                    <p>@Model.risks.diabetesRisk.riskText</p>
+                }
+                <div class="grid-x grid-margin-x" id="glucoseRisk">
+                    <div class="cell medium-6">
+                        @if (Model.risks.diabetesRisk.glucChart != null)
+                        {
+                            <div class="report-chart" id="chart-glucose"></div>
+                            @Html.Partial("_ChartsforReport", Model.risks.diabetesRisk.glucChart)
+                        }
+                    </div>
+                    <div class="cell medium-6">
+                        @if (Model.risks.diabetesRisk.a1cChart != null)
+                        {
+                            <div class="report-chart" id="chart-a1c"></div>
+                            @Html.Partial("_ChartsforReport", Model.risks.diabetesRisk.a1cChart)
+                        }
+                    </div>
+                    @if (!Model.risks.adaRisk.isDiaborPreDiab && !CommonUtility.IsIntegratedWithLMC(Model.integrationWith))
+                    {
+                        if (!string.IsNullOrEmpty(Model.risks.adaRisk.riskInfoTextADA))
+                        {
+                            <p>
+                                @Html.Raw(Model.risks.adaRisk.riskInfoTextADA)
+                            </p>
+                        }
+                        <div class="cell medium-6">
+                            @if (Model.risks.adaRisk.riskChartADA != null)
+                            {
+                                <div class="report-chart" id="chart-ada"></div>
+                                @Html.Partial("_ChartsforReport", Model.risks.adaRisk.riskChartADA)
+                            }
+                        </div>
+                    }
+                </div>
+                <a name="lf"></a>
+                <!--Physical Activity-->
+                @if (Model.risks.paRisk.risk == 1)
+                {
+                    <h4 class="title-risk"><i class="fa fa-frown-o"></i> @Translate.Message("L271")</h4>
+                }
+                else if (Model.risks.paRisk.risk == 2)
+                {
+                    <h4 class="title-no-risk"><i class="fa fa-smile-o"></i> @Translate.Message("L271")</h4>
+                }
+                else
+                {
+                    <h4 class="title-meh"><i class="fa fa-meh-o"></i> @Translate.Message("L271")</h4>
+                }
+                @if (!string.IsNullOrEmpty(Model.risks.paRisk.riskText))
+                {
+                    <p>
+                        @Model.risks.paRisk.riskText
+                    </p>
+                }
+                @if (Model.risks.paRisk.riskChart != null)
+                {
+                    <div class="grid-x grid-margin-x" id="pai">
+                        <div class="cell medium-6 medium-centered">
+                            <div class="report-chart" id="chart-exer"></div>
+                        </div>
+                        @Html.Partial("_ChartsforReport", Model.risks.paRisk.riskChart)
+                    </div>
+                    if (Model.HRAVer.HasValue && Model.HRAVer.Value == (int)HRAVersions.ActivateVersion)
+                    {
+                        if (!string.IsNullOrEmpty(Model.risks.paRisk.riskInfoTextPAI))
+                        {
+                            <p>
+                                @Html.Raw(Model.risks.paRisk.riskInfoTextPAI)
+                            </p>
+                        }
+                        <div class="grid-x grid-margin-x">
+                            <div class="cell medium-6 medium-centered">
+                                <div class="report-chart" id="chart-pai"></div>
+                            </div>
+                            @Html.Partial("_ChartsforReport", Model.risks.paRisk.riskChartPAI)
+                        </div>
+                    }
+                }
+                <!--Nutrition-->
+                @if (Model.risks.nutRisk.risk == 1)
+                {
+                    <h4 class="title-risk"><i class="fa fa-frown-o"></i> @Translate.Message("L272")</h4>
+                }
+                else if (Model.risks.nutRisk.risk == 2)
+                {
+                    <h4 class="title-no-risk"><i class="fa fa-smile-o"></i> @Translate.Message("L272")</h4>
+                }
+                else
+                {
+                    <h4 class="title-meh"><i class="fa fa-meh-o"></i> @Translate.Message("L272")</h4>
+                }
+                @if (!string.IsNullOrEmpty(Model.risks.nutRisk.riskIntro))
+                {
+                    <p>
+                        @Model.risks.nutRisk.riskIntro
+                    </p>
+                }
+                @if (Model.risks.nutRisk.riskText != null)
+                {
+                    for (int i = 0; i < Model.risks.nutRisk.riskText.Count; i++)
+                    {
+                        <p>@Html.Raw(Model.risks.nutRisk.riskText[i])</p>
+                    }
+                }
+                @if (!string.IsNullOrEmpty(Model.risks.nutRisk.goalText))
+                {
+                    <p>@Model.risks.nutRisk.goalText</p>
+                }
+
+                <!--Stress-->
+                @if (Model.risks.stressRisk.risk == 1)
+                {
+                    <h4 class="title-risk"><i class="fa fa-frown-o"></i>@Translate.Message("L273") </h4>
+                }
+                else if (Model.risks.stressRisk.risk == 2)
+                {
+                    <h4 class="title-no-risk"><i class="fa fa-smile-o"></i>@Translate.Message("L273") </h4>
+                }
+                else
+                {
+                    <h4 class="title-meh"><i class="fa fa-meh-o"></i>@Translate.Message("L273") </h4>
+                }
+                @if (!string.IsNullOrEmpty(Model.risks.stressRisk.riskText))
+                {
+                    <p>
+                        @Model.risks.stressRisk.riskText
+                    </p>
+                }
+
+                <!--Tobacco-->
+                @if (Model.risks.tobaccoRisk.risk == 1)
+                {
+                    <h4 class="title-risk"><i class="fa fa-frown-o"></i> @Translate.Message("L1060")</h4>
+                }
+                else if (Model.risks.tobaccoRisk.risk == 2)
+                {
+                    <h4 class="title-no-risk"><i class="fa fa-smile-o"></i> @Translate.Message("L1060")</h4>
+                }
+                else
+                {
+                    <h4 class="title-meh"><i class="fa fa-meh-o"></i> @Translate.Message("L1060")</h4>
+                }
+                <p>
+                    @Model.risks.tobaccoRisk.riskText
+                </p>
+                @if (Model.risks.tobaccoRisk.riskChart != null)
+                {
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-6 medium-centered">
+                            <div class="report-chart" id="chart-tob"></div>
+                        </div>
+                        @Html.Partial("_ChartsforReport", Model.risks.tobaccoRisk.riskChart)
+                    </div>
+                }
+                <a name="mf"></a>
+                <!--Metabolic Syndrome-->
+                @if (Model.risks.metRisk.risk == 1)
+                {
+                    <h4 class="title-risk"><i class="fa fa-frown-o"></i> @Translate.Message("L148")</h4>
+                }
+                else if (Model.risks.metRisk.risk == 2)
+                {
+                    <h4 class="title-no-risk"><i class="fa fa-smile-o"></i> @Translate.Message("L148")</h4>
+                }
+                else if (Model.risks.metRisk.risk == 0)
+                {
+                    <h4 class="title-meh"><i class="fa fa-meh-o"></i> @Translate.Message("L148")</h4>
+                }
+                @if (!string.IsNullOrEmpty(Model.risks.metRisk.riskIntro))
+                {
+                    <p>
+                        @Model.risks.metRisk.riskIntro
+                    </p>
+                }
+                @if (Model.risks.metRisk.riskText != null)
+                {
+                    for (int i = 0; i < Model.risks.metRisk.riskText.Count; i++)
+                    {
+                        <p>@Html.Raw(Model.risks.metRisk.riskText[i])</p>
+                    }
+                }
+
+                <!--Cancer-->
+                @if (Model.risks.cancerRisk.risk == 1)
+                {
+                    <h4 class="title-risk"><i class="fa fa-frown-o"></i> @Translate.Message("L26")</h4>
+                }
+                else if (Model.risks.cancerRisk.risk == 2)
+                {
+                    <h4 class="title-no-risk"><i class="fa fa-smile-o"></i> @Translate.Message("L26")</h4>
+                }
+                else
+                {
+                    <h4 class="title-meh"><i class="fa fa-meh-o"></i> @Translate.Message("L26")</h4>
+                }
+                @if (!string.IsNullOrEmpty(Model.risks.cancerRisk.riskIntro))
+                {
+                    <p>
+                        @Model.risks.cancerRisk.riskIntro
+                    </p>
+                }
+                @if (Model.risks.cancerRisk.riskText != null)
+                {
+                    for (int i = 0; i < Model.risks.cancerRisk.riskText.Count; i++)
+                    {
+                        <p>@Html.Raw(Model.risks.cancerRisk.riskText[i])</p>
+
+                    }
+                }
+
+                <!--Safety-->
+                @if (Convert.ToByte(Model.HRAVer) != (byte)HRAVersions.IntuityVersion)
+                {
+                    if (Model.risks.safetyRisk.risk == 1)
+                    {
+                        <h4 class="title-risk"><i class="fa fa-frown-o"></i> @Translate.Message("L149")</h4>
+                    }
+                    else if (Model.risks.safetyRisk.risk == 2)
+                    {
+                        <h4 class="title-no-risk"><i class="fa fa-smile-o"></i> @Translate.Message("L149")</h4>
+                        <p>Your do not have safety-related risks.</p>
+                    }
+                    else
+                    {
+                        <h4 class="title-meh"><i class="fa fa-meh-o"></i> @Translate.Message("L149")</h4>
+                    }
+                    if (!string.IsNullOrEmpty(Model.risks.safetyRisk.riskIntro))
+                    {
+                        <p>
+                            @Model.risks.safetyRisk.riskIntro
+                        </p>
+                    }
+                    if (Model.risks.safetyRisk.riskText != null)
+                    {
+                        for (int i = 0; i < Model.risks.safetyRisk.riskText.Count; i++)
+                        {
+                            <p>@Html.Raw(Model.risks.safetyRisk.riskText[i])</p>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <!--Medical Conditions & Risk Factors-->
+    <div class='grid-x collapse summary-row'>
+        <div class='small-9 medium-7 cell summary-name'><i class='fa fa-file-text-o'></i><div class='summary-title'>@Translate.Message("L508")</div></div>
+        <div class='small-3 medium-5 cell summary-content'>
+            <button class='side-button' onclick='toggleMedicalCondition(this)'><i class='fa fa-angle-right'></i></button>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x tile-item hide" id="MedicalCondition">
+        <div class="cell bg-wrapper tabular">
+            <!--at risk-->
+            @if (Model.medicalConditionsandRiskFactors.highRisk.Count > 0)
+            {
+                <div class="tabular-row at-risk">
+                    <div class="cell">
+                        <h4><i class="fa fa-frown-o"></i> @Translate.Message("L509")</h4>
+                        <ol class="column-list">
+                            @for (int i = 0; i < Model.medicalConditionsandRiskFactors.highRisk.Count; i++)
+                            {
+                                <li>@Model.medicalConditionsandRiskFactors.highRisk[i]</li>
+                            }
+                        </ol>
+                    </div>
+                </div>
+            }
+            <!--incomplete data-->
+            @if (Model.medicalConditionsandRiskFactors.missingRisk.Count > 0)
+            {
+                <div class="grid-x tabular-row incomplete">
+                    <div class="cell">
+                        <h4><i class="fa fa-meh-o"></i> @Translate.Message("L211")</h4>
+                        <ol class="column-list">
+                            @for (int i = 0; i < Model.medicalConditionsandRiskFactors.missingRisk.Count; i++)
+                            {
+                                <li>@Model.medicalConditionsandRiskFactors.missingRisk[i]</li>
+                            }
+                        </ol>
+                    </div>
+                </div>
+            }
+            <!--not at risk-->
+            @if (Model.medicalConditionsandRiskFactors.noRisk.Count > 0)
+            {
+                <div class="grid-x tabular-row not-at-risk">
+                    <div class="cell">
+                        <h4><i class="fa fa-smile-o"></i> @Translate.Message("L510")</h4>
+                        <ol class="column-list">
+                            @for (int i = 0; i < Model.medicalConditionsandRiskFactors.noRisk.Count; i++)
+                            {
+                                <li>@Model.medicalConditionsandRiskFactors.noRisk[i]</li>
+                            }
+                        </ol>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <!--Checkups & Tests-->
+    if (Model.checkupsandGoals != null)
+    {
+        <div class='grid-x collapse summary-row'>
+            <div class='small-9 medium-7 cell summary-name'><i class='fa fa-file-text-o'></i><div class='summary-title'>@Translate.Message("L511")</div></div>
+            <div class='small-3 medium-5 cell summary-content'>
+                <button class='side-button' onclick='toggleCheckup(this)'><i class='fa fa-angle-right'></i></button>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x tile-item hide" id="Checkup">
+            <h5 class="cell text-right show-for-medium">@Translate.Message("L217")</h5>
+            <div class="cell bg-wrapper tabular">
+                @for (int i = 0; i < Model.checkupsandGoals.Count; i++)
+                {
+                    <div class="grid-x tabular-row" data-equalizer>
+                        <div class="cell small-6 medium-4" data-equalizer-watch>
+                            <span>@Model.checkupsandGoals[i].Name</span>
+                            <span data-tooltip class="recommendation-handle has-tip show-for-small-only"
+                                  aria-haspopup="true" title="Recommended Schedule: @Model.checkupsandGoals[i].Recommended">?</span>
+                        </div>
+                        <div class="cell small-6 medium-4 text-center" data-equalizer-watch>
+                            @if (Model.checkupsandGoals[i].Status == 1)
+                            {
+                                <div class="on track">@Model.checkupsandGoals[i].StatusMessage</div>
+                            }
+                            else if (Model.checkupsandGoals[i].Status == 2)
+                            {
+                                <div class="no track">@Model.checkupsandGoals[i].StatusMessage</div>
+                            }
+                            else
+                            {
+                                <div class="track">@Model.checkupsandGoals[i].StatusMessage</div>
+                            }
+                        </div>
+                        <div class="cell show-for-medium medium-4" data-equalizer-watch>@Model.checkupsandGoals[i].Recommended</div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <!--Immunizations-->
+    if (Model.immunizationandGoals != null)
+    {
+        <div class='grid-x collapse summary-row'>
+            <div class='small-9 medium-7 cell summary-name'><i class='fa fa-file-text-o'></i><div class='summary-title'>@Translate.Message("L219")</div></div>
+            <div class='small-3 medium-5 cell summary-content'>
+                <button class='side-button' onclick='toggleImmunization(this)'><i class='fa fa-angle-right'></i></button>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x tile-item hide" id="Immunization">
+            <h5 class="cell text-right show-for-medium">@Translate.Message("L217")</h5>
+            <div class="cell bg-wrapper tabular">
+                @for (int i = 0; i < Model.immunizationandGoals.Count; i++)
+                {
+                    <div class="grid-x tabular-row" data-equalizer>
+                        <div class="cell small-6 medium-4" data-equalizer-watch>
+                            <span>@Model.immunizationandGoals[i].Name</span>
+                            <span data-tooltip class="recommendation-handle has-tip show-for-small-only"
+                                  aria-haspopup="true" title="Recommended Schedule: @Model.immunizationandGoals[i].Recommended">?</span>
+                        </div>
+                        <div class="cell small-6 medium-4 text-center" data-equalizer-watch>
+                            @if (Model.immunizationandGoals[i].Status == 1)
+                            {
+                                <div class="on track">@Model.immunizationandGoals[i].StatusMessage</div>
+                            }
+                            else if (Model.immunizationandGoals[i].Status == 2)
+                            {
+                                <div class="no track">@Model.immunizationandGoals[i].StatusMessage</div>
+                            }
+                            else
+                            {
+                                <div class="track">@Model.immunizationandGoals[i].StatusMessage</div>
+                            }
+                        </div>
+                        <div class="cell show-for-medium medium-4" data-equalizer-watch>@Model.immunizationandGoals[i].Recommended</div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <!--measurements-->
+    if (Model.measurementsandGoals != null)
+    {
+        <div class='grid-x collapse summary-row'>
+            <div class='small-9 medium-7 cell summary-name'><i class='fa fa-file-text-o'></i><div class='summary-title'>@Translate.Message("L224")</div></div>
+            <div class='small-3 medium-5 cell summary-content'>
+                <button class='side-button' onclick='toggleMeasurement(this)'><i class='fa fa-angle-right'></i></button>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x tile-item hide" id="Measurement">
+            <h5 class="cell text-right show-for-medium">@Translate.Message("L223")</h5>
+            <div class="cell bg-wrapper tabular">
+                @for (int i = 0; i < Model.measurementsandGoals.Count; i++)
+                {
+                    <div class="grid-x tabular-row" data-equalizer>
+                        <div class="cell small-6 medium-4" data-equalizer-watch>
+                            <span>@Model.measurementsandGoals[i].Name</span>
+                            <span data-tooltip class="recommendation-handle has-tip show-for-small-only"
+                                  aria-haspopup="true" title="Recommended: @Model.measurementsandGoals[i].Goal">?</span>
+                        </div>
+                        <div class="cell small-6 medium-4 text-center" data-equalizer-watch>
+                            <div class="value">@Model.measurementsandGoals[i].Measurement</div>
+                            <div class="unit">@Model.measurementsandGoals[i].Unit</div>
+                        </div>
+                        <div class="cell show-for-medium medium-4" data-equalizer-watch>@Model.measurementsandGoals[i].Goal</div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!--referrals-->
+    if (Model.drReferralGoal.referrals != null)
+    {
+        <div class='grid-x collapse summary-row'>
+            <div class='small-9 medium-7 cell summary-name'><i class='fa fa-file-text-o'></i><div class='summary-title'>@Translate.Message("L512")</div></div>
+            <div class='small-3 medium-5 cell summary-content'>
+                <button class='side-button' onclick='toggleReferrals(this)'><i class='fa fa-angle-right'></i></button>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x tile-item hide" id="Referrals">
+            <div class="cell bg-wrapper tabular">
+                <div class="grid-x tabular-row">
+                    <div class="cell small-12 medium-12" data-equalizer-watch>
+                        @if (Model.drReferralGoal.referrals.Count > 0)
+                        {
+                            <ol class="referrals">
+                                @for (int i = 0; i < Model.drReferralGoal.referrals.Count; i++)
+                                {
+                                    <li>@Model.drReferralGoal.referrals[i]</li>
+                                }
+                            </ol>
+                        }
+                        else
+                        {
+                            <p>
+                                @Translate.Message("L2454")
+                            </p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!--Recommendations-->
+    <div class='grid-x collapse summary-row'>
+        <div class='small-9 medium-7 cell summary-name'><i class='fa fa-file-text-o'></i><div class='summary-title'>@Translate.Message("L695")</div></div>
+        <div class='small-3 medium-5 cell summary-content'>
+            <button class='side-button' onclick='toggleRecommendations(this)'><i class='fa fa-angle-right'></i></button>
+        </div>
+    </div>
+
+    <div class="grid-x grid-margin-x tile-item recommendations hide" id="Recommendations">
+        <div class="cell">
+            <div class="bg-wrapper tabular">
+                <div class="grid-x tabular-row">
+                    <div class="cell">
+                        <h5>@Translate.Message("L272")</h5>
+                        <div>
+                            @Model.nutritionGoal.nutGoalIntro
+                        </div>
+                        <h5>@Translate.Message("L513")</h5>
+                        @if (Model.nutritionGoal.NutMaint == true)
+                        {
+                            <text>
+                                @Translate.Message("L514")
+                            </text>
+                        }
+                        <ul class="tabs" data-tabs id="nutrition-tabs" data-active-collapse="true" role="tablist">
+                            <li class="tabs-title is-active"><a href="#plan-a" aria-selected="true">Plan @Model.nutritionGoal.FirstNutPlan</a></li>
+                            @if (Model.nutritionGoal.NutMaint == true)
+                            {
+                                <li class="tabs-title"><a data-tabs-target="plan-b" href="#plan-b">Plan @Model.nutritionGoal.NutMaintMealPlan</a></li>
+                            }
+                        </ul>
+                        <div class="tabs-content" data-tabs-content="nutrition-tabs">
+                            <div class="tabs-panel is-active clearfix" id="plan-a">
+                                <div class="cell small-12">
+                                    <div class="grid-x grid-padding-x">
+                                        <div class="cell large-6">
+                                            @Html.Partial("_MealPlan", Model.nutritionGoal,
+                                                 new ViewDataDictionary(ViewData) {
+                                                                    { "Name", "Breakfast" },
+                                                                    { "Meat", @Model.nutritionGoal.FirstNutPlanArray.GetValue(0, 0) },
+                                                                    { "Milk", @Model.nutritionGoal.FirstNutPlanArray.GetValue(1, 0) },
+                                                                    { "Fruit", @Model.nutritionGoal.FirstNutPlanArray.GetValue(2, 0) },
+                                                                    { "NonStarch", @Model.nutritionGoal.FirstNutPlanArray.GetValue(3, 0) },
+                                                                    { "Starch", @Model.nutritionGoal.FirstNutPlanArray.GetValue(4, 0) },
+                                                 })
+                                            @Html.Partial("_MealPlan", Model.nutritionGoal,
+                                                 new ViewDataDictionary(ViewData) {
+                                                                    { "Name", "Lunch" },
+                                                                    { "Meat", @Model.nutritionGoal.FirstNutPlanArray.GetValue(0, 1) },
+                                                                    { "Milk", @Model.nutritionGoal.FirstNutPlanArray.GetValue(1, 1) },
+                                                                    { "Fruit", @Model.nutritionGoal.FirstNutPlanArray.GetValue(2, 1) },
+                                                                    { "NonStarch", @Model.nutritionGoal.FirstNutPlanArray.GetValue(3, 1) },
+                                                                    { "Starch", @Model.nutritionGoal.FirstNutPlanArray.GetValue(4, 1) },
+                                                 })
+                                        </div>
+                                        <div class="cell large-6">
+                                            @Html.Partial("_MealPlan", Model.nutritionGoal,
+                                                 new ViewDataDictionary(ViewData) {
+                                                                    { "Name", "Snacks" },
+                                                                    { "Meat", @Model.nutritionGoal.FirstNutPlanArray.GetValue(0, 2) },
+                                                                    { "Milk", @Model.nutritionGoal.FirstNutPlanArray.GetValue(1, 2) },
+                                                                    { "Fruit", @Model.nutritionGoal.FirstNutPlanArray.GetValue(2, 2) },
+                                                                    { "NonStarch", @Model.nutritionGoal.FirstNutPlanArray.GetValue(3, 2) },
+                                                                    { "Starch", @Model.nutritionGoal.FirstNutPlanArray.GetValue(4, 2) },
+                                                 })
+                                            @Html.Partial("_MealPlan", Model.nutritionGoal,
+                                                 new ViewDataDictionary(ViewData) {
+                                                                    { "Name", "Dinner" },
+                                                                    { "Meat", @Model.nutritionGoal.FirstNutPlanArray.GetValue(0, 3) },
+                                                                    { "Milk", @Model.nutritionGoal.FirstNutPlanArray.GetValue(1, 3) },
+                                                                    { "Fruit", @Model.nutritionGoal.FirstNutPlanArray.GetValue(2, 3) },
+                                                                    { "NonStarch", @Model.nutritionGoal.FirstNutPlanArray.GetValue(3, 3) },
+                                                                    { "Starch", @Model.nutritionGoal.FirstNutPlanArray.GetValue(4, 3) },
+                                                 })
+                                        </div>
+                                        <div class="cell large-6">
+                                            @Html.Partial("_MealPlan", Model.nutritionGoal,
+                                                 new ViewDataDictionary(ViewData) {
+                                                                    { "Name", Translate.Message("L3812") },
+                                                                    { "Meat", @Model.nutritionGoal.FirstNutPlanArray.GetValue(0, 4) },
+                                                                    { "Milk", @Model.nutritionGoal.FirstNutPlanArray.GetValue(1, 4) },
+                                                                    { "Fruit", @Model.nutritionGoal.FirstNutPlanArray.GetValue(2, 4) },
+                                                                    { "NonStarch", @Model.nutritionGoal.FirstNutPlanArray.GetValue(3, 4) },
+                                                                    { "Starch", @Model.nutritionGoal.FirstNutPlanArray.GetValue(4, 4) },
+                                                 })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="cell small-12">
+                                    <div class="grid-x grid-padding-x">
+                                        <div class="cell large-6">
+                                            <h5>@Translate.Message("L515")</h5>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>@Translate.Message("L526")</th>
+                                                        <th>@Translate.Message("L516")</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>@Translate.Message("L517")</td>
+                                                        <td>@Model.nutritionGoal.NutFatNum.Value-@Model.nutritionGoal.NewNutFatNum<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L518")</td>
+                                                        <td>Less than @Model.nutritionGoal.NutSatFatNum<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L1637")</td>
+                                                        <td>@Model.nutritionGoal.NutTransFatNum</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L1231")</td>
+                                                        <td>@Model.nutritionGoal.NutCholNum</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L519")</td>
+                                                        <td>@Model.nutritionGoal.NutCarbFrom-@Model.nutritionGoal.NutCarbTo<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L520")</td>
+                                                        <td>10-25 g</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L521")</td>
+                                                        <td>Less than @Model.nutritionGoal.NutSugNum<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L522")</td>
+                                                        <td>@Translate.Message("L523")</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L524")</td>
+                                                        <td>At least @Model.nutritionGoal.NutDrinkWaterNum glasses</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="cell large-6">
+                                            <h5>@Translate.Message("L529")</h5>
+                                            @Html.Partial("_CommonMeasurements")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (Model.nutritionGoal.NutMaint == true)
+                            {
+                                <div class="tabs-panel content clearfix" id="plan-b">
+                                    <div class="cell small-12">
+                                        <div class="grid-x grid-margin-x">
+                                            <div class="cell large-6">
+                                                @Html.Partial("_MealPlan", Model.nutritionGoal,
+                                                 new ViewDataDictionary(ViewData) {
+                                                                    { "Name", "Breakfast" },
+                                                                    { "Meat", @Model.nutritionGoal.SecondNutPlanArray.GetValue(0, 0) },
+                                                                    { "Milk", @Model.nutritionGoal.SecondNutPlanArray.GetValue(1, 0) },
+                                                                    { "Fruit", @Model.nutritionGoal.SecondNutPlanArray.GetValue(2, 0) },
+                                                                    { "NonStarch", @Model.nutritionGoal.SecondNutPlanArray.GetValue(3, 0) },
+                                                                    { "Starch", @Model.nutritionGoal.SecondNutPlanArray.GetValue(4, 0) },
+                                                 })
+                                                @Html.Partial("_MealPlan", Model.nutritionGoal,
+                                                 new ViewDataDictionary(ViewData) {
+                                                                    { "Name", "Lunch" },
+                                                                    { "Meat", @Model.nutritionGoal.SecondNutPlanArray.GetValue(0, 1) },
+                                                                    { "Milk", @Model.nutritionGoal.SecondNutPlanArray.GetValue(1, 1) },
+                                                                    { "Fruit", @Model.nutritionGoal.SecondNutPlanArray.GetValue(2, 1) },
+                                                                    { "NonStarch", @Model.nutritionGoal.SecondNutPlanArray.GetValue(3, 1) },
+                                                                    { "Starch", @Model.nutritionGoal.SecondNutPlanArray.GetValue(4, 1) },
+                                                 })
+                                            </div>
+                                            <div class="cell large-6">
+                                                @Html.Partial("_MealPlan", Model.nutritionGoal,
+                                                 new ViewDataDictionary(ViewData) {
+                                                                    { "Name", "Snacks" },
+                                                                    { "Meat", @Model.nutritionGoal.SecondNutPlanArray.GetValue(0, 2) },
+                                                                    { "Milk", @Model.nutritionGoal.SecondNutPlanArray.GetValue(1, 2) },
+                                                                    { "Fruit", @Model.nutritionGoal.SecondNutPlanArray.GetValue(2, 2) },
+                                                                    { "NonStarch", @Model.nutritionGoal.SecondNutPlanArray.GetValue(3, 2) },
+                                                                    { "Starch", @Model.nutritionGoal.SecondNutPlanArray.GetValue(4, 2) },
+                                                 })
+                                                @Html.Partial("_MealPlan", Model.nutritionGoal,
+                                                 new ViewDataDictionary(ViewData) {
+                                                                    { "Name", "Dinner" },
+                                                                    { "Meat", @Model.nutritionGoal.SecondNutPlanArray.GetValue(0, 3) },
+                                                                    { "Milk", @Model.nutritionGoal.SecondNutPlanArray.GetValue(1, 3) },
+                                                                    { "Fruit", @Model.nutritionGoal.SecondNutPlanArray.GetValue(2, 3) },
+                                                                    { "NonStarch", @Model.nutritionGoal.SecondNutPlanArray.GetValue(3, 3) },
+                                                                    { "Starch", @Model.nutritionGoal.SecondNutPlanArray.GetValue(4, 3) },
+                                                 })
+                                            </div>
+                                            <div class="cell large-6">
+                                                @Html.Partial("_MealPlan", Model.nutritionGoal,
+                                                 new ViewDataDictionary(ViewData) {
+                                                                    { "Name", Translate.Message("L3812") },
+                                                                    { "Meat", @Model.nutritionGoal.SecondNutPlanArray.GetValue(0, 4) },
+                                                                    { "Milk", @Model.nutritionGoal.SecondNutPlanArray.GetValue(1, 4) },
+                                                                    { "Fruit", @Model.nutritionGoal.SecondNutPlanArray.GetValue(2, 4) },
+                                                                    { "NonStarch", @Model.nutritionGoal.SecondNutPlanArray.GetValue(3, 4) },
+                                                                    { "Starch", @Model.nutritionGoal.SecondNutPlanArray.GetValue(4, 4) },
+                                                 })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="cell small-12">
+                                        <div class="grid-x grid-padding-x">
+                                            <div class="cell large-6">
+                                                <h5>@Translate.Message("L525")</h5>
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>@Translate.Message("L526")</th>
+                                                            <th>@Translate.Message("L516")</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>@Translate.Message("L517")</td>
+                                                            <td>@Model.nutritionGoal.NutLtFatNum-@Model.nutritionGoal.NewNutLtFatNum<span> g</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L518")</td>
+                                                            <td>Less than @Model.nutritionGoal.NutLtSatFatNum<span> g</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L1637")</td>
+                                                            <td>@Model.nutritionGoal.NutTransFatNum</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L1231")</td>
+                                                            <td>@Model.nutritionGoal.NutCholNum</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L519")</td>
+                                                            <td>@Model.nutritionGoal.NutLtCarbFrom-@Model.nutritionGoal.NutLtCarbTo<span> g</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L520")</td>
+                                                            <td>10-25 g</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L521")</td>
+                                                            <td>Less than @Model.nutritionGoal.NutSugNum<span> g</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L522")</td>
+                                                            <td>@Translate.Message("L523")</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L524") </td>
+                                                            <td>@Translate.Message("L527") @Model.nutritionGoal.NutDrinkWaterNum @Translate.Message("L528")</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="cell large-6">
+                                                <h5>@Translate.Message("L529")</h5>
+                                                @Html.Partial("_CommonMeasurements")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-container">
+                    <div class="grid-x grid-padding-x">
+                        <div class="small-12 cell">
+                            <h4>@Translate.Message("L530")</h4>
+                            @if (Model.nutritionGoal.nutRecommendations.Count > 0)
+                            {
+                                <ul class="decorated blue">
+                                    @for (int i = 0; i < Model.nutritionGoal.nutRecommendations.Count; i++)
+                                    {
+                                        @Html.Raw(Model.nutritionGoal.nutRecommendations[i])
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+
+                    <hr />
+                    <a name="pai"></a>
+                    <div class="grid-x grid-padding-x">
+                        <div class="cell small-12">
+                            <h4>@Translate.Message("L271")</h4>
+                            @if (!Model.physicalActivityGoal.ExerPlan.ToLower().Contains("g"))
+                            {
+                                <h5>@Translate.Message("L531")</h5>
+                                <p>@Translate.Message("L532") </p>
+                                <table class="exercise-plan">
+                                    <thead class="header-blue">
+                                        <tr>
+                                            <th>@Translate.Message("L471")</th>
+                                            <th>@Translate.Message("L472")</th>
+                                            <th>@Translate.Message("L473")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i <= 11; i++)
+                                        {
+                                            <tr>
+                                                @if (i == 11)
+                                                {
+                                                    <td>@(i + 1) @Translate.Message("L533") </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@(i + 1)</td>
+                                                }
+                                                @for (int j = 0; j <= 1; j++)
+                                                {
+                                                    <td>@Model.physicalActivityGoal.ExerPlanArray[i, j]</td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            <h5>@Translate.Message("L534")</h5>
+                            @if (Model.physicalActivityGoal.exGuidelines.Count > 0)
+                            {
+                                <ul class="decorated blue">
+                                    @for (int i = 0; i < Model.physicalActivityGoal.exGuidelines.Count; i++)
+                                    {
+                                        @Html.Raw(Model.physicalActivityGoal.exGuidelines[i])
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="grid-x grid-padding-x">
+                        <div class="cell small-12">
+                            <h4>@Translate.Message("L1061")</h4>
+                            @if (Model.medicationGoal.medicationGoalContent.Count > 0)
+                            {
+                                <ul class="decorated blue">
+                                    @for (int i = 0; i < Model.medicationGoal.medicationGoalContent.Count; i++)
+                                    {
+                                        @Html.Raw(Model.medicationGoal.medicationGoalContent[i])
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="grid-x grid-padding-x">
+                        <div class="small-12 cell">
+                            <h4>@Translate.Message("L1058")</h4>
+                            @if (Model.stressGoal.stressGoalContent.Count > 0)
+                            {
+                                <ul class="decorated purple">
+                                    @for (int i = 0; i < Model.stressGoal.stressGoalContent.Count; i++)
+                                    {
+                                        @Html.Raw(Model.stressGoal.stressGoalContent[i])
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="grid-x grid-padding-x">
+                        <div class="small-12 cell">
+                            <h4>@Translate.Message("L1014")</h4>
+                            @if (Model.supplementGoal.supplementGoalContent.Count > 0)
+                            {
+                                <ul class="decorated green">
+                                    @for (int i = 0; i < Model.supplementGoal.supplementGoalContent.Count; i++)
+                                    {
+                                        @Html.Raw(Model.supplementGoal.supplementGoalContent[i])
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="grid-x grid-padding-x">
+                        <div class="small-12 cell">
+                            <h4>@Translate.Message("L1060")</h4>
+                            @if (Model.tobaccoGoal.tobaccoGoalContent.Count > 0)
+                            {
+                                <ul class="decorated pink">
+                                    @for (int i = 0; i < Model.tobaccoGoal.tobaccoGoalContent.Count; i++)
+                                    {
+                                        @Html.Raw(Model.tobaccoGoal.tobaccoGoalContent[i])
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div id="pai-modal" class="reveal large report-modal" data-reveal>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <span>
+                <b>@Translate.Message("L3096")</b>
+                <br /><br />@Translate.Message("L3102")
+                <br /><br />@Translate.Message("L3103")
+                <br /><br />@Translate.Message("L3104")
+                <br /><br />@Translate.Message("L3105")
+            </span>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div id="ada-modal" class="reveal large report-modal" data-reveal>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <span>
+                <b>@Translate.Message("L3590")</b>
+                <br /><br />@string.Format(Translate.Message("L3591"), Translate.Message(Model.AssessmentName).ToLower())
+                @if (Model.risks != null && !Model.risks.adaRisk.isDiaborPreDiab)
+                {
+                    if (!string.IsNullOrEmpty(Model.risks.adaRisk.riskText))
+                    {
+                        <br /><br />@Model.risks.adaRisk.riskText
+                    }
+                    if (!Model.risks.adaRisk.GINAQuestion)
+                    {
+                        <br /><br />@Translate.Message("L3592")
+                    }
+                    if ((Model.risks.adaRisk.riskChartADA.currentValue <= 4 && Model.risks.adaRisk.GINAQuestion) || Model.risks.adaRisk.riskChartADA.currentValue <= 3)
+                    {
+                        <br /><br />@Translate.Message("L3593")
+                    }
+                    if (Model.risks.adaRisk.riskChartADA.currentValue >= 4 && Model.risks.adaRisk.riskChartADA.currentValue < 5 && !Model.risks.adaRisk.GINAQuestion)
+                    {
+                        <br /><br />@Translate.Message("L3594")
+                    }
+                    if (Model.risks.adaRisk.riskChartADA.currentValue >= 5)
+                    {
+                        <br /><br />@Translate.Message("L3595")
+                    }
+                }
+            </span>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<!--Score Details Modal-->
+<div id="score-details-modal" class="reveal large" data-reveal>
+    <a class="close-reveal">×</a>
+</div>
+<!--Key Action Steps Modal-->
+<div id="key-action-steps" class="reveal large" data-reveal>
+    <a class="close-reveal">×</a>
+</div>
+<div id="resource-cholesterol-triglycerides" class="reveal large" data-reveal>
+</div>
+<script src="@Url.Content("~/Scripts/IVCharts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/ReportColors.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    $(document).ready(function () {
+            $("[data-open]").on('click', function (e) {
+                showmodal($(this), e)
+            });
+        });
+    function toggleSummary(dispatcher) {
+        if (!$("#Summary").hasClass("hide")) {
+            $("#Summary").addClass("hide");
+            $(dispatcher).removeClass('toggled');
+        }
+        else {
+            $("#Summary").removeClass("hide");
+            $(dispatcher).addClass('toggled');
+        }
+    }
+
+    function toggleMeasurement(dispatcher) {
+        if (!$("#Measurement").hasClass("hide")) {
+            $("#Measurement").addClass("hide");
+            $(dispatcher).removeClass('toggled');
+        }
+        else {
+            $("#Measurement").removeClass("hide");
+            $(dispatcher).addClass('toggled');
+            $(document).foundation('equalizer', 'reflow');
+        }
+    }
+
+    function toggleCheckup(dispatcher) {
+        if (!$("#Checkup").hasClass("hide")) {
+            $("#Checkup").addClass("hide");
+            $(dispatcher).removeClass('toggled');
+        }
+        else {
+            $("#Checkup").removeClass("hide");
+            $(dispatcher).addClass('toggled');
+            $(document).foundation('equalizer', 'reflow');
+        }
+    }
+
+    function toggleImmunization(dispatcher) {
+        if (!$("#Immunization").hasClass("hide")) {
+            $("#Immunization").addClass("hide");
+            $(dispatcher).removeClass('toggled');
+        }
+        else {
+            $("#Immunization").removeClass("hide");
+            $(dispatcher).addClass('toggled');
+            $(document).foundation('equalizer', 'reflow');
+        }
+    }
+
+    function toggleMedicalCondition(dispatcher) {
+        if (!$("#MedicalCondition").hasClass("hide")) {
+            $("#MedicalCondition").addClass("hide");
+            $(dispatcher).removeClass('toggled');
+        }
+        else {
+            $("#MedicalCondition").removeClass("hide");
+            $(dispatcher).addClass('toggled');
+        }
+    }
+
+    function toggleRecommendations(dispatcher) {
+        if (!$("#Recommendations").hasClass("hide")) {
+            $("#Recommendations").addClass("hide");
+            $(dispatcher).removeClass('toggled');
+        }
+        else {
+            $("#Recommendations").removeClass("hide");
+            $(dispatcher).addClass('toggled');
+        }
+    }
+    function toggleReferrals(dispatcher) {
+        if (!$("#Referrals").hasClass("hide")) {
+            $("#Referrals").addClass("hide");
+            $(dispatcher).removeClass('toggled');
+        }
+        else {
+            $("#Referrals").removeClass("hide");
+            $(dispatcher).addClass('toggled');
+        }
+    }
+    var realAge, calcAge;
+    @if (Model.ageInfo != null){
+        @: realAge =  @Model.ageInfo.Age;
+        @: calcAge = 0;
+        if (Model.ageInfo.arterialAge.HasValue)
+        {
+            @: calcAge = @Model.ageInfo.arterialAge.Value;
+        }
+        else if(Model.ageInfo.heartAge != "0")
+        {
+            @: calcAge = @Convert.ToInt16(Model.ageInfo.heartAge.Substring(0,2));
+        }
+        @: $('#heart-age-chart').addClass(getHAColor(calcAge, realAge));
+    }
+    $(document).foundation();
+    var wellnessScore, peerScore;
+    @if (Model != null && Model.hasSummary)
+    {
+        @: wellnessScore = @Model.wellnessScoreInfo.newWellnessScore;
+        @: $("#my-score").addClass(ScoreColor(wellnessScore));
+        if (Model.PeerAverage.HasValue)
+        {
+            @: peerScore = @Model.PeerAverage;
+            @: $("#peer-score").addClass(ScoreColor(peerScore));
+        }
+        else
+        {
+            @: $("#peer-score").addClass('blue');
+        }
+    }
+    @if(Model.CRF > Model.MeasuredCRF)
+    {
+        @: $("#measured-crf").addClass('red');
+    }
+    else
+    {
+        @: $("#measured-crf").addClass('green');
+    }
+
+    @if (Model.risks != null && Model.risks.adaRisk != null && Model.risks.adaRisk.riskChartADA != null)
+    {
+        if(Model.risks.adaRisk.riskChartADA.currentValue >= 5){
+            @: $("#ada-color").addClass('red');
+        }
+        else if (Model.risks.adaRisk.riskChartADA.currentValue >= 3) {
+            @: $("#ada-color").addClass('blue');
+        }
+        else {
+            @: $("#ada-color").addClass('green');
+        }
+    }
+</script>

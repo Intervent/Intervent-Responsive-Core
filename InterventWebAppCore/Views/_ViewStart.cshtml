@@ -1,0 +1,17 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+
+    $(function () {
+        $.ajaxSetup({
+            statusCode: {
+                401: function () {
+                    window.location.href = "@Url.Action("Index","Home")";
+                }
+            }
+        });
+    });
+</script> 
+

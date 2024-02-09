@@ -1,0 +1,35 @@
+﻿@model InterventWebApp.NotificationMessageModel
+<section class="msg-board-container">
+	<div class="msg-list-container">
+		<div class="msg-list-inner">
+			<ul>
+				@if (Model.NotificationMessage.Count > 0)
+				{
+					for (int i = 0; i < Model.NotificationMessage.Count; i++)
+					{
+							<li class="grid-x  align-justify">
+								<div class="cell medium-7">
+									<div class="msg-contact-detail">@Model.NotificationMessage[i].SubjectLine</div>
+								</div>
+								<div class="cell medium-5 small-text-left text-right">
+									<div class="msg-time"><span>@Model.NotificationMessage[i].Date</span></div>
+								</div>
+							</li>
+					}
+				}
+				else
+				{
+					<div class='no-msg-container'>
+						<div class='no-msg'>
+							<img src='~/Images/messages/no-msg.jpg'>
+							<h3>No Messages, Yet</h3>
+							<p>There are No Messages in your Inbox as yet!</p>
+							<p>You can start by creating a new message</p>
+							@*<button class='button' data-open='new-msg-modal' onclick='addNewMsg();' aria-controls='new-msg-modal' aria-haspopup='true' tabindex='0'>Create New</button>*@
+						</div>
+					</div>
+				}
+			</ul>
+		</div>
+	</div>
+</section>

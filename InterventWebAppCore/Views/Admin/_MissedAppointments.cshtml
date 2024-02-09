@@ -1,0 +1,242 @@
+﻿@model InterventWebApp.AppointmentsListModel
+
+<div class="grid-x grid-margin-x">
+    @if (Model.Appointments != null)
+    {
+        if (Model.Appointments.Where(x => Convert.ToDateTime(x.UTCDate) > DateTime.UtcNow && x.Active).Count() > 0)
+        {
+            <div class="cell">
+                <div class="appt-seperator">
+                    <span>Upcoming</span>
+                </div>
+            </div>
+            foreach (var apt in Model.Appointments.OrderBy(x => x.UTCDate).Where(x => Convert.ToDateTime(x.UTCDate) > DateTime.UtcNow && x.Active).ToList())
+            {
+                <div class="cell large-6">
+                    <div class="admin-cards meet-notification-card">
+                        <!-- <div class="card-main-info"> -->
+                        @*<span class="meet-notification">In 20 mins</span>*@
+                        <div class="card-header">
+                            <div class="profile-detail" data-equalizer-watch>
+                                <div class="profile-img">
+                                    <img src="@apt.ParticipantPic" alt="" />
+                                </div>
+                                <div class="profile-content">
+                                    <p><strong>@apt.UserName</strong></p>
+                                    <p>@apt.UserProgram</p>
+                                </div>
+                            </div>
+                            @*<div class="card-option">
+                                <div class="admin-profile-circle">
+                                    <div class="kit-progress-circle">
+                                        <div class="circle-graph" data-circle-graph data-percent="75">
+                                            <div class="circle-graph-progress">
+                                                <div class="circle-graph-progress-fill"></div>
+                                            </div>
+                                            <div class="circle-graph-percents">75%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                        </div>
+                        <!-- card header ends -->
+                        <div class="card-body">
+                            <div class="details-section-wrapper">
+                                <div class="detail-section">
+                                    <p class="section-title">Scheduled from</p>
+                                    <p>@apt.StartTime</p>
+                                </div>
+                                <div class="detail-section">
+                                    <p class="section-title">Duration</p>
+                                    <p>@apt.Minutes Minutes</p>
+                                </div>
+                            </div>
+                            <div class="status-tags">
+                                <span class="status-tag">Last Appointment on </span>
+                            </div>
+                        </div>
+                        <!-- card body ends -->
+                        @*<div class="card-additional-info">
+                            <p>Mark Appointment Status</p>
+                            <div class="button-group">
+                                <button class="button">Completed</button>
+                                <button class="button hollow">Missed</button>
+                            </div>
+                            <div class="info-footer">
+                                <a href="#" class="anchor-blue">Reschedule</a>
+                            </div>
+                        </div>*@
+
+                        <div class="card-footer">
+                            <span class="prof-number"><i class="fa fa-phone"></i>@apt.User.PhoneNumber</span>
+                            <a href="#" class="anchor-blue">Update</a>
+                        </div>
+                        <!-- card footer ends -->
+                    </div>
+                </div>
+            }
+        }
+
+        if (Model.Appointments.Where(x => !x.Active).Count() > 0)
+        {
+            <div class="cell">
+                <div class="appt-seperator">
+                    <span>Missed</span>
+                </div>
+            </div>
+
+            foreach (var apt in Model.Appointments.OrderBy(x => x.UTCDate).Where(x => !x.Active).ToList())
+            {
+                <div class="cell large-6">
+                    <div class="admin-cards meet-notification-card">
+                        <!-- <div class="card-main-info"> -->
+                        @*<span class="meet-notification">In 20 mins</span>*@
+                        <div class="card-header">
+                            <div class="profile-detail" data-equalizer-watch>
+                                <div class="profile-img">
+                                    <img src="@apt.ParticipantPic" alt="" />
+                                </div>
+                                <div class="profile-content">
+                                    <p><strong>@apt.UserName</strong></p>
+                                    <p>@apt.UserProgram</p>
+                                </div>
+                            </div>
+                            @*<div class="card-option">
+                                <div class="admin-profile-circle">
+                                    <div class="kit-progress-circle">
+                                        <div class="circle-graph" data-circle-graph data-percent="75">
+                                            <div class="circle-graph-progress">
+                                                <div class="circle-graph-progress-fill"></div>
+                                            </div>
+                                            <div class="circle-graph-percents">75%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                        </div>
+                        <!-- card header ends -->
+                        <div class="card-body">
+                            <div class="details-section-wrapper">
+                                <div class="detail-section">
+                                    <p class="section-title">Scheduled from</p>
+                                    <p>@apt.StartTime</p>
+                                </div>
+                                <div class="detail-section">
+                                    <p class="section-title">Duration</p>
+                                    <p>@apt.Minutes Minutes</p>
+                                </div>
+                            </div>
+                            <div class="status-tags">
+                                <span class="status-tag">Last Appointment on </span>
+                            </div>
+                        </div>
+                        <!-- card body ends -->
+                        @*<div class="card-additional-info">
+                            <p>Mark Appointment Status</p>
+                            <div class="button-group">
+                                <button class="button">Completed</button>
+                                <button class="button hollow">Missed</button>
+                            </div>
+                            <div class="info-footer">
+                                <a href="#" class="anchor-blue">Reschedule</a>
+                            </div>
+                        </div>*@
+
+                        <div class="card-footer">
+                            <span class="prof-number"><i class="fa fa-phone"></i>@apt.User.PhoneNumber</span>
+                            <a href="#" class="anchor-blue">Update</a>
+                        </div>
+                        <!-- card footer ends -->
+                    </div>
+                </div>
+            }
+        }
+
+        if (Model.Appointments.Where(x => Convert.ToDateTime(x.UTCDate) < DateTime.UtcNow && x.Active).Count() > 0)
+        {
+            <div class="cell">
+                <div class="appt-seperator">
+                    <span>Completed</span>
+                </div>
+            </div>
+
+            foreach (var apt in Model.Appointments.OrderBy(x => x.UTCDate).Where(x => Convert.ToDateTime(x.UTCDate) < DateTime.UtcNow && x.Active).ToList())
+            {
+                <div class="cell large-6">
+                    <div class="admin-cards meet-notification-card">
+                        <!-- <div class="card-main-info"> -->
+                        @*<span class="meet-notification">In 20 mins</span>*@
+                        <div class="card-header">
+                            <div class="profile-detail" data-equalizer-watch>
+                                <div class="profile-img">
+                                    <img src="@apt.ParticipantPic" alt="" />
+                                </div>
+                                <div class="profile-content">
+                                    <p><strong>@apt.UserName</strong></p>
+                                    <p>@apt.UserProgram</p>
+                                </div>
+                            </div>
+                            @*<div class="card-option">
+                                <div class="admin-profile-circle">
+                                    <div class="kit-progress-circle">
+                                        <div class="circle-graph" data-circle-graph data-percent="75">
+                                            <div class="circle-graph-progress">
+                                                <div class="circle-graph-progress-fill"></div>
+                                            </div>
+                                            <div class="circle-graph-percents">75%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                        </div>
+                        <!-- card header ends -->
+                        <div class="card-body">
+                            <div class="details-section-wrapper">
+                                <div class="detail-section">
+                                    <p class="section-title">Scheduled from</p>
+                                    <p>@apt.StartTime</p>
+                                </div>
+                                <div class="detail-section">
+                                    <p class="section-title">Duration</p>
+                                    <p>@apt.Minutes Minutes</p>
+                                </div>
+                            </div>
+                            <div class="status-tags">
+                                <span class="status-tag">Last Appointment on </span>
+                            </div>
+                        </div>
+                        <!-- card body ends -->
+                        @*<div class="card-additional-info">
+                            <p>Mark Appointment Status</p>
+                            <div class="button-group">
+                                <button class="button">Completed</button>
+                                <button class="button hollow">Missed</button>
+                            </div>
+                            <div class="info-footer">
+                                <a href="#" class="anchor-blue">Reschedule</a>
+                            </div>
+                        </div>*@
+
+                        <div class="card-footer">
+                            <span class="prof-number"><i class="fa fa-phone"></i>@apt.User.PhoneNumber</span>
+                            <a href="#" class="anchor-blue">Update</a>
+                        </div>
+                        <!-- card footer ends -->
+                    </div>
+                </div>
+            }
+        }
+    }
+    else
+    {
+        <div class="cell">
+			<div class="flex-container align-center-middle empty-appointment-container">
+				<div class="text-center">
+					<img src="~/Images/admin/empty-appointments.png" alt="" />
+					<p>You have no scheduled appointments on <span>@Model.Date.ToString("dd MMMM yyyy")</span></p>
+					<a href="@Url.Action("ParticipantAdvancedSearch", "Participant")" class="button">Schedule an Appointment</a>
+				</div>
+			</div>
+        </div>
+    }
+</div>

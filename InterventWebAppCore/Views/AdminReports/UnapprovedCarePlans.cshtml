@@ -1,0 +1,188 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+@model InterventWebApp.ReportSelectModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x scheduler-offset-small-only">
+                <div class="small-12 large-6 left cell">
+                    @Html.Partial("_ReportSelect", Model, new ViewDataDictionary(ViewData) { { "Kind", "UnapprovedCarePlans" } })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="panel filters">
+            <fieldset>
+                <div class="callout hide" id="alert-message1" data-closable>
+                    <div id="alert"></div>
+                    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <legend>Report Criteria</legend>
+                <div class="grid-x grid-padding-x">
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.portal, Model.PortalList, "--Select Portal--", new Dictionary<string, object> { { "required", "required" }, { "class", "primary-select" } })
+                        <small class="form-error">@string.Format(Translate.Message("L1895"), "Portal").</small>
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.AssessmentType, Model.AssessmentList, "--Select Assessment--", new Dictionary<string, object> { { "required", "required" }, { "class", "primary-select" } })
+                        <small class="form-error">@string.Format(Translate.Message("L1895"), "Assessment").</small>
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.UserStatus, Model.UserStautsList, "--Select Eligibility Stauts--", new Dictionary<string, object> { { "required", "required" }, { "class", "primary-select" } })
+                        <small class="form-error">@string.Format(Translate.Message("L1895"), "Assessment").</small>
+                    </div>
+                    <div class="small-12 medium-6 cell text-right">
+                        <button class="button" id="filter-careplan-data">
+                            <div class="loading-spinner hide" show-if-submitting></div>
+                            <i class="fa fa-filter"></i>
+                            Search
+                        </button>
+                        <button class="secondary-color small" id="download-log-data">
+                            <div class="loading-spinner hide" id="download-spinner"></div>
+                            <i class="fa fa-download"></i>
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="small-12 cell">
+            <div class="table-container">
+                <table class='table basic-table1' id="listReports"></table>
+            </div>
+        </div>
+        <div class="cell small-12">
+            <!-- pagination Start -->
+            <div class="pagination-area hide" id="pagination-centered">
+                <ul>
+                    <li id="numeric"></li>
+                </ul>
+                <!-- page-link Start -->
+                <div class="page-link">
+                    <label>@Translate.Message("L4041")</label>
+                    <div class="grid-x">
+                        <input type="text" id="jumptoPageNo">
+                        <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                    </div>
+                </div>
+                <!-- page-link End -->
+            </div>
+            <!-- pagination End -->
+        </div>
+    </div>
+</section>
+
+
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/downloadcsv.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 10;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    var download = false;
+    $(document).ready(function () {
+    @if (Model.tempData != null)
+    {
+        @:currentPage = @Model.tempData.page;
+        @:totalRecords = @Model.tempData.totalRecords;
+        @:$("#portal").val(@Model.tempData.portalId);
+        @:$("#AssessmentType").val(@Model.tempData.assessmentType);
+        @:$("#UserStatus").val("@Model.tempData.userStatus");
+        @:ListCarePlanReport();
+    }
+            if (window.performance.navigation.type == 1) {
+            window.location = "../AdminReports/UnapprovedCarePlans";
+        }
+    });
+    $('#filter-careplan-data').on('click', function () {
+        $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+        $('[show-if-submitting]').removeClass('hide');
+        startIndex = 0;
+        pageSize = 10;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        download = false;
+        ListCarePlanReport();
+    });
+    $('#download-log-data').on('click', function () {
+        $('#download-spinner').parent().prop('disabled', 'disabled');
+        $('#download-spinner').removeClass('hide');
+        download = true;
+        ListCarePlanReport();
+    });
+    function ListCarePlanReport() {
+        var poralId = $('#portal').val();
+        var assessmentType = $('#AssessmentType').val();
+        var userStatus = $('#UserStatus').val();
+        $.ajax({
+            url: "@Url.Action("UnapprovedCarePlanList", "AdminReports")",
+            data: { page: currentPage, pageSize: pageSize, totalRecords: totalRecords, poralId: poralId, assessmentType: assessmentType, userStatus: userStatus, download: download },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (download) {
+                    var filename = 'unapprovedcareplans_' + new Date().toLocaleDateString() + '.csv';
+                    downloadCSV(data.Records, filename);
+                    download = false;
+                }
+                else {
+                    totalRecords = data.TotalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    displayCarePlanReports(data);
+                    if (totalRecords <= 0) {
+                        $('#listReports').html("<center>No data were found.</center>");
+                    }
+                    AddPager();
+                    $('[show-if-submitting]').parent().prop('disabled', '');
+                    $('[show-if-submitting]').addClass('hide');
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListCarePlanReport();
+    }
+    function displayCarePlanReports(careplandata) {
+        var careplandata = careplandata.Records;
+        $('#listReports').html("");
+        var careplanhtml = "";
+        careplanhtml += "<thead><tr><th>UserId</th>";
+        careplanhtml += "<th>Name</th>";
+        careplanhtml += "<th>User Status</th>";
+        careplanhtml += "<th>Assessment Type</th>";
+        careplanhtml += "<th>Completed Date</th></tr></thead>";
+        var k = 0;
+        for (i in careplandata) {
+            var careplan = careplandata[i];
+            careplanhtml += "<tr><td><a style='text-decoration: underline;color:deepskyblue;' onclick='ViewParticipant(" + careplan.UserId + ")'>" + careplan.UserId + "</td>";
+            careplanhtml += "<td>" + careplan.UserName + "</td>";
+            careplanhtml += "<td>" + careplan.UserStatus + "</td>";
+            careplanhtml += "<td>" + careplan.AssessmentType + "</td>";
+            careplanhtml += "<td>" + careplan.CompletedDate + "</td></tr>";
+            k++;
+        }
+        $('#listReports').append(careplanhtml);
+    }
+
+    function ViewParticipant(Id) {
+        var link = '@Url.Action("ParticipantProfile", "Participant", new { Id = "PId", unapprovedCarePlan = true })';
+        window.location.href = link.replace("PId", Id)
+    }
+    function doPrint() {
+        window.print();
+    }
+</script>

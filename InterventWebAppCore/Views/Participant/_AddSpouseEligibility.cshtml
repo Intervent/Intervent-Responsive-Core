@@ -1,0 +1,218 @@
+﻿@using InterventWebApp;
+@model InterventWebApp.SpouseEligibilityModel
+<form id="frmAddSpouseEligibilityUser" data-abide novalidate class="new-search-form form-component add-spouse-details">
+	<div class="eligibility-tabs-container">
+		<div class="content is-active">
+			<div class="grid-x grid-margin-x">
+				<div class="cell small-12">
+					<h2>Add Spouse Eligibility Details</h2>
+				</div>
+
+			</div>
+			@Html.HiddenFor(m => m.PrimaryEligibilityId)
+			@Html.HiddenFor(m => m.EmployeeUniqueId)
+			<!--PERSONAL INFORMATION-->
+			<fieldset class="form-section">
+				<legend>Personal Information</legend>
+				<div class="grid-x grid-margin-x">
+					<div class="medium-12 cell">
+						<label>
+							<p>Unique ID : @Model.UniqueId</p>
+						</label>
+						@Html.HiddenFor(m => m.UniqueId)
+					</div>
+					<div class="medium-6 cell">
+						<label>
+							First Name :
+							@Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+							<small class="form-error">First name is required.</small>
+						</label>
+					</div>
+					<div class="medium-6 cell">
+						<label>
+							Last Name :
+							@Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+							<small class="form-error">Last name is required.</small>
+						</label>
+					</div>
+					<div class="medium-6 cell">
+						<label class="options-main-label">
+							Gender :
+						</label>
+						<div class="eligibility-radio-container flex-container">
+							<div class="tick-buttons radio-btn">
+								@Html.RadioButtonFor(model => model.Gender, 1, new Dictionary<string, object> { { "id", "genderMale"} }) 
+								<label for="genderMale">
+									Male
+									<span class="checkmark"></span>
+								</label>
+							</div>
+							<div class="tick-buttons radio-btn">
+								@Html.RadioButtonFor(model => model.Gender, 2, new Dictionary<string, object> { { "id", "genderFemale" } })
+								<label for="genderFemale">
+									Female
+									<span class="checkmark"></span>
+								</label>
+							</div>
+						</div>						
+					</div>
+					<div class="medium-6 cell">
+						<label>
+							DOB :
+							@Html.TextBoxFor(model => model.DOB, new Dictionary<string, object> { { "placeholder ", Model.DateFormat.ToUpper() }, { "class", "fdatepicker" }, { "required", "required" } })
+							<small class="form-error">DOB is required.</small>
+						</label>
+						<input id="tempDOB" type="hidden">
+					</div>
+					<div class="medium-6 cell">
+						<label class="options-main-label">
+							Email Address?
+						</label>
+						<div class="eligibility-radio-container flex-container">
+							<div class="tick-buttons radio-btn">
+								@Html.RadioButtonFor(m => m.hasEmail, true, new Dictionary<string, object> { { "class", "hasemail" }, { "id", "hasemail" } })
+								<label for="hasemail">
+									Yes
+									<span class="checkmark"></span>
+								</label>
+							</div>
+							<div class="tick-buttons radio-btn">
+								@Html.RadioButtonFor(m => m.hasEmail, false, new Dictionary<string, object> { { "class", "noemail" }, { "id", "noemail" } })
+								<label for="noemail">
+									No
+									<span class="checkmark"></span>
+								</label>
+							</div>
+						</div>						
+					</div>
+					<div class="medium-6 cell">
+						<label>
+							Home Phone :
+							@Html.EditorFor(model => model.HomeNumber, new { htmlAttributes = new { @class = "form-control" } })
+						</label>
+					</div>
+					<div class="medium-6 cell">
+						<label>
+							Email Address :
+							@Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+							<small class="form-error">Email is required.</small>
+						</label>
+					</div>
+					<div class="medium-6 cell">
+						<label>
+							Address :
+							@Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+							<small class="form-error">Address is required.</small>
+						</label>
+					</div>
+					<div class="medium-6 cell">
+						<label>
+							Address 2 :
+							@Html.EditorFor(model => model.Address2, new { htmlAttributes = new { @class = "form-control" } })
+						</label>
+					</div>
+					<div class="medium-6 cell">
+						<label>
+							City :
+							@Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+							<small class="form-error">City is required.</small>
+						</label>
+					</div>
+					<div class="medium-6 cell">
+						<label>
+							Country
+							@Html.DropDownListFor(m => m.Country, Model.Countries, "", new { @class = "form-control", @required = "required" })
+							<small class="form-error">Country is required.</small>
+						</label>
+					</div>
+					<div class="medium-6 cell">
+						<label>
+							State :
+							@Html.DropDownListFor(m => m.State, Model.States, "", new { @class = "form-control", @required = "required" })
+							<small class="form-error">State is required.</small>
+						</label>
+					</div>
+					<div class="medium-6 cell">
+						<label>
+							ZIP :
+							@Html.EditorFor(model => model.Zip, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+							<small class="form-error">ZIP is required.</small>
+						</label>
+					</div>
+				</div>
+				<div class="grid-x grid-margin-x">
+					<div class="cell new-button text-center">
+						<button class="button" type="submit" id="add-spouse-eligibility-button">Add Spouse Eligibility</button>
+					</div>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+    <a class="close-button" data-close>&#215;</a>
+</form>
+<script>
+    $("#DOB").on("change", function () {
+        $('#tempDOB').val(toSystemDateFormat($('#DOB').val()));
+    });
+    $('.noemail').on('click', function () {
+        var createdEmail = createmail($("#FirstName").val(), $("#LastName").val(), $("#UniqueId").val());
+        $("#Email").val(createdEmail);
+    });
+    $('.hasemail').on('click', function () {
+        $("#Email").val('');
+    });
+    $(document).ready(function () {
+        $('.fdatepicker').fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            disableDblClickSelection: true,
+            pickTime: false,
+            onRender: function (date) {
+                return date.valueOf() > Date.now() ? 'disabled' : '';
+            }
+        });
+    });
+    $("#add-spouse-eligibility-button").off('click');
+    $("#add-spouse-eligibility-button").on('click', function () {
+        $('#frmAddSpouseEligibilityUser').foundation();
+        $('#frmAddSpouseEligibilityUser').off('forminvalid.zf.abide');
+        $('#frmAddSpouseEligibilityUser').off('formvalid.zf.abide');
+        $('#frmAddSpouseEligibilityUser').on('forminvalid.zf.abide', function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+
+        }).on('formvalid.zf.abide', function () {
+            $('#DOB').val($('#tempDOB').val());
+            $.ajax({
+                url: "@Url.Action("AddSpouseEligibilityDetails", "Participant")",
+                data: $('#frmAddSpouseEligibilityUser').serialize(),
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    $('#add-spouse-eligibility').foundation('close');
+                    ListEligibility($("#UniqueId").val());
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            $('#DOB').val(moment($('#tempDOB').val(), "YYYY/MM/DD").format("@Model.DateFormat.ToUpper()"));
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        })
+    });
+    $('#Country').on('change', function () {
+        $("#State").empty();
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("ListStates", "Common")",
+            data: { CountryId: null, CountryCode: $('#Country').val() },
+            success: function (data) {
+                $("#State").append("<option value=''></option>");
+                for (i = 0; i < data.Records.length; i++) {
+                    $("#State").append("<option value=" + data.Records[i].Code + ">" + data.Records[i].Name + "</option>");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+</script>

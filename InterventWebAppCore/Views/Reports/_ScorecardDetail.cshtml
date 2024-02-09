@@ -1,0 +1,99 @@
+﻿@using InterventWebApp;
+@model InterventWebApp.ScorecardModel
+
+<h2 class="text-center">@Translate.Message("L230")</h2>
+<form data-abide="ajax" id="scorecard-form" novalidate="novalidate">
+    <div class="grid-container">
+        <div>
+            <h2 class="text-center">@Model.wellnessScoreInfo.newWellnessScore (@Translate.Message(Model.wellnessScoreInfo.wellnessHead))</h2>
+            @if (Model.wellnessScoreInfo.previousHraDate != null)
+            {
+                <h4 class="text-center">Your Wellness Score on (@CommonUtility.dateFormater(Model.wellnessScoreInfo.previousHraDate.Value, false, Model.DateFormat)) was : @Model.wellnessScoreInfo.previousnewWellnessScore (@Translate.Message(Model.wellnessScoreInfo.previousWellnessText))</h4>
+            }
+            <p>
+                @Translate.Message("L229")
+            </p>
+            <p>
+                @Translate.Message("L231")
+            </p>
+            <p>
+                @Translate.Message("L232")
+            </p>
+            <div class="small-12 cell">
+                <!--Personal History-->
+                <div class="grid-x grid-padding-x tile-item">
+                    <div><h3>@Translate.Message("L258")</h3></div>
+                    <div class="cell bg-wrapper tabular">
+                        @for (int i = 0; i < Model.PHistoryItems.Count; i++)
+                        {
+                            <div class="grid-x tabular-row @Model.PHistoryItems[i].riskClass" data-equalizer>
+                                <div class="cell small-6" data-equalizer-watch>@Model.PHistoryItems[i].Name</div>
+                                <div class="cell small-6 text-center risk-level" data-equalizer-watch>@Translate.Message(Model.PHistoryItems[i].riskText)</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!--Family History-->
+                <div class="grid-x grid-padding-x tile-item">
+                    <div><h3>@Translate.Message("L259")</h3></div>
+                        <div class="cell bg-wrapper tabular">
+                            @for (int i = 0; i < Model.FHistoryItems.Count; i++)
+                            {
+                                <div class="grid-x tabular-row @Model.FHistoryItems[i].riskClass" data-equalizer>
+                                    <div class="cell small-6" data-equalizer-watch>@Model.FHistoryItems[i].Name</div>
+                                    <div class="cell small-6 text-center risk-level" data-equalizer-watch>@Translate.Message(Model.FHistoryItems[i].riskText)</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                <!--Lifestyle Factors-->
+                <div class="grid-x grid-padding-x tile-item">
+                    <div><h3>@Translate.Message("L260")</h3></div>
+                    <div class="cell bg-wrapper tabular">
+                        @for (int i = 0; i < Model.LFactorsItems.Count; i++)
+                        {
+                            <div class="grid-x tabular-row @Model.LFactorsItems[i].riskClass" data-equalizer>
+                                <div class="cell small-6" data-equalizer-watch>@Model.LFactorsItems[i].Name</div>
+                                <div class="cell small-6 text-center risk-level" data-equalizer-watch>@Translate.Message(Model.LFactorsItems[i].riskText)</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!--Clinical Measurements-->
+                <div class="grid-x grid-padding-x tile-item">
+                    <div><h3>@Translate.Message("L261")</h3></div>
+                    <div class="cell bg-wrapper tabular">
+                        @for (int i = 0; i < Model.CMItems.Count; i++)
+                        {
+                            <div class="grid-x tabular-row @Model.CMItems[i].riskClass" data-equalizer>
+                                <div class="cell small-6" data-equalizer-watch>@Model.CMItems[i].Name</div>
+                                <div class="cell small-6 text-center risk-level" data-equalizer-watch>@Translate.Message(Model.CMItems[i].riskText)</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!--Preventive Exams/Immunizations-->
+                <div class="grid-x grid-padding-x tile-item">
+                    <div><h3>@Translate.Message("L262")</h3></div>
+                    <div class="cell bg-wrapper tabular">
+                        @for (int i = 0; i < Model.PEItems.Count; i++)
+                        {
+                            <div class="grid-x tabular-row @Model.PEItems[i].riskClass" data-equalizer>
+                                <div class="cell small-6" data-equalizer-watch>@Model.PEItems[i].Name</div>
+                                <div class="cell small-6 text-center risk-level" data-equalizer-watch>@Translate.Message(Model.PEItems[i].riskText)</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>
+<script>
+    setTimeout(function() {
+        $(document).foundation();
+    }, 1000);
+</script>

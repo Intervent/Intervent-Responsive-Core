@@ -1,0 +1,262 @@
+﻿@model InterventWebApp.RecommendationsModel
+@using InterventWebApp
+
+@{
+    ViewBag.Title = "RecommendationsDashboard";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main recommendations">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                @*<div class="action-plan-header">
+                    <h2>@Translate.Message("L695")</h2>
+                    <button class="button action-plan-print hide-for-print hide-for-small-only" onclick="doPrint();"><i class="fa fa-print"></i>@Translate.Message("L205")</button>
+                </div>*@
+                <div class="panel">
+                    <p>
+                        @Translate.Message("L696") <a style='color:deepskyblue' href='@Url.Action("ReportsDashboard", "Reports")#mrf'>@Translate.Message("L697")</a>.
+                    </p>
+                    <p>
+                        @Translate.Message("L10")
+                    </p><p>
+                        @Translate.Message("L1005")
+                    </p>
+                    @if (Model.pregnant == 1)
+                    {
+                        <p>
+                            @Translate.Message("L2020")
+                        </p>
+                    }
+                    @if (CommonUtility.GetAge(Convert.ToDateTime(Model.dob)) < 18)
+                    {
+                        <p>
+                            @Translate.Message("L3688")
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-padding-y cards">
+            @if (Model.carePlan)
+            {
+                <div class="small-12 medium-6 large-4 cell">
+                    <a href="#" data-open="summary-care-plans" data-modal-path="@Html.Raw(Url.Action("SummaryCarePlan", "Reports"))">
+                        <div class="recommendation-item pink">
+                            <div class="slider">&nbsp;</div>
+                            <div><i class="fa fa-list-alt"></i></div>
+                            <div class="title">@Translate.Message("L4557")</div>
+                        </div>
+                    </a>
+                </div>
+            }
+            <div class="small-12 medium-6 large-4 cell">
+                <a href="#" data-open="exercise-rec" data-modal-path="@Html.Raw(Url.Action("ExerciseRecommendation", "Reports", new { fromKit = false}))">
+                    <div class="recommendation-item blue">
+                        <div class="slider">&nbsp;</div>
+                        <div><i class="fa fa-bicycle"></i></div>
+                        <div class="title">@Translate.Message("L271")</div>
+                    </div>
+                </a>
+            </div>
+            <div class="small-12 medium-6 large-4 cell">
+                <a href="#" data-open="nutrition-rec" data-modal-path="@Html.Raw(Url.Action("NutritionRecommendation", "Reports"))">
+                    <div class="recommendation-item orange">
+                        <div class="slider">&nbsp;</div>
+                        <div><i class="fa fa-cutlery"></i></div>
+                        <div class="title">@Translate.Message("L272")</div>
+                    </div>
+                </a>
+            </div>
+            <div class="small-12 medium-6 large-4 cell">
+                <a href="#" data-open="supplement-rec" data-modal-path="@Html.Raw(Url.Action("SupplementRecommendation", "Reports"))">
+                    <div class="recommendation-item green">
+                        <div class="slider">&nbsp;</div>
+                        <div><i class="fa fa-plus-square"></i></div>
+                        <div class="title">@Translate.Message("L1014")</div>
+                    </div>
+                </a>
+            </div>
+            <div class="small-12 medium-6 large-4 cell">
+                <a href="#" data-open="stress-rec" data-modal-path="@Html.Raw(Url.Action("StressRecommendation", "Reports"))">
+                    <div class="recommendation-item purple">
+                        <div class="slider">&nbsp;</div>
+                        <div><i class="fa fa-leaf"></i></div>
+                        <div class="title">@Translate.Message("L1058")</div>
+                    </div>
+                </a>
+            </div>
+            <div class="small-12 medium-6 large-4 cell">
+                <a href="#" data-open="tobacco-rec" data-modal-path="@Html.Raw(Url.Action("TobaccoRecommendation", "Reports"))">
+                    <div class="recommendation-item pink">
+                        <div class="slider">&nbsp;</div>
+                        <div><i class="fa fa-exclamation-triangle"></i></div>
+                        <div class="title">@Translate.Message("L1060")</div>
+                    </div>
+                </a>
+            </div>
+            <div class="small-12 medium-6 large-4 cell">
+                <a href="#" data-open="exams-rec" data-modal-path="@Html.Raw(Url.Action("ExamsRecommendation", "Reports"))">
+                    <div class="recommendation-item orange">
+                        <div class="slider">&nbsp;</div>
+                        <div><i class="fa fa-thumb-tack"></i></div>
+                        <div class="title">@Translate.Message("L1059") </div>
+                    </div>
+                </a>
+            </div>
+            <div class="small-12 medium-6 large-4 cell">
+                <a href="#" data-open="medication-rec" data-modal-path="@Html.Raw(Url.Action("MedicationRecommendation", "Reports"))">
+                    <div class="recommendation-item blue">
+                        <div class="slider">&nbsp;</div>
+                        <div><i class="fa fa-medkit"></i></div>
+                        <div class="title">@Translate.Message("L1061")</div>
+                    </div>
+                </a>
+            </div>
+            <div class="small-12 medium-6 large-4 cell">
+                <a href="#" data-open="referral-rec" data-modal-path="@Html.Raw(Url.Action("Referrals", "Reports"))">
+                    <div class="recommendation-item purple">
+                        <div class="slider">&nbsp;</div>
+                        <div><i class="fa fa-user-md"></i></div>
+                        <div class="title">@Translate.Message("L1062")</div>
+                    </div>
+                </a>
+            </div>
+            @if (Model.carePlan)
+            {
+                <div class="small-12 medium-6 large-4 cell">
+                    <a href="#" data-open="key-action-steps" data-modal-path="@Html.Raw(Url.Action("KeyActionSteps", "Reports", new { hraid = Model.hraId}))">
+                        <div class="recommendation-item cyan">
+                            <div class="slider">&nbsp;</div>
+                            <div><i class="fa fa-key"></i></div>
+                            <div class="title">@Translate.Message("L4556")</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="small-12 medium-6 large-4 cell">
+                    <a href="@Html.Raw(Url.Action("PrintableDetailedPlan", "Reports" ))">
+                        <div class="recommendation-item green">
+                            <div class="slider">&nbsp;</div>
+                            <div><i class="fa fa-print"></i></div>
+                            <div class="title">@Translate.Message("L4555")</div>
+                        </div>
+                    </a>
+                </div>
+            }
+            <div class="small-12 medium-6 large-4 cell">
+                &nbsp;
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="nutrition-rec" class="reveal large rec-modal nutrition" data-reveal>
+</div>
+
+<div id="summary-care-plans" class="reveal large rec-modal care-plan" data-reveal>
+</div>
+
+<div id="exercise-rec" class="reveal large rec-modal exercise" data-reveal>
+</div>
+
+<div id="rpe" class="reveal large rec-modal exercise" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    @Html.Partial("_RPE")
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div id="referral-rec" class="reveal large rec-modal" data-reveal>
+</div>
+<div id="key-action-steps" class="reveal large" data-reveal>
+</div>
+<div id="supplement-rec" class="reveal large rec-modal" data-reveal>
+</div>
+
+<div id="stress-rec" class="reveal large rec-modal" data-reveal>
+</div>
+
+<div id="medication-rec" class="reveal large rec-modal" data-reveal>
+</div>
+
+<div id="tobacco-rec" class="reveal large rec-modal" data-reveal>
+</div>
+
+<div id="exams-rec" class="reveal large rec-modal" data-reveal>
+</div>
+
+<!--Intro Modal-->
+<div id="what-is-recommendations" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    @{ string linkMessage;}
+    @if (string.IsNullOrEmpty(Model.nextApptDate))
+    {
+        linkMessage = Translate.Message("L1009");
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <h2>@Translate.Message("L1063")</h2>
+                <p>
+                    <strong>
+                        @Translate.Message("L1006")
+                    </strong>
+                </p>
+                <p>
+                    @Translate.Message("L1007")
+                </p>
+                <p>
+                    @Html.Raw(@Translate.Message("L1008"))
+                </p>
+            </div>
+        </div>
+
+        <div id="loadProgramOptions"> </div>
+    }
+    else
+    {
+        linkMessage = Translate.Message("L1657");
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <p>
+                    @Translate.Message("L1658") @Model.nextApptDate. @Translate.Message("L1659")
+                </p>
+            </div>
+        </div>
+    }
+    <p class="text-center underline">
+        <a href="../Participant/Stream?ForceParticipant=true">@linkMessage</a>
+    </p>
+</div>
+
+<script>
+    $(document).ready(function () {
+        @if(!Model.hasProgram)
+        {
+            <text>
+            $('#what-is-recommendations').foundation('open')
+            </text>
+        }
+        loadProgramOptions();
+    });
+
+    function loadProgramOptions() {
+        var url = "";
+        if ('@Model.coachingProgram' == "True" && ('@string.IsNullOrEmpty(Model.userStatus)' == 'False' || '@Model.userStatus' != "T"))
+            url = "@Url.Action("ProgramOptions", "Participant", new { Coaching = true })";
+        else
+            url = "@Url.Action("ProgramOptions", "Participant", new { Coaching = false })";
+        $.ajax({
+            type: "POST",
+            contentType: 'application/json, charset=utf-8',
+            url: url,
+            success: function (data) {
+                $('#loadProgramOptions').html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function doPrint() {
+        window.open("@Url.Action("PrintableReports", "Reports")" + '?view=MyActionPlan&generatePDF=false');
+    }
+</script>

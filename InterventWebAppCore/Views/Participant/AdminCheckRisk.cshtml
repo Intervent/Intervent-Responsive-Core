@@ -1,0 +1,13 @@
+﻿@using InterventWebApp
+@model InterventWebApp.CheckRiskModel
+@{
+    ViewBag.Title = "CheckRisk";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@Html.Partial("_WhatIf", Model)
+<script>
+    //preload heart age
+    $("#option-heart-age").trigger("click");
+</script>
+
+

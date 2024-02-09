@@ -1,0 +1,574 @@
+﻿@model InterventWebApp.AdminDashboardModel
+
+@{
+    ViewBag.Title = "CoachDashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<section class="main stream">
+    <div class="grid-container admin-dashboard">
+        <div class="grid-x grid-margin-y">
+            <div id="admin-menu" class="cell large-3 health-link-container show-for-large"></div>
+            <!--Health container ends-->
+
+            <div id="mydashboard" class="cell large-6 medium-7 feeds-container">
+                <div class="dashboard-main-section">
+                    <div class="section-heading">
+                        <h5 id="welcome-msg"></h5>
+                        @*<p>Hi Jessica! You have 2 new participants +2 more updates</p>*@
+                    </div>
+                    @if (Model.IsAdmin)
+                    {
+                        <div class="section-admin-slider">
+                            <div class="admin-slider-item">
+                                <div class="admin-info-card">
+                                    <div class="info-card-body flex-container ">
+                                        <img src="~/Images/participant/icon-card-prog.svg" alt="">
+                                        <div>
+                                            <p>@Model.DashBoardDetails.ProgramsCount</p>
+                                            <span>Programs</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-card-footer">
+                                        <p>13 new programs</p>
+                                        <span>in the past 3 months</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="admin-slider-item">
+                                <div class="admin-info-card">
+                                    <div class="info-card-body flex-container ">
+                                        <img src="~/Images/participant/icon-card-report.svg" alt="">
+                                        <div>
+                                            <p>@Model.DashBoardDetails.ReportsCount</p>
+                                            <span>Reports</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-card-footer">
+                                        <p>75%</p>
+                                        <span>Reports generated before time </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="admin-slider-item">
+                                <div class="admin-info-card">
+                                    <div class="info-card-body flex-container ">
+                                        <img src="~/Images/participant/icon-card-org.svg" alt="">
+                                        <div>
+                                            <p>@Model.DashBoardDetails.OrganizationsCount</p>
+                                            <span>Organizations</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-card-footer">
+                                        <p>25 New organizations</p>
+                                        <span>In 3 months </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-statistics participant-container">
+                            <section class="section-heading">
+                                <h5>Your Statistics</h5>
+                                <select name="sort-by" id="sort-date" class="primary-select">
+                                    <option value="0">Last Month</option>
+                                    <option value="2">Last Week</option>
+                                    <option value="3">Last Year</option>
+                                </select>
+                            </section>
+
+                            <section class="admin-dashboard-tabs">
+                                <ul class="tabs rounded-tabs status-tabs" data-tabs id="portal-details-tabs">
+                                    <li class="tabs-title is-active">
+                                        <a href="#dashboard-enrolled-clients" id="tabEnrolledClient" aria-selected="true">Enrolled Clients</a>
+                                    </li>
+                                    <li class="tabs-title">
+                                        <a href="#dashboard-assessment" id="tabAssessment" data-tabs-target="dashboard-assessment">Assessments</a>
+                                    </li>
+                                    <li class="tabs-title">
+                                        <a href="#dashboard-progstatus" id="tabProgStatus" data-tabs-target="dashboard-progstatus">Programs status</a>
+                                    </li>
+                                </ul>
+                            </section>
+
+                            <section class="section-client-highlight">
+                                <div>
+                                    <p>@Model.DashBoardDetails.NewClients</p>
+                                    <span>New Clients</span>
+                                </div>
+                                <div>
+                                    <p>@Model.DashBoardDetails.ActiveClients</p>
+                                    <span>Active Clients</span>
+                                </div>
+                                <div>
+                                    <p>@Model.DashBoardDetails.Coaches</p>
+                                    <span>Coaches</span>
+                                </div>
+                            </section>
+
+                            <section class="section-performance-graph">
+                                <section class="section-heading">
+                                    <p>Last one year performance</p>
+                                    <select name="sort-by" id="sort-year" class="primary-select">
+                                        <option value="0">2020-2021</option>
+                                        <option value="2">2019-2020</option>
+                                        <option value="3">2018-2019</option>
+                                    </select>
+                                </section>
+
+                                <div class="performance-graph" id="performance-graph"></div>
+                            </section>
+                        </div>
+                    }
+                    else if (Model.IsCoach)
+                    {
+                        <div class="section-tabs">
+                            <div class="switch slider-switch">
+                                <input type="checkbox" name="appt-enroll" id="appt-enroll" class="switch-input" value="">
+                                <label class="switch-paddle" for="appt-enroll">
+                                    <span class="switch-active" aria-hidden="true">Appointments</span>
+                                    <span class="switch-inactive" aria-hidden="true">Recently Enrolled</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="section-cal">
+                            <div class="appt-calendar grid-x admin-appt-calendar" id="calendar">
+                                <div class="cell">
+                                    <button onclick="ChangeDate(selectedDate.setDate(selectedDate.getDate() - 1))" type="button" class="secondary small nav lnav"></button>
+                                    <span class="month-picker-label" data-toggle="calendar-dropdown"></span>
+                                    <button onclick="ChangeDate(selectedDate.setDate(selectedDate.getDate() + 1))" type="button" class="secondary small nav rnav"></button>
+                                </div>
+                                <div class="dropdown-pane cell medium-8 small-10 calendar-dropdown" id="calendar-dropdown" data-dropdown data-auto-focus="true" data-position="bottom" data-alignment="center" data-v-offset="-31" data-close-on-click="true">
+                                    <div>
+                                        <button onclick="ChangeDate(selectedDate.setMonth(selectedDate.getMonth() - 1))" type="button" class="secondary small nav lnav"></button>
+                                        <span class="month-picker-label" data-toggle=""></span>
+                                        <button onclick="ChangeDate(selectedDate.setMonth(selectedDate.getMonth() + 1))" type="button" class="secondary small nav rnav"></button>
+                                    </div>
+                                    <div>
+                                        <ul class="grid-x small-up-7 hide-loader monthly-calendar" id="calendar-month">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="myappointments"></div>
+                    }
+                    else
+                    {
+                        <div class="section-tabs">
+                            <div class="switch slider-switch">
+                                <input type="checkbox" name="appt-switch" id="appt-switch" class="switch-input" value="">
+                                <label class="switch-paddle" for="appt-switch">
+                                    <span class="switch-active" aria-hidden="true">Missed Appointments</span>
+                                    <span class="switch-inactive" aria-hidden="true">Follow-Up Calls</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="missedappointments" class="section-cards-container" data-equalizer data-equalize-on="medium" data-equalize-by-row="true"></div>
+                    }
+                </div>
+            </div>
+            <!--Feeds container ends-->
+
+            <div class="cell large-3 medium-5 participant-container">
+                <section>
+                    <div class="section-heading">
+                        <h5>Participant</h5>
+                        <select name="sort-by" id="sort-participant" class="primary-select">
+                            <option value="0">Sort by</option>
+                            @foreach (var msg in Model.ContactRequirements)
+                            {
+                                <option value="@msg.Value">@msg.Text</option>
+                            }
+                        </select>
+                    </div>
+                </section>
+                <div id="participantResult" class="participant-result-list"></div>
+            </div>
+            <!--Reminder & Ranks container ends-->
+        </div>
+    </div>
+</section>
+
+@Html.Partial("_TimeTracker")
+
+<!--Cancel Appointment-->
+<div id="cancel-appointment" class="reveal medium" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+
+<!--Appointment No Show-->
+@Html.Partial("_RevertNoShow")
+
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/slick.min.js")"></script>
+<script>
+    var selectedDate = new Date();
+    var pageSize = 5;
+    var currentPage = 0;
+    var totalPages = 0;
+    var SearchText = "";
+    var OrganizationId = 0;
+    var CoachId = 0;
+    var ProgramType = null;
+    var ContactType = 0;
+    var FilterText = "";
+    var windowSize;
+    var weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var dDay, dMonth, dYear;
+    var recentlyEnrolled = false;
+    var isCoach = '@Model.IsCoach' == 'True' ? true : false;
+
+	$(document).ready(function () {
+
+        var today = new Date();
+        if (today.getHours() < 12) {
+            $("#welcome-msg").html("Good Morning, " + "@Model.FirstName");
+        } else if (today.getHours() < 18) {
+            $("#welcome-msg").html("Good Afternoon, " + "@Model.FirstName");
+        } else {
+            $("#welcome-msg").html("Good Evening, " + "@Model.FirstName");
+        }
+
+        $("#sort-participant").on("change", function () {
+            currentPage = 0;
+            ContactType = $("#sort-participant").val();
+            FilterText = $("#sort-participant option:selected").text();
+            ParticipantSearch();
+		});
+
+		$("#appt-enroll").on("change", function () {
+            recentlyEnrolled = !recentlyEnrolled;
+            if (recentlyEnrolled)
+                GetRecentlyEnrolledUsers();
+            else
+                GetAppointments();
+        });
+
+        if (isCoach) {
+            LoadCalendar();
+            GetAppointments();
+        } else {
+            GetMissedAppointments();
+        }
+        ParticipantSearch();
+
+        @*$("[data-circle-graph]").each(function () {
+            var $graph = $(this),
+                percent = parseInt($graph.data('percent'), 10),
+                deg = 360 * percent / 100;
+            if (percent > 50) {
+                $graph.addClass('gt-50');
+            }
+            $graph.find('.circle-graph-progress-fill').css('transform', 'rotate(' + deg + 'deg)');
+            if ($graph.parents('div#past').length == 0) {
+                if (percent == 100) {
+                    $(this).parents("li").addClass("hide");
+                }
+                else {
+                    $(this).closest(".kit-category").find("h5").removeClass("hide");
+                }
+            }
+        });*@
+
+        $(document).foundation();
+
+        $('ul.monthly-calendar li').on("click", function () {
+            $('#calendar-dropdown').foundation('close');
+        });
+
+        $(".section-admin-slider").slick({
+            arrows: false,
+            dots: true,
+            infinite: false,
+            speed: 300,
+            slidesToShow: 2,
+            slidesToScroll: 1,
+            responsive: [
+                {
+                    breakpoint: 1023,
+                    settings: {
+                        slidesToShow: 1,
+                    }
+                }
+                // You can unslick at a given breakpoint now by adding:
+                // settings: "unslick"
+                // instead of a settings object
+            ]
+        });
+
+		SetSideBar();
+
+        @*var chart = am4core.create("performance-graph", am4charts.XYChart);
+        chart.data = [{
+            "month": "Jan",
+            "value": 38
+        }, {
+            "month": "Feb",
+            "value": 42
+        }, {
+            "month": "March",
+            "value": 58
+        }, {
+            "month": "April",
+            "value": 100
+        }, {
+            "month": "May",
+            "value": 75
+        }, {
+            "month": "June",
+            "value": 23
+        }, {
+            "month": "July",
+            "value": 79
+        }, {
+            "month": "Aug",
+            "value": 15
+        }, {
+            "month": "Sep",
+            "value": 50
+        }, {
+            "month": "Oct",
+            "value": 45
+        }, {
+            "month": "Nov",
+            "value": 35
+        }, {
+            "month": "Dec",
+            "value": 60
+        }];
+
+        // Create axes
+        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        // categoryAxis.startLocation = 0.5;
+        // categoryAxis.endLocation = 0.4;
+        categoryAxis.renderer.grid.template.disabled = true;
+        categoryAxis.renderer.labels.template.fill = am4core.color("#999999");
+        categoryAxis.renderer.labels.template.rotation = 45;
+        categoryAxis.renderer.labels.template.horizontalCenter = "right";
+        categoryAxis.renderer.labels.template.verticalCenter = "middle";
+        categoryAxis.dataFields.category = "month";
+
+        // Create value axis
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.min = 0;
+        valueAxis.renderer.grid.template.disabled = true;
+        valueAxis.renderer.labels.template.fill = am4core.color("#999999");
+        valueAxis.renderer.line.strokeOpacity = 1;
+        valueAxis.renderer.line.strokeWidth = 2;
+        valueAxis.renderer.line.stroke = am4core.color("#E6E6E6");
+
+        // Create series
+        var columnSeries = chart.series.push(new am4charts.ColumnSeries());
+        columnSeries.dataFields.valueY = "value";
+        columnSeries.dataFields.categoryX = "month";
+        columnSeries.stroke = am4core.color("#AAD4D9");
+        columnSeries.fill = am4core.color("#AAD4D9");
+        columnSeries.fillOpacity = 1;
+
+        /* Add a tooltip to series */
+        columnSeries.columns.template.tooltipText = "Month: {categoryX}\nValue: {valueY}";
+        columnSeries.columns.template.fill = am4core.color("#AAD4D9"); // fill
+        columnSeries.tooltip.background.fill = am4core.color("#AAD4D9");
+
+        chart.cursor = new am4charts.XYCursor();*@
+    });
+
+    function ChangeDate(date) {
+        selectedDate = new Date(date);
+        LoadCalendar();
+        GetAppointments();
+    }
+
+	function ParticipantSearch() {
+		$('#participantResult').html('<div id="loader" class="section-loader"></div>');
+        var request = {};
+        var search = {
+            'SearchText': SearchText,
+            'OrganizationId': OrganizationId,
+            'CoachId' : CoachId,
+            'ProgramType': ProgramType,
+            'ContactRequirement': ContactType,
+            'Page': currentPage,
+            'PageSize': pageSize
+        };
+        request = (search);
+        var strData = JSON.stringify(request);
+        $.ajax({
+            url: "@Url.Action("ParticipantSearch", "Admin")",
+            data: strData,
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#participantResult').html(data);
+            },
+            complete: function () {
+                if ($('#filter-text').length != 0)
+                    $('#filter-text').html(FilterText);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function ViewParticipant(Id) {
+        var link = '@Url.Action("ParticipantProfile", "Participant", new { Id = "PId" })';
+        window.location.href = link.replace("PId", Id)
+    }
+
+    function LoadCalendar() {
+        $("#calendar-month").html("").removeClass("hide-loader");
+        var sDay = selectedDate.getDate();
+        var sMonth = selectedDate.getMonth();
+        var sYear = selectedDate.getFullYear();
+        dDay = new Date().getDate();
+        dMonth = new Date().getMonth();
+        dYear = new Date().getFullYear();
+        var dWeekDayOfMonthStart = new Date(sYear, sMonth, 1).getDay();
+        var dLastDayOfMonth = new Date(sYear, sMonth + 1, 0).getDate();
+        $('.month-picker-label').html(sDay + ' ' + months[sMonth] + ' ' + sYear + '<img src="/Images/admin/calendar-blue.svg">');
+        for (var i = 0; i < weekDays.length; i++) {
+            $("#calendar-month").append("<li class='cell day-label'>" + weekDays[i] + "</li>");
+        }
+        var day = 1;
+        var html = "";
+        var totalDays = getWeeksInMonth(dMonth, dYear) * 7;
+        for (var i = 0; i < totalDays; i++) {
+            var date = "\"" + sYear + "-" + (sMonth + 1) + "-" + day + "\"";
+            if (i < dWeekDayOfMonthStart) {
+                html = html + "<li class='cell grayed-out'><a><span class='date'></span></a></li>";
+            }
+            else if (day <= dLastDayOfMonth) {
+                if (day == sDay) {
+                    html = html + "<li class='cell today available'><a onclick='ChangeDate(" + date + ")' class='select-day'> <span class='date'>" + day++ + "</span></a></li>";
+                }
+                else if (day > dDay) {
+                    html = html + "<li class='cell available'><a onclick='ChangeDate(" + date + ")'><span class='date'>" + day++ + "</span></a></li>";
+                }
+                else {
+                    html = html + "<li class='cell available'><a onclick='ChangeDate(" + date + ")'><span class='date'>" + day++ + "</span></a></li>";
+                }
+            }
+            else {
+                html = html + "<li class='cell grayed-out'><a><span class='date'></span></a></li>";
+            }
+        }
+        $("#calendar-month").append(html).addClass("hide-loader");
+    }
+
+    function SetSideBar() {
+        windowSize = $(window).width();
+        if (windowSize <= 640) {
+			$('article.accordion').removeAttr('disabled');
+			$('article.accordion .accordion-item:not(first-child)').removeClass('is-active');
+            $('article.accordion').foundation();
+        }
+    }
+
+    function getWeeksInMonth(month, year) {
+        var weeks = 0,
+            firstDate = new Date(year, month, 1),
+            lastDate = new Date(year, month + 1, 0),
+            numDays = lastDate.getDate();
+
+        var start = 1;
+        var end = 7 - firstDate.getDay();
+        while (start <= numDays) {
+            weeks++;
+            start = end + 1;
+            end = end + 7;
+            if (end > numDays)
+                end = numDays;
+        }
+        return weeks;
+    }
+
+    function UpdateAppointmentUI() {
+        GetAppointments();
+    }
+
+    function GetAppointments() {
+        $('#calendar').removeClass("hide");
+		$('#myappointments').html('<div id="loader" class="section-loader"></div>');
+        var startDay = selectedDate;
+        var endDate = new Date(startDay);
+        endDate.setDate(startDay.getDate() + 1);
+        var request = {};
+        var search = {
+            'startDate': startDay.toISOString(),
+            'endDate': endDate.toISOString(),
+			'recentlyEnrolled': recentlyEnrolled
+        };
+        request = (search);
+        var strData = JSON.stringify(request);
+        $.ajax({
+            url: "@Url.Action("GetAppointments", "Admin")",
+            data: strData,
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#myappointments').html(data);
+            },
+            complete: function () {
+				$("[data-dropdown]").foundation();
+				$("[data-open]").on('click', function (e) {
+					showmodal($(this), e)
+				});
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+           // RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function GetRecentlyEnrolledUsers() {
+        $('#calendar').addClass("hide");
+        $('#myappointments').html('<div id="loader" class="section-loader"></div>');
+        $.ajax({
+            url: "@Url.Action("RecentlyEnrolledUsers", "Admin")",
+            type: 'POST',
+            success: function (data) {
+                $('#myappointments').html(data);
+            },
+            complete: function () {
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+        });
+    }
+
+    function GetMissedAppointments() {
+		$('#missedappointments').html('<div id="loader" class="section-loader"></div>');
+        var startDay = selectedDate;
+        var endDate = new Date(startDay);
+        endDate.setDate(startDay.getDate() + 1);
+        var request = {};
+        var search = {
+            'startDate': startDay.toISOString(),
+            'endDate': endDate.toISOString()
+        };
+        request = (search);
+        var strData = JSON.stringify(request);
+        $.ajax({
+            url: "@Url.Action("MissedAppointments", "Admin")",
+            data: strData,
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#missedappointments').html(data);
+            },
+            complete: function () {
+				$("[data-dropdown]").foundation();
+				$("[data-open]").on('click', function (e) {
+					showmodal($(this), e)
+				});
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+           // RedirectToErrorPage(jqXHR.status);
+        });
+    }
+</script>

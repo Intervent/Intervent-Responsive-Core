@@ -1,0 +1,219 @@
+﻿@using InterventWebApp
+<section class="main search-participants">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <h2>@Translate.Message("L503")</h2>
+            </div>
+        </div>
+        <div class="filters grid-x grid-margin-x">
+            <div class="small-12 medium-4 cell">
+                <select id="BPdays" onchange="daysOptions()">
+                    <option>--@Translate.Message("L421")--</option>
+                    <option value="90">@Translate.Message("L2739")</option>
+                    <option value="30">@Translate.Message("L2740")</option>
+                    <option value="7">@Translate.Message("L2741")</option>
+                    <option value="2">@Translate.Message("L2742")</option>
+                    <option value="1">@Translate.Message("L2743")</option>
+                    <option value="0" selected="selected">@Translate.Message("L2744")</option>
+
+                </select>
+            </div>
+            <div class="small-12 medium-4 cell">
+                <input type="text" placeholder="From" id="BPStartDate" name="BPStartDate" value="@DateTime.Now.AddDays(-180).ToString("MM/dd/yyyy")">
+            </div>
+            <div class="small-12 medium-4 cell">
+                <input type="text" placeholder="To" id="BPEndDate" name="BPEndDate" value="@DateTime.Now.ToString("MM/dd/yyyy")">
+            </div>
+            <div class="small-12 medium-6 cell">
+                <button class="secondary-color button small" id="filter-bloodpressure-data">
+                    <div class="loading-spinner hide" show-if-submitting></div>
+                    <i class="fa fa-filter"></i>
+                    @Translate.Message("L963")
+                </button>
+            </div>
+            <div class="cell">
+                <div id="BP-results"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>
+
+<script src="@Url.Content("~/Scripts/amcharts/gauge.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts/plugins/responsive/responsive.min.js")"></script>
+<script>
+    $(document).ready(function () {
+        $("#BPStartDate").fdatepicker({
+            endDate: new Date()
+        }).on('change', function (selected) {
+            var endDate = new Date($("#BPEndDate").val());
+            var minDate = new Date($("#BPStartDate").val());
+            if (endDate < minDate) {
+                $('#BPEndDate').fdatepicker('setDate', minDate);
+            }
+            $('#BPEndDate').fdatepicker('setStartDate', minDate);
+        });
+        $("#BPEndDate").fdatepicker({
+            endDate: new Date()
+        });
+    });
+        function daysOptions() {
+            if ($("#BPdays").val() == 0) {
+                $("#BPStartDate").val("@DateTime.Now.AddDays(-180).ToString("MM/dd/yyyy")");
+                $("#BPEndDate").val("@DateTime.Now.ToString("MM/dd/yyyy")");
+                $('#BPEndDate').fdatepicker('setStartDate', new Date($("#BPStartDate").val()));
+                $("#BPStartDate").removeAttr('readonly');
+                $("#BPEndDate").removeAttr('readonly');
+        }
+        else {
+                $("#BPStartDate").val("");
+                $("#BPEndDate").val("");
+                $("#BPStartDate").attr('readonly', 'readonly');
+                $("#BPEndDate").attr('readonly', 'readonly');
+        }
+    }
+
+        $("#filter-bloodpressure-data").click(function () {
+            $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+            $('[show-if-submitting]').removeClass('hide');
+            var StartDate = $("#BPStartDate").val();
+            var EndDate = $("#BPEndDate").val();
+            var Days = $("#BPdays").val();
+         $.ajax({
+            url: "@Url.Action("ListBiometricsData", "Validic")",
+            data: { externalId: $("#ExternalId").val(), Days: Days, StartDate: StartDate, EndDate: EndDate },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#BP-results').html("");
+                if (data != null && data.Record != null) {
+                    $('#BP-results').show();
+                    var SystolicHtml = "";
+                    var SystolicDiv = "", SystolicName = ""; comparesign = ">=";
+                    var Biometrics = data.Record;
+                    if (Biometrics.SystolicCount > 0) {
+                    SystolicHtml += "<div class='grid-x grid-margin-x'><div class='small-12 cell'><h4>@Translate.Message("L157").Substring(0, @Translate.Message("L157").IndexOf('('))</h4></div></div>";
+                    if (Biometrics.recentDate != null) {
+                        var date = new Date(Biometrics.recentDate);
+                        SystolicHtml += "<span>(@Translate.Message("L2755"); " + date.toLocaleDateString() + ")<\span>";
+                    }
+                    SystolicDiv = "Systolic-chart";
+                    SystolicName = "Systolic Chart";
+                    SystolicHtml += "<div class='grid-x grid-margin-x chart-container'><div class='small-12 medium-6 cell'><div id='Systolic-chart' style='width:100%;height:250px;'></div></div><div class='small-12 medium-6 cell'>";
+                    SystolicHtml += "<div>@Translate.Message("L2759"): " + Biometrics.SystolicCount + "</div>";
+                    SystolicHtml += "<div>@Translate.Message("L2747"): " + Biometrics.SystolicMin + " To " + Biometrics.SystolicMax + " mmHg </div>";
+                    SystolicHtml += "<div>@Translate.Message("L2748") " + comparesign + " " + Biometrics.SystolicRange1Value + " mmHg= " + Biometrics.SystolicRange1Count + " @Translate.Message("L2750") " + Biometrics.SystolicCount + "</div>"
+                    SystolicHtml += "<div>@Translate.Message("L2748") " + comparesign + " " + Biometrics.SystolicRange2Value + " mmHg= " + Biometrics.SystolicRange2Count + " @Translate.Message("L2750") " + Biometrics.SystolicCount + "</div>";
+                    SystolicHtml += "<div>@Translate.Message("L2748") " + comparesign + " " + Biometrics.SystolicRange3Value + " mmHg= " + Biometrics.SystolicRange3Count + " @Translate.Message("L2750") " + Biometrics.SystolicCount + "</div>";
+                    SystolicHtml += "</div></div>";
+                    $('#BP-results').append(SystolicHtml);
+
+                    SystolicChart(SystolicDiv, Biometrics.LatestSystolic, SystolicName, 'mmHg', [0, 119, 139, 159, 350], '#ffcc00');
+                }
+                        var DiastolicHtml = "";
+                        var DiastolicDiv = "", DiastolicName = ""; comparesign = ">=";
+                        if (Biometrics.DiastolicCount > 0) {
+                            DiastolicHtml += "<div class='grid-x grid-margin-x'><div class='small-12 cell'><h4>@Translate.Message("L323").Substring(0, @Translate.Message("L323").IndexOf('('))</h4></div></div>";
+                            if (Biometrics.recentDate != null) {
+                                var date = new Date(Biometrics.recentDate);
+                                DiastolicHtml += "<span>(Most recent value; " + date.toLocaleDateString() + ")</span>";
+                                SystolicChart(SystolicDiv, Biometrics.LatestSystolic, SystolicName, 'mmHg', [0, 119, 139, 159, 350], '#ffcc00');
+                                var DiastolicHtml = "";
+                                var DiastolicDiv = "", DiastolicName = ""; comparesign = ">=";
+                                DiastolicHtml += "<div class='grid-x grid-margin-x'><div class='small-12 cell'><h4>@Translate.Message("L158").Substring(0, @Translate.Message("L158").IndexOf('('))</h4></div></div>";
+                                if (Biometrics.recentDate != null) {
+                                    var date = new Date(Biometrics.recentDate);
+                                    DiastolicHtml += "<span>(@Translate.Message("L2755"); " + date.toLocaleDateString() + ")</span>";
+                                }
+                                DiastolicDiv = "Diastolic-chart";
+                                DiastolicName = "Diastolic Chart";
+                                DiastolicHtml += "<div class='grid-x grid-margin-x chart-container'><div class='small-12 medium-6 cell'><div id='Diastolic-chart' style='width:100%;height:250px;'></div></div><div class='small-12 medium-6 cell'>";
+                                DiastolicHtml += "<div>@Translate.Message("L2759"): " + Biometrics.DiastolicCount + "</div>";
+                                DiastolicHtml += "<div>@Translate.Message("L2747"): " + Biometrics.DiastolicMin + " To " + Biometrics.DiastolicMax + " mmHg </div>";
+                                DiastolicHtml += "<div>@Translate.Message("L2748") " + comparesign + " " + Biometrics.DiastolicRange1Value + " mmHg= " + Biometrics.DiastolicRange1Count + " @Translate.Message("L2750") " + Biometrics.DiastolicCount + "</div>";
+                                DiastolicHtml += "<div>@Translate.Message("L2748") " + comparesign + " " + Biometrics.DiastolicRange2Value + " mmHg= " + Biometrics.DiastolicRange2Count + " @Translate.Message("L2750") " + Biometrics.DiastolicCount + "</div>";
+                                DiastolicHtml += "<div>@Translate.Message("L2748") " + comparesign + " " + Biometrics.DiastolicRange3Value + " mmHg= " + Biometrics.DiastolicRange3Count + " @Translate.Message("L2750") " + Biometrics.DiastolicCount + "</div>";
+                                DiastolicHtml += "</div></div>";
+                    $('#BP-results').append(DiastolicHtml);
+                                DiastolicChart(DiastolicDiv, Biometrics.LatestDiastolic, DiastolicName, 'mmHg', [0, 79, 89, 150], '#ffcc00');
+                            }
+                        }
+                        else {
+                            $('#BP-results').append('<center>@Translate.Message("L2774")</center>');
+                        }
+                    }
+                    else {
+                        $('#BP-results').append('<center>@Translate.Message("L2774")</center>');
+                }
+                $('[show-if-submitting]').parent().prop('disabled', '');
+                $('[show-if-submitting]').addClass('hide');
+                }
+            });
+         $("#loader-wrapper").fadeOut();
+        })
+        var SystolicChart = function (div, value, text, unit, limits, limitColor) {
+            var chart = AmCharts.makeChart(div, {
+                "type": "gauge",
+                "theme": "dark",
+                "axes": [{
+                    "axisThickness": 1,
+                    "axisAlpha": 0.2,
+                    "tickAlpha": 0.2,
+                    "valueInterval": 40,
+                    "bands": [{
+                        "color": "#00cc00",
+                        "endValue": limits[1],
+                        "startValue": limits[0]
+                    }, {
+                        "color": "#ffff00",
+                        "endValue": limits[2],
+                        "startValue": limits[1]
+                    }, {
+                        "color": "#FF8000",
+                        "endValue": limits[3],
+                        "startValue": limits[2]
+                    }, {
+                        "color": "#ff0000",
+                        "endValue": limits[4],
+                        "startValue": limits[3]
+                    }],
+                    "bottomText": value + ' ' + unit,
+                    "bottomTextYOffset": -20,
+                    "endValue": limits[4]
+                }],
+                "arrow": [{ "value": value }],
+            });
+        };
+        var DiastolicChart = function (div, value, text, unit, limits, limitColor) {
+            var chart = AmCharts.makeChart(div, {
+                "type": "gauge",
+                "theme": "dark",
+                "axes": [{
+                    "axisThickness": 1,
+                    "axisAlpha": 0.2,
+                    "tickAlpha": 0.2,
+                    "valueInterval": 30,
+                    "bands": [{
+                        "color": "#00cc00",
+                        "endValue": limits[2],
+                        "startValue": limits[0]
+                    }, {
+                        "color": "#ffff00",
+                        "endValue": limits[2],
+                        "startValue": limits[1]
+                    }, {
+                        "color": "#ff0000",
+                        "endValue": limits[3],
+                        "startValue": limits[2]
+                    }],
+                    "bottomText": value + ' ' + unit,
+                    "bottomTextYOffset": -20,
+                    "endValue": limits[3]
+                }],
+                "arrow": [{ "value": value }],
+            });
+        };
+</script>

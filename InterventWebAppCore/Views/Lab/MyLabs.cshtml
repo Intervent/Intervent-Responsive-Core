@@ -1,0 +1,91 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<section class="main test-results">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12">
+                <div class="content-summary" id="lab-view"></div>
+            </div>
+        </div>
+    </div>
+</section>
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#lab-view").load("@Url.Action("LabResults", "Lab")");
+            setTimeout(function() {
+                $(document).foundation();
+                $('.lab-results').removeClass('medium-8').addClass('medium-12').removeClass('large-9').addClass('large-12');
+            }, 500);
+        });
+        function TakeAction(id) {
+        $.ajax({
+            url: "@Url.Action("TakeAction", "Lab")",
+            data: { Id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                document.getElementById("action-" + id + "").disabled = true;
+                document.getElementById("action-" + id + "").innerHTML = '@Translate.Message("L2732")';
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+        function labselection(count, selection) {
+
+            var option = $("input[name='labsource']:checked").val();
+            if (option) {
+                if (!(count > 0 && selection != 4)) {
+                    AddLabSelection(option);
+                }
+            }
+            else {
+                document.getElementById("addLabSource").disabled = false;
+            }
+        }
+        function AddLabSelection(option) {
+        $.ajax({
+            url: "@Url.Action("AddLabSelection", "Lab")",
+            type: 'POST',
+            dataType: "json",
+            data: {
+                labSource: option
+            },
+            success: function (data) {
+                if (!data.LabOrder || !data.LabOrder.status) {
+                    if (data.LabOrder && data.LabOrder.duplicate) {
+                        $("#labError").html('@Translate.Message("L3690")');
+                    }
+                    else {
+                        $("#labError").html('@Translate.Message("L2731")');
+                    }
+                    $('#lab-order-error').foundation('open');
+                }
+                else {
+                    if (data.AdminView == "True") {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("AdminView", "Lab")',
+                        success: function (data) {
+                            $("#profile-content").html(data);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                    }
+                    else {
+                        window.location.reload();
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    </script>
+}

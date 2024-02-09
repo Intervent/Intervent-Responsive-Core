@@ -1,0 +1,232 @@
+﻿@using InterventWebApp
+<section class="main search-participants">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <h2>@Translate.Message("L1619")</h2>
+            </div>
+        </div>
+        <div class="filters grid-x grid-margin-x">
+            <div class="small-12 medium-4 cell">
+                <select id="routinedays" onchange="daysOptions()">
+                    <option>--@Translate.Message("L421")--</option>
+                    <option value="90">@Translate.Message("L2739")</option>
+                    <option value="30">@Translate.Message("L2740")</option>
+                    <option value="7">@Translate.Message("L2741")</option>
+                    <option value="2">@Translate.Message("L2742")</option>
+                    <option value="1">@Translate.Message("L2743")</option>
+                    <option value="0" selected="selected">@Translate.Message("L2744")</option>
+                </select>                    
+            </div>
+            <div class="small-12 medium-4 cell">
+                <input type="text" placeholder="From" id="routineStartDate" name="StartDate" value="@DateTime.Now.AddDays(-180).ToString("MM/dd/yyyy")">
+            </div>
+            <div class="small-12 medium-4 cell">
+                <input type="text" placeholder="To" id="routineEndDate" name="EndDate" value="@DateTime.Now.ToString("MM/dd/yyyy")">
+            </div>
+            <div class="small-12 medium-6 cell">
+                <button class="secondary-color button small" id="filter-routine-data">
+                    <div class="loading-spinner hide" show-if-submitting></div>
+                    <i class="fa fa-filter"></i>
+                    @Translate.Message("L963")
+                </button>
+            </div>
+            <div class="cell">
+                <div id="fitness-results"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>
+<script src="@Url.Content("~/Scripts/amcharts/gauge.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts/plugins/responsive/responsive.min.js")"></script>
+<script>
+    $(document).ready(function () {
+        $("#routineStartDate").fdatepicker({
+            endDate: new Date()
+        })
+            .on('change', function (selected) {
+            var endDate = new Date($("#routineEndDate").val());
+            var minDate = new Date($("#routineStartDate").val());
+            if (endDate < minDate) {
+                $('#routineEndDate').fdatepicker('setDate', minDate);
+            }
+            $('#routineEndDate').fdatepicker('setStartDate', minDate);
+        });
+        $("#routineEndDate").fdatepicker({
+            endDate: new Date()
+        });
+    });
+        function daysOptions() {
+            if ($("#routinedays").val() == 0) {
+                $("#routineStartDate").val("@DateTime.Now.AddDays(-180).ToString("MM/dd/yyyy")");
+                $("#routineEndDate").val("@DateTime.Now.ToString("MM/dd/yyyy")");
+                $('#routineEndDate').fdatepicker('setStartDate', new Date($("#routineStartDate").val()));
+                $("#routineStartDate").removeAttr('readonly');
+                $("#routineEndDate").removeAttr('readonly');
+        }
+        else {
+                $("#routineStartDate").val("");
+                $("#routineEndDate").val("");
+                $("#routineStartDate").attr('readonly', 'readonly');
+                $("#routineEndDate").attr('readonly', 'readonly');
+        }
+    }
+
+        $("#filter-routine-data").click(function () {
+            $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+            $('[show-if-submitting]').removeClass('hide');
+            var StartDate = $("#routineStartDate").val();
+            var EndDate = $("#routineEndDate").val();
+            var Days = $("#routinedays").val();
+            $.ajax({
+                url: "@Url.Action("ListRoutineData", "Validic")",
+                data: { externalId: $("#ExternalId").val(), Days: Days, StartDate: StartDate, EndDate: EndDate },
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    $('#fitness-results').html("");
+                    if (data != null) {
+                        if (data.Record1 != null) {
+                            $('#fitness-results').show();
+                            if (data.Record1.Count > 0) {
+                                var routineHtml = "<div class='row'><div class='small-12 cell'><h4> @Translate.Message("L2745")</h4></div><div class='small-12 cell'></div></div>";
+                                var routineDiv = "", routineName = ""; comparesign = ">=";
+                                var rout = data.Record1;
+                                routineDiv = "roution-chart";
+                                routineName = "Roution Chart";
+                                routineHtml += "<div class='row chart-container'><div class='small-12 medium-6 cell'><div id='roution-chart' style='width:100%;height:250px;'></div></div><div class='small-12 medium-6 cell'>";
+                                routineHtml += "<div>@Translate.Message("L2746") @Translate.Message("L2752"): " + rout.Count + " </div>";
+                                routineHtml += "<div>@Translate.Message("L2747"): " + rout.Min + " To " + rout.Max + " @Translate.Message("L2745").ToLower() </div>";
+                                routineHtml += "<div>@Translate.Message("L2748") " + comparesign + " " + rout.Range1Value.toLocaleString('en-US') + " @Translate.Message("L2749")= " + rout.Range1Count + " @Translate.Message("L2750") " + rout.Count + "</div>";
+                                routineHtml += "<div>@Translate.Message("L2748") " + comparesign + " " + rout.Range2Value.toLocaleString('en-US') + " @Translate.Message("L2749")= " + rout.Range2Count + " @Translate.Message("L2750") " + rout.Count + "</div>";
+                                routineHtml += "<div>@Translate.Message("L2748") " + comparesign + " " + rout.Range3Value.toLocaleString('en-US') + " @Translate.Message("L2749")= " + rout.Range3Count + " @Translate.Message("L2750") " + rout.Count + "</div></div></div></div>";
+                                routineHtml += "</div></div>";
+
+                                $('#fitness-results').append(routineHtml);
+                                var maxLimit = 10000;
+                                var limitColor = "#00cc00";
+                                if (rout.Value > maxLimit)
+                                    maxLimit = rout.Value;
+                                buildroutineChart(routineDiv, rout.Value, routineName, '@Translate.Message("L2749").ToLower()', [0, 2500, 4999, 6999, 8000, maxLimit], limitColor);
+                            }
+                        }
+                        StartDate = new Date(StartDate);
+                        EndDate = new Date(EndDate);
+                        var datediff = Math.floor((Date.UTC(EndDate.getFullYear(), EndDate.getMonth(), EndDate.getDate()) - Date.UTC(StartDate.getFullYear(), StartDate.getMonth(), StartDate.getDate())) / (1000 * 60 * 60 * 24));
+                        if (Days > 2 || Days == 0 || datediff > 7) {
+                            if (data.Record2 != null) {
+                                if (data.Record2.TimeCount > 0) {
+                                    var timeHtml = "<div class='row'><div class='small-12 cell'><h4>@Translate.Message("L1619") (@Translate.Message("L2773"))</h4></div><div class='small-12 cell'></div></div>";
+                                    var timeDiv = "", timeName = ""; comparesign = ">=";
+                                    var timedata = data.Record2;
+                                    timeDiv = "time-chart";
+                                    timeName = "Time Chart";
+                                    timeHtml += "<div class='row chart-container'><div class='small-12 medium-6 cell'><div id='time-chart' style='width:100%;height:250px;'></div></div><div class='small-12 medium-6 cell'>";
+                                    timeHtml += "<div>@Translate.Message("L2751"): " + timedata.TimeCount + " </div>";
+                                    timeHtml += "<div>@Translate.Message("L2747"): " + timedata.Min + " To " + timedata.Max + " mins/week </div>";
+                                    timeHtml += "<div>@Translate.Message("L2753") " + comparesign + " " + timedata.TimeRange1Value + " @Translate.Message("L2754")= " + timedata.TimeRange1Count + " @Translate.Message("L2750") " + timedata.TimeCount + "</div>";
+                                    timeHtml += "<div>@Translate.Message("L2753") " + comparesign + " " + timedata.TimeRange2Value + " @Translate.Message("L2754")= " + timedata.TimeRange2Count + " @Translate.Message("L2750") " + timedata.TimeCount + "</div>";
+                                    timeHtml += "<div>@Translate.Message("L2753") " + comparesign + " " + timedata.TimeRange3Value + " @Translate.Message("L2754")= " + timedata.TimeRange3Count + " @Translate.Message("L2750") " + timedata.TimeCount + "</div>";
+                                    timeHtml += "<div>@Translate.Message("L2753") " + comparesign + " " + timedata.TimeRange4Value + " @Translate.Message("L2754")= " + timedata.TimeRange4Count + " @Translate.Message("L2750") " + timedata.TimeCount + "</div></div></div></div></div>";
+                                    timeHtml += "<div class='row'><div class='small-12 cell'><div class='note'>@Translate.Message("L2559")</div></div>";
+                                    timeHtml += "</div>";
+                                    $('#fitness-results').append(timeHtml);
+                                    var maxLimit = 250;
+                                    var limitColor = "#00cc00";
+                                    if (timedata.Value > maxLimit)
+                                        maxLimit = timedata.Value;
+                                    buildtimechart(timeDiv, timedata.Value, timeName, 'min/wk', [0, 60, 75, 150, maxLimit], limitColor);
+                                }
+                                else {
+                                    $('#fitness-results').append("");
+                                }
+                            }
+                        }
+                        if (data.Record1.Count <= 0 && data.Record2.TimeCount <= 0) {
+                             $('#fitness-results').append('<center>@Translate.Message("L2775")</center>');
+                        }
+                    }
+                        else {
+                        $('#roution-results').hide();
+                    }
+                    $('[show-if-submitting]').parent().prop('disabled', '');
+                    $('[show-if-submitting]').addClass('hide');
+                }
+            });
+        $("#loader-wrapper").fadeOut();
+        })
+        var buildroutineChart = function (div, value, text, unit, limits, limitColor) {
+            var chart = AmCharts.makeChart(div, {
+                "type": "gauge",
+                "theme": "dark",
+                "axes": [{
+                    "axisThickness": 1,
+                    "axisAlpha": 0.2,
+                    "tickAlpha": 0.2,
+                    "valueInterval": 1000,
+                    "labelFrequency": 2,
+                    "bands": [{
+                        "color": "#cc0000",
+                        "endValue": limits[1],
+                        "startValue": limits[0]
+                    }, {
+                        "color": "#ff7d67",
+                        "endValue": limits[2],
+                        "startValue": limits[1] + 1
+                    }, {
+                        "color": "#FFFF00",
+                        "endValue": limits[3],
+                        "startValue": limits[2] + 1
+                    }, {
+                        "color": limitColor,
+                        "endValue": limits[4],
+                        "startValue": limits[3] + 1,
+                    }, {
+                        "color": limitColor,
+                        "endValue": limits[5],
+                        "startValue": limits[4] + 1
+                    }],
+                    "bottomText": value + ' ' + unit,
+                    "bottomTextYOffset": -20,
+                    "endValue": limits[5]
+                }],
+                "arrows": [{ "value": value }],
+            });
+        };
+        var buildtimechart = function (div, value, text, unit, limits, limitColor) {
+            var chart = AmCharts.makeChart(div, {
+                "type": "gauge",
+                "theme": "dark",
+                "axes": [{
+                    "axisThickness": 1,
+                    "axisAlpha": 0.2,
+                    "tickAlpha": 0.2,
+                    "bands": [{
+                        "color": "#cc0000",
+                        "endValue": limits[1],
+                        "startValue": limits[0]
+                    }, {
+                        "color": "#FF8000",
+                        "endValue": limits[2],
+                        "startValue": limits[1]
+                    }, {
+                        "color": "#FFFF00",
+                        "endValue": limits[3],
+                        "startValue": limits[2]
+                    },
+                    {
+                        "color": "#00CC00",
+                        "endValue": limits[4],
+                        "startValue": limits[3]
+                    }],
+                    "bottomText": value + ' ' + unit,
+                    "bottomTextYOffset": -20,
+                    "endValue": limits[4]
+                }],
+                "arrows": [{ "value": value }],
+            });
+        };
+</script>

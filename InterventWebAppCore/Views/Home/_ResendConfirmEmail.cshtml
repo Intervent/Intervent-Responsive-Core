@@ -1,0 +1,59 @@
+﻿
+@using InterventWebApp
+
+<!--Resend Confirm Email-->
+@{string className = ViewData["LMCClass"] != null ? ViewData["LMCClass"].ToString() : "";}
+    <div id="resend-email-modal" class="reveal small @className" data-reveal data-close-on-click="false" data-close-on-esc="false">
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-12">
+                <div id="headerText" class="show">
+                    <label>@Translate.Message("L2396")</label>
+                </div>
+                <div id="emailConfirm" class="show">
+                    <a href="#" style="color:skyblue" id="resend">@Translate.Message("L2397") <span id="email"></span></a>
+                </div>
+                <input type="text" value="" id="emailId" class="hide" />
+                <div data-alert id="email-error" class="callout alert hide">
+                    <a href="#" class="close">&times;</a>
+                </div>
+                <div data-alert id="emailId-found" class="callout hide">
+                    @Translate.Message("L2398")
+                </div>
+            </div>
+        </div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+<script type="text/javascript">
+    $('#resend').on('click', function () {
+        $.ajax({
+            url: "@Url.Action("ResendConfirmEmail", "Account")",
+            type: 'POST',
+        dataType: "json",
+        data: {
+            email: $('#emailId').val(),
+            OrgContactEmail: $('#supportEmail').val()
+        },
+        success: function (data) {
+            if (data == 'success') {
+                $('#resend-email-modal').find('#emailId-found').removeClass('hide');
+                $('#resend-email-modal').find('#emailConfirm').addClass('hide');
+                $('#resend-email-modal').find('#headerText').addClass('hide');
+                setTimeout(function () {
+                    $('#login-modal').foundation('close');
+                }, 4000);
+            }
+            else {
+                $('#resend-email-modal').find('#emailConfirm').addClass('hide');
+                $('#resend-email-modal').find('#headerText').addClass('hide');
+                $("#resend-email-modal").find('#email-error').html(data);
+                $('#resend-email-modal').find('#email-error').removeClass('hide');
+            }
+        }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            DisplayError(jqXHR.status);
+        });
+    });
+</script>

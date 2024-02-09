@@ -1,0 +1,104 @@
+﻿@model InterventWebApp.AddProgramModel
+@using InterventWebApp
+
+<form id="program-form" data-abide novalidate>
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <label>HRA Risk :</label>
+            <h6>@Model.hraRisk</h6>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.eligible))
+            {
+            <div class="cell">
+                <label>Eligible for :</label>
+                <h6>@Html.Raw(Model.eligible)</h6>
+            </div>
+        }
+        <div class="cell">
+            <label for="PrograminPortalId">Select Program</label>
+            @Html.DropDownListFor(x => x.ProgramsinPortals, Model.ProgramsinPortals, "--Select--", new { @onchange = "CheckProgramType()" })
+        </div>
+        <div class="cell">
+            <label for="CoachId">Select Coach</label>
+            @Html.DropDownListFor(x => x.CoachId, Model.Coaches, "--Select--", new Dictionary<string, object> { { "data-validator", "validateCoach" } })
+            <small class="form-error" id="Req_error">@Translate.Message("L480")</small>
+        </div>
+        <div class="cell">
+            <label for="Language">Select Language</label>
+            @Html.DropDownListFor(x => x.Language, Model.Language, "--Select--")
+        </div>
+        <div class="hide">
+            <label for="ProgramType">Select</label>
+            @Html.DropDownListFor(x => x.Programs, Model.Programs, "--Select--")
+        </div>
+    </div>
+
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="submit">Save</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeProgram">@Translate.Message("L967")</button></div>
+    </div>
+</form>
+<script type="text/javascript">
+    Foundation.Abide.defaults.validators['validateCoach'] = function ($el, required, parent) {
+
+        var va = $el.val();
+        if (va == "" && GetProgramType() == "2")
+            return false;
+        else
+            return true;
+    };
+    $(document).ready(function () {
+        $('#StartDate').fdatepicker();
+        $('#CoachId').val(@Model.suggestedCoach);
+        $('#closeProgram').on('click', function () {
+            $('#add-program').foundation('close');
+        });
+        $("#program-form").foundation();
+        $('#program-form')
+            .on('formvalid.zf.abide', function () {
+                EnrollProgram();
+            }).on("submit", function (ev) {
+                ev.preventDefault();
+            })
+    });
+
+
+
+
+    function EnrollProgram() {
+        var startDate = $("#StartDate").val();
+        var programinPortalId = $("#ProgramsinPortals").val();
+        var coachId = $("#CoachId").val();
+        var hraId = $("#hraId").val();
+        var language = $("#Language").val();
+        if (programinPortalId == "") {
+            return;
+        }
+        $("#ProgramsinPortals").val('');
+        $.ajax({
+            url: "@Url.Action("EnrollinProgram", "Program")",
+            type: 'POST',
+            dataType: "json",
+            data: { ProgramsinPortalsId: programinPortalId, coachId: coachId, Language: language },
+            success: function (data) {
+                if (data.Options.success == false) {
+                    $("#ProgramAlert").removeClass('hide');
+                }
+                $('#add-program').foundation('close');
+                GetUserProgramHistory();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function GetProgramType() {
+        var Id = $("#ProgramsinPortals").find("option:selected").val();
+        var programType = $('#Programs option[value=' + Id + ']').text();
+        return programType;
+    }
+
+    function CheckProgramType() {
+        GetProgramType() == "1" ? ($("#CoachId").prop("disabled", true), $('#CoachId').val('')) : $("#CoachId").prop("disabled", false);
+    }
+</script>

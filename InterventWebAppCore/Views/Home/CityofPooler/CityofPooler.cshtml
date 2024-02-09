@@ -1,0 +1,396 @@
+﻿@using InterventWebApp
+@model InterventWebApp.LoginModel
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+
+@Html.Partial("CityofPooler/_CityofPoolerHeader", new ViewDataDictionary(ViewData) { { "OrgId", ViewData["OrgId"] }, { "MenuClass", "lmc-menu-hidden" }, { "DateFormat", ViewData["DateFormat"] } })
+
+<section class="lmc-index lmc-wrapper title-casing">
+    <section class="lmc-login">
+        <div class="grid-container">
+            <div class="grid-x">
+                <div class="cell large-11">
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-6">
+                            <h1>@Translate.Message("L1893")</h1>
+
+                            <p>
+                                @Translate.Message("L428")
+                            </p>
+                            <img src="~/Images/logo-green.png" alt="City of Pooler" />
+                            <img src="~/Images/lmc/bicycle-girl.svg" alt="" class="bicycle-girl" />
+                        </div>
+                        <div class="cell medium-6 large-5 large-offset-1">
+                            <div class="form-white-bg hide-for-small-only">
+                                <div class="switch slider-switch">
+                                    <input type="checkbox" name="login-switch" id="login-switch" class="switch-input" value="">
+                                    <label class="switch-paddle login-switch-paddle" for="login-switch">
+                                        <span class="switch-inactive" aria-hidden="true">@Translate.Message("L443")</span>
+                                        <span class="switch-active" aria-hidden="true">@Translate.Message("L2084")</span>
+                                    </label>
+                                </div>
+
+                                <form id="inline-login-form" class="form-login-box" data-abide novalidate>
+                                <!--Login Form-->
+                                    <div data-alert="" id="inline-login-form-inline-login-error" class="callout alert alert-box hide"></div>
+                                    <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+                                    <div>
+                                        <label>@Translate.Message("L572")</label>
+                                        @Html.TextBoxFor(m => m.UserName, new Dictionary<string, object> { { "placeholder", Translate.Message("L986") }, { "required", "required" }, { "id", "loginUserName" } })
+                                        <small class="form-error">@Translate.Message("L463")</small>
+                                    </div>
+
+                                    <div class="password-field-box">
+                                        <label>@Translate.Message("L466")</label>
+                                        @Html.PasswordFor(m => m.Password, new Dictionary<string, object> { { "placeholder", Translate.Message("L466") }, { "required", "required" } })
+                                        <span class="toggle-password fa fa-fw fa-eye"></span>
+                                        <small class="form-error">@Translate.Message("L464")</small>
+                                    </div>
+
+                                    <input class="DeviceId" type="hidden" id="DeviceId" name="DeviceId" value="" />
+
+                                    <p><a href="#" data-open="forgot-password-modal">@Translate.Message("L465")</a></p>
+
+                                    <div class="lmc-login-container">
+                                        <button type="submit" class="button expanded">
+                                            <div class="loading-spinner hide" show-if-submitting></div>
+                                            @Translate.Message("L426")
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div id="device-verification-inline-login-form"></div>
+
+                                <form id="sign-up-inlineform" class="form-signup-box hide" data-abide novalidate>
+                                <!--SignUp Form-->
+                                    <input type="hidden" id="inDOB" name="DOB" />
+                                    <input type="hidden" id="organizationId" name="OrganizationId" value="@ViewData["OrgId"]" />
+                                    <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+                                    <div>
+                                        <h3>@Translate.Message("L3596")</h3>
+                                    </div>
+                                    <div>
+                                        <label>@Translate.Message("L938")</label>
+                                        <input type="text" id="infirstName" name="FirstName" placeholder="" required pattern="[a-zA-Z]+">
+                                        <small class="form-error">@Translate.Message("L432")</small>
+                                    </div>
+
+                                    <div>
+                                        <label>@Translate.Message("L939")</label>
+                                        <input type="text" id="inlastName" name="LastName" placeholder="" required pattern="[a-zA-Z]+">
+                                        <small class="form-error">@Translate.Message("L433")</small>
+                                    </div>
+
+                                    <div class="grid-x dob-select">
+                                        <div class="cell"><label>@Translate.Message("L226")</label></div>
+                                        <div class="cell medium-5">
+                                            <select id="inMonth" required></select>
+                                            <small id="Error_inMonth" class="form-error">@Translate.Message("L480").</small>
+                                        </div>
+                                        <div class="cell small-3">
+                                            <select id="inDay" required></select>
+                                            <small id="Error_inDay" class="form-error">@Translate.Message("L480").</small>
+                                        </div>
+                                        <div class="cell small-4">
+                                            <select id="inYear" required></select>
+                                            <small id="Error_inYear" class="form-error">@Translate.Message("L480").</small>
+                                        </div>
+                                    </div>
+                                    <div class="position-relative">
+                                        <label>@ViewData["IDText"]</label>
+                                        <input type="text" id="inCouponCode" name="UniqueID" required>
+                                        <small class="form-error">@string.Format(Translate.Message("L1895"), ViewData["IDText"]).</small>
+                                        <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip aria-haspopup="true" data-allow-html="true" title="@ViewData["IDInfo"]"></i>
+                                    </div>
+
+                                    <div class="email position-relative">
+                                        <label>Email Address</label>
+                                        <input type="email" id="inemail" name="EmailAddress" required onchange="$('#inconfirmemail').trigger('change');">
+                                        <small class="form-error">@Translate.Message("L434")</small>
+                                        <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip aria-haspopup="true" data-allow-html="true" title="@Translate.Message("L1988")"></i>
+                                    </div>
+
+                                    <div>
+                                        <label>@Translate.Message("L2468")</label>
+                                        <input type="email" id="inconfirmemail" data-validator="validateInConfirmEmail" class="preventCutCopyPaste" required>
+                                        <small id="inerrconfirmemail" class="form-error">@Translate.Message("L2469")</small>
+                                    </div>
+
+                                    <div class="form-password-field">
+                                        <label>@Translate.Message("L466")</label>
+                                        <input type="password" id="inpassword" name="Password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$" required>
+                                        <small class="form-error" data-error-message>@Translate.Message("L1929")</small>
+
+                                        <div class="password-req-list">
+                                            <p>@Translate.Message("L4269")</p>
+                                            <ul>
+                                                <li class="upper-char"><span>@Translate.Message("L4270")</span></li>
+                                                <li class="lower-char"><span>@Translate.Message("L4271")</span></li>
+                                                <li class="number-char"><span>@Translate.Message("L4272")</span></li>
+                                                <li class="min-length"><span>@Translate.Message("L4273")</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label>@Translate.Message("L1628")</label>
+                                        <input type="password" id="inconfirmpassword" data-equalto="inpassword" class="preventCutCopyPaste">
+                                        <small class="form-error">@Translate.Message("L438")</small>
+                                    </div>
+
+                                    <div>
+                                        <div class="tick-buttons">
+                                            <label for="inserviceagreement">
+                                                <input type="checkbox" id="inserviceagreement" required>
+                                                @Translate.Message("L441") <a href="#" onclick="ServiceAgreement(true);">@Translate.Message("L440")</a>
+                                                <span class="checkmark"></span>
+                                                <small class="form-error">@Translate.Message("L442")</small>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="lmc-login-container">
+                                        <button type="submit" value="" class="button expanded">@Translate.Message("L443")</button>
+                                    </div>
+                                    <input type="hidden" name="IDText" value="@ViewData["IDText"]" />
+                                    <input type="hidden" id="SignUpDate" name="SignUpDate" value="" />
+                                </form>
+                            </div>
+
+                            <div class="show-for-small-only lmc-mobile-form">
+                                <button class="button expanded" data-open="login-modal">@Translate.Message("L426")</button>
+                                <p>@Translate.Message("L3223")</p>
+                                <button class="button hollow expanded" data-open="lmc-mobile-signup">@Translate.Message("L443")</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Login section ends-->
+
+    <section class="lmc-offers-section">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x text-center" data-equalizer>
+                <div class="cell medium-4">
+                    <div class="column-container">
+                        <img src="~/Images/lmc/columns-image-1.png" alt="" />
+                        <h4 data-equalizer-watch>@Translate.Message("L3224")</h4>
+                        <p data-equalizer-watch>@Translate.Message("L3225")</p>
+                    </div>
+                </div>
+                <div class="cell medium-4">
+                    <div class="column-container">
+                        <img src="~/Images/lmc/columns-image-2.png" alt="" />
+                        <h4 data-equalizer-watch>@Translate.Message("L3226")</h4>
+                        <p data-equalizer-watch>@Translate.Message("L454")</p>
+                    </div>
+                </div>
+                <div class="cell medium-4">
+                    <div class="column-container">
+                        <img src="~/Images/lmc/columns-image-3.png" alt="" />
+                        <h4 data-equalizer-watch>@Translate.Message("L3228")</h4>
+                        <p data-equalizer-watch>@Translate.Message("L3229")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="lmc-contact-section">
+        <div class="grid-container">
+            <div class="grid-x align-center">
+                <div class="cell large-6 medium-9">
+                    <h2>@Translate.Message("L3460")</h2>
+                    <form id="contact-form" data-abide novalidate>
+                        <div class="grid-x grid-margin-x grid-margin-y">
+                            <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+                            <input type="hidden" id="subject" name="subject" value="City of Pooler" />
+                            <div class="cell medium-6">
+                                <label>@Translate.Message("L3233")</label>
+                                <input type="text" id="name" name="name" required />
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                            <div class="cell medium-6">
+                                <label>@Translate.Message("L572")</label>
+                                <input type="email" id="email" name="email" required />
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                            <div class="cell">
+                                <label>@Translate.Message("L3234")</label>
+                                <textarea id="meassage" name="meassage" required></textarea>
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                            <div class="cell text-center">
+                                <button type="submit" class="button">@Translate.Message("L3235")</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Contact section ends-->
+
+    <section class="lmc-get-started">
+        <div class="grid-container">
+            <div class="grid-x align-center">
+                <div class="cell large-6 medium-9 text-center ">
+                    <h2>@Translate.Message("L3680")</h2>
+                    <a onclick="openSignUp(event)" class="hide-for-small-only">
+                        @Translate.Message("L443")
+                    </a>
+                </div>
+
+                <div class="show-for-small-only lmc-mobile-form">
+                    <button class="button" data-open="lmc-mobile-signup">@Translate.Message("L443")</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Get started section ends-->
+</section>
+
+<!-- Error Modal-->
+<div id="error-modal" class="reveal small" data-reveal>
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <h2 class="text-center"></h2>
+            <p>
+                <span id="error-message-genericmodal"></span>
+            </p>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div id="lmc-mobile-signup" class="reveal lmc-form" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    @Html.Partial("_MobEligSignUp")
+    <a class="close-button" data-close id="close">&#215;</a>
+</div>
+
+
+<script>
+    Foundation.Abide.defaults.validators['validateInConfirmEmail'] = function ($el, required, parent) {
+        var email = $("#inemail").val();
+        var confirmemail = $("#inconfirmemail").val();
+        if (email.toUpperCase() === confirmemail.toUpperCase())
+            return true;
+        else
+            return false;
+    };
+    $(document).ready(function () {
+        $('#contact-form').foundation();
+        $('#contact-form')
+            //When Not Valid
+            .on('forminvalid.zf.abide', function () {
+            })
+            //When Valid
+            .on('formvalid.zf.abide', function () {
+                $.ajax({
+                    url: "@Url.Action("SendUserMessage", "Home")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#contact-form").serialize(),
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#contact-form :input').val("");
+                            alert("@Translate.Message("L3461")");
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    DisplayError(jqXHR.status);
+                });
+            }).on("submit", function (ev) {
+                    ev.preventDefault();
+            })
+            $("#sign-up-inlineform").foundation();
+            //When Not Valid
+            $("#sign-up-inlineform")
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+             })
+            //When Valid
+                .on('formvalid.zf.abide', function () {
+                    if (document.getElementById('inserviceagreement').checked)
+                    {
+                        $("#sign-up-inlineform").find('input[id="inpassword"]').val(window.btoa(Math.random().toString(36).substring(2, 8) + $("#sign-up-inlineform").find('input[id="inpassword"]').val()));
+                        var tempDOB = ($("#inMonth").val() + "/" + $("#inDay").val() + "/" + $("#inYear").val());
+                        $('#inDOB').val(tempDOB);
+                        $('#SignUpDate').val(toSystemDateFormat(new Date().toLocaleDateString()));
+                        $.ajax({
+                            url: "@Url.Action("RegisterUsingEligibility", "Account")",
+                            type: 'POST',
+                            dataType: "json",
+                            data: $("#sign-up-inlineform").serialize(),
+                            success: function (data) {
+                                var password = $('#inpassword').val();
+                                $("#sign-up-inlineform").find('input[id="inpassword"]').val("");
+                                $("#sign-up-inlineform").find('input[id="inpassword"]').trigger('keypress');
+                                $("#sign-up-inlineform").find('input[id="inpassword"]').trigger('keyup');
+                                $("#sign-up-inlineform").find('input[id="inconfirmpassword"]').val("");
+                                if (data.Success) {
+                                    var username = $('#inemail').val();
+                                    var organizationEmail = $('#supportEmail').val();
+                                    var loginURL = "@Url.Action("Login", "Account")";
+                                    var streamURL = "@Url.Action("Stream", "Participant")";
+                                    validateSignIn(data, username, password, organizationEmail, loginURL, streamURL);
+                                    $('.register-modal-email').text($('#inemail').val());
+                                    document.getElementById("sign-up-inlineform").reset();
+                                }
+                                else {
+                                    if (data.Action != undefined) {
+                                        if (data.Action == 'VerifyPrimaryInfo') {
+                                            //verify primary user info
+                                            document.getElementById("primaryuserinfo-confirmation-modelform").reset();
+                                            $('#register-primaryuserinfo-confirmation-modal').foundation('open');
+                                            $('#primaryVerificationRegisterInfo').val(data.RegisterData);
+                                        }
+                                    }
+                                    else {
+                                        $('#error-modal').foundation('open');
+                                        $("#error-message-genericmodal").text(data.ErrorMessage);
+                                        $('#primaryVerificationRegisterInfo').val(data.RegisterData);
+                                    }
+                                }
+
+                            }
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                            DisplayError(jqXHR.status);
+                        });
+                    }
+            }).on("submit", function (ev) {
+                    ev.preventDefault();
+            })
+            if ("@ViewData["SignUp"]" == "True")
+            {
+                $("#inlineSignUp").trigger('click');
+            }
+    });
+
+</script>
+
+<script>
+    $("input#login-switch").on('click', function () {
+        $(".form-login-box, .form-signup-box").toggleClass("hide");
+	});
+
+	function openSignUp(e) {
+		e.preventDefault();
+		$("html, body").animate({
+			scrollTop: 0
+		}, "fast");
+
+		if ($("#sign-up-inlineform").hasClass("hide")) {
+			$(".form-login-box, .form-signup-box").toggleClass("hide");
+			$("input#login-switch").prop("checked", true);
+		}
+	}
+</script>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/PasswordValidation.js")?v=@CommonUtility.GetRandom()"></script>

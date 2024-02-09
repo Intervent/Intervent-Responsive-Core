@@ -1,0 +1,347 @@
+﻿@using InterventWebApp
+@using Intervent.Web.DTO;
+
+<div id="signup-error" class="callout alert-box alert hide" data-closable>
+    @Translate.Message("L1931")
+    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form id="sign-up-form" class="compass" data-abide novalidate>
+    <!--replace with compass organization id-->
+    <input type="hidden" id="formDOB" name="DOB" />
+    <input type="hidden" id="organizationId" name="OrganizationId" value="@ViewData["OrgId"]" />
+    <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+    <div class="form-white-bg form-signup-box">
+        <div>
+            <h3>@Translate.Message("L3596")</h3>
+        </div>
+        <div>
+            <label>@Translate.Message("L938")</label>
+            <input type="text" id="firstName" name="FirstName" placeholder="" required pattern="[a-zA-Z]+">
+            <small class="form-error">@Translate.Message("L432")</small>
+        </div>
+
+
+        <div>
+            <label>@Translate.Message("L939")</label>
+            <input type="text" id="lastName" name="LastName" placeholder="" required pattern="[a-zA-Z]+">
+            <small class="form-error">@Translate.Message("L433")</small>
+        </div>
+
+        @if (TempData.Peek("ShowSID").ToString() == "True")
+        {
+            <div class="position-relative">
+                <label>@Translate.Message("L4442")</label>
+                <input type="text" id="inSID" name="SID" placeholder="" required pattern="^([a-zA-Z]{1})([0-9]{6})+$">
+                <small class="form-error">@Translate.Message("L4443")</small>
+                <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip aria-haspopup="true" data-allow-html="true" title="@Translate.Message("L4444")"></i>
+            </div>
+        }
+
+        <div class="grid-x dob-select">
+            <div class="cell"><label>@Translate.Message("L226")</label></div>
+            <div class="cell small-5">
+                <select id="month" required></select>
+                <small id="Error_month" class="form-error">@Translate.Message("L480").</small>
+            </div>
+            <div class="cell small-3">
+                <select id="day" required></select>
+                <small id="Error_day" class="form-error">@Translate.Message("L480").</small>
+            </div>
+            <div class="cell small-4">
+                <select id="year" required></select>
+                <small id="Error_year" class="form-error">@Translate.Message("L480").</small>
+            </div>
+        </div>
+
+        <div class="email position-relative">
+            <label>@Translate.Message("L986")</label>
+            <input type="email" id="signupemail" name="EmailAddress" onchange="$('#confirmsignupemail').trigger('change');" required>
+            <small class="form-error">@Translate.Message("L434")</small>
+        </div>
+
+        <div>
+            <label>@Translate.Message("L2468")</label>
+            <input type="email" id="confirmsignupemail" data-validator="validateConfirmEmail" class="preventCutCopyPaste" required>
+            <small id="errconfirmemail" class="form-error">@Translate.Message("L2469")</small>
+        </div>
+
+        <div class="form-password-field">
+            <label>@Translate.Message("L466")</label>
+            <input type="password" id="password" name="Password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$" required>
+            <small class="form-error" data-error-message>@Translate.Message("L1929")</small>
+
+            <div class="password-req-list">
+                <p>@Translate.Message("L4269")</p>
+                <ul>
+                    <li class="upper-char"><span>@Translate.Message("L4270")</span></li>
+                    <li class="lower-char"><span>@Translate.Message("L4271")</span></li>
+                    <li class="number-char"><span>@Translate.Message("L4272")</span></li>
+                    <li class="min-length"><span>@Translate.Message("L4273")</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div>
+            <label>@Translate.Message("L1628")</label>
+            <input type="password" id="confirmpassword" data-equalto="password" class="preventCutCopyPaste">
+            <small class="form-error">@Translate.Message("L438")</small>
+        </div>
+
+        @if (ViewData["Name"] != null && ViewData["Name"].ToString() == "Poplar")
+        {
+            <div>
+                <label>@Translate.Message("L4508")</label>
+                <select name="ProviderId" id="ProviderId" class="primary-select" required>
+                    <option value="">@Translate.Message("L4508")</option>
+                    @foreach (var msg in ViewData["ProvidersList"] as List<ProviderDto>)
+                    {
+                        <option value="@msg.Id">@msg.Name</option>
+                    }
+                </select>
+                <small class="form-error">@Translate.Message("L480")</small>
+            </div>
+        }
+
+        @if (ViewData["HideCouponCode"] == null || ViewData["HideCouponCode"].ToString() != "True")
+        {
+            <div>
+                <label>@Translate.Message("L1629")</label>
+                <input type="text" id="CouponCode" name="CouponCode" required onblur="showBonafide(this);">
+                <small class="form-error">@Translate.Message("L439")</small>
+            </div>
+
+            if (TempData.Peek("BonafideConfirmation").ToString() == "True")
+            {
+                <div class="bonafide-message-wrapper hide">
+                    <div class="tick-buttons">
+                        <label>
+                            <input type="checkbox" id="bonafideConfirmation" required>
+                            @TempData.Peek("BonafideConfirmationText").ToString()
+                            <span class="checkmark"></span>
+                            <small class="form-error">In order to proceed please check and confirm the above required field</small>
+                        </label>
+                    </div>
+                </div>
+            }
+        }
+
+        <div>
+            <div class="tick-buttons">
+                <label for="serviceagreement">
+                    <input type="checkbox" id="serviceagreement" required>
+                    @Translate.Message("L441") <a href="#" onclick="ServiceAgreement(true);">@Translate.Message("L440")</a>
+                    <span class="checkmark"></span>
+                    <small class="form-error">@Translate.Message("L442")</small>
+                </label>
+            </div>
+        </div>
+
+        <div class="lmc-login-container">
+            <button type="submit" value="" class="button expanded">@Translate.Message("L443")</button>
+        </div>
+        <input type="hidden" name="IDText" value="@ViewData["IDText"]" />
+        <input type="hidden" id="SignUpDate" name="SignUpDate" value="" />
+    </div>
+</form>
+<!--Email Confirmation Modal-->
+<div id="confirmation-modal" class="reveal small" data-reveal>
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <p>
+                @Translate.Message("L1932")
+            </p>
+        </div>
+        <div class="small-12 cell">
+            <button class="expand pink middle" href="" onclick="$('#login-modal').foundation('open'); return false;">
+                @Translate.Message("L426")
+            </button>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<!-- Error Modal-->
+<div id="error-modal" class="reveal small" data-reveal>
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <h2 class="text-center"></h2>
+            <p>
+                <span id="error-message-genericmodal"></span>
+                @*@Translate.Message("L479")*@
+            </p>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/RegistrationSignIn.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    Foundation.Abide.defaults.validators['validateConfirmEmail'] = function ($el, required, parent) {
+        var email = $("#signupemail").val();
+        var confirmemail = $("#confirmsignupemail").val();
+        if (email.toUpperCase() === confirmemail.toUpperCase())
+            return true;
+        else
+            return false;
+    };
+    $(document).ready(function () {
+        $('#sign-up-form').foundation();
+        $('#sign-up-form')
+        //When Not Valid
+        .on('forminvalid.zf.abide', function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+            console.log(invalid_fields);
+        })
+        //When Valid
+            .on('formvalid.zf.abide', function () {
+                if (document.getElementById('serviceagreement').checked) {
+                    $("#sign-up-form").find('input[id="password"]').val(window.btoa(Math.random().toString(36).substring(2, 8) + $("#sign-up-form").find('input[id="password"]').val()));
+                    var tempDOB = ($("#month").val() + "/" + $("#day").val() + "/" + $("#year").val());
+                    $('#formDOB').val(tempDOB);
+                    $('#SignUpDate').val(toSystemDateFormat(new Date().toLocaleDateString()));
+                    $.ajax({
+                        url: "@Url.Action("Register", "Account")",
+                        type: 'POST',
+                        dataType: "json",
+                        data: $("#sign-up-form").serialize(),
+                        success: function (data) {
+                            var password = $('#password').val();
+                            $("#sign-up-form").find('input[id="password"]').val("");
+                            $("#sign-up-form").find('input[id="password"]').trigger('keypress');
+                            $("#sign-up-form").find('input[id="password"]').trigger('keyup');
+                            $("#sign-up-form").find('input[id="confirmpassword"]').val("");
+                            if (data.Success) {
+                                var username = $('#signupemail').val();
+                                var organizationEmail = $('#supportEmail').val();
+                                var loginURL = "@Url.Action("Login", "Account")";
+                                var streamURL = "@Url.Action("Stream", "Participant")";
+                                validateSignIn(data, username, password, organizationEmail, loginURL, streamURL);
+                                $('.register-modal-email').text($('#signupemail').val());
+                                document.getElementById("sign-up-form").reset();
+                            }
+                            else {
+                                $('#error-modal').foundation('open');
+                                $("#error-message-genericmodal").text(data.ErrorMessage);
+                            }
+                        }
+                    }).error(function (jqXHR, textStatus, errorThrown) {
+                            DisplayError(jqXHR.status);
+                        });
+                }
+        }).on('submit',function(e){
+           e.preventDefault();
+        });
+
+     GetDate();
+    });
+
+     function GetDate() {
+         $.ajax({
+            url: "@Url.Action("GetDateList", "Home")",
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                var date = data.date;
+                $('#month').empty();
+                $('#inMonth').empty();
+                $('#primaryMonth').empty();
+                $("#month").append("<option value=''></option>");
+                $("#inMonth").append("<option value=''></option>");
+                $("#primaryMonth").append("<option value=''></option>");
+                for (i = 0; i < date.months.length; i++) {
+                    $("#month").append("<option value=" + date.months[i].Value + ">" + date.months[i].text + "</option>");
+                    $("#inMonth").append("<option value=" + date.months[i].Value + ">" + date.months[i].text + "</option>");
+                    $("#primaryMonth").append("<option value=" + date.months[i].Value + ">" + date.months[i].text + "</option>");
+                }
+                $('#day').empty();
+                $('#inDay').empty();
+                $('#primaryDay').empty();
+                $("#day").append("<option value=''></option>");
+                $("#inDay").append("<option value=''></option>");
+                $("#primaryDay").append("<option value=''></option>");
+                for (i = 0; i < date.days.length; i++) {
+                    $("#day").append("<option value=" + date.days[i].Value + ">" + date.days[i].text + "</option>");
+                    $("#inDay").append("<option value=" + date.days[i].Value + ">" + date.days[i].text + "</option>");
+                    $("#primaryDay").append("<option value=" + date.days[i].Value + ">" + date.days[i].text + "</option>");
+                }
+                $('#year').empty();
+                $('#inYear').empty();
+                $('#primaryYear').empty();
+                $("#year").append("<option value=''></option>");
+                $("#inYear").append("<option value=''></option>");
+                $("#primaryYear").append("<option value=''></option>");
+                for (i = 0; i < date.years.length; i++) {
+                    $("#year").append("<option value=" + date.years[i].Value + ">" + date.years[i].text + "</option>");
+                    $("#inYear").append("<option value=" + date.years[i].Value + ">" + date.years[i].text + "</option>");
+                    $("#primaryYear").append("<option value=" + date.years[i].Value + ">" + date.years[i].text + "</option>");
+                }
+            }
+        });
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#password').on('keypress', function (e) {
+            var $this = $(this),
+                code = e.keyCode || e.which;
+            codeStr = String.fromCharCode(code);
+            console.log(codeStr);
+            if (/^[a-z]$/.test(codeStr)) {
+                $("li.lower-char").addClass("is-active");
+            }
+            else if (/^[A-Z]$/.test(codeStr)) {
+                $("li.upper-char").addClass("is-active");
+            }
+            else if (/^[0-9]$/.test(codeStr)) {
+                $("li.number-char").addClass("is-active");
+            }
+        });
+
+        $('#password').on("keyup", function (e) {
+            // var $this = $(this);
+            var str = $('#password').val();
+            if (str.replace(/\s+/g, '').length >= 8) {
+                $("li.min-length").addClass("is-active");
+            }
+            else {
+                $("li.min-length").removeClass("is-active");
+            }
+
+            if (!/[a-z]/.test(str)) {
+                $("li.lower-char").removeClass("is-active");
+            }
+            if (!/[A-Z]/.test(str)) {
+                $("li.upper-char").removeClass("is-active");
+            }
+            if (!/[0-9]/.test(str)) {
+                $("li.number-char").removeClass("is-active");
+            }
+        });
+
+        $('#password, #inpassword').on('focus', function (e) {
+            if (window.innerHeight < window.innerWidth && window.innerWidth < 1024) {
+                var scrollPos = $('#password, #inpassword').offset().top - 80;
+            }
+            $('html, body').animate({
+                scrollTop: scrollPos
+            }, 500);
+        });
+    });
+
+    function showBonafide(obj) {
+        if ($("#bonafideConfirmation").length != 0) {
+            var couponVal = obj.value;
+            if (couponVal != '')
+                $(".bonafide-message-wrapper").removeClass("hide");
+            else
+                $(".bonafide-message-wrapper").addClass("hide");
+        }
+    }
+</script>

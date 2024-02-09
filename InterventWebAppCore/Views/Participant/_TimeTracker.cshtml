@@ -1,0 +1,150 @@
+﻿@model InterventWebApp.TimeTrackerModel
+
+@if (Model.ShowTimeTracker && (Model.IsParticipantInfoPage || Model.TrackerStartTime != DateTime.MinValue))
+{
+    <div class='timer-wrapper stop-timer'>
+        <button class='timer-btn'><span>00:00:00</span></button>
+        <img src='/Images/participant/timer-hover-clock.svg' alt='' class='timer-hover-image' />
+    </div>
+    
+    <div class='stop-reminder-wrapper'>
+        <div class='timer-wrapper'><p>It has been <span class='reminder-time' id='reminder-time-text'></span> since you started the timer for <span class='reminder-name'>@Model.UserName</span>.</p>
+            <p>Is the session still ongoing?</p>
+            <div class='flex-container align-middle align-justify'>
+                <button class='button' id='hideReminder'>Yes</button>
+                <button class='button hollow' id='showStopTimer'>No, stop the timer</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="stop-timer" class="stop-timer-modal reveal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+        <p>Do you want to stop the timer for @Model.UserName?</p>
+        <p class="time-spent"><span id="timeSpentText"></span></p>
+        <select name="disposition-list" id="disposition-list" class="primary-select">
+            <option value="0">Select activity type</option>
+            @foreach (var data in Model.TimeTrackingDispositionList)
+            {
+                <option value="@data.Value">@data.Text</option>
+            }
+        </select>
+        <div class="flex-container align-middle align-justify">
+            <button class="button" id="saveTimeSpent">Submit</button>
+            <button class="button hollow" id="cancelTimeSpent" data-close>Cancel</button>
+        </div>
+    </div>
+    
+    <script>
+        var timeSpentSeconds = @(Model.TrackerStartTime != DateTime.MinValue ? (DateTime.UtcNow - Model.TrackerStartTime).TotalSeconds : 0);
+        var timer, reminder;
+        var disposition = 0;
+        var reminderTime = @(Model.reminderTime != 0 ? Model.reminderTime : 20);
+    
+        $(document).ready(function () {
+            if (timeSpentSeconds != 0) {
+                $('.stop-timer').removeClass('hide').addClass('is-active');
+                SetTimer();
+            } else {
+                $('.start-timer').toggleClass("hide");
+            }
+    
+            $('.start-timer').on('click', function () {
+                $(this).addClass('hide');
+    			$('.stop-timer').removeClass('hide').addClass('is-active');
+    			if (timeSpentSeconds == 0) {
+    				StartTimer();
+    			}
+            });
+    
+    		$('.stop-timer').on('click', function () {
+                $('#timeSpentText').html(new Date(timeSpentSeconds * 1000).toISOString().substr(11, 8));
+                
+    			clearInterval(timer);
+    			clearInterval(reminder);
+    			$("#stop-timer").foundation('open');
+            });
+    
+            $("#hideReminder").on("click", function (e) {
+                e.stopPropagation();
+                
+    			$('.stop-reminder-wrapper').removeClass('is-active');
+    		});
+    
+            $("#showStopTimer").on("click", function (e) {
+                e.stopPropagation();
+                $('#timeSpentText').html(new Date(timeSpentSeconds * 1000).toISOString().substr(11, 8));
+    			$('.stop-reminder-wrapper').removeClass('is-active');
+    			$("#stop-timer").foundation('open');
+            });
+    
+    	    $("#saveTimeSpent").on('click', function () {
+    		    disposition = $("#disposition-list").val();
+    		    if (disposition == 0) {
+    			    $("#disposition-list").focus();
+    			    return;
+    		    }
+    		    StopTimer();
+    	    });
+    
+            $("#cancelTimeSpent").on('click', function () {
+                SetTimer();
+            });
+    	});
+    
+        function ShowReminder() {
+            
+            clearInterval(reminder);
+    		$('.stop-reminder-wrapper').addClass('is-active');
+        }
+    
+        function StartTimer() {
+            $.ajax({
+                type: "POST",
+    			dataType: 'json',
+                data: { timeSpent: 0 },
+                url: "@Url.Action("TrackTime", "Participant")",
+                success: function (data) {
+                    if (data.Result) {
+                        SetTimer();
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+    
+        function SetTimer() {
+            timer = setInterval(function () {
+    			$('.timer-btn span').html(new Date(++timeSpentSeconds * 1000).toISOString().substr(11, 8));
+            }, 1000);
+            reminder = setInterval(function () {
+                var timeInterval = timeSpentSeconds % (reminderTime * 60);
+                if (Math.floor(timeInterval) == 0 && $('.stop-timer').hasClass('is-active'))
+                {
+                    $('#reminder-time-text').html(Math.floor(timeSpentSeconds / 60) + " minutes");
+                    ShowReminder();
+                }
+            }, 1000);
+        }
+    
+    	function StopTimer() {
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: "@Url.Action("TrackTime", "Participant")",
+                data: { timeSpent: parseInt(timeSpentSeconds), disposition: disposition },
+                success: function (data) {
+                    if (data.Result) {
+                        timeSpentSeconds = 0;
+    					$('#timeSpend').html(new Date(timeSpentSeconds * 1000).toISOString().substr(11, 8));
+    					$("#stop-timer").foundation('close');
+    					$('.start-timer .timer-btn span').html('Start Timer');
+    					$('.stop-timer').removeClass('is-active');
+                        $('.start-timer').removeClass('hide');
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+    </script>
+}

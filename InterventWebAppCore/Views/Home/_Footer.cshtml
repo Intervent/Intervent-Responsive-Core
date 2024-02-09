@@ -1,0 +1,120 @@
+﻿@using InterventWebApp
+
+<section class="parallax-wrapper @ViewData["parentView"]">
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x"> 
+                <div class="feature-icon cell medium-5">
+                    @if(ViewData["parentView"] == "intervent") {
+                        <img src="~/images/wellness-score-inverted.svg" alt="" />
+                    } else {
+                        <img src="~/images/wellness-score.svg" alt="" />
+                    }
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L444")</h2>
+                    <p>@Translate.Message("L445")</p>
+                </div>
+            </div>
+        </div>  
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="~/images/report.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L446")</h2>
+                    <p>@Translate.Message("L447")</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature ">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5">
+                    <img src="~/images/target.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L451")</h2>
+                    <p>
+                        @Translate.Message("L452")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="~/images/coach.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L453")</h2>
+                    <p>
+                        @Translate.Message("L454")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5">
+                    <img src="~/images/collage-heart-shape.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L455")</h2>
+                    <p>
+                        @Translate.Message("L456")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+       <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="~/images/reward.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L457")</h2>
+                    <p>
+                        @Translate.Message("L458")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5">
+                    <img src="~/images/responsive.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L459")</h2>
+                    <p>@Translate.Message("L460")</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature final">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="cell text-center">
+                    <img src="~/images/collage-horizontal.svg" alt="" />
+                    <h2>@Translate.Message("L461")</h2>
+                    <button class="pink" onclick="$('#sign-up-modal').foundation('open'); return false;">
+                        @Translate.Message("L443")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>

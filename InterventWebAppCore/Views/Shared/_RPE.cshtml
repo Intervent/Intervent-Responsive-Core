@@ -1,0 +1,31 @@
+﻿@using InterventWebApp
+<div class="grid-container">
+    <div class="grid-x">
+        <div class="cell">
+            <div class="grid-x grid-margin-x">
+                <div class="small-12 cell">
+                    <h3>@Translate.Message("L2181")</h3>
+                    <p>
+                        @Translate.Message("L2185")
+                    </p>
+                    <p>
+                        @Translate.Message("L2186")
+                    </p>
+                </div>
+                @Html.Partial("_CoreRPE")
+                <div class="small-12 cell">
+                    <h3>@Translate.Message("L2187")</h3>
+                    <div class="grid-x">
+                        <div class="small-12 cell">
+                            <ul class="decorated blue">
+                                <li>@Translate.Message("L2188")</li>
+                                <li>@Translate.Message("L2189")</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="close-button hide-for-print" data-close>&#215;</a>
+    </div>
+</div>

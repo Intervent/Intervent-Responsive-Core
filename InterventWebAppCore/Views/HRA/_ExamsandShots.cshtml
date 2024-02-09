@@ -1,0 +1,355 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+@model InterventWebApp.ExamsModel
+<div class="inner-survey-modal">
+<h2 class="text-center">@Translate.Message("L486")</h2>
+<form data-abide id="exams-form" novalidate>
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <div class="question">
+                <div class="qHeader">
+                    <div class="qNumber">1.</div>
+                    <div class="qText">
+                        @Translate.Message("L201")
+                    </div>
+                </div>
+                <div class="exams-group" data-validator-limit="1,12">
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.PhysicalExamBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                            <label for="PhysicalExamBool">@Translate.Message("L124").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption with-tooltip">
+                            @Html.CheckBoxFor(M => M.ColTestBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                            <label for="ColTestBool">@Translate.Message("L1338").
+                                <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2476")"><i class="fa fa-question-circle"></i></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="qBody" id="sigTest">
+                        <div class="qOption with-tooltip">
+                            @Html.CheckBoxFor(M => M.SigTestBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                            <label for="SigTestBool">@Translate.Message("L126").<span data-tooltip aria-haspopup="true" title="@Translate.Message("L2415")"><i class="fa fa-question-circle"></i></span></label>
+                        </div>
+                    </div>
+                    <div class="qBody" id="colStoolTest">
+                        <div class="qOption with-tooltip">
+                            @Html.CheckBoxFor(M => M.ColStoolTestBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                            <label for="ColStoolTestBool">@Translate.Message("L2854").<span data-tooltip aria-haspopup="true" title="@Translate.Message("L2855")"><i class="fa fa-question-circle"></i></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="qBody" id="stoolTest">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.StoolTestBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                            <label for="StoolTestBool">@Translate.Message("L125").</label>
+                        </div>
+                    </div>
+                    @if (Model.Gender == 2)
+                    {
+                        <div class="qBody">
+                            <div class="qOption with-tooltip">
+                                @Html.CheckBoxFor(M => M.PapTestBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                                <label for="PapTestBool">
+                                    @Translate.Message("L127").(@Translate.Message("L215"))
+                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2477")"><i class="fa fa-question-circle"></i></span>
+                                </label>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.CheckBoxFor(M => M.PSATestBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                                <label for="PSATestBool">@Translate.Message("L128").</label>
+                            </div>
+                        </div>
+                    }
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.BoneTestBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                            <label for="BoneTestBool">@Translate.Message("L129").</label>
+                        </div>
+                    </div>
+                    @if (Model.Gender == 2)
+                    {
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.CheckBoxFor(M => M.MammogramBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                                <label for="MammogramBool">@Translate.Message("L130").</label>
+                            </div>
+                        </div>
+                    }
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.DentalExamBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                            <label for="DentalExamBool">@Translate.Message("L131").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+
+                            @Html.CheckBoxFor(M => M.BPCheckBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                            <label for="BPCheckBool">@Translate.Message("L132").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.CholTestBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                            <label for="CholTestBool">@Translate.Message("L133").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.GlucoseTestBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                            <label for="GlucoseTestBool">@Translate.Message("L134").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.EyeExamBool, new Dictionary<string, object> { { "class", "exam" }, { "data-validator", "validateExam" } })
+                            <label for="EyeExamBool">@Translate.Message("L135").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.NoTestBool, new Dictionary<string, object> { { "class", "noexam" }, { "data-validator", "validateExam" } })
+                            <label for="NoTestBool">@Translate.Message("L136").</label>
+                            <small class="form-error">@Translate.Message("L480")</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="qHeader">
+                    <div class="qNumber">2.</div>
+                    <div class="qText">
+                        @Translate.Message("L137")
+                    </div>
+                </div>
+                <div class="shots-group" data-validator-limit="1,8">
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.TetanusShotBool, new Dictionary<string, object> { { "class", "immune" }, { "data-validator", "validateImmune" } })
+                            <label for="TetanusShotBool">@Translate.Message("L138").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.FluShotBool, new Dictionary<string, object> { { "class", "immune" }, { "data-validator", "validateImmune" } })
+                            <label for="FluShotBool">@Translate.Message("L139").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.MMRBool, new Dictionary<string, object> { { "class", "immune" }, { "data-validator", "validateImmune" } })
+                            <label for="MMRBool">@Translate.Message("L140").</label>
+                            <span>@Translate.Message("L213")</span>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.VaricellaBool, new Dictionary<string, object> { { "class", "immune" }, { "data-validator", "validateImmune" } })
+                            <label for="VaricellaBool">@Translate.Message("L141").</label>
+                            <span>@Translate.Message("L214")</span>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.HepBShotBool, new Dictionary<string, object> { { "class", "immune" }, { "data-validator", "validateImmune" } })
+                            <label for="HepBShotBool">@Translate.Message("L142").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.ShinglesShotBool, new Dictionary<string, object> { { "class", "immune" }, { "data-validator", "validateImmune" } })
+                            <label for="ShinglesShotBool">@Translate.Message("L143").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.HPVShotBool, new Dictionary<string, object> { { "class", "immune" }, { "data-validator", "validateImmune" } })
+                            <label for="HPVShotBool">@Translate.Message("L144").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.PneumoniaShotBool, new Dictionary<string, object> { { "class", "immune" }, { "data-validator", "validateImmune" } })
+                            <label for="PneumoniaShotBool">@Translate.Message("L145").</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.NoShotsBool, new Dictionary<string, object> { { "class", "noimmune" }, { "data-validator", "validateImmune" } })
+                            <label for="NoShotsBool">@Translate.Message("L146").</label>
+                            <small class="form-error">@Translate.Message("L480") </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small button" type="submit">@Translate.Message("L481")</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeExams">@Translate.Message("L967")</button></div>
+    </div>
+</form>
+<script type="text/javascript">
+    var formsubmit = true;
+    Foundation.Abide.defaults.validators['validateExam'] = function ($el, required, parent) {
+        var group = parent.closest('.exams-group');
+        var limit = group.attr('data-validator-limit').split(',');
+        var countC = group.find(':checked').length;
+        if (countC >= limit[0] && countC <= limit[1]) {
+            group.find('small.form-error').hide();
+            group.find('small.form-error').removeClass('is-visible');
+            return true;
+        } else {
+            group.find('small.form-error').css({ display: 'block' });
+            return false;
+        }
+    };
+    Foundation.Abide.defaults.validators['validateImmune'] = function ($el, required, parent) {
+        var group = parent.closest('.shots-group');
+        var limit = group.attr('data-validator-limit').split(',');
+        var countC = group.find(':checked').length;
+        if (countC >= limit[0] && countC <= limit[1]) {
+            group.find('small.form-error').hide();
+            group.find('small.form-error').removeClass('is-visible');
+            return true;
+        } else {
+            group.find('small.form-error').css({ display: 'block' });
+            return false;
+        }
+    };
+    $(document).ready(function () {
+        @if (Model.readOnly)
+        {
+            @: $("#exams-form :input").prop("disabled", true);
+            @: $('#closeExams').attr('disabled', false);
+        }
+        $('#closeExams').on('click', function () {
+            $('#survey-modal').foundation('close');
+            RealignPage();
+            //removeForm('exams-form');
+        });
+        HideShowQuestions('ColTestBool', ('@Model.ColTestBool' == 'True'), true);
+        HideShowQuestions('SigTestBool', ('@Model.SigTestBool' == 'True'), true);
+        HideShowQuestions('ColStoolTestBool', ('@Model.ColStoolTestBool' == 'True'), true);
+        $("#exams-form").foundation();
+        $('#exams-form')
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                if (invalid_fields) {
+                    var scrollTo = $('#' + invalid_fields[0].id).parent('.qOption').position().top;
+                    $('#exams-form').parents('.reveal-overlay').animate({
+                        scrollTop: scrollTo
+                    }, 400);
+                }
+            })
+            .on('formvalid.zf.abide', function () {
+                    $.ajax({
+                        url: "@Url.Action("ExamsandShots", "HRA")",
+                        type: 'POST',
+                        dataType: "json",
+                        data: $("#exams-form").serialize(),
+                        success: function (data) {
+                            if (data == "success") {
+                                $(document).on('closed.zf.reveal', '[data-reveal]', function () {
+                                        
+                                    UpdateHRAStatus("EC");
+                                });
+                                $('#survey-modal').foundation('close');
+                                //removeForm('exams-form');
+                            }
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+            })
+            // to prevent form from submitting upon successful validation
+            .on("submit", function (ev) {
+                ev.preventDefault();
+
+            })
+    });
+
+    $('.exam').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.noexam').prop("checked", false);
+        }
+    });
+    $('.noexam').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.exam').prop("checked", false);
+        }
+    });
+    $('.immune').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.noimmune').prop("checked", false);
+        }
+    });
+    $('.noimmune').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.immune').prop("checked", false);
+        }
+    });
+
+    $('#ColTestBool').on('change', function () {
+        HideShowQuestions('ColTestBool', $(this).is(':checked'), false);
+    });
+
+    $('#SigTestBool').on('change', function () {
+        HideShowQuestions('SigTestBool', $(this).is(':checked'), false);
+    });
+
+    $('#ColStoolTestBool').on('change', function () {
+        HideShowQuestions('ColStoolTestBool', $(this).is(':checked'), false);
+    });
+
+    function HideShowQuestions(question, checked, isFirst) {
+        if (isFirst && checked) {
+            $('#stoolTest').hide();
+            if (question == 'ColTestBool') {
+                $('#colStoolTest').hide();
+                $('#sigTest').hide();
+            }
+            else if (question == 'SigTestBool')
+                $('#colStoolTest').hide();
+        }
+        else if(!isFirst) {
+            if (checked) {
+                $('#stoolTest').hide();
+                $('#StoolTestBool').prop('checked', false)
+                if (question == 'ColTestBool') {
+                    $('#colStoolTest').hide();
+                    $('#ColStoolTestBool').prop('checked', false)
+                    $('#sigTest').hide();
+                    $('#SigTestBool').prop('checked', false)
+                }
+                else if (question == 'SigTestBool') {
+                    $('#colStoolTest').hide();
+                    $('#ColStoolTestBool').prop('checked', false);
+                }
+            }
+            else {
+                $('#stoolTest').show();
+                if (question == 'ColTestBool') {
+                    $('#colStoolTest').show();
+                    $('#sigTest').show();
+                }
+                else if (question == 'SigTestBool')
+                    $('#colStoolTest').show();
+            }
+        }
+    }
+</script>
+
+<button class="close-button" data-close aria-label="Close modal" type="button" onclick="removeForm('exams-form')">
+    <span aria-hidden="true">&times;</span>
+</button>
+</div>

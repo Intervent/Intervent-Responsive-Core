@@ -1,0 +1,81 @@
+﻿@model InterventWebApp.ReportsModel
+@using InterventWebApp;
+
+<div class="row">
+    <div class="columns">
+        @if (Model.wellnessScoreInfo != null)
+        {
+            <h2>Wellness ScoreCard</h2>
+
+            <div class="row report-item collapse">
+                <div class="columns" data-equalizer-watch>
+                    <div class="columns text-center">
+                        <!--Pie Chart -->
+                      <div class="progress-pie-chart" data-percent="@Model.wellnessScoreInfo.newWellnessScore">
+                        <div class="ppc-progress">
+                          <div class="ppc-progress-fill"></div>
+                        </div>
+                        <div class="ppc-percents">
+                          <div class="pcc-percents-wrapper">
+                            <span>Wellness Score</span>
+                            <span class="percentage">@Model.wellnessScoreInfo.newWellnessScore</span>
+                          </div>
+                        </div>
+                      </div>
+                        <!--End Chart -->
+                    </div>
+                </div>
+                <div class="columns">
+                    <p>
+                        <span class="score-status">@Translate.Message(Model.wellnessScoreInfo.wellnessHead)</span>
+                        @Translate.Message(Model.wellnessScoreInfo.wellnessText)
+                    </p>
+                </div>
+                <div class="columns text-center">
+                    <button onclick="window.location.href = '@Url.Action("ReportsDashboard", "Reports")'">Continue to My Wellness Report</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="columns">
+                    <h2>Wellness Report</h2>
+                    <p>
+                        Please complete all sections of the survey to view your report
+                    </p>
+                    <input type="checkbox" id="dont-show-again" value="">
+                    <label for="dont-show-again">Don't show this again</label>
+                    <button onclick="$('#complete-survey-modal').foundation('reveal', 'close');" class="expand">
+                        Continue
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script>
+  //Wellness Score Pie Chart
+  $(function () {
+    var $ppc = $('.progress-pie-chart'),
+            percent = @Model.wellnessScoreInfo.newWellnessScore,
+            deg = 360 * percent / 100;
+    if (percent > 50) {
+      $ppc.addClass('gt-50');
+    }
+    $('.ppc-progress-fill').css('transform', 'rotate(' + deg + 'deg)');
+    $('.ppc-percents .percentage').html(percent);
+
+    //assign colors
+    function between(x, min, max) {
+      return x >= min && x <= max;
+    }
+    if (between(percent, 0, 79)) {
+      $ppc.addClass('red');
+    } else if (between(percent, 80, 89)) {
+      $ppc.addClass('orange');
+    } else {
+      $ppc.addClass('green');
+    }
+  });
+</script>

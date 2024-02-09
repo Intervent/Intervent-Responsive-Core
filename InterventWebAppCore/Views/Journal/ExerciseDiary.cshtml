@@ -1,0 +1,635 @@
+﻿@model InterventWebApp.ExerciseModel
+@using InterventWebApp
+@{
+    ViewBag.Title = "ExerciseDiary";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main search-participants">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="medium-7 large-8 medium-order-1 cell">
+                    <h2>@Translate.Message("L1706")</h2>
+                </div>
+                <div class="small-5 medium-3 large-2 medium-order-3 cell text-right">
+                    <button id="exercise-resource-btn" data-open="resource" class="small secondary-color right"><i class="fa fa-file-text-o"></i>@Translate.Message("L1707")</button>
+                </div>
+                <div class="small-7 medium-2 medium-order-2 cell text-right">
+                @if (Model.HasActivePortal)
+                {
+                    <button id="add-exercise-button" data-open="add-exercise" class="button plus-btn right">@Translate.Message("L291")</button>
+                }
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="small-12 cell">
+                    <div class="panel filters">
+                        <fieldset>
+                            <div class="grid-x grid-margin-x">
+                                <div class="small-12 cell">
+                                    @if (Model.shortTermPoints.HasValue)
+                                    {
+                                        <h6>@Translate.Message("L1708") : @Model.shortTermMinutes minutes/ @Model.shortTermPoints @Translate.Message("L1710")</h6>
+                                    }
+                                    @if (Model.longTermPoints.HasValue)
+                                    {
+                                        <h6>@Translate.Message("L1709") : @Model.longTermMinutes minutes/ @Model.longTermPoints @Translate.Message("L1710")</h6>
+                                    }
+                                </div>
+                                <div class="slider">&nbsp;</div>
+                            </div>
+                            <div class="grid-x grid-margin-x">
+                                <div class="small-12 medium-4 cell">
+                                    <select id="exercisedays" onchange="daysOptions()">
+                                        <option>--@Translate.Message("L421")--</option>
+                                        <option value="365">1 @Translate.Message("L3348")</option>
+                                        <option value="30">1 @Translate.Message("L3346")</option>
+                                        <option value="7">@Translate.Message("L3015")</option>
+                                        <option value="2">@Translate.Message("L2742")</option>
+                                        <option value="1">@Translate.Message("L2743")</option>
+                                        <option value="0" selected="selected">@Translate.Message("L2744")</option>
+                                    </select>
+                                </div>
+                                <div class="small-12 medium-4 cell">
+                                    <input type="text" placeholder="@Translate.Message("L3809")" id="exerciseStartDate" name="exerciseStartDate">
+                                    <input id="HexerciseStartDate" type="hidden" />
+                                </div>
+                                <div class="small-12 medium-4 cell">
+                                    <input type="text" placeholder="@Translate.Message("L3810")" id="exerciseEndDate" name="exerciseEndDate">
+                                    <input id="HexerciseEndDate" type="hidden" />
+                                </div>
+                                <div class="small-12 medium-text-right cell">
+                                    <button class="button" id="filter-exercise-data">
+                                        <div class="loading-spinner hide" show-if-submitting></div>
+                                        <i class="fa fa-filter"></i>
+                                        @Translate.Message("L963")
+                                    </button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell">
+                    <div id="search-results"></div>
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x grid-margin-y">
+                <div class="cell">
+                    <!-- pagination Start -->
+                    <div class="pagination-area hide" id="pagination-centered">
+                        <ul>
+                            <li id="numeric"></li>
+                        </ul>
+                        <!-- page-link Start -->
+                        <div class="page-link">
+                            <label>@Translate.Message("L4041")</label>
+                            <div class="grid-x">
+                                <input type="text" id="jumptoPageNo">
+                                <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                            </div>
+                        </div>
+                        <!-- page-link End -->
+                    </div>
+                    <!-- pagination End -->
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x grid-margin-y">
+                <div class="cell">
+                    <div class="panel" id="chart-results" hidden>
+                        <div id="chartdivdaily" style="width:100%;height:500px;"></div>
+                        <div id="chartdivweekly" style="width:100%;height:500px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="add-exercise" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form id="add-exercise" data-abide novalidate>
+        <h2 class="text-center">@Translate.Message("L1711")</h2>
+        @Html.Hidden("ExerciseDiaryId")
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6">
+                    <label for="ExerciseDate">@Translate.Message("L561")</label>
+                    <input type="text" id="ExerciseDate" class="fdatepicker" required />
+                    <small class="form-error">@Translate.Message("L480")</small>
+                    <input id="hExerciseDate" type="hidden">
+                </div>
+                <div class="cell medium-6">
+                    <label>@Translate.Message("L1718")</label>
+                    @Html.DropDownListFor(m => m.ExerciseType, Model.ExerciseTypes, "----", new { @required = "required", onchange = @"UpdatePoints();" })
+                    <small class="form-error">@Translate.Message("L480")</small>
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6">
+                    <label for="Duration">@Translate.Message("L1713")</label>
+                    <input type="number" id="Duration" max="60" min="1" onchange="UpdatePoints()" required />
+                    <small class="form-error">@Translate.Message("L480")</small>
+                </div>
+                @if (Model.ExerciseDiaryAccess >= 2)
+                {
+                    <div class="cell medium-6">
+                        <label for="RPE">@Translate.Message("L1714")</label>
+                        @Html.DropDownListFor(m => m.RPE, Model.RPES, "--" + Translate.Message("L2138") + "--", new { @onchange = "UpdatePoints()" })
+                    </div>
+                }
+            </div>
+            <div class="grid-x grid-margin-x">
+                @if (Model.ExerciseDiaryAccess >= 2)
+                {
+                    <div class="cell medium-6">
+                        <label for="HeartRate">@Translate.Message("L1715")</label>
+                        <input type="number" id="HeartRate" max="10" min="1" />
+                    </div>
+                }
+                @if (Model.ExerciseDiaryAccess >= 3)
+                {
+                    <div class="cell medium-6">
+                        <label for="Points">@Translate.Message("L1716")</label>
+                        <input type="number" id="Points" max="200" min="1" />
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" id="Points" />
+                }
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6">
+                    <label for="StepsPerDay">@Translate.Message("L3815")</label>
+                    <input type="number" id="StepsPerDay" />
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-12">
+                    <label for="Notes">@Translate.Message("L1717")</label>
+                    <textarea id="Notes" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x button-set">
+                <div class="cell medium-6 medium-order-2 medium-text-right">
+                    <button class="small" type="submit">@Translate.Message("L968")</button>
+                </div>
+                <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeExercise">@Translate.Message("L967")</button></div>
+            </div>
+        </div>
+        <a class="close-button" data-close>&#215;</a>
+    </form>
+</div>
+<div id="resource" class="reveal large rec-modal exercise" data-reveal>
+    @Html.Partial("_RPE")
+</div>
+<!-- Preloader-->
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/moment-timezone.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    $("#exerciseStartDate").on("change", function () {
+        $('#HexerciseStartDate').val(toSystemDateFormat($('#exerciseStartDate').val()));
+    });
+    $("#exerciseEndDate").on("change", function () {
+        $('#HexerciseEndDate').val(toSystemDateFormat($('#exerciseEndDate').val()));
+    });
+    $("#ExerciseDate").on("change", function () {
+        $('#hExerciseDate').val(toSystemDateFormat(this.value));
+    });
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+
+        function daysOptions() {
+            if ($("#exercisedays").val() == 0) {
+            $("#exerciseStartDate").val(toLocalDateFormat("@DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy")"));
+            $("#exerciseEndDate").val(toLocalDateFormat("@DateTime.Now.ToString("MM/dd/yyyy")"));
+            $('#exerciseEndDate').fdatepicker('setStartDate', new Date($("#exerciseStartDate").val()));
+            $("#exerciseStartDate").removeAttr('readonly');
+            $("#exerciseEndDate").removeAttr('readonly');
+        }
+            else {
+            $("#exerciseStartDate").val("");
+            $("#exerciseEndDate").val("");
+            $("#exerciseStartDate").attr('readonly', 'readonly');
+            $("#exerciseEndDate").attr('readonly', 'readonly');
+        }
+            $("#exerciseStartDate").trigger("change");
+            $("#exerciseEndDate").trigger("change");
+    }
+
+    $(document).ready(function () {
+            $("#exerciseStartDate").val(toLocalDateFormat("@DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy")"));
+            $("#exerciseEndDate").val(toLocalDateFormat("@DateTime.Now.ToString("MM/dd/yyyy")"));
+            $("#exercisedays").val("30");
+            $("#exerciseStartDate").fdatepicker({
+                format: "@Model.DateFormat.ToLower()",
+                endDate: new Date()
+            }).on('change', function (selected) {
+                var endDate = new Date($("#HexerciseEndDate").val());
+                var minDate = new Date($("#HexerciseStartDate").val());
+                if (endDate < minDate) {
+                    $('#exerciseEndDate').fdatepicker('setDate', minDate);
+                }
+                $('#exerciseEndDate').fdatepicker('setStartDate', minDate);
+                $("#exerciseEndDate").trigger("change");
+            });
+            $("#exerciseEndDate").fdatepicker({
+                format: "@Model.DateFormat.ToLower()",
+                endDate: new Date()
+            });
+            $('.fdatepicker').fdatepicker({
+                format: "@Model.DateFormat.ToLower()",
+                endDate: new Date()
+            });
+        ListExercise();
+        $('#filter-exercise-data').on('click', function () {
+            startIndex = 0;
+            pageSize = 15;
+            totalRecords = 0;
+            currentPage = 0;
+            totalPages = 0;
+            ListExercise();
+        })
+        $("#exerciseStartDate").trigger("change");
+        $("#exerciseEndDate").trigger("change");
+    });
+        $('#add-exercise').foundation();
+        $('#add-exercise')
+        .on("forminvalid.zf.abide", function (ev, frm) {
+            console.log("Form id " + ev.target.id + " is invalid");
+            })
+        .on('formvalid.zf.abide', function () {
+            //When Valid
+            $("#loader-wrapper").fadeIn();
+            UpdatePoints();
+            var id = $('#ExerciseDiaryId').val();
+            var ExerciseDate = $("#hExerciseDate").val();
+            var Type = $("#ExerciseType").val().split("^");
+            var Duration = $("#Duration").val();
+            var RPE = $('#RPE').val();
+            var HeartRate = $('#HeartRate').val();
+            var Points = $('#Points').val();
+            var StepsPerDay = $('#StepsPerDay').val();
+            var Notes = $('#Notes').val();
+            var type = Type[0];
+            if (ExerciseDate.length > 0 && Type[0] != "" && Type[0] != null && (Type[0] == @((int)ExerciseTypes.Steps) || Duration.length > 0)) {
+                $.ajax({
+                    url: "@Url.Action("AddtoExercsieDiary", "Journal")",
+                    data: { id: id, ExerciseDate: ExerciseDate, Type: type, Duration: Duration, RPE: RPE, HeartRate: HeartRate, Points: Points, StepsPerDay: StepsPerDay, Notes: Notes },
+                    type: 'POST',
+                    dataType: "json",
+                    success: function (data) {
+                        if (!id)
+                            totalRecords++;
+                        currentPage--;
+                        ListExercise();
+                        $('#add-exercise').foundation('close');
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+                }
+                $("#loader-wrapper").fadeOut();
+            })
+        .on("submit", function (ev) {
+            ev.preventDefault();
+
+        })
+
+        $('#closeExercise').on('click', function () {
+            $('#add-exercise').foundation('close');
+        });
+
+    $("#add-exercise-button").on('click', function () {
+
+        $("#ExerciseDate").val("");
+        $("#ExerciseType").val("");
+        $("#Duration").val("");
+        $('#ExerciseDiaryId').val("");
+        $('#RPE').val("");
+        $('#HeartRate').val("");
+        $('#Points').val("");
+        $('#StepsPerDay').val("");
+        $('#Notes').val("");
+    })
+
+    function ListExercise() {
+        var startDate = $("#HexerciseStartDate").val();
+        var endDate = $("#HexerciseEndDate").val();
+        var Days = $("#exercisedays").val();
+        var model = {};
+        var paginationdata = {
+            'page': currentPage,
+            'pageSize': pageSize,
+            'totalRecords': totalRecords,
+            'startDate': startDate.toISOString(),
+            'endDate': endDate.toISOString(),
+            'Days' : Days
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+        $.ajax({
+            url: "@Url.Action("ListExercise", "Journal")",
+            data: strData,
+            type: 'POST',
+            contentType: 'application/json, charset=utf-8',
+            dataType: "json",
+            success: function (data) {
+                totalRecords = data.Records.totalRecords;
+                totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                $('#search-results').html("");
+                if (data != null) {
+                    var exerciseData = [];
+                    var weeklyExerciseData = [];
+                    if (data.Records != null && data.Records.ExcerciseDiaries.length > 0) {
+                        $("#chartdivdaily").show();
+                        $('#search-results').show();
+                        var exerciseHtml = "<table class='table'>";
+                        exerciseHtml += "<tr><th class='pink'>@Translate.Message("L561")</th><th class='pink'>@Translate.Message("L1718")</th><th class='pink'>@Translate.Message("L1713")</th><th class='pink'>@Translate.Message("L3573")</th><th class='pink'></th></tr>"
+                        for (var i = 0; i < data.Records.ExcerciseDiary.length; i++)
+                        {
+                            var exercise = data.Records.ExcerciseDiary[i];
+                            var duration = exercise.Duration != null ? exercise.Duration : '@Translate.Message("L1149")';
+                            var stepsperday = exercise.StepsPerDay != null ? exercise.StepsPerDay : '@Translate.Message("L1149")';
+                            var date = moment.tz(new Date(parseInt(exercise.Date.substr(6))), '@Model.TimeZone');
+                            exerciseHtml += "<tr><td>" + toLocalDateFormat(date) + "</td>" + "<td>" + exercise.ExerciseType.Activity + "</td>" +
+                                "<td>" + duration + "</td>" +
+                                "<td>" + stepsperday + "</td>";
+                            if ('@Model.HasActivePortal' == "True") {
+                                exerciseHtml += "<td><a onclick='Update(" + exercise.Id + ")'><i class='fa fa-file-o'></i></a></td>";
+                            }
+                            exerciseHtml += "</tr>";
+                        }
+                        for (var i = 0; i < data.DailyRecord.length; i++) {
+                            var exercises = data.DailyRecord[i];
+                            var startDate, points = 0, duration = 0, message = "";
+                            for (var j = 0; j < exercises.length; j++) {
+                                if (j == 0) {
+                                    var date = new Date(moment.tz(new Date(parseInt(exercises[j].Date.substr(6))), '@Model.TimeZone'));
+                                    startDate = toSystemDateFormat(date);
+                                }
+                                if (exercises[j].Points > 0)
+                                    points = points + exercises[j].Points;
+                                if (exercises[j].Duration > 0)
+                                    duration = duration + exercises[j].Duration;
+                            }
+                            exerciseData.push({
+                                "date": toSystemDateFormat(date),
+                                "minutes": duration,
+                                "points": points
+                            });
+                        }
+                        exerciseHtml += "</table>";
+                        $('#search-results').append(exerciseHtml);
+                        $('#chart-results').show();
+                        GenerateChart(exerciseData, false, "chartdivdaily");
+                    }
+                    else {
+                        $('#search-results').append('<center>@Translate.Message("L2774")</center>');
+                        $('#chart-results').hide();
+                    }
+                    if (data.WeeklyRecord != null && data.WeeklyRecord.length > 0) {
+                        $("#chartdivweekly").show();
+                        for (var i = 0; i < data.WeeklyRecord.length; i++) {
+                            var exercises = data.WeeklyRecord[i];
+                            var startDate, points = 0, duration = 0, message = "";
+                            for (var j = 0; j < exercises.length; j++) {
+                                if (j == 0) {
+                                    var date = new Date(moment.tz(new Date(parseInt(exercises[j].Date.substr(6))), '@Model.TimeZone'));
+                                    startDate = toSystemDateFormat(date);
+                                }
+                                if (exercises[j].Points > 0)
+                                    points = points + exercises[j].Points;
+                                if (exercises[j].Duration > 0)
+                                    duration = duration + exercises[j].Duration;
+                            }
+                            if (points < 25)
+                                message = "@Translate.Message("L1719").";
+                            else if (points >= 25 && points < 35)
+                                message = "@Translate.Message("L1720").";
+                            else if (points >= 35 && points < 50)
+                                message = "@Translate.Message("L1721")!";
+                            else if (points >= 50 && points < 75)
+                                message = "@Translate.Message("L1722").";
+                            else if (points >= 75 && points < 100)
+                                message = "@Translate.Message("L1723")!";
+                            else if (points >= 100)
+                                message = "@Translate.Message("L1724").";
+                            weeklyExerciseData.push({
+                                "date": startDate, "minutes": duration, "points": points, "message": message
+                            });
+                        }
+                        GenerateChart(weeklyExerciseData, true, "chartdivweekly");
+                    }
+                    else {
+                        $("#chartdivdaily").hide();
+                        $("#chartdivweekly").hide();
+                    }
+                }
+                AddPager();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListExercise();
+    }
+
+    function Update(id) {
+        $.ajax({
+            url: "@Url.Action("ReadExercise", "Journal")",
+            data: { id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                        $('#ExerciseDiaryId').val(data.Record.Id);
+                        var dateStr = moment.tz(new Date(parseInt(data.Record.Date.substr(6))), '@Model.TimeZone');
+                        var exerciseDate = toLocalDateFormat(dateStr);
+                        $("#ExerciseDate").val(exerciseDate);
+                        $("#ExerciseType").val(data.Record.Type + "^" + data.Record.ExerciseType.Value);
+                        $("#Duration").val(data.Record.Duration);
+                        $("#RPE").val(data.Record.RPE);
+                        $("#HeartRate").val(data.Record.HeartRate);
+                        $("#Points").val(data.Record.Points);
+                        $("#StepsPerDay").val(data.Record.StepsPerDay);
+                        $("#Notes").val(data.Record.Notes);
+                        $('#add-exercise').foundation('open');
+                        $("#ExerciseDate").trigger("change");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function GenerateChart(data, weekly, chart) {
+        var balloonText = "", title = "";
+        if (weekly == false) {
+            balloonText = "<div style='margin:10px; text-align:left;'><span>@Translate.Message("L561"):{dateX}</span><br><span>@Translate.Message("L1713"):{minutes}</span>";
+            title = "<b>@Translate.Message("L4483")</b>";
+        }
+        else {
+            balloonText = "<div style='margin:10px; text-align:left;'><span>@Translate.Message("L1730"):{dateX}</span><br><span>@Translate.Message("L1713"):{minutes}</span><br><span>@Translate.Message("L1729"):{message}</span>";
+            title = "<b>@Translate.Message("L4484")</b>";
+        }
+            // Themes end
+         am4core.addLicense("CH39169069");
+            // Create chart instance
+            var chart = am4core.create(chart, am4charts.XYChart);
+            chart.dateFormatter.dateFormat = "@Model.DateFormat";
+            var chartTitle = chart.titles.create();
+            chartTitle.html = title;
+            chartTitle.fontSize = 15;
+            chartTitle.marginBottom = 30;
+
+            // Create daily series and related axes
+            var dateAxis1 = chart.xAxes.push(new am4charts.DateAxis());
+            dateAxis1.renderer.grid.template.location = 0;
+		    dateAxis1.renderer.minGridDistance = 40;
+		    dateAxis1.renderer.labels.template.rotation = -45;
+		    dateAxis1.renderer.labels.template.horizontalCenter = "right";
+		    dateAxis1.renderer.labels.template.verticalCenter = "middle";
+            if (weekly == true) {
+                dateAxis1.skipEmptyPeriods = true;
+            }
+            //dateAxis1.events.on("sizechanged", function (ev) {
+            //    var axis = ev.target;
+            //    var cellWidth = axis.pixelWidth / (axis.endIndex - axis.startIndex);
+            //    if (cellWidth < axis.renderer.labels.template.maxWidth) {
+            //        axis.renderer.labels.template.rotation = -45;
+            //        axis.renderer.labels.template.horizontalCenter = "right";
+            //        axis.renderer.labels.template.verticalCenter = "middle";
+            //    }
+            //    else {
+            //        axis.renderer.labels.template.rotation = 0;
+            //        axis.renderer.labels.template.horizontalCenter = "middle";
+            //        axis.renderer.labels.template.verticalCenter = "top";
+            //    }
+            //});
+            var valueAxis1 = chart.yAxes.push(new am4charts.ValueAxis());
+            valueAxis1.title.html = "@Translate.Message("L473")";
+
+            var series1 = chart.series.push(new am4charts.ColumnSeries());
+            series1.dataFields.valueY = "minutes";
+            series1.dataFields.dateX = "date";
+            series1.data = data;
+            series1.xAxis = dateAxis1;
+            series1.yAxis = valueAxis1;
+            series1.tooltipHTML = balloonText;
+
+            // Create hourly series and related axes
+            var dateAxis2 = chart.xAxes.push(new am4charts.DateAxis());
+            dateAxis2.renderer.grid.template.location = 0;
+            dateAxis2.renderer.minGridDistance = 40;
+            dateAxis2.renderer.labels.template.disabled = true;
+            dateAxis2.renderer.grid.template.disabled = true;
+		    dateAxis2.renderer.tooltip.disabled = true;
+		    dateAxis2.renderer.labels.template.rotation = -45;
+		    dateAxis2.renderer.labels.template.horizontalCenter = "right";
+		    dateAxis2.renderer.labels.template.verticalCenter = "middle";
+            if (weekly == true) {
+                dateAxis2.skipEmptyPeriods = true;
+            }
+            //dateAxis2.events.on("sizechanged", function (ev) {
+            //    var axis = ev.target;
+            //    var cellWidth = axis.pixelWidth / (axis.endIndex - axis.startIndex);
+            //    if (cellWidth < axis.renderer.labels.template.maxWidth) {
+            //        axis.renderer.labels.template.rotation = -45;
+            //        axis.renderer.labels.template.horizontalCenter = "right";
+            //        axis.renderer.labels.template.verticalCenter = "middle";
+            //    }
+            //    else {
+            //        axis.renderer.labels.template.rotation = 0;
+            //        axis.renderer.labels.template.horizontalCenter = "middle";
+            //        axis.renderer.labels.template.verticalCenter = "top";
+            //    }
+            //});
+
+            var valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
+            valueAxis2.renderer.opposite = true;
+            valueAxis2.renderer.grid.template.disabled = true;
+            valueAxis2.renderer.labels.template.disabled = true;
+            valueAxis2.renderer.tooltip.disabled = true;
+
+            var series2 = chart.series.push(new am4charts.LineSeries());
+            series2.dataFields.valueY = "points";
+            series2.dataFields.dateX = "date";
+            series2.data = data;
+            series2.xAxis = dateAxis2;
+            series2.yAxis = valueAxis2;
+            series2.fill = am4core.color("#FFFF00");
+            series2.stroke = am4core.color("#FFFF00");
+            series2.strokeWidth = 1;
+            series2.tensionX = 0.8;
+            series2.tooltipHTML = "@Translate.Message("L1716"):<b>{valueY}</b>";
+
+            chart.legend = new am4charts.Legend();
+            chart.legend.useDefaultMarker = true;
+            var marker = chart.legend.markers.template.children.getIndex(0);
+            marker.cornerRadius(12, 12, 12, 12);
+            marker.strokeWidth = 2;
+            marker.strokeOpacity = 1;
+            marker.stroke = am4core.color("#ccc");
+
+            series1.legendSettings.labelText = "@Translate.Message("L4485")";
+            series2.legendSettings.labelText = "@Translate.Message("L1716")";
+
+
+            var durationBullet = series2.bullets.push(new am4charts.Bullet());
+            var durationRectangle = durationBullet.createChild(am4core.Rectangle);
+            durationBullet.horizontalCenter = "middle";
+            durationBullet.verticalCenter = "middle";
+            durationBullet.width = 7;
+            durationBullet.height = 7;
+            durationRectangle.width = 7;
+            durationRectangle.height = 7;
+
+            // Add cursor
+            chart.cursor = new am4charts.XYCursor();
+    }
+
+    function UpdatePoints() {
+        var Type = $("#ExerciseType").val().split("^");
+        var Duration = $("#Duration").val();
+        var RPE = $('#RPE').val();
+        if (Type[0] != @((int)ExerciseTypes.Steps)) {
+            $("#Duration").attr("required", "required");
+        }
+        else {
+            $("#Duration").removeAttr("required");
+        }
+        if (Type[0] != @((int)ExerciseTypes.Steps) && Type[1] != "" && Type[1] != null && Duration != "" && RPE != "") {
+            $.ajax({
+                url: "@Url.Action("GetExercisePoints", "Journal")",
+                type: 'POST',
+                dataType: "json",
+                data: { Exercise: Type[1], Internsity: RPE, Duration: Duration },
+                success: function (data) {
+                    $("#Points").val(data.Record);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+        else {
+            $("#Points").val('');
+        }
+    }
+
+</script>

@@ -1,0 +1,26 @@
+﻿@{string url;}
+@if (@Model == "1"){
+    url = "https://medmovie.com/library_id/3170/topic/cvml_0070a/embedded-v/"; //ascvd
+}
+else if (@Model == "2"){
+    url = "https://medmovie.com/library_id/3170/topic/cvml_0225i/embedded-v/"; //high bp
+}
+else if (@Model == "3")
+{
+    url = "https://medmovie.com/library_id/3170/topic/cvml_0066a/embedded-v/"; //stent
+}
+else
+{
+    url = "https://medmovie.com/library_id/3170/topic/cvml_0342a/embedded-v/"; //qui smoking
+}
+<div class="flex-video">
+    <iframe width="420" height="315" src="@url" frameborder="0" allowfullscreen="" data-src="@url"></iframe>
+</div>
+<a class="close-button" data-close onclick="removeVideo()">&#215;</a>
+
+<script>
+    function removeVideo(formName) {
+        $(".flex-video").remove();
+    }
+</script>
+

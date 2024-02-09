@@ -1,0 +1,50 @@
+﻿@using InterventWebApp
+
+@{
+    ViewBag.Title = "Task Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<section class="main recommendations admin-main-body">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="cell small-12">
+                    <h2>Register Participant</h2>
+					<div class="panel">
+						<p>
+							@Translate.Message("L1990")<a href='@Url.Action("ServiceAgreement", "Home")' target="_blank"> www.myintervent.com/serviceagreement. </a>
+						</p>
+						<div class="tick-buttons">
+							<label>
+								@Html.CheckBox("Terms", new Dictionary<string, object> { { "class", "immune" }, { "data-abide-validator", "validateTerms" } })
+								<span class="checkmark"></span>
+								@Translate.Message("L1991")
+							</label>
+						</div>
+						<p>
+							<button class="button hide" type="button" id="acceptTerms" href="" data-open="user-profile" data-modal-path="@Html.Raw(Url.Action("Userprofile", "Account" , new { module="Admin" , create=true }))">
+								Create profile
+							</button>
+						</p>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="user-profile" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+<script>
+    $(document).ready(function () {
+    });
+    $(document).on('change', '#Terms', function () {
+        var terms = document.getElementById('Terms').checked;
+        if (terms)
+            $('#acceptTerms').removeClass("hide");
+        else
+            $('#acceptTerms').addClass("hide");
+    });
+    function CreateProfileStatus(redirect) {
+        window.location.href = "../Participant/Stream?ForceParticipant=true";
+    }
+</script>

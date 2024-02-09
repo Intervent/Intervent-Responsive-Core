@@ -1,0 +1,475 @@
+﻿@using InterventWebApp
+@model HomeModel
+@{
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+
+@if (Model.CloseModal)
+{
+	<div data-sticky-container class="header-blue hide">
+		<div class="contain-to-grid sticky" data-sticky data-stick-to="top" data-margin-top="0" data-sticky-on="small">
+			<div class="menu-white-bg"></div>
+			<div class="grid-container">
+				<div class="grid-x grid-margin-x">
+					<div class="cell">					
+						<nav class="top-bar lmc-nav-bar" data-topbar role="navigation">
+							<div class="title-bar" data-responsive-toggle="lmc-mobile-menu" data-hide-for="large">
+								<button class="menu-icon" type="button" data-toggle="lmc-mobile-menu"></button>
+							</div>
+							<h1 class="menu-text"><img src="~/Images/lmc/lmc-logo.png" /></h1>
+							<div class="lmc-menu-items" id="lmc-mobile-menu">
+								<ul class="menu vertical large-horizontal main-menu" data-responsive-menu="accordion large-dropdown">
+									<li class="curve-bg small-order-1"></li>
+				
+									<li class="white-bg large-order-2 small-order-1">
+										<a>&nbsp;</a>
+									</li>
+								</ul>
+							</div>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+else 
+{
+	<div data-sticky-container class="header-blue">
+		<div class="contain-to-grid sticky" data-sticky data-stick-to="top" data-margin-top="0" data-sticky-on="small">
+			<div class="menu-white-bg"></div>
+			<div class="grid-container">
+				<div class="grid-x grid-margin-x">
+					<div class="cell">					
+						<nav class="top-bar lmc-nav-bar" data-topbar role="navigation">
+							<div class="title-bar" data-responsive-toggle="lmc-mobile-menu" data-hide-for="large">
+								<button class="menu-icon" type="button" data-toggle="lmc-mobile-menu"></button>
+							</div>
+							<h1 class="menu-text"><img src="~/Images/lmc/lmc-logo.png" /></h1>
+							<div class="lmc-menu-items" id="lmc-mobile-menu">
+								<ul class="menu vertical large-horizontal main-menu" data-responsive-menu="accordion large-dropdown">
+									<li class="curve-bg small-order-1"></li>
+				
+									<li class="white-bg large-order-2 small-order-1">
+										<a>&nbsp;</a>
+									</li>
+								</ul>
+							</div>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+<section class="lmc-index lmc-wrapper title-casing service-content">
+	<section class="lmc-login">
+		<div class="grid-container">
+			<div class="grid-x grid-margin-x">
+				<div class="cell">
+					<h2>@Translate.Message("L1735")</h2>
+					<p>
+						@Translate.Message("L1736").
+					</p>
+					<h4>1. @Translate.Message("L1738")</h4>
+					<p>
+						@Translate.Message("L1737").
+					</p>
+					<p>
+						@Translate.Message("L1739").
+					</p>
+					<p>
+						@Translate.Message("L1740"):
+					</p>
+					<ol>
+						@Html.Raw(Translate.Message("L1741"))
+					</ol>
+					<h4>
+						2. @Translate.Message("L1742")
+					</h4>
+					<p>
+						@Translate.Message("L1743").
+					</p>
+					<h4>
+						3. @Translate.Message("L1744")
+					</h4>
+					<p>
+						@Translate.Message("L1745").
+					</p>
+					<h4>
+						4. @Translate.Message("L1746")
+					</h4>
+					<p>
+						@Translate.Message("L1747").
+					</p>
+					<h4>
+						5. @Translate.Message("L1748")
+					</h4>
+					<p>@Translate.Message("L1749")</p>
+					<ol>
+						<li>@Translate.Message("L1750");</li>
+						<li>@Translate.Message("L1751");</li>
+						<li>@Translate.Message("L1752");</li>
+						<li>@Html.Raw(Translate.Message("L1753"))</li>
+					</ol>
+					<p>(b) @Translate.Message("L1754"):</p>
+					<ol>
+						<li>
+							<h5>@Translate.Message("L1755")</h5>
+							@Translate.Message("L1756").
+
+							@Translate.Message("L1757").
+
+							@Translate.Message("L1758").
+
+							@Translate.Message("L1759").
+
+							@Translate.Message("L1760").
+						</li>
+						<li>
+							<h5>@Translate.Message("L1761")</h5>
+							@Translate.Message("L1762").
+
+							@Translate.Message("L1763").
+
+							@Translate.Message("L1764").
+
+							@Translate.Message("L1765").
+						</li>
+						<li>
+							<h5>@Translate.Message("L1767")</h5>
+							@Translate.Message("L1768").
+						</li>
+						<li>
+							<h5>@Translate.Message("L1769")</h5>
+							@Translate.Message("L1770").
+
+							@Translate.Message("L1771").
+						</li>
+						<li>
+							<h5>@Translate.Message("L1772")</h5>
+							@Translate.Message("L1773")
+							@Translate.Message("L1774")
+							@Translate.Message("L1775")
+							<ul>
+								<li>@Translate.Message("L1776")</li>
+								<li>
+									@Translate.Message("L1778").
+								</li>
+							</ul>
+						</li>
+					</ol>
+
+					<h4>
+						6. @Translate.Message("L1779")
+					</h4>
+					<p>
+						@Translate.Message("L1780").
+					</p>
+					<p>
+						@Translate.Message("L1781").
+					</p>
+					<p>
+						@Translate.Message("L1782").
+					</p>
+					<p>
+						@Translate.Message("L1783").
+					</p>
+					<h4>
+						7. @Translate.Message("L1784")
+					</h4>
+					<p> @Html.Raw(Translate.Message("L1766"))</p>
+					<h4>
+						8. @Translate.Message("L1785")
+					</h4>
+					<p>
+						@Translate.Message("L1786").
+					</p>
+					<h4>
+						9. @Translate.Message("L1787")
+					</h4>
+					<p>
+						@Translate.Message("L1788").
+					</p>
+					<h4>
+						10. @Translate.Message("L1789")
+					</h4>
+					<p>
+						@Translate.Message("L1790").
+					</p>
+					<h4>
+						11. @Translate.Message("L1791")
+					</h4>
+					<p>
+						@Translate.Message("L1792").
+					</p>
+					<h4>
+						12. @Translate.Message("L1793")
+					</h4>
+					<p>
+						@Translate.Message("L1794")
+					</p>
+					<h4>
+						13. @Translate.Message("L1795")
+					</h4>
+					<p>
+						@Translate.Message("L1796").
+					</p>
+					<h4>
+						14. @Translate.Message("L1797")
+					</h4>
+					<p>
+						@Translate.Message("L1798")
+					</p>
+					<p>
+						@Translate.Message("L1799").
+					</p>
+					<h4>
+						15. @Translate.Message("L1800")
+					</h4>
+					<p>
+						@Translate.Message("L1801")
+					</p>
+					<h4>
+						16. @Translate.Message("L1802")
+					</h4>
+					<p>
+						@Translate.Message("L1803")
+					</p>
+					<p>
+						@Translate.Message("L1804")
+					</p>
+					<ol>
+						<li>@Translate.Message("L1805")</li>
+						<li>@Translate.Message("L1806")</li>
+					</ol>
+					<h4>
+						17. @Translate.Message("L1807")
+					</h4>
+					<p>
+						@Translate.Message("L1808")
+					</p>
+					<h4>
+						18. @Translate.Message("L1809")
+					</h4>
+					<p>
+						@Translate.Message("L1810").
+					</p>
+					<h4>
+						19. @Translate.Message("L1811")
+					</h4>
+					<p>
+						@Translate.Message("L1812")
+					</p>
+					<p>
+						@Translate.Message("L1813")
+					</p>
+					<a name="privacy">
+						<center>
+							<h3>
+								@Html.Raw(Translate.Message("L1814"))
+							</h3>
+						</center>
+					</a>
+					<p>
+						@Translate.Message("L1815")
+					</p>
+					<p>
+						@Translate.Message("L3151")
+					</p>
+					<p>
+						@Translate.Message("L1816")
+					</p>
+					<h4>
+						@Translate.Message("L1818")
+					</h4>
+					<p>
+						@Translate.Message("L1819")
+					</p>
+					<ul>
+						<li>@Translate.Message("L1820")</li>
+						<li>@Translate.Message("L1821")</li>
+						<li>@Translate.Message("L1822")</li>
+						<li>@Translate.Message("L1823")</li>
+					</ul>
+
+					<h4>
+						@Translate.Message("L1824")
+					</h4>
+					<p>
+						@Translate.Message("L1825")
+					<p>
+
+					<p>
+						@Translate.Message("L1826")
+					</p>
+
+					<h5>@Translate.Message("L1827")</h5>
+					<p>
+						@Translate.Message("L1828")
+					</p>
+
+					<h5>@Translate.Message("L1829")</h5>
+					<p>
+						@Translate.Message("L1830")
+					</p>
+
+					<h5>
+						@Translate.Message("L1831")
+					</h5>
+
+					<p>
+						@Translate.Message("L1833")
+					</p>
+					<h5>
+						@Translate.Message("L1834")
+					</h5>
+					<p>
+						@Translate.Message("L1835")
+					</p>
+					<p>
+								@Translate.Message("L4604")
+					</p>
+					<ul>
+						<li>@Translate.Message("L4605")</li>
+						<li>@Translate.Message("L4606")</li>
+					</ul>
+					<p>
+								@Html.Raw(Translate.Message("L4607"))
+					</p>
+					<h5>
+						@Translate.Message("L1836")
+					</h5>
+					<p>
+						@Translate.Message("L1837")
+					</p>
+					<ul>
+						<li>@Translate.Message("L1838")</li>
+						<li>@Translate.Message("L1839")</li>
+						<li>@Translate.Message("L1840")</li>
+						<li>@Translate.Message("L1841")</li>
+						<li>@Translate.Message("L1842")</li>
+						<li>@Translate.Message("L1843")</li>
+					</ul>
+					<p>
+						@Translate.Message("L1844")
+					</p>
+					<ul>
+						<li>@Translate.Message("L1845")</li>
+						<li>@Translate.Message("L1846")</li>
+						<li>@Translate.Message("L1847")</li>
+						<li>@Translate.Message("L1848")</li>
+						<li>@Translate.Message("L1849")</li>
+						<li>@Translate.Message("L1850")</li>
+						<li>@Translate.Message("L1851")</li>
+					</ul>
+					<p>
+						@Translate.Message("L1852")
+					</p>
+					<p>
+						@Translate.Message("L1853")
+					</p>
+					<p>
+						@Translate.Message("L1854")
+					</p>
+					<p>
+						@Translate.Message("L1855")
+					</p>
+					<p>
+						@Translate.Message("L1856")
+					</p>
+					<h5>
+						@Translate.Message("L1857")
+					</h5>
+					<h6>
+						@Translate.Message("L1858")
+					</h6>
+					<p>
+						@Translate.Message("L1859")
+					</p>
+					<p>
+						@Translate.Message("L1860")
+					</p>
+
+					@Html.Raw(Translate.Message("L1861"))
+
+					<p>
+						@Translate.Message("L1862")
+					</p>
+					<h4>
+						@Translate.Message("L1863")
+					</h4>
+					<p>
+						@Translate.Message("L1864")
+					</p>
+					<h4>
+						@Translate.Message("L1865")
+					</h4>
+					<h5>
+						@Translate.Message("L1866")
+					</h5>
+					<h4>
+						@Translate.Message("L1867")
+					</h4>
+					<p>
+						@Translate.Message("L1868")
+					</p>
+					<h4>
+						@Translate.Message("L1869")
+					</h4>
+					<p>
+						@Translate.Message("L1870")
+					</p>
+					<p>
+						@Translate.Message("L1871")
+					</p>
+					<p>
+						@Translate.Message("L1872")
+					</p>
+					<h4>
+						@Translate.Message("L1873")
+					</h4>
+					<p>
+						@Translate.Message("L1874")
+					</p>
+					<h4>
+						@Translate.Message("L1875")
+					</h4>
+					<p>
+						@Translate.Message("L1876")
+					</p>
+					<h4>
+						@Translate.Message("L1877")
+					</h4>
+					<p>
+						@Translate.Message("L1878")
+					</p>
+					<p>
+						@Translate.Message("L1879")
+					</p>
+					<p>
+						@Translate.Message("L1880")
+					</p>
+					<p>@Translate.Message("L1881")
+				</div>
+				@if (Model.CloseModal)
+				{
+					if (Model.IsModal)
+					{
+						<a class="close-button" data-open="sign-up-modal" data-close aria-label="Close modal" type="button">
+							<span aria-hidden="true">&times;</span>
+						</a>
+					}
+					else
+					{
+						<a class="close-button" data-close aria-label="Close modal" type="button">
+							<span aria-hidden="true">&times;</span>
+						</a>
+					}
+				}
+			</div>
+
+		</div>
+
+	</section>
+</section>

@@ -1,0 +1,1244 @@
+﻿<!--USER VIEW-->
+@model InterventWebApp.UserProfileModel
+@using InterventWebApp
+<div class="grid-container">
+	<div class="grid-x">
+		<div class="cell">
+			<h2 class="text-center">@Translate.Message("L935")</h2>
+			<sup>@Translate.Message("L1341")</sup>
+			<form data-abide novalidate id="userprofile-form" autocomplete="off" class="form-component">
+				<div id="signup-error" class="callout alert hide" data-closable>
+					@Translate.Message("L2180")
+					<a href="#" class="close">&times;</a>
+				</div>
+				<!--PERSONAL INFORMATION-->
+				<fieldset>
+					<legend>@Translate.Message("L937") </legend>
+					<div class="grid-x grid-padding-x">
+						<div class="large-3 cell">
+							<!--PHOTO-->
+							<label>@Translate.Message("L936")</label>
+							<div class="photo-frame-wrapper" id="profilepicdiv-@Model.user.Id">
+								@{
+									string className = "";
+
+									if (Model.gender.HasValue && Model.gender.Value == 2)
+									{
+										className = "anonymous-female";
+									}
+									else
+									{
+										className = "anonymous-male";
+									}
+
+									string styleText = "";
+									var url = "";
+								}
+
+								@if (Model.user.Picture != null)
+								{
+									url = Model.user.BaseUrl;
+									url = url + "/ProfilePictures/" + Model.user.Picture;
+									styleText = "background-image:url('" + @url + "')";
+
+								}
+								<div id="profilepic" class="photo-frame @className" style="@styleText" value="fff"></div>
+								@*<div>
+							<a onclick="rotateimage(1, '@url');"><i class="fa fa-rotate-left"></i></a>
+							<a onclick="rotateimage(2, '@url');"><i class="fa fa-rotate-right"></i></a>
+						</div>*@
+
+								<div class="text-right hide" id="edit-image"><a class="anchor-blue" data-open="rotate-image">@Translate.Message("L4470")</a></div>
+
+								<div class="reveal" id="rotate-image" data-reveal data-multiple-opened="true" data-close-on-click="false" data-close-on-esc="false">
+									<div class="img-preview" style="display: none; margin-bottom: 15px;">
+										<div id="imgPreview"></div>
+									</div>
+									<div class="flex-container align-justify align-middle">
+										<button class="button" id="save-rotation-image" data-close type="button">@Translate.Message("L968")</button>
+										<div>
+											<button class="button hollow" onclick="rotateimage(1, '@url');"><i class="fa fa-rotate-left"></i>@Translate.Message("L202")</button>
+											<button class="button hollow" onclick="rotateimage(2, '@url');"><i class="fa fa-rotate-right"></i>@Translate.Message("L203")</button>
+										</div>
+									</div>
+
+									<div id="loader" class="section-loader"></div>
+								</div>
+							</div>
+							<div class="profile-pic-buttons flex-container align-justify">
+								<div class="file-upload button small">
+									<span>@Translate.Message("L415")</span>
+									@*<input type="file" id="imageUpload-@Model.user.Id" class="upload" name="files" onchange="upload_files();" placeholder="@Translate.Message("L2874")" />*@
+									<input type="file" id="imageUpload-@Model.user.Id" class="upload upload-profile-pic" name="files" placeholder="@Translate.Message("L2874")" />
+								</div>
+								<a id="removelink-@Model.user.Id" href="" class="button secondary small" onclick="return removepicture();">@Translate.Message("L416")</a>
+							</div>
+						</div>
+						<div class="large-9 cell">
+							<!--NAME-->
+							<div class="grid-x grid-margin-x">
+								<!--PREFIX-->
+								<div class="medium-2 cell">
+                                    <label>
+                                        @Translate.Message("L940")
+                                        @Html.DropDownListFor(m => m.user.NamePrefix, Model.NamePrefixList, "", new Dictionary<string, object> { { "data-validator", "validateRequired" } })
+
+                                        <small class="form-error">@Translate.Message("L941").</small>
+                                    </label>
+								</div>
+								<!--FIRST NAME-->
+								<div class="medium-5 cell">
+									<label>
+										@Translate.Message("L938")
+										@Html.TextBoxFor(m => m.user.FirstName, new { @required = "required", @pattern = "[a-zA-Z]+" })
+										<small class="form-error">@Translate.Message("L432")</small>
+									</label>
+								</div>
+								<!--MIDDLE NAME-->
+								<div class="medium-5 cell">
+									<label>
+										@Translate.Message("L2081")
+										@Html.TextBoxFor(m => m.user.MiddleName, new { @pattern = "[a-zA-Z]+" })
+									</label>
+								</div>
+							</div>
+							<div class="grid-x grid-margin-x">
+								<!--LAST NAME-->
+								<div class="medium-7 cell">
+									<label>
+										@Translate.Message("L939")
+										@Html.TextBoxFor(m => m.user.LastName, new { @required = "required", @pattern = "[a-zA-Z]+" })
+										<small class="form-error">@Translate.Message("L433")</small>
+									</label>
+								</div>
+								<!--Suffix-->
+								<div class="medium-5 cell right">
+									<label>
+										@Translate.Message("L2082")
+										@Html.TextBoxFor(m => m.user.Suffix)
+									</label>
+								</div>
+							</div>
+							<!--DOB-->
+							<div class="grid-x grid-margin-x">
+								<div class="medium-12 cell">
+									<div class="grid-x grid-margin-x">
+										<!--month-->
+										<div class="small-5 medium-6 cell">
+											<label>
+												@Translate.Message("L226")
+												@Html.DropDownListFor(m => m.month, Model.months, "", new Dictionary<string, object> { { "data-validator", "validateRequired" }, { "id", "months" }, { "onchange", "checkAge()" } })
+												<small class="form-error">@Translate.Message("L942").</small>
+											</label>
+										</div>
+										<!--day-->
+										<div class="small-3 cell">
+                                            <label>
+                                                <br>
+                                                @Html.DropDownListFor(m => m.day, Model.days, "", new Dictionary<string, object> { { "data-validator", "validateRequired" }, { "id", "days" }, { "onchange", "checkAge()" } })
+                                                <small class="form-error">@Translate.Message("L944").</small>
+                                            </label>
+										</div>
+										<!--year-->
+										<div class="small-4 medium-3 cell">
+											<label>
+												<br>
+												@Html.DropDownListFor(m => m.year, Model.years, "", new Dictionary<string, object> { { "data-validator", "validateRequired" }, { "id", "years" }, { "onchange", "checkAge()" } })
+												<small class="form-error">@Translate.Message("L945").</small>
+											</label>
+										</div>
+										<div class="cell">
+											<small id="ageWarning" class="form-error">@Translate.Message("L3688").</small>
+											<br>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="grid-x grid-margin-x">
+								<div class="medium-4 cell">
+									<!--gender-->
+									<label>
+										@Translate.Message("L884")
+										@Html.DropDownListFor(m => m.user.Gender, Model.GenderList, "", new Dictionary<string, object> { { "data-validator", "validateRequired" } })
+										<small class="form-error">@Translate.Message("L946").</small>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+				<!--ADDRESS-->
+				<fieldset>
+					<legend>@Translate.Message("L227")</legend>
+					<div class="grid-x grid-padding-x">
+						<div class="medium-4 cell">
+							<!--street-->
+                            <label>
+                                @Translate.Message("L948")
+                                @Html.TextBoxFor(m => m.user.Address, new Dictionary<string, object> { { "placeholder", Translate.Message("L1620") }, { "data-validator", "validateRequired" } })
+                                <small class="form-error">@Translate.Message("L949").</small>
+                            </label>
+						</div>
+						<div class="medium-4 cell">
+							<!--address-->
+							<label>
+								@Translate.Message("L4267")
+								@Html.TextBoxFor(m => m.user.Address2, new { @placeholder = Translate.Message("L4267") })
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--city-->
+							<label>
+								@Translate.Message("L964")
+								@Html.TextBoxFor(m => m.user.City, new Dictionary<string, object> { { "placeholder", Translate.Message("L1621") }, { "data-validator", "validateRequired" } })
+								<small class="form-error">@Translate.Message("L965").</small>
+							</label>
+						</div>
+					</div>
+					<div class="grid-x grid-padding-x">
+						<div class="medium-4 cell">
+							<!--country-->
+							<label>
+								@Translate.Message("L989")
+								@Html.DropDownListFor(m => m.user.Country, Model.Countries, "", new Dictionary<string, object> { { "data-validator", "validateRequired" } })
+								<small class="form-error">@Translate.Message("L988").</small>
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--state-->
+							<label>
+								@Translate.Message("L966")
+								@Html.DropDownListFor(m => m.user.State, Model.States, "", new Dictionary<string, object> { { "data-validator", "validateRequired" } })
+								<small class="form-error">@Translate.Message("L970").</small>
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--zip code-->
+							<label>
+								@Translate.Message("L971")
+								@Html.TextBoxFor(m => m.user.Zip, new Dictionary<string, object> { { "placeholder", Translate.Message("L971") }, { "data-validator", "validateRequired" } })
+								<small class="form-error">@Translate.Message("L990").</small>
+							</label>
+						</div>
+					</div>
+				</fieldset>
+				<!--CONTACT INFO-->
+				<fieldset>
+					<legend>@Translate.Message("L987")</legend>
+					<div class="grid-x grid-padding-x">
+						<div class="medium-4 cell">
+							<!--home phone-->
+							<label>
+								@Translate.Message("L972")
+								@Html.TextBoxFor(m => m.user.HomeNumber, new { @type = "tel" })
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--work phone-->
+							<label>
+								@Translate.Message("L973")
+								@Html.TextBoxFor(m => m.user.WorkNumber, new { @type = "tel" })
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--cell phone-->
+							<label>
+								@Translate.Message("L974")
+								@Html.TextBoxFor(m => m.user.CellNumber, new { @type = "tel" })
+								<small class="form-error">@Translate.Message("L3200").</small>
+							</label>
+						</div>
+					</div>
+					<div class="grid-x grid-padding-x">
+						<!--contact me by-->
+						<div class="medium-4 cell">
+							<!--Contact Mode-->
+							<label>
+								@Translate.Message("L985")
+								@Html.DropDownListFor(M => M.user.ContactMode, Model.ContactModes, "--" + Translate.Message("L421") + "--", new Dictionary<string, object> { { "id", "ContactMode" }, { "data-validator", "validateContactMode" } })
+								<small class="form-error error" id="ContactModeError">@Translate.Message("L3341").</small>
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--Time preference-->
+							<label>
+								@Translate.Message("L983")
+								@Html.DropDownListFor(m => m.user.PreferredContactTimeId, Model.PreferredContactTimes, "--" + Translate.Message("L421") + "--")
+							</label>
+						</div>
+						<div class="medium-4 cell" id="hasEmailId">
+							<label>
+								@Translate.Message("L986")?
+							</label>
+							<div class="tick-buttons radio-btn">
+								<label>
+									@Html.RadioButton("Email", true, new Dictionary<string, object> { { "class", "hasemail" }, { "id", "hasemail" }, { "data-validator", "hasEmail" } })
+									@Translate.Message("L2")
+									<span class="checkmark"></span>
+								</label>
+							</div>
+
+							<div class="tick-buttons radio-btn">
+								<label>
+									@Html.RadioButton("Email", false, new Dictionary<string, object> { { "class", "noemail" }, { "name", "Email" }, { "data-validator", "hasEmail" } })
+									@Translate.Message("L3")
+									<span class="checkmark"></span>
+								</label>
+							</div>
+							<small data-form-error-for="hasEmail" class="form-error error">@Translate.Message("L2182")</small>
+						</div>
+						<div class="medium-4 cell" id="emailId">
+							<!--email-->
+							<label>
+								@Translate.Message("L986")
+								@Html.TextBoxFor(m => m.user.Email, new { @type = "email", @required = "required" })
+								<small class="form-error">@Translate.Message("L434")</small>
+							</label>
+							<input type="hidden" name="existingEmail" id="existingEmail" />
+						</div>
+					</div>
+					<div class="grid-x grid-padding-x">
+						<div id="notifyEmailChangeDiv" class="medium-4 cell" hidden>
+							<div class="tick-buttons">
+								<label>
+									@Html.CheckBoxFor(m => m.notifyEmailChange, new Dictionary<string, object> { { "Name", "notifyEmailChange" }, { "class", "inActive" } })
+									<span class="checkmark"></span>
+									Do not notify this change to the user
+								</label>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+				<!--Other-->
+				<fieldset>
+					<legend>@Translate.Message("L981") </legend>
+					<div class="grid-x grid-padding-x">
+						@if (Model.Departments.Count() != 0)
+						{
+							<div class="medium-4 cell">
+								<!--time zone-->
+								<label>
+									@Translate.Message("L4264")
+									@Html.DropDownListFor(m => m.user.DeptId, Model.Departments, "", new Dictionary<string, object> { { "data-validator", "validateRequired" } })
+									<small class="form-error">@Translate.Message("L4265").</small>
+								</label>
+							</div>
+						}
+						<div class="medium-4 cell">
+							<!--Occupation-->
+							<label>
+								@Translate.Message("L589")
+								@Html.TextBoxFor(m => m.user.Occupation)
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--source-->
+							<label>
+								@Translate.Message("L588")
+								@Html.DropDownListFor(m => m.user.Source, Model.Sources, "", new Dictionary<string, object> { { "id", "Source" }, { "data-validator", "validateSource" }, { "onChange", "showHideSourceTextbox()" } })
+								<small class="form-error">@Translate.Message("L480")</small>
+							</label>
+						</div>
+						<div class="medium-4 cell is-hidden">
+							<!--source other-->
+							<label>
+								@Translate.Message("L947")
+								@Html.TextBoxFor(m => m.user.SourceOther, new Dictionary<string, object> { { "id", "SourceOther" }, { "data-validator", "validateSourceOther" } })
+								<small class="form-error">@Translate.Message("L480")</small>
+							</label>
+						</div>
+						<div class="medium-4 cell is-hidden">
+							<!--referred source textbox-->
+							<label>
+								@Translate.Message("L3881")
+								@Html.TextBoxFor(m => m.user.ReferralDetails, new Dictionary<string, object> { { "id", "ReferralDetails" }, })
+							</label>
+						</div>
+					</div>
+					<div class="grid-x grid-padding-x">
+						<div class="medium-4 cell">
+							<!--time zone-->
+							<label>
+								@Translate.Message("L586")
+								@Html.DropDownListFor(m => m.user.TimeZoneId, Model.TimeZones, "", new Dictionary<string, object> { { "data-validator", "validateRequired" } })
+								<small class="form-error">@Translate.Message("L587").</small>
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--language-->
+							<label>
+								@Translate.Message("L978")
+								@Html.DropDownListFor(m => m.user.LanguagePreference, Model.LanguagePreferences, "", new Dictionary<string, object> { { "data-validator", "validateRequired" } })
+								<small class="form-error">@Translate.Message("L1340").</small>
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--Measurement-->
+							<label>
+								@Translate.Message("L2183")
+								@Html.DropDownListFor(m => m.user.Unit, Model.Units, "", new Dictionary<string, object> { { "data-validator", "validateRequired" } })
+								<small class="form-error">@Translate.Message("L2184")</small>
+							</label>
+						</div>
+					</div>
+					<div class="grid-x grid-padding-x">
+						<div class="medium-4 cell">
+							<!--race-->
+							<label>
+								@Translate.Message("L931")
+								@Html.DropDownListFor(m => m.user.Race, Model.RaceList, "", new { @onchange = "checkRace()" })
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--Other-->
+							<label>
+								@Translate.Message("L947")
+								@Html.TextBoxFor(m => m.user.RaceOther)
+							</label>
+						</div>
+					</div>
+					<div class="grid-x grid-padding-x">
+						@if (Model.create == true)
+						{
+							<div class="details medium-4 cell" id="organizationlist">
+								<!--Organizations -->
+								<label>
+									Organization
+									@Html.DropDownListFor(m => m.user.OrganizationId, Model.ListOrganizations, "", new { @id = "organizationId", @required = "required" })
+									<small class="form-error">Organization is required.</small>
+								</label>
+							</div>
+							<div class="details medium-4 cell" id="uniqueIdfield" hidden>
+								<!--UniqueId -->
+								<label>
+									Unique ID
+									@Html.TextBoxFor(m => m.user.UniqueId, new { @id = "uniqueId" })
+									<small class="form-error">UniqueId is required.</small>
+								</label>
+							</div>
+						}
+						@if (Model.coachingProgram|| Model.selfHelpProgram)
+						{
+							<div class="medium-8 cell">
+								<label class="options-main-label">@Translate.Message("L585")</label>
+								<div class="tick-buttons radio-btn">
+									<label>
+										@Html.RadioButtonFor(M => M.user.Text, 1, new Dictionary<string, object> { { "id", "TextYes" }, { "Name", "user.Text" }, { "data-validator", "validateText" } })
+										@Translate.Message("L2")
+										<span class="checkmark"></span>
+									</label>
+								</div>
+								
+								<div class="tick-buttons radio-btn">
+									<label>
+										@Html.RadioButtonFor(M => M.user.Text, 2, new Dictionary<string, object> { { "id", "TextNo" }, { "Name", "user.Text" }, { "data-validator", "validateText" } })
+										@Translate.Message("L3")
+										<span class="checkmark"></span>
+									</label>
+								</div>
+								<small data-form-error-for="TextYes" class="form-error error" id="textError">@Translate.Message("L480")</small>
+							</div>
+						}
+					</div>
+				</fieldset>
+				<!--Physician Details-->
+				<fieldset id="provider_Details">
+					<legend>@Translate.Message("L1923")</legend>
+					<div class="grid-x grid-padding-x">
+						<div class="medium-4 cell" id="provider_DropDown">
+							<label>
+								@Translate.Message("L4508")
+								@Html.DropDownListFor(m => m.user.UserDoctorInfoes[0].ProviderId, Model.ProvidersList, "")
+							</label>
+						</div>
+						<div id="provider_PlainText" class="cell">
+							<div class="label">
+								<label class="options-main-label">@Translate.Message("L1924")</label>
+								<div class="tick-buttons radio-btn">
+									<label>
+										@Html.RadioButtonFor(M => M.user.PrimaryCarePhysician, 1, new Dictionary<string, object> { { "Name", "user.PrimaryCarePhysician" }, { "data-validator", "validatePrimaryCarePhysician" } })
+										@Translate.Message("L2")
+										<span class="checkmark"></span>
+									</label>
+								</div>
+
+								<div class="tick-buttons radio-btn">
+									<label>
+										@Html.RadioButtonFor(M => M.user.PrimaryCarePhysician, 2, new Dictionary<string, object> { { "Name", "user.PrimaryCarePhysician" }, { "data-validator", "validatePrimaryCarePhysician" } })
+										@Translate.Message("L3")
+										<span class="checkmark"></span>
+									</label>
+								</div>
+								<small data-form-error-for="user_PrimaryCarePhysician" class="form-error error">@Translate.Message("L480")</small>
+								<br />
+							</div>
+							<div class="details physiciandetails">
+								<div class="grid-x grid-padding-x">
+									<div class="medium-4 cell">
+										<label>
+											@Translate.Message("L1925")
+											@Html.TextBoxFor(m => m.user.UserDoctorInfoes[0].Name)
+										</label>
+									</div>
+									<div class="medium-4 cell">
+										<!--street-->
+										<label>
+											@Translate.Message("L948")
+											@Html.TextBoxFor(m => m.user.UserDoctorInfoes[0].Address, new { @placeholder = Translate.Message("L1620") })
+										</label>
+									</div>
+									<div class="medium-4 cell">
+										<!--city-->
+										<label>
+											@Translate.Message("L964")
+											@Html.TextBoxFor(m => m.user.UserDoctorInfoes[0].City, new { @placeholder = Translate.Message("L1621") })
+										</label>
+									</div>
+									<div class="medium-4 cell">
+										<!--country-->
+										<label>
+											@Translate.Message("L989")
+											@Html.DropDownListFor(m => m.user.UserDoctorInfoes[0].Country, Model.Countries, "")
+										</label>
+									</div>
+									<div class="medium-4 cell">
+										<!--state-->
+										<label>
+											@Translate.Message("L966")
+											@Html.DropDownListFor(m => m.user.UserDoctorInfoes[0].State, Model.DoctorInfo_States, "")
+										</label>
+									</div>
+									<div class="medium-4 cell">
+										<!--zip code-->
+										<label>
+											@Translate.Message("L971")
+											@Html.TextBoxFor(m => m.user.UserDoctorInfoes[0].Zip, new { @placeholder = Translate.Message("L971") })
+										</label>
+									</div>
+									<div class="medium-4 cell">
+										<label>
+											@Translate.Message("L3342")
+											@Html.TextBoxFor(m => m.user.UserDoctorInfoes[0].FaxNumber)
+										</label>
+									</div>
+									<div class="medium-4 cell">
+										<label>
+											@Translate.Message("L1626")
+											@Html.TextBoxFor(m => m.user.UserDoctorInfoes[0].PhoneNumber)
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="medium-8 cell physiciandetails">
+								<label class="options-main-label">@Translate.Message("L3339")</label>
+								<div class="tick-buttons radio-btn">
+									<label>
+										@Html.RadioButtonFor(m => m.user.UserDoctorInfoes[0].ContactPermission, 1, new Dictionary<string, object> { { "Name", "user.UserDoctorInfoes[0].ContactPermission" }, { "data-validator", "validateContactPhysician" } })
+										@Translate.Message("L2")
+										<span class="checkmark"></span>
+									</label>
+								</div>
+
+								<div class="tick-buttons radio-btn">
+									<label>
+										@Html.RadioButtonFor(m => m.user.UserDoctorInfoes[0].ContactPermission, 2, new Dictionary<string, object> { { "Name", "user.UserDoctorInfoes[0].ContactPermission" }, { "data-validator", "validateContactPhysician" } })
+										@Translate.Message("L3")
+										<span class="checkmark"></span>
+									</label>
+								</div>
+								<small data-form-error-for="user_UserDoctorInfoes_0__ContactPermission" class="form-error error">@Translate.Message("L480")</small>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+				<!--User Status-->
+				@if (Model.adminId.HasValue && Model.create != true)
+				{
+					<fieldset>
+						<legend>User Status</legend>
+                        <div class="grid-x grid-padding-x user-status">
+                            <div class="medium-4 cell">
+                                <div class="tick-buttons">
+                                    <label>
+                                        @Html.CheckBoxFor(m => m.user.IsActive, new Dictionary<string, object> { { "Name", "user.IsActive" }, { "class", "inActive" } })
+                                        <span class="checkmark"></span>
+                                        Active
+                                    </label>
+                                </div>
+
+                                <div id="userAccess">
+                                    <div>
+                                        Inactive Reason
+                                        @Html.DropDownListFor(x => x.user.InactiveReason, Model.InactiveReason, "--Select--", new Dictionary<string, object> { { "id", "InactiveReason" }, { "Name", "user.InactiveReason" }, { "data-validator", "validateInactiveReason" } })
+                                        <small class="form-error error">Please select the inactive reason.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (Model.LockOption)
+                            {
+                                <div class="medium-4 cell">
+                                    <div class="tick-buttons">
+                                        <label>
+                                            @Html.CheckBoxFor(m => m.IsLocked, new Dictionary<string, object> { { "Name", "IsLocked" } })
+                                            <span class="checkmark"></span>
+                                            Locked
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                            <div class="cell medium-4 text-center">
+                                <div class="tick-buttons">
+                                    @if (Model.adminId.HasValue && Model.create != true && Model.user.EmailConfirmed)
+                                    {
+                                        <div class="">
+                                            <a id="resetPassword" class="anchor-blue">@Translate.Message("L254")</a>
+                                            <div data-alert id="email-found" class="alert-box success hide">
+                                            </div>
+                                        </div>
+                                        <div class="">
+                                            <div data-alert id="reset-password-response" class="alert-box radius hide"></div>
+                                        </div>
+                                    }
+                                    @if (!Model.user.EmailConfirmed)
+                                    {
+                                        <div class="">
+                                            <div data-alert id="email-not-active" class="alert-box radius">
+                                                <a class="anchor-blue" id="resend">Resend confirmation email</a>
+                                            </div>
+                                            <div data-alert id="resend-email-found" class="alert-box success hide"></div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+							@if (!Model.user.Complete.HasValue || !Model.user.Complete.Value)
+                            {
+								<div class="medium-4 cell">
+									<div class="tick-buttons">
+                                        <label>
+                                            @Html.CheckBoxFor(m => m.SkipValidation, new Dictionary<string, object> { { "name", "SkipValidation" } })
+                                            <span class="checkmark"></span>
+                                            @Translate.Message("L4596")
+                                        </label>
+									</div>
+								</div>
+							}
+                        </div>
+					</fieldset>
+				}
+				else
+				{
+					@Html.HiddenFor(m => m.user.IsActive)
+				}
+				<div class="grid-x grid-margin-x">
+					<div class="small-12 medium-4 cell medium-offset-4">
+						<button class="expanded button" type="submit">@Translate.Message("L968")</button>
+					</div>
+				</div>
+				@Html.HiddenFor(m => m.module)
+				@Html.HiddenFor(m => m.create)
+				@Html.HiddenFor(m => m.LockOption)
+				@Html.HiddenFor(m => m.ProviderDropDown)
+			</form>
+		</div>
+	</div>
+</div>
+@Html.Partial("_ImageUpload", Model.user)
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/AgeValidation.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/NoZipCountries.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+    var formsubmit = true;
+    var isSSO = 'False';
+    var tempMail;
+    var existingEmail = "";
+    var element = document.getElementById("user_Zip");
+    var adminId = '@Model.adminId';
+    var integrationWith = '@Model.integrationWith';
+    @if (!string.IsNullOrEmpty(Model.sso))
+    {
+	    @: isSSO = '@Model.sso';
+    }
+    $('.noemail').on('click', function () {
+        tempMail = $("#user_Email").val();
+        var attherate = '@@';
+        var firstName = $("#user_FirstName").val();
+        var lastName = $("#user_LastName").val();
+        var createdEmail = firstName + lastName + attherate.substr(0, 1) + 'noemail.myintervent.com';
+        $("#user_Email").val(createdEmail);
+    });
+    $('.hasemail').on('click', function () {
+        $("#user_Email").val(tempMail);
+        $("#user_Email").trigger("change");
+    });
+    $('.noemail').on('click', function () {
+        $("#user_Email").trigger("change");
+    });
+
+    function showHideSourceTextbox() {
+        $("#SourceOther").closest(".medium-4.cell").addClass("is-hidden");
+        $("#ReferralDetails").closest(".medium-4.cell").addClass("is-hidden");
+        if ($("#Source").val() == 10) {
+            $("#ReferralDetails").closest(".medium-4.cell").removeClass("is-hidden");
+            $('#SourceOther').val("");
+        }
+        else if ($("#Source").val() == 8) {
+            $("#SourceOther").closest(".medium-4.cell").removeClass("is-hidden");
+            $('#ReferralDetails').val("");
+        }
+        else {
+            $('#SourceOther').val("");
+            $('#ReferralDetails').val("");
+        }
+    }
+    Foundation.Abide.defaults.validators['validateRequired'] = function ($el, required, parent) {
+        if ($el.val() == "" && $("input[id='SkipValidation']:checked").length == 0)
+            return false;
+        else
+            return true;
+    };
+    Foundation.Abide.defaults.validators['hasEmail'] = function ($el, required, parent) {
+        if ('@Model.create' == 'True' || adminId != "") {
+            if ($("input[name='Email']:checked").length == 0) {
+                $("#emailId").show();
+                return false;
+            }
+            else {
+                $("#emailId").show();
+                return true;
+            }
+        }
+        else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validatePrimaryCarePhysician'] = function ($el, required, parent) {
+        if ($("input[id='SkipValidation']:checked").length == 0 && $("input[name='user.PrimaryCarePhysician']:checked").length == 0 && $("#ProviderDropDown").val() == "False")
+            return false;
+        else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateContactPhysician'] = function ($el, required, parent) {
+        if ($("input[name='user.PrimaryCarePhysician']:checked").length > 0 && $("input[name='user.PrimaryCarePhysician']:checked")[0].value == 1 && $("#user_UserDoctorInfo_Name").val() != "" && $("#ProviderDropDown").val() == "False") {
+            if ($("input[id='SkipValidation']:checked").length == 0 && $("input[name='user.UserDoctorInfoes[0].ContactPermission']:checked").length == 0)
+                return false;
+            else
+                return true;
+        }
+    };
+
+	Foundation.Abide.defaults.validators['validateText'] = function ($el, required, parent) {
+		if ($("input[id='SkipValidation']:checked").length == 0)
+		{
+			if ($("input[name='user.Text']:checked").length == 0)
+				return false;
+			else if ($('#TextYes').is(':checked') && $("#user_CellNumber").val() == "") {
+				document.getElementById('textError').innerText = "@Html.Raw(Translate.Message("L1624")).";
+				return false;
+			}
+		}
+        return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateInactiveReason'] = function ($el, required, parent) {
+        if (adminId != "" && $("input[name='user.IsActive']:checked").length == 0 && $("#InactiveReason").val() == "")
+            return false;
+        else
+            return true;
+    };
+
+	Foundation.Abide.defaults.validators['validateContactMode'] = function ($el, required, parent) {
+		if ($("input[id='SkipValidation']:checked").length == 0) {
+			if ($("#ContactMode").val() == "") {
+				document.getElementById('ContactModeError').innerText = "@Html.Raw(Translate.Message("L3341")).";
+				return false;
+			}
+			else {
+				if ($("#ContactMode").val() == 1 && $("#user_HomeNumber").val() == "") {
+					document.getElementById('ContactModeError').innerText = "@Html.Raw(Translate.Message("L1622")).";
+					return false;
+				}
+				else if ($("#ContactMode").val() == 2 && $("#user_WorkNumber").val() == "") {
+					document.getElementById('ContactModeError').innerText = "@Html.Raw(Translate.Message("L1623")).";
+					return false;
+				}
+				else if ($("#ContactMode").val() == 3 && $("#user_CellNumber").val() == "") {
+					document.getElementById('ContactModeError').innerText = "@Html.Raw(Translate.Message("L1624")).";
+					return false;
+				}
+				else
+					return true;
+			}
+		}
+		else
+			return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateSource'] = function ($el, required, parent) {
+        $("#SourceOther").trigger("change");
+        if (integrationWith == 3 && $("#Source").val() == "") {
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+
+    Foundation.Abide.defaults.validators['validateSourceOther'] = function ($el, required, parent) {
+        if ($("#Source").val() == 8 && $("#SourceOther").val() == "") {
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
+
+    $(document).ready(function () {
+        checkAge();
+        showHideSourceTextbox();
+        @if (!Model.adminId.HasValue || Model.user.InactiveReason == null)
+        {
+                    @: $("#userAccess").hide();
+                }
+            existingEmail = '@Model.user.Email';
+            @if(Model.user.UserDoctorInfoes != null && Model.user.UserDoctorInfoes[0].Country != null)
+                {
+                    @:$('#user_UserDoctorInfoes_0__Country').val(@Model.user.UserDoctorInfoes[0].Country);
+                }
+            @if(Model.user.UserDoctorInfoes != null && Model.user.UserDoctorInfoes[0].State != null)
+                {
+                    @:$('#user_UserDoctorInfoes_0__State').val(@Model.user.UserDoctorInfoes[0].State);
+                }
+            @if(Model.user.UserDoctorInfoes != null && Model.user.UserDoctorInfoes[0].ProviderId != null)
+                {
+                    @:$('#user_UserDoctorInfoes_0__ProviderId').val(@Model.user.UserDoctorInfoes[0].ProviderId);
+                }
+            @if (Model.ProviderDropDown)
+            {
+                @:$('#provider_DropDown').show();
+                @:$('#provider_PlainText').hide();
+            }
+            else
+            {
+
+                @:$('#provider_DropDown').hide();
+                @:$('#provider_PlainText').show();
+            }
+            @if(Model.user.PrimaryCarePhysician == 2 || Model.user.PrimaryCarePhysician == null)
+                {
+                    @: $(".physiciandetails").hide();
+                }
+            @if(Model.create == true)
+                {
+                    @: $("#emailId").hide();
+                    @: $("#provider_Details").hide();
+                }
+
+            @if(Model.user.Source != 8) {
+                    @: $('#user_SourceOther').prop("disabled", true);
+                }
+            @if(String.IsNullOrEmpty(Model.user.Zip)) {
+                    @: element.required = false;
+                    @: $('#user_Zip').prop("disabled", true);
+                }
+            @if(Model.create == false || Model.create == null)
+                {
+                    @: $("#provider_Details").show();
+                if (!Model.adminId.HasValue)
+                {
+                    @: $("#hasEmailId").hide();
+                }
+            else if (Model.user.Email != null)
+            {
+                    @: $(".hasemail").attr("checked", "true");
+                }
+        }
+        @if(Model.readOnlyList != null && Model.readOnlyList.Count > 0)
+            {
+            for (int i = 0; i < Model.readOnlyList.Count; i++)
+            {
+                    @: if("@Model.readOnlyList[i]" == "DOB" && $("#year").val() != ""){
+                    @: ($("#month").val()) && ($("#month").prop("disabled", true));
+                    @: ($("#day").val()) && ($("#day").prop("disabled", true));
+                    @: ($("#year").val()) && ($("#year").prop("disabled", true));}
+                    @: else if (document.getElementById("user_@Model.readOnlyList[i]") != null && document.getElementById("user_@Model.readOnlyList[i]").type == "select-one" && $('#user_@Model.readOnlyList[i]').val() != "")
+                    {
+                    @: $('#user_@Model.readOnlyList[i]').prop("disabled", true);
+                                    }
+                                    @: else if ($('#user_@Model.readOnlyList[i]').val() != "")
+                                {
+                    @: $('#user_@Model.readOnlyList[i]').prop('readonly', true);
+                                    }
+                                }
+                        }
+                        checkRace();
+                            $("#userprofile-form").foundation();
+
+                                $('#userprofile-form')
+                                    .on('forminvalid.zf.abide', function() {
+                            var invalid_fields = $(this).find('[data-invalid]');
+
+                            if (invalid_fields)
+                            {
+                                var scrollTo = $('#' + invalid_fields[0].id).position().top;
+                                          $('.reveal-overlay').animate({
+                                scrollTop: scrollTo
+                                          }, 400);
+                            }
+                        })
+                                  .on('formvalid.zf.abide', function() {
+                            @if(Model.readOnlyList != null && Model.readOnlyList.Count > 0)
+                                        {
+                                for (int i = 0; i < Model.readOnlyList.Count; i++)
+                                {
+                                    @: if ("@Model.readOnlyList[i]" == "DOB"){
+                                    @: $("#month").prop("disabled", false);
+                                    @: $("#day").prop("disabled", false);
+                                    @: $("#year").prop("disabled", false);}
+                                    @: else if (document.getElementById("user_@Model.readOnlyList[i]").type == "select-one" && $('#user_@Model.readOnlyList[i]').val() != "") {
+                                    @: $('#user_@Model.readOnlyList[i]').prop("disabled", false);}
+                                    @: else if ($('#user_@Model.readOnlyList[i]').val() != ""){
+                                    @: $('#user_@Model.readOnlyList[i]').prop('readonly', false);}
+                                        }
+                        }
+                        var newEmail = $("#user_Email").val();
+                        if (existingEmail != newEmail)
+                        {
+                                      $("#existingEmail").val(existingEmail)
+                                  }
+                        else
+                                      $("#existingEmail").val('')
+                                  if (formsubmit == true)
+                        {
+                                      $.ajax({
+                            url: "@Url.Action("UserProfile", "Account")",
+                                          type: 'POST',
+                                          dataType: "json",
+                                          data: $("#userprofile-form").serialize(),
+                                          success: function(data) {
+                                    if (data == "success")
+                                    {
+                                                  $(document).on('closed.zf.reveal', '[data-reveal]', function() {
+                                            @if(Model.create == true)
+                                                {
+                                                @: CreateProfileStatus(true)
+                                            }
+                                            else
+                                            {
+                                            @: UpdateProfileStatus()
+                                        }
+                                });
+                                          $('#user-profile').foundation('close');
+                            }
+                            else
+                            {
+                                @if(Model.readOnlyList != null && Model.readOnlyList.Count > 0)
+                                          {
+                                    for (int i = 0; i < Model.readOnlyList.Count; i++)
+                                    {
+                                        @: if("@Model.readOnlyList[i]" == "DOB" && $("#year").val() != ""){
+                                        @: ($("#month").val()) && ($("#month").prop("disabled", true));
+                                        @: ($("#day").val()) && ($("#day").prop("disabled", true));
+                                        @: ($("#year").val()) && ($("#year").prop("disabled", true));}
+                                        @: else if (document.getElementById("user_@Model.readOnlyList[i]").type == "select-one" && $('#user_@Model.readOnlyList[i]').val() != ""){
+                                        @: $('#user_@Model.readOnlyList[i]').prop("disabled", true);}
+                                        @: else if ($('#user_@Model.readOnlyList[i]').val() != ""){
+                                        @: $('#user_@Model.readOnlyList[i]').prop('readonly', true);}
+                                          }
+                            }
+                                      $('#user-profile').find('#signup-error').removeClass('hide');
+                                      $('#user-profile').find('#signup-error').text(data);
+                                      $(".reveal-overlay").animate({
+                            scrollTop: 0
+                                      }, "fast");
+                        }
+                    }
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            }
+            else
+            {
+                         $('#user-profile').foundation('close');
+            }
+        })
+                // to prevent form from submitting upon successful validation
+                .on('submit', function(e){
+            e.preventDefault();
+        })
+
+        });
+
+    $('input[type=radio][name="user.PrimaryCarePhysician"]').on('click', function () {
+        if (this.value == 1)
+                $(".physiciandetails").show();
+            else
+                $(".physiciandetails").hide();
+    });
+
+    $('.inActive').on('change', function () {
+            $("input[name='user.IsActive']:checked").length == 0 ? $("#userAccess").show() : $("#userAccess").hide();
+    });
+
+
+    $('#user_Country').on('change', function () {
+        CountryChange('user_Country', 'user_Unit', 'user_State', 'user_Zip', "@Url.Action("ListStates", "Common")", 'user_Race', "@Url.Action("ListRace", "Common")", true, "@Url.Action("CheckIfCountryHasZipCode", "Common")");
+    });
+
+    $('select#organizationId').on('change', function () {
+        var organizationId = $(this).val();
+        if (organizationId == '') {
+            $("#user_UserDoctorInfoes_0__ProviderId").empty();
+            $("#provider_Details").hide();
+            $('input[name="user.PrimaryCarePhysician"]').prop('checked', false);
+        }
+        else
+        {
+            $("#provider_Details").show();
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: "@Url.Action("ListProviderDetails", "Common")",
+                data: { organizationId: organizationId },
+                success: function (data) {
+                    $("#user_UserDoctorInfoes_0__ProviderId").empty();
+                    if (data.hasProviderDropDown) {
+                        $("#ProviderDropDown").val("True");
+                        $('#provider_DropDown').show();
+                        $('#provider_PlainText').hide();
+                        $("#user_UserDoctorInfoes_0__ProviderId").append("<option value=''></option>");
+                        for (i = 0; i < data.Records.length; i++) {
+                            $("#user_UserDoctorInfoes_0__ProviderId").append("<option value=" + data.Records[i].Value + ">" + data.Records[i].Text + "</option>");
+                        }
+                        $('input[name="user.PrimaryCarePhysician"]').prop('checked', false);
+                    }
+                    else {
+                        $("#ProviderDropDown").val("False");
+                        $('#provider_DropDown').hide();
+                        $('#provider_PlainText').show();
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+    });
+
+    $('#user_UserDoctorInfoes_0__Country').on('change', function () {
+        CountryChange('user_UserDoctorInfoes_0__Country', '', 'user_UserDoctorInfoes_0__State', 'user_UserDoctorInfoes_0__Zip', "@Url.Action("ListStates", "Common")", "", "", true, "@Url.Action("CheckIfCountryHasZipCode", "Common")");
+    });
+
+    $("#resetPassword").on('click', function () {
+        if (isSSO == 'False')
+        {
+            $("#email-found").addClass("hide");
+            $("#reset-password-response").addClass("hide");
+            $.ajax({
+                url: "@Url.Action("ForgotPassword", "Account")",
+                type: 'POST',
+                dataType: "json",
+                data: {
+                    email: existingEmail,
+                    OrgContactEmail: "@Model.orgContactEmail"
+                },
+                success: function(data) {
+                            if (data == 'success') {
+                        $("#email-found").removeClass("hide");
+                        $('#email-found').show();
+                        $("#email-found").text("@Translate.Message("L2530")");
+                                setTimeout(function() {
+                            $('#email-found').hide();
+                                }, 3000);
+                            }
+                            else
+                            {
+                            $("#reset-password-response").removeClass("hide");
+                            $('#reset-password-response').text(data);
+                            $('#reset-password-response').show();
+                            }
+                        }
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+            }
+            else {
+                $("#email-found").removeClass("hide");
+                $('#email-found').text('@Translate.Message("L3889")');
+                $('#email-found').show();
+            }
+        });
+
+        $("#user_Email").on('change', function () {
+            var email = $("#user_Email").val();
+            if (existingEmail != email && adminId != @Model.user.Id)
+                $("#notifyEmailChangeDiv").show();
+            else
+                $("#notifyEmailChangeDiv").hide();
+        });
+
+        $('#resend').on('click', function () {
+            $.ajax({
+        url: "@Url.Action("ResendConfirmEmail", "Account")",
+                type: 'POST',
+                dataType: "json",
+                data:
+            {
+            email: existingEmail,
+                    OrgContactEmail: "@Model.orgContactEmail"
+                },
+                success: function(data) {
+                if (data == 'success')
+                {
+                        $("#resend-email-found").removeClass("hide");
+                        $('#resend-email-found').show();
+                        $("#resend-email-found").text("Confirmation email sent.");
+                    setTimeout(function() {
+                            $('#resend-email-found').hide();
+                    }, 3000);
+                }
+            }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+});
+
+        function checkAge()
+{
+        if ($("#months").val() != "" && $("#days").val() != "" && $("#years").val() != "") {
+            var birthDate = new Date($("#months").val() + "/" + $("#days").val() + "/" + $("#years").val());
+            var ageGreaterThanEighteen = validateage(birthDate);
+            if (ageGreaterThanEighteen == false)
+            {
+                    $('#ageWarning').addClass("is-visible");
+            }
+            else
+            {
+                    $('#ageWarning').removeClass("is-visible");
+            }
+        }
+}
+
+function checkRace()
+{
+        var type = $('#user_Race').val();
+        if (type != "")
+        {
+                $.ajax({
+            url: "@Url.Action("CheckIfOther", "Common")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: { raceType: type },
+                    success: function(data) {
+                    if (data.Result)
+                    {
+                            $('#user_RaceOther').prop("disabled", false);
+                    }
+                    else
+                    {
+                            $('#user_RaceOther').val('');
+                            $('#user_RaceOther').prop("disabled", true);
+                    }
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+    }
+
+    @if (@Model.EligibilityImportLoadList != null)
+    {
+       @: $("select#organizationId").on("change", function () {
+       @: $('#uniqueIdfield').prop("hidden", true);
+       @: $("#uniqueId").prop('required', false);
+          @:  var org = $('#organizationId').find(":selected").val();
+            for(var i = 0; i < @Model.EligibilityImportLoadList.Count(); i++) {
+                @:var item = @Model.EligibilityImportLoadList[i];
+                @:if (item == $('#organizationId').find(":selected").val()){
+                @:    $('#uniqueIdfield').prop("hidden", false);
+                @:    $("#uniqueId").prop('required', true);
+                @:  }
+            }
+        @:});
+    }
+
+    $('#Source').on('change', function () {
+        if ($(this).val() == "8") {
+                $('#user_SourceOther').prop("disabled", false);
+        }
+            else {
+                $('#user_SourceOther').val('');
+                $('#user_SourceOther').prop("disabled", true);
+        }
+    });
+
+</script>
+
+<script>
+	var rotation = 0;
+	function rotateimage(directions, url) {
+		$('#rotate-image').addClass('show-loader');
+		//Code for UI
+		if (directions == 2) {
+			rotation = (rotation + 90) % 360;
+		};
+		if (directions == 1) {
+			rotation = (rotation - 90) % 360;
+		};
+
+		$(".pic-view").css({ 'transform': 'rotate(' + rotation + 'deg)' });
+
+		if (rotation != 0) {
+			$(".pic-view").css({ 'width': '300px', 'height': 'auto' });
+		} else {
+			$(".pic-view").css({ 'width': 'auto', 'height': '300px' });
+		}
+		$('#rotation').val(rotation);
+
+		//Code for controller
+        var image = $('#profilepicdiv-@Model.user.Id').find('#profilepic').css('background-image');
+        var cleanup = /\"|\'|\)/g;
+        var imageName = image.split('/').pop().replace(cleanup, '');
+        var id = @Model.user.Id;
+		$.ajax({
+			url: "@Url.Action("RotateImage", "Common")",
+			type: 'POST',
+			dataType: "json",
+			data: { image: imageName, direction: directions, userId: id },
+			success: function (data) {
+				showHideImage(data.Image, 'add');
+			},
+			complete: function () {
+				$('#rotate-image').removeClass('show-loader');
+			}
+        });
+	}
+
+	function filePreview(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				//$('#imgPreview img').remove();
+				$('#imgPreview').html('<img src="' + e.target.result + '" class="pic-view" width="300" height="auto"/>');
+			};
+			reader.readAsDataURL(input.files[0]);
+			$('.img-preview').css('display', 'flex');
+			$('#edit-image').removeClass('hide');
+			//$('#rotate-image').foundation('open');
+		} else {
+			$('#imgPreview').html('');
+			$('.img-preview').css('display', 'none');
+		}
+	}
+
+	$(".upload-profile-pic").on('change', function () {
+		// Image preview
+		rotation = 0;
+		filePreview(this);
+		upload_files();
+	});
+
+</script>
+
+<button class="close-button" data-close aria-label="Close reveal" type="button">
+	<span aria-hidden="true">&times;</span>
+</button>

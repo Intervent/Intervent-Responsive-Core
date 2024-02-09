@@ -1,0 +1,955 @@
+﻿@using InterventWebApp;
+@model InterventWebApp.WellnessDataModel
+
+<div class="grid-x grid-margin-x">
+    <div class="cell small-12 text-center">
+        @{
+            if ((Model.wellnessData != null) && (Model.wellnessData.Id > 0))
+            {
+                <h2 class="with-subtitle">Update Wellness Data</h2>
+            }
+            else
+            {
+                <h2 class="with-subtitle">Add New Data</h2>
+            }
+        }
+    </div>
+</div>
+<form id="wellness-data-form" data-abide novalidate>
+    <fieldset>
+        <legend>Weight and Bloodwork</legend>
+        <div class="grid-x grid-margin-x">
+            <div class="medium-3 cell">
+                <div class="grid-x collapse">
+                    <div class="cell">
+                        <label>Weight</label>
+                    </div>
+                    <div class="input-group cell">
+                        @Html.HiddenFor(m => m.wellnessData.Id)
+                        @Html.HiddenFor(m => m.wellnessData.CollectedOn)
+                        @Html.TextBoxFor(m => m.wellnessData.Weight, new Dictionary<string, object> { { "id", "wellnessData_Weight" }, { "data-validator", "validateWeight" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "data-live-validate", true } })
+                        <span class="input-group-label postfix">@Model.WeightText</span>
+                    </div>
+                    <small data-form-error-for="wellnessData_Weight" class="form-error">@Translate.Message("L2021") @Model.Measurements[BioLookup.Weight].Min-@Model.Measurements[BioLookup.Weight].Max.</small>
+
+                </div>
+            </div>
+            <div class="medium-3 cell">
+                <div class="grid-x collapse">
+                    <div class="cell">
+                        <label>Systolic B.P.</label>
+                    </div>
+                    <div class="input-group cell">
+                        @Html.TextBoxFor(m => m.wellnessData.SBP, new Dictionary<string, object> { { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                        <span class="input-group-label postfix">mmHg</span>
+                    </div>
+                </div>
+            </div>
+            <div class="medium-3 cell">
+                <div class="grid-x collapse">
+                    <div class="cell">
+                        <label>Diastolic B.P.</label>
+                    </div>
+                    <div class="input-group cell">
+                        @Html.TextBoxFor(m => m.wellnessData.DBP, new Dictionary<string, object> { { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                        <span class="input-group-label postfix">mmHg</span>
+                    </div>
+                </div>
+            </div>
+            <div class="medium-3 cell">
+                <div class="grid-x collapse">
+                    <div class="cell">
+                        <label>Waist Circumference</label>
+                    </div>
+                    <div class="input-group cell">
+                        @Html.TextBoxFor(m => m.wellnessData.waist, new Dictionary<string, object> { { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "data-live-validate", true } })
+                        <span class="input-group-label postfix">@Model.WaistText</span>
+                    </div>
+                </div>
+            </div>
+            @if (CommonUtility.IsIntegratedWithLMC(Model.integrationWith))
+            {
+                <div class="cell large-12"><p> @Html.CheckBoxFor(M => M.sameDeviceBool) Weight  taken on same device as previously used</p></div>
+            }
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Physical Activity</legend>
+        <div class="grid-x grid-margin-x">
+            <div class="cell large-8">
+                <p>How many minutes of aerobic physical activity did you do in the past 7 days?</p>
+            </div>
+            <div class="cell large-4">
+                <div class="grid-x grid-margin-x collapse">
+                    <div class="input-group cell">
+                        @Html.TextBoxFor(m => m.wellnessData.ExerMin, new Dictionary<string, object> { { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                        <span class="input-group-label postfix">mins</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cell large-8">
+                <p>Was it Moderate, High, or a Combination of both?</p>
+            </div>
+            <div class="cell large-4">
+                @Html.DropDownListFor(M => M.wellnessData.ExerInt, Model.ExerIntList, "Select One...")
+            </div>
+        </div>
+    </fieldset>
+    @if (Model.tobaccoUser)
+    {
+        <div id="tobacco-questions">
+            <fieldset>
+                <legend>Tobacco</legend>
+                <div class="grid-x grid-margin-x">
+                    <div class="cell large-8">
+                        <p>Do you use Tobacco?</p>
+                    </div>
+                    <div class="cell large-4">
+                        @Html.RadioButtonFor(M => M.wellnessData.CurrentSmoker, 1, new { @id = "CurrentSmokerYes" })
+                        <label for="yes-tobacco">Yes</label>
+                        @Html.RadioButtonFor(M => M.wellnessData.CurrentSmoker, 2, new { @id = "CurrentSmokerNo" })
+                        <label for="no-tobacco">No</label>
+                    </div>
+                    <div id="still-smoking" class="cell">
+                        <div class="grid-x grid-margin-x">
+                            <div class="cell large-8">
+                                <p>Number of cigarettes per day</p>
+                            </div>
+                            <div class="cell large-4">
+                                @Html.TextBoxFor(m => m.wellnessData.SmokedPerDay, new Dictionary<string, object> { { "onkeypress", "ValidateNumeric(this, event)" } })
+                            </div>
+                            <div class="cell large-8">
+                                <p>On what date are you planning on quitting? (if applicable)</p>
+                            </div>
+                            <div class="cell large-4">
+                                @Html.TextBoxFor(M => M.wellnessData.YQuitDate, "{0:MM/dd/yyyy}", new Dictionary<string, object> { { "class", "fdatepicker" } })
+                            </div>
+                            <div class="cell large-8">
+                                <p>Have you signed the contract?</p>
+                            </div>
+                            <div class="cell large-4">
+                                @Html.DropDownListFor(M => M.wellnessData.YContractSign, Model.ContractStatusList, "Select One...")
+                            </div>
+                        </div>
+                    </div>
+                    <div id="quit-smoking" class="cell">
+                        <div class="grid-x grid-margin-x">
+                            <div class="cell large-8">
+                                <p>On what date did you quit? (if applicable)</p>
+                            </div>
+                            <div class="cell large-4">
+                                @Html.TextBoxFor(M => M.wellnessData.NQuitDate, "{0:MM/dd/yyyy}", new Dictionary<string, object> { { "class", "fdatepicker" } })
+                            </div>
+                            <div class="cell large-8">
+                                <p>How are you managing the withdrawal symptoms? (if applicable)</p>
+                            </div>
+                            <div class="cell large-4">
+                                @Html.DropDownListFor(M => M.wellnessData.ManWithdrawSymp, Model.Ratings, "Select One...")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cell large-8"><p>Are you using Nicotine Replacement Therapy (NRT)?</p></div>
+                    <div class="cell large-4">
+                        @Html.RadioButtonFor(M => M.wellnessData.UsingNRT, 1, new { @id = "UsingNRTYes" })
+                        <label for="yes-nrt">Yes</label>
+                        @Html.RadioButtonFor(M => M.wellnessData.UsingNRT, 2, new { @id = "UsingNRTNo" })
+                        <label for="no-nrt">No</label>
+                    </div>
+                    <div class="cell large-8"><p>What type(s) of NRT are you using?</p></div>
+                    <div class="cell large-4">
+                        <div class="grid-x grid-margin-x">
+                            <div class="cell large-6 medium-3 small-6">@Html.CheckBoxFor(M => M.GumBool) Gum </div>
+                            <div class="cell large-6 medium-3 small-6">@Html.CheckBoxFor(M => M.PatchBool) Patch</div>
+                            <div class="cell large-6 medium-3 small-6">@Html.CheckBoxFor(M => M.LozengeBool) Lozenge</div>
+                            <div class="cell large-6 medium-3 small-6">@Html.CheckBoxFor(M => M.InhalerBool) Inhaler</div>
+                            <div class="cell large-6 medium-3 small-6">@Html.CheckBoxFor(M => M.SprayBool) Spray</div>
+                        </div>
+                    </div>
+                    <div class="cell large-8"><p>Do you use Bupropion?</p></div>
+                    <div class="cell large-4">
+                        @Html.RadioButtonFor(M => M.wellnessData.UsingBupropion, 1, new { @id = "UsingBupropionYes" })
+                        <label for="yes-bupropion">Yes</label>
+                        @Html.RadioButtonFor(M => M.wellnessData.UsingBupropion, 2, new { @id = "UsingBupropionNo" })
+                        <label for="no-bupropion">No</label>
+                    </div>
+                    <div class="cell large-8"><p>Do you use Varenicline?</p></div>
+                    <div class="cell large-4">
+                        @Html.RadioButtonFor(M => M.wellnessData.UsingVarenicline, 1, new { @id = "UsingVareniclineYes" })
+                        <label for="yes-varenicline">Yes</label>
+                        @Html.RadioButtonFor(M => M.wellnessData.UsingVarenicline, 2, new { @id = "UsingVareniclineNo" })
+                        <label for="no-varenicline">No</label>
+                    </div>
+                    <div class="cell large-8"><p>Do you use any other drugs to assist with quitting tobacco?</p></div>
+                    <div class="cell large-4">@Html.TextBoxFor(m => m.wellnessData.UsingOtherDrug)</div>
+                </div>
+            </fieldset>
+        </div>
+    }
+    <fieldset>
+        <legend>How well are you doing in...</legend>
+        <div class="grid-x grid-margin-x">
+            <div class="cell large-8"><p>Practicing healthy eating habits?</p></div>
+            <div class="cell large-4">
+                @Html.DropDownListFor(M => M.wellnessData.HealthyEating, Model.Ratings, "Select One...")
+            </div>
+            <div class="cell large-8"><p>Being physically active?</p></div>
+            <div class="cell large-4">
+                @Html.DropDownListFor(M => M.wellnessData.PhysicallyActive, Model.Ratings, "Select One...")
+            </div>
+            <div class="cell large-8"><p>Managing stress?</p></div>
+            <div class="cell large-4">
+                @Html.DropDownListFor(M => M.wellnessData.ManageStress, Model.Ratings, "Select One...")
+            </div>
+            <div class="cell large-8"><p>Staying motivated to work toward your wellness vision and long-term health goals?</p></div>
+            <div class="cell large-4">
+                @Html.DropDownListFor(M => M.wellnessData.Motivation, Model.Ratings, "Select One...")
+            </div>
+            @if (CommonUtility.IsIntegratedWithLMC(Model.integrationWith))
+            {
+                <div class="cell large-8"><p>Updates to your health?</p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.UpdateHealth, 1, new { @id = "UpdateHealthYes" })
+                    <label for="yes-updatehealth">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.UpdateHealth, 2, new { @id = "UpdateHealthNo" })
+                    <label for="no-updatehealth">No</label>
+                </div>
+            }
+            <div class="question cell">
+                <div class="checkbox-group hide">
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.SteroidBool, new Dictionary<string, object> { { "id", "SteroidBool" }, { "class", "updatecheckbox" }, { "data-validator", "validateHealth" } })
+                            <label for="SteroidBool">Taken any steroid medication by mouth or injection in the past 3 months?</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.PancreatitisBool, new Dictionary<string, object> { { "id", "PancreatitisBool" }, { "class", "updatecheckbox" }, { "data-validator", "validateHealth" } })
+                            <label for="PancreatitisBool">Pancreatitis</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.CancerTreatedBool, new Dictionary<string, object> { { "id", "CancerTreatedBool" }, { "class", "updatecheckbox" }, { "data-validator", "validateHealth" } })
+                            <label for="CancerTreatedBool">Active cancer or being treated for cancer</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption">
+                            @Html.CheckBoxFor(M => M.HemoglobinopathyBool, new Dictionary<string, object> { { "id", "HemoglobinopathyBool" }, { "class", "updatecheckbox" }, { "data-validator", "validateHealth" } })
+                            <label for="HemoglobinopathyBool">Hemoglobinopathy</label>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption with-tooltip">
+                            @Html.CheckBoxFor(M => M.StudyDrugBool, new Dictionary<string, object> { { "id", "StudyDrugBool" }, { "class", "updatecheckbox" }, { "data-validator", "validateHealth" } })
+                            <label for="StudyDrugBool">In a research study right now where you are taking an investigational/study drug?</label>
+                            <small class="form-error" id="medError">@Translate.Message("L480")</small>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption with-tooltip">
+                            @Html.CheckBoxFor(M => M.GlucoseLoweringBool, new Dictionary<string, object> { { "id", "GlucoseLoweringBool" }, { "class", "updatecheckbox" }, { "data-validator", "validateHealth" } })
+                            <label for="GlucoseLoweringBool">Any medications to lower your blood sugar levels? (Example: metformin)</label>
+                            <small class="form-error" id="medError">@Translate.Message("L480")</small>
+                        </div>
+                    </div>
+                    <div class="qBody">
+                        <div class="qOption with-tooltip">
+                            @Html.CheckBoxFor(M => M.WeightLossBool, new Dictionary<string, object> { { "id", "WeightLossBool" }, { "class", "updatecheckbox" }, { "data-validator", "validateHealth" } })
+                            <label for="WeightLossBool">Any prescribed weight loss medication?</label>
+                            <small class="form-error" id="medError">@Translate.Message("L480")</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    @if (Model.gender.HasValue && Model.gender.Value == 2 && Model.Age < 60)
+    {
+        <fieldset>
+            <legend>Pregnancy</legend>
+            <div class="question" id="PregnantDiv">
+                <div class="qHeader">
+                    <div class="qText">
+                        @Translate.Message("L592")
+                    </div>
+                </div>
+                <div class="qBody">
+                    <div class="qOption">
+                        @Html.RadioButtonFor(M => M.wellnessData.isPregnant, true, new Dictionary<string, object> { { "id", "PregnantYes" }, { "Name", "wellnessData.isPregnant" }, { "data-validator", "validatePregnant" } })
+                        <label for="PregnantYes">@Translate.Message("L2")</label>
+                    </div>
+                    <div class="qOption">
+                        @Html.RadioButtonFor(M => M.wellnessData.isPregnant, false, new Dictionary<string, object> { { "id", "PregnantNo" }, { "Name", "wellnessData.isPregnant" }, { "data-validator", "validatePregnant" } })
+                        <label for="PregnantNo">@Translate.Message("L3")</label>
+                        <small id="PregnantError" class="form-error">@Translate.Message("L480")</small>
+                    </div>
+                </div>
+            </div>
+            <div class="question" id="PregDueDateDiv">
+                <div class="qHeader">
+                    <div class="qText">
+                        @Translate.Message("L591")
+                    </div>
+                </div>
+                <div class="qBody">
+                    <div class="qOption">
+                        @Html.TextBoxFor(m => m.wellnessData.DueDate, new Dictionary<string, object> { { "data-validator", "validatePregDueDate" }, { "class", "fdatepicker" }, { "placeholder", "" + Model.dateFormat.ToUpper() + "" } })
+                        <small class="form-error" id="pregDueError">@Translate.Message("L480")</small>
+                        <input id="HDueDate" type="hidden">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    }
+
+    <fieldset>
+        <legend>Diabetes</legend>
+        @if (Model.showDiabetes)
+        {
+            <div class="question" id="DiabetesDiv">
+                <div class="qHeader">
+                    <div class="qText">
+                        Have you been diagnosed with diabetes?
+                    </div>
+                </div>
+                <div class="qBody">
+                    <div class="qOption">
+                        @Html.RadioButtonFor(M => M.wellnessData.isDiabetic, true, new Dictionary<string, object> { { "id", "DiabeticYes" }, { "Name", "wellnessData.isDiabetic" }, { "data-validator", "validateDiabetes" } })
+                        <label for="DiabeticYes">@Translate.Message("L2")</label>
+                    </div>
+                    <div class="qOption">
+                        @Html.RadioButtonFor(M => M.wellnessData.isDiabetic, false, new Dictionary<string, object> { { "id", "DiabeticNo" }, { "Name", "wellnessData.isDiabetic" }, { "data-validator", "validateDiabetes" } })
+                        <label for="DiabeticNo">@Translate.Message("L3")</label>
+                        <small id="DiabetesError" class="form-error">@Translate.Message("L480")</small>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="grid-x grid-margin-x" id="Additional-Diabetes-Questions">
+            <div class="cell large-8 DiabetesReason">
+                <p>Type</p>
+            </div>
+            <div class="cell large-4 DiabetesReason">
+                @Html.DropDownListFor(M => M.wellnessData.DiabeticType, Model.DiabetesTypeList, "Select One...", new Dictionary<string, object> { { "data-validator", "validateDiabetesType" } })
+                <small class="form-error" id="reasonError">@Translate.Message("L480")</small>
+            </div>
+            <div class="cell large-8 TakeInsulin"><p>Do you take insulin?</p></div>
+            <div class="cell large-4 TakeInsulin">
+                @Html.RadioButtonFor(M => M.wellnessData.TakingInsulin, 1, new { @id = "TakingInsulinYes" })
+                <label for="yes-takingins">Yes</label>
+                @Html.RadioButtonFor(M => M.wellnessData.TakingInsulin, 2, new { @id = "TakingInsulinNo" })
+                <label for="no-takingins">No</label>
+            </div>
+            <div class="cell large-8"><p>Did your doctor (or healthcare provider) tell you how many times you should test your blood glucose each day?</p></div>
+            <div class="cell large-4">
+                @Html.RadioButtonFor(M => M.wellnessData.DidDocReqGlucoseTest, 1, new { @id = "DidDocReqGlucoseTestYes" })
+                <label for="yes-medchanges">Yes</label>
+                @Html.RadioButtonFor(M => M.wellnessData.DidDocReqGlucoseTest, 2, new { @id = "DidDocReqGlucoseTestNo" })
+                <label for="no-medchanges">No</label>
+            </div>
+            <div class="cell large-8 NoOfGlucTestRequested"><p>How many times each day did your doctor (or healthcare provider) tell you to test your blood glucose?</p></div>
+            <div class="cell large-4 NoOfGlucTestRequested">
+                @Html.DropDownListFor(M => M.wellnessData.NoOfGlucTestRequested, Model.GlucoseCheckCountList, "Select One...", new { @id = "NoOfGlucTestRequested" })
+            </div>
+            <div class="cell large-8"><p>How many times per day do you check your blood glucose?</p></div>
+            <div class="cell large-4">
+                @Html.DropDownListFor(M => M.wellnessData.NoOfGlucTestDone, Model.GlucoseCheckCountList, "Select One...", new { @id = "NoOfGlucTestDone" })
+            </div>
+            <div class="cell large-8"><p>What is your typical blood glucose range?</p></div>
+            <div class="cell large-4">
+                <div class="input-group">
+                    @Html.TextBoxFor(M => M.wellnessData.GlucoseFrom, new Dictionary<string, object> { { "id", "GlucoseFrom" }, { "data-validator", "validateGlucose" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "placeholder", "From" }, { "class", "input-group-field" } })
+                    <span class="input-group-label postfix">@Model.Measurements[BioLookup.Glucose].MeasurementUnit</span>
+                </div>
+                <small data-form-error-for="GlucoseFrom" class="form-error">@Translate.Message("L957") @Model.Measurements[BioLookup.Glucose].Min-@Model.Measurements[BioLookup.Glucose].Max.</small>
+            </div>
+            <div class="cell large-8"></div>
+            <div class="cell large-4">
+                <div class="input-group">
+                    @Html.TextBoxFor(M => M.wellnessData.GlucoseTo, new Dictionary<string, object> { { "id", "GlucoseTo" }, { "data-validator", "validateGlucose" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "placeholder", "To" }, { "class", "input-group-field" } })
+                    <span class="input-group-label postfix">@Model.Measurements[BioLookup.Glucose].MeasurementUnit</span>
+                </div>
+                <small data-form-error-for="GlucoseTo" class="form-error">@Translate.Message("L957") @Model.Measurements[BioLookup.Glucose].Min-@Model.Measurements[BioLookup.Glucose].Max.</small>
+            </div>
+            <div class="cell large-8"><p>What is your recent A1C?</p></div>
+            <div class="cell large-4">
+                <div class="input-group">
+                    @Html.TextBoxFor(M => M.wellnessData.A1C, new Dictionary<string, object> { { "id", "A1C" }, { "data-validator", "validateA1C" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" } })
+                    <span class="input-group-label postfix">%</span>
+                </div>
+                <small data-form-error-for="A1C" class="form-error">@Translate.Message("L956") @Model.Measurements[BioLookup.A1c].Min-@Model.Measurements[BioLookup.A1c].Max.</small>
+            </div>
+            <div class="cell">Comments:</div>
+            <div class="cell">
+                <div class="cell large-12">@Html.TextAreaFor(M => M.wellnessData.DiabetesComments, new Dictionary<string, object> { { "id", "DiabetesComments" } })</div>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Medications</legend>
+        <div class="grid-x grid-margin-x">
+            <div class="cell large-8"><p>Are you taking your medications as prescribed?</p></div>
+            <div class="cell large-4">
+                @Html.RadioButtonFor(M => M.wellnessData.TakingMedication, 1, new { @id = "TakingMedicationsYes" })
+                <label for="yes-takingmed">Yes</label>
+                @Html.RadioButtonFor(M => M.wellnessData.TakingMedication, 2, new { @id = "TakingMedicationsNo" })
+                <label for="no-takingmed">No</label>
+                @Html.RadioButtonFor(M => M.wellnessData.TakingMedication, 3, new { @id = "TakingMedicationsNone" })
+                <label for="no-takingmed">None Required</label>
+            </div>
+            <div class="cell large-8"><p>Have you had any medication changes?</p></div>
+            <div class="cell large-4">
+                @Html.RadioButtonFor(M => M.wellnessData.MedicationChanges, 1, new { @id = "MedicationsChangesYes" })
+                <label for="yes-medchanges">Yes</label>
+                @Html.RadioButtonFor(M => M.wellnessData.MedicationChanges, 2, new { @id = "MedicationsChangesNo" })
+                <label for="no-medchanges">No</label>
+            </div>
+            <div class="cell large-8"><p>Have you experienced any new medication side effects? </p></div>
+            <div class="cell large-4">
+                @Html.RadioButtonFor(M => M.wellnessData.SideEffects, 1, new { @id = "SideEffectsYes" })
+                <label for="yes-sideeffects">Yes</label>
+                @Html.RadioButtonFor(M => M.wellnessData.SideEffects, 2, new { @id = "SideEffectsNo" })
+                <label for="no-sideeffects">No</label>
+            </div>
+            <div class="cell">Comments:</div>
+            <div class="cell">
+                <div class="cell large-12">@Html.TextAreaFor(M => M.wellnessData.MedicationComments, "Type here...")</div>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Symptoms</legend>
+        <div class="grid-x grid-margin-x">
+            <div class="cell large-8"><p>Have you experienced any new symptoms? </p></div>
+            <div class="cell large-4">
+                @Html.RadioButtonFor(M => M.wellnessData.Symptoms, 1, new { @id = "SymptomsYes" })
+                <label for="yes-symptoms">Yes</label>
+                @Html.RadioButtonFor(M => M.wellnessData.Symptoms, 2, new { @id = "SymptomsNo" })
+                <label for="no-symptoms">No</label>
+            </div>
+            <div class="cell">Comments:</div>
+            <div class="cell">
+                <div class="cell large-12">@Html.TextAreaFor(M => M.wellnessData.SymptomsComments, "Type here...")</div>
+            </div>
+        </div>
+    </fieldset>
+
+    @if (Model.allowCardiacQuestion)
+    {
+        <fieldset>
+            <legend>Cardiac Related Symptoms: General</legend>
+            <h4>Have you recently experienced any of the following:</h4>
+            <div class="grid-x grid-margin-x">
+                <div class="cell large-8"><p>Chest pain or discomfort? </p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.Discomfort, 1, new { @id = "DiscomfortYes" })
+                    <label for="yes-discomfort">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.Discomfort, 2, new { @id = "DiscomfortNo" })
+                    <label for="no-discomfort">No</label>
+                </div>
+                <div class="cell large-8 DiscomfortReason"><p>During exercise/exertion? </p></div>
+                <div class="cell large-4 DiscomfortReason">
+                    @Html.RadioButtonFor(M => M.wellnessData.DiscomfortReason, 1, new { @id = "DiscomfortReasonYes" })
+                    <label for="yes-discomfortreason">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.DiscomfortReason, 2, new { @id = "DiscomfortReasonNo" })
+                    <label for="no-discomfortreason">No</label>
+                </div>
+
+                <div class="cell large-8"><p>Unusual shortness of breath?</p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.BreathShortness, 1, new { @id = "BreathShortnessYes" })
+                    <label for="yes-discomfort">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.BreathShortness, 2, new { @id = "BreathShortnessNo" })
+                    <label for="no-discomfort">No</label>
+                </div>
+                <div class="cell large-8 ShortnessReason"><p>During exercise/exertion?</p></div>
+                <div class="cell large-4 ShortnessReason">
+                    @Html.RadioButtonFor(M => M.wellnessData.ShortnessReason, 1, new { @id = "DiscomfortReasonYes" })
+                    <label for="yes-shortnessreason">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.ShortnessReason, 2, new { @id = "DiscomfortReasonNo" })
+                    <label for="no-shortnessreason">No</label>
+                </div>
+
+                <div class="cell large-8"><p>Dizzyness, fainting or blackouts?</p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.Dizzyness, 1, new { @id = "DizzynessYes" })
+                    <label for="yes-dizzyness">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.Dizzyness, 2, new { @id = "DizzynessNo" })
+                    <label for="no-dizzyness">No</label>
+                </div>
+                <div class="cell large-8 DizzynessReason"><p>During exercise/exertion?</p></div>
+                <div class="cell large-4 DizzynessReason">
+                    @Html.RadioButtonFor(M => M.wellnessData.DizzynessReason, 1, new { @id = "DizzynessReasonYes" })
+                    <label for="yes-dizzynessreason">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.DizzynessReason, 2, new { @id = "DizzynessReasonNo" })
+                    <label for="no-dizzynessreason">No</label>
+                </div>
+
+                <div class="cell large-8"><p>Irregular pulse, skipped heart beats or unusually fast heart rate?</p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.FastHeartRate, 1, new { @id = "FastHeartRateYes" })
+                    <label for="yes-fastheartrate">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.FastHeartRate, 2, new { @id = "FastHeartRateNo" })
+                    <label for="no-fastheartrate">No</label>
+                </div>
+                <div class="cell large-8 FastHeartRateReason"><p>During exercise/exertion?</p></div>
+                <div class="cell large-4 FastHeartRateReason">
+                    @Html.RadioButtonFor(M => M.wellnessData.FastHeartRateReason, 1, new { @id = "FastHeartRateReasonYes" })
+                    <label for="yes-fastheartratereason">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.FastHeartRateReason, 2, new { @id = "FastHeartRateReasonNo" })
+                    <label for="no-fastheartratereason">No</label>
+                </div>
+
+                <div class="cell large-8"><p>Swelling in your ankles or legs? </p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.Swelling, 1, new { @id = "SwellingYes" })
+                    <label for="yes-swelling">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.Swelling, 2, new { @id = "SwellingNo" })
+                    <label for="no-swelling">No</label>
+                </div>
+
+                <div class="cell large-8"><p>Any other unusual symptoms?</p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.UnusualSymptoms, 1, new { @id = "UnusualSymptomsYes" })
+                    <label for="yes-unusualsymptoms">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.UnusualSymptoms, 2, new { @id = "UnusualSymptomsNo" })
+                    <label for="no-unusualsymptoms">No</label>
+                </div>
+                <div class="cell">Comments:</div>
+                <div class="cell">
+                    <div class="cell large-12">@Html.TextAreaFor(M => M.wellnessData.CardiacComments, "Type here...")</div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Additional Heart Failure Questions</legend>
+            <h4>Have you recently experienced any of the following:</h4>
+            <div class="grid-x grid-margin-x">
+                <div class="cell large-8"><p>An increase in weight of 3-5 lbs or more? </p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.WeightIncrease, 1, new { @id = "WeightIncreaseYes" })
+                    <label for="yes-weightincrease">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.WeightIncrease, 2, new { @id = "WeightIncreaseNo" })
+                    <label for="no-weightincrease">No</label>
+                </div>
+                <div class="cell large-8"><p>Frequent urination (more than usual)?</p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.Urination, 1, new { @id = "UrinationYes" })
+                    <label for="yes-urination">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.Urination, 2, new { @id = "UrinationNo" })
+                    <label for="no-urination">No</label>
+                </div>
+                <div class="cell large-8"><p>Sputum production?</p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.Sputum, 1, new { @id = "SputumYes" })
+                    <label for="yes-sputum">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.Sputum, 2, new { @id = "SputumNo" })
+                    <label for="no-sputum">No</label>
+                </div>
+                <div class="cell large-8"><p>Waking up feeling short of breath at night?</p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.BreathatNight, 1, new { @id = "BreathatNightYes" })
+                    <label for="yes-breathatnight">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.BreathatNight, 2, new { @id = "BreathatNightNo" })
+                    <label for="no-breathatnight">No</label>
+                </div>
+                <div class="cell large-8"><p>Becoming short of breath when you lie down flat?</p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.BreathatLieDown, 1, new { @id = "BreathatLieDownYes" })
+                    <label for="yes-breathatliedown">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.BreathatLieDown, 2, new { @id = "BreathatLieDownNo" })
+                    <label for="no-breathatliedown">No</label>
+                </div>
+                <div class="cell">Comments:</div>
+                <div class="cell">
+                    <div class="cell large-12">@Html.TextAreaFor(M => M.wellnessData.HeartFailureComments, "Type here...")</div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>PAD Questions</legend>
+            <h4>Do you experience any of the following:</h4>
+            <div class="grid-x grid-margin-x">
+                <div class="cell large-8"><p>Leg discomfort, pain or cramping during exertion?</p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.LegDiscomfort, 1, new { @id = "LegDiscomfortYes" })
+                    <label for="yes-legdiscomfort">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.LegDiscomfort, 2, new { @id = "LegDiscomfortNo" })
+                    <label for="no-legdiscomfort">No</label>
+                </div>
+                <div class="cell large-8 LegDiscomfort"><p>How many minutes can walk before discomfort or pain starts?</p></div>
+                <div class="cell large-4 LegDiscomfort">
+                    @Html.TextBoxFor(m => m.wellnessData.DiscomfortMinutes, new { @id = "DiscomfortMinutes" })
+                </div>
+                <div class="cell large-8 LegDiscomfort"><p>How severe does the pain get on claudication scale? (0-4)</p></div>
+                <div class="cell large-4 LegDiscomfort">
+                    @Html.DropDownListFor(M => M.wellnessData.Claudication, Model.ClaudicationScale, "Select One...", new { @id = "Claudication" })
+                </div>
+                <div class="cell large-8 IntensePain"><p>How many minutes can walk before pain causes you to stop?</p></div>
+                <div class="cell large-4 IntensePain">
+                    @Html.TextBoxFor(m => m.wellnessData.BeforePainMinutes, new { @id = "BeforePainMinutes" })
+                </div>
+                <div class="cell large-8"><p>Any changes of foot wounds?</p></div>
+                <div class="cell large-4">
+                    @Html.RadioButtonFor(M => M.wellnessData.FootWounds, 1, new { @id = "FootWoundsYes" })
+                    <label for="yes-footwounds">Yes</label>
+                    @Html.RadioButtonFor(M => M.wellnessData.FootWounds, 2, new { @id = "FootWoundsNo" })
+                    <label for="no-footwounds">No</label>
+                </div>
+                <div class="cell">Comments:</div>
+                <div class="cell">
+                    <div class="cell large-12">@Html.TextAreaFor(M => M.wellnessData.PADComments, "Type here...")</div>
+                </div>
+            </div>
+        </fieldset>
+    }
+    <fieldset>
+        <legend>Wellness Vision</legend>
+        <div class="grid-x grid-margin-x">
+            <div class="cell large-12">@Html.TextAreaFor(M => M.wellnessData.WellnessVision, "Select One...")</div>
+        </div>
+    </fieldset>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="submit" id="AddData">Save</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeAddTask">Cancel</button></div>
+    </div>
+    @Html.HiddenFor(m => m.wellnessData.SourceHRA)
+    @Html.HiddenFor(m => m.wellnessData.SourceFollowUp)
+</form>
+<script type="text/javascript" src="@Url.Content("~/Scripts/ValidateNumbers.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+    var formsubmit = true;
+    Foundation.Abide.defaults.validators['validatePregnant'] = function ($el, required, parent) {
+        if ($("input[name='wellnessData.isPregnant']:checked").length == 0)
+            return false;
+        else
+            $('#PregnantError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateDiabetes'] = function ($el, required, parent) {
+        if ($("input[name='wellnessData.isDiabetic']:checked").length == 0)
+            return false;
+        else
+            $('#DiabetesError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validatePregDueDate'] = function ($el, required, parent) {
+        $('#HDueDate').val(toSystemDateFormat($('#wellnessData_DueDate').val()));
+        if ($('#PregnantYes').is(":checked")) {
+            if ($el.val() == "")
+                return false;
+            else if (new Date($el.val()) < new Date()) {
+                $("#pregDueError").text('@Translate.Message("L2087")');
+                return false;
+            }
+        }
+    };
+    Foundation.Abide.defaults.validators['validateDiabetesType'] = function ($el, required, parent) {
+        if ($('#DiabeticYes').is(":checked")) {
+            if ($el.val() == "") {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+    };
+    Foundation.Abide.defaults.validators['validateWeight'] = function ($el, required, parent) {
+        var min = @Model.Measurements[BioLookup.Weight].Min;
+        var max = @Model.Measurements[BioLookup.Weight].Max;
+        var pregDueDate = $el.val().replace(/[^0-9\.]/g, '');
+        if ((($el.val() >= min && $el.val() <= max) || (required == false && $el.val() == "")) && (!($el.val() != pregDueDate)))
+            return true;
+        else
+            return false;
+    };
+    Foundation.Abide.defaults.validators['validateA1C'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.A1c].Min;
+	    var max = @Model.Measurements[BioLookup.A1c].Max;
+	    if((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateGlucose'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.Glucose].Min;
+        var max = @Model.Measurements[BioLookup.Glucose].Max;
+        if ($el.is(":hidden") || (parseInt($el.val()) >= min && parseInt($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+        };
+    Foundation.Abide.defaults.validators['validateHealth'] = function ($el, required, parent) {
+        var group = parent.closest('.checkbox-group');
+        var countC = group.find(':checked').length;
+        if (!($('#UpdateHealthYes').is(":checked")) || countC >= 1) {
+            group.find('small.form-error').hide();
+            group.find('small.form-error').removeClass('is-visible');
+            return true;
+        } else {
+            group.find('small.form-error').css({ display: 'block' });
+            return false;
+        }
+    };
+    $(document).ready(function () {
+        $('.fdatepicker').fdatepicker({
+            format: "@Model.dateFormat.ToLower()"
+        });
+        if ('@Model.hasActivePortal' != "True")
+        {
+            $("#wellness-data-form :input").prop("disabled", true);
+            $('#AddData').addClass('hide');
+        }
+        $("#still-smoking").hide();
+        $("#quit-smoking").hide();
+        if ('@Model.wellnessData.UpdateHealth' == '1') {
+            $(".checkbox-group").removeClass('hide');
+        }
+        if ('@Model.wellnessData.DiabeticType.HasValue' == 'True' || ('@Model.wellnessData.Id' != '0' && '@Model.wellnessData.isDiabetic' == 'False') ||
+            '@Model.showDiabetes' == 'True') {
+            $(".DiabetesReason").hide();
+            if (('@Model.wellnessData.Id' != '0' && '@Model.wellnessData.isDiabetic' == 'False') || '@Model.showDiabetes' == 'True') {
+                $("#Additional-Diabetes-Questions").hide();
+            }
+        }
+        if ('@Model.wellnessData.DueDate.HasValue' == 'False') {
+            $("#PregDueDateDiv").hide();
+        }
+        else {
+            $("#wellnessData_DueDate").val(toLocalDateFormat($('#wellnessData_DueDate').val()));
+        }
+        @if(Model.wellnessData.DiabeticType.HasValue && Model.wellnessData.DiabeticType.Value == 1)
+        {
+            <text>
+                $(".TakeInsulin").addClass('hide');
+            </text>
+        }
+        @if(Model.wellnessData.DidDocReqGlucoseTest == null || (Model.wellnessData.DidDocReqGlucoseTest.HasValue && Model.wellnessData.DidDocReqGlucoseTest.Value == 2))
+        {
+            <text>
+                $(".NoOfGlucTestRequested").addClass('hide');
+            </text>
+        }
+        @if((Model.wellnessData.CurrentSmoker.HasValue && Model.wellnessData.CurrentSmoker.Value == 1))
+        {
+            <text>
+                $("#still-smoking").show();
+                $("#quit-smoking").hide();
+            </text>
+        }
+        @if((Model.wellnessData.CurrentSmoker.HasValue && Model.wellnessData.CurrentSmoker.Value == 2))
+        {
+            <text>
+                $("#still-smoking").hide();
+                $("#quit-smoking").show();
+            </text>
+        }
+        @if(Model.wellnessData.Discomfort == null || (Model.wellnessData.Discomfort.HasValue && Model.wellnessData.Discomfort.Value == 2))
+        {
+            <text>
+                $(".DiscomfortReason").addClass('hide');
+            </text>
+        }
+        @if(Model.wellnessData.BreathShortness == null || (Model.wellnessData.BreathShortness.HasValue && Model.wellnessData.BreathShortness.Value == 2))
+        {
+            <text>
+                $(".ShortnessReason").addClass('hide');
+            </text>
+        }
+        @if(Model.wellnessData.Dizzyness == null || (Model.wellnessData.Dizzyness.HasValue && Model.wellnessData.Dizzyness.Value == 2))
+        {
+            <text>
+                $(".DizzynessReason").addClass('hide');
+            </text>
+        }
+        @if(Model.wellnessData.FastHeartRate == null || (Model.wellnessData.FastHeartRate.HasValue && Model.wellnessData.FastHeartRate.Value == 2))
+        {
+            <text>
+                $(".FastHeartRateReason").addClass('hide');
+            </text>
+        }
+        @if(Model.wellnessData.LegDiscomfort == null || (Model.wellnessData.LegDiscomfort.HasValue && Model.wellnessData.LegDiscomfort.Value == 2))
+        {
+            <text>
+                $(".LegDiscomfort").addClass('hide');
+                $(".IntensePain").addClass('hide');
+            </text>
+        }
+        @if(Model.wellnessData.Claudication == null || (Model.wellnessData.Claudication.HasValue && (Model.wellnessData.Claudication.Value == 0 || Model.wellnessData.Claudication.Value == 1 || Model.wellnessData.Claudication.Value == 2 )))
+        {
+            <text>
+                $(".IntensePain").addClass('hide');
+            </text>
+        }
+
+        $('#closeAddTask').on('click', function () {
+            $('#add-wellness-data').foundation('close');
+        });
+        $("#wellness-data-form").foundation();
+            $("#wellness-data-form")
+                .on('forminvalid.zf.abide', function () {
+                    var invalid_fields = $(this).find('[data-invalid]');
+                    if (invalid_fields) {
+                        var scrollTo = $('#' + invalid_fields[0].id).offset().top;
+                        $('html, body').animate({
+                            scrollTop: scrollTo
+                        }, 400);
+                    }
+                })
+                .on('formvalid.zf.abide', function () {
+                    $('#wellnessData_DueDate').val($('#HDueDate').val());
+                    if (formsubmit == true) {
+                    $.ajax({
+                        url: "@Url.Action("AddEditWellnessData", "Participant")",
+                        type: 'POST',
+                        dataType: "json",
+                        data: $("#wellness-data-form").serialize(),
+                        success: function (data) {
+                            if (data == "success") {
+                                $('#add-wellness-data').foundation('close');
+                                showDetails(1);
+                            }
+                        }
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                                RedirectToErrorPage(jqXHR.status);
+                            })
+                    formsubmit = false;
+                }
+            }).on("submit", function (ev) {
+                ev.preventDefault();
+            })
+    });
+    $("#wellnessData_DiabeticType").on('change', function () {
+        if (this.value == 1) {
+            $(".TakeInsulin").addClass('hide');
+            $('input[name="wellnessData.TakingInsulin"]').prop('checked', false);
+        }
+        else {
+            $(".TakeInsulin").removeClass('hide');
+        }
+    });
+    $('input[name="wellnessData.DidDocReqGlucoseTest"]').on('click', function () {
+        if (this.value == 1) {
+            $(".NoOfGlucTestRequested").removeClass('hide');
+        }
+        else {
+            $(".NoOfGlucTestRequested").addClass('hide');
+            $("#NoOfGlucTestRequested").val('');
+        }
+    });
+    $('input[name="wellnessData.Discomfort"]').on('click', function () {
+        if (this.value == 1) {
+            $(".DiscomfortReason").removeClass('hide');
+        }
+        else {
+            $(".DiscomfortReason").addClass('hide');
+            $('input[name="wellnessData.DiscomfortReason"]').prop("checked", false);
+        }
+    });
+    $('input[name="wellnessData.Dizzyness"]').on('click', function () {
+        if (this.value == 1) {
+            $(".DizzynessReason").removeClass('hide');
+        }
+        else {
+            $(".DizzynessReason").addClass('hide');
+            $('input[name="wellnessData.DizzynessReason"]').prop("checked", false);
+        }
+    });
+    $('input[name="wellnessData.BreathShortness"]').on('click', function () {
+        if (this.value == 1) {
+            $(".ShortnessReason").removeClass('hide');
+        }
+        else {
+            $(".ShortnessReason").addClass('hide');
+            $('input[name="wellnessData.ShortnessReason"]').prop("checked", false);
+        }
+    });
+    $('input[name="wellnessData.FastHeartRate"]').on('click', function () {
+        if (this.value == 1) {
+            $(".FastHeartRateReason").removeClass('hide');
+        }
+        else {
+            $(".FastHeartRateReason").addClass('hide');
+            $('input[name="wellnessData.FastHeartRateReason"]').prop("checked", false);
+        }
+    });
+    $('input[name="wellnessData.LegDiscomfort"]').on('click', function () {
+        if (this.value == 1) {
+            $(".LegDiscomfort").removeClass('hide');
+        }
+        else {
+            $(".LegDiscomfort").addClass('hide');
+            $(".IntensePain").addClass('hide');
+            $("#DiscomfortMinutes").val('');
+            $("#Claudication").val('');
+            $("#BeforePainMinutes").val('');
+        }
+    });
+    $("#Claudication").on('change', function () {
+        if (this.value == 3 || this.value == 4) {
+            $(".IntensePain").removeClass('hide');
+        }
+        else {
+            $(".IntensePain").addClass('hide');
+            $("#BeforePainMinutes").val('');
+        }
+    });
+    $('input[type=radio][name="wellnessData.isPregnant"]').on('click', function () {
+            if (this.value == "True") {
+                $("#PregDueDateDiv").show();
+                document.getElementById("PregDueDateDiv").required = true;
+            }
+            else {
+                $("#PregDueDateDiv").hide();
+                $("#wellnessData_DueDate").val('');
+                document.getElementById("PregDueDateDiv").required = false;
+            }
+    });
+
+    $('input[type=radio][name="wellnessData.isDiabetic"]').on('click', function () {
+        if (this.value == "True") {
+            $("#Additional-Diabetes-Questions").show();
+            $(".DiabetesReason").show();
+        }
+        else {
+            $("#Additional-Diabetes-Questions").hide();
+            $(".DiabetesReason").hide();
+            $("#wellnessData_DiabeticType").val('');
+            $("#DiabetesComments").val('');
+            $('input[name="wellnessData.TakingInsulin"]').prop('checked', false);
+            $("#GlucoseFrom").val('');
+            $("#GlucoseTo").val('');
+            $("#NoOfGlucTestRequested").val('');
+            $("#NoOfGlucTestDone").val('');
+            $('input[name="wellnessData.DidDocReqGlucoseTest"]').prop('checked', false);
+        }
+    });
+
+    $('input[name="wellnessData.CurrentSmoker"]').on('click', function () {
+        if (this.value == 1) {
+            $("#still-smoking").show();
+            $("#quit-smoking").hide();
+        }
+        else {
+            $("#still-smoking").hide();
+            $("#quit-smoking").show();
+        }
+    });
+
+    $('input[name="wellnessData.UpdateHealth"]').on('click', function () {
+        if (this.value == 1) {
+            $(".checkbox-group").removeClass('hide');
+        }
+        else {
+            $(".checkbox-group").addClass('hide');
+            $('.updatecheckbox').prop("checked", false);
+        }
+    });
+
+
+</script>
+<a class="close-button" data-close aria-label="Close">&#215;</a>

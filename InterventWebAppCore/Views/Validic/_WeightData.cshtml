@@ -1,0 +1,175 @@
+﻿@using InterventWebApp
+<section class="main search-participants">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <h2>@Translate.Message("L2557")</h2>
+            </div>
+        </div>
+        <div class="filters grid-x grid-margin-x">
+            <div class="small-12 medium-4 cell">
+                <select id="Weightdays" onchange="daysOptions()">
+                    <option>--@Translate.Message("L421")--</option>
+                    <option value="90">@Translate.Message("L2739")</option>
+                    <option value="30">@Translate.Message("L2740")</option>
+                    <option value="7">@Translate.Message("L2741")</option>
+                    <option value="2">@Translate.Message("L2742")</option>
+                    <option value="1">@Translate.Message("L2743")</option>
+                    <option value="0" selected="selected">@Translate.Message("L2744")</option>
+                </select>
+            </div>
+            <div class="small-12 medium-4 cell">
+                <input type="text" placeholder="From" id="WeightStartDate" name="WeightStartDate" value="@DateTime.Now.AddDays(-180).ToString("MM/dd/yyyy")">
+            </div>
+            <div class="small-12 medium-4 cell">
+                <input type="text" placeholder="To" id="WeightEndDate" name="WeightEndDate" value="@DateTime.Now.ToString("MM/dd/yyyy")">
+            </div>
+            <div class="small-12 medium-6 cell">
+                <button class="secondary-color small button" id="filter-weight-data">
+                    <div class="loading-spinner hide" show-if-submitting></div>
+                    <i class="fa fa-filter"></i>
+                    @Translate.Message("L963")
+                </button>
+            </div>
+            <div class="cell">
+                <div id="weight-results"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>
+<script src="@Url.Content("~/Scripts/amcharts/gauge.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts/plugins/responsive/responsive.min.js")"></script>
+<script>
+    $(document).ready(function () {
+        $("#WeightStartDate").fdatepicker({
+            endDate: new Date()
+        })
+            .on('change', function (selected) {
+                var endDate = new Date($("#WeightEndDate").val());
+                var minDate = new Date($("#WeightStartDate").val());
+                if (endDate < minDate) {
+                    $('#WeightEndDate').fdatepicker('setDate', minDate);
+                }
+                $('#WeightEndDate').fdatepicker('setStartDate', minDate);
+            });
+        $("#WeightEndDate").fdatepicker({
+            endDate: new Date()
+        })
+    });
+        function daysOptions() {
+            if ($("#Weightdays").val() == 0) {
+            $("#WeightStartDate").val("@DateTime.Now.AddDays(-180).ToString("MM/dd/yyyy")");
+            $("#WeightEndDate").val("@DateTime.Now.ToString("MM/dd/yyyy")");
+            $('#WeightEndDate').fdatepicker('setStartDate', new Date($("#WeightStartDate").val()));
+            $("#WeightStartDate").removeAttr('readonly');
+            $("#WeightEndDate").removeAttr('readonly');
+        }
+        else {
+            $("#WeightStartDate").val("");
+            $("#WeightEndDate").val("");
+            $("#WeightStartDate").attr('readonly', 'readonly');
+            $("#WeightEndDate").attr('readonly', 'readonly');
+        }
+    }
+
+        $("#filter-weight-data").click(function () {
+            $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+            $('[show-if-submitting]').removeClass('hide');
+            var StartDate = $("#WeightStartDate").val();
+            var EndDate = $("#WeightEndDate").val();
+            var Days = $("#Weightdays").val();
+        $.ajax({
+            url: "@Url.Action("ListWeightData", "Validic")",
+            data: { externalId: $("#ExternalId").val(), Days: Days, StartDate: StartDate, EndDate: EndDate },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#weight-results').html("");
+                if (data != null) {
+                    if (data.Record != null) {
+                        if (data.Record.Count > 0) {
+                            $('#weight-results').show();
+                            var weight = data.Record;
+                            var weightHtml = "";
+                            var weightDiv = "weight-chart", weightName = "Weight Chart";
+                            weightHtml += "<div class='row chart-container'>";
+                            if (weight.recentDate != null) {
+                                var date = new Date(weight.recentDate);
+                                weightHtml += "<div class='small-12 cell'><h4>@Translate.Message("L381")</h4></div>";
+                                weightHtml += "<div class='small-12 cell'>(@Translate.Message("L2755"); " + date.toLocaleDateString() + ")</div>";
+                            }
+                            weightHtml += "<div class='small-12 medium-6 cell'><div id='weight-chart' style='width:100%;height:250px;'></div></div><div class='small-12 medium-6 cell'>";
+                            weightHtml += "<div>@Translate.Message("L2779"): " + weight.StartingWeight + " lbs </div>";
+                            if (weight.Count > 1) {
+                                weightHtml += "<div>@Translate.Message("L2757") vs. 2nd @Translate.Message("L2757"): </div>";
+                                weightHtml += "<div>@Translate.Message("L1930") = " + weight.weightDiffRecent + " lbs</div>";
+                                weightHtml += "<div>@Translate.Message("L2758"): </div>";
+                                weightHtml += "<div>@Translate.Message("L1930") = " + weight.weightDiffHistory + " lbs</div>";
+                            }
+                            else {
+                                weightHtml += "<div>@Translate.Message("L2757") vs. 2nd @Translate.Message("L2757"): </div>";
+                                weightHtml += "<div>@Translate.Message("L1930") = N/A </div>";
+                                weightHtml += "<div>@Translate.Message("L2758"): </div>";
+                                weightHtml += "<div>@Translate.Message("L1930") = N/A </div>";
+                            }
+                            weightHtml += "</div></div></div></div></div>";
+                            $('#weight-results').append(weightHtml);
+                            var maxLimit = 36;
+                            var limitColor = "#ffcc00";
+                            if (weight.BMI != 0) {
+                                if (weight.BMI > maxLimit)
+                                    maxLimit = weight.BMI;
+                            }
+                            buildWeightChart(weightDiv, weight.BMI, weightName, 'lbs', [0, 18.5, 25.0, 30.0, maxLimit], limitColor, weight.recentWeight);
+                        }
+                        else {
+                            $('#weight-results').append('<center>@Translate.Message("L2774")</center>');
+                        }
+                    }
+                }
+                else {
+                    $('#weight-results').hide();
+                }
+                $('[show-if-submitting]').parent().prop('disabled', '');
+                $('[show-if-submitting]').addClass('hide');
+            }
+        });
+        $("#loader-wrapper").fadeOut();
+        })
+        var buildWeightChart = function (div, value, text, unit, limits, limitColor, weight) {
+            var chart = AmCharts.makeChart(div, {
+                "type": "gauge",
+                "theme": "dark",
+                "axes": [{
+                    "axisThickness": 1,
+                    "axisAlpha": 0.2,
+                    "tickAlpha": 0.2,
+                    "valueInterval": 6,
+                    "bands": [{
+                        "color": "#FF8000",
+                        "endValue": limits[1],
+                        "startValue": limits[0]
+                    }, {
+                        "color": "#00cc00",
+                        "endValue": limits[2],
+                        "startValue": limits[1]
+                    }, {
+                        "color": "#FF8000",
+                        "endValue": limits[3],
+                        "startValue": limits[2]
+                    }, {
+                        "color": "#ff0000",
+                        "endValue": limits[4],
+                        "startValue": limits[3]
+                    }],
+                    "bottomText": weight + ' ' + unit,
+                    "bottomTextYOffset": -20,
+                    "endValue": limits[4]
+                    }],
+                "arrows": [{ "value": value }],
+            });
+        };
+</script>

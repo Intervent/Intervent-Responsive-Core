@@ -1,0 +1,576 @@
+﻿@model InterventWebApp.NutritionGoalModel
+@using InterventWebApp
+
+<div class="grid-container">
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <h2 class="" id="nutrition">@Translate.Message("L272")</h2>
+            <h2 class="" id="diet">@Translate.Message("L515")</h2>
+            <p class="" id="nutrition-intro">
+                @Model.nutGoalIntro
+            </p>
+            <div class="" id="nutmaint">
+                <h3>@Translate.Message("L513")</h3>
+                @if (Model.NutMaint == true)
+                {
+                    <text>
+                        @Translate.Message("L1636")
+                    </text>
+                }
+            </div>
+            <div class="hide-for-print">
+                <ul class="tabs" data-tabs id="nutrition-tabs" data-active-collapse="true" role="tablist">
+                    <li class="tabs-title is-active"><a href="#plan-a" aria-selected="true">@Translate.Message("L1640") @Model.FirstNutPlan</a></li>
+                    @if (Model.NutMaint == true)
+                    {
+                        <li class="tabs-title"><a data-tabs-target="plan-b" href="#plan-b">@Translate.Message("L1640") @Model.NutMaintMealPlan</a></li>
+                    }
+                </ul>
+                <div class="tabs-content" data-tabs-content="nutrition-tabs">
+                    <div class="tabs-panel is-active clearfix" id="plan-a">
+                        <div class="grid-x grid-margin-x">
+                            <div class="cell small-12" id="plan-a-meal">
+                                <div class="grid-x grid-margin-x">
+                                    <div class="cell large-6">
+                                        <div class="grid-x">
+                                            @Html.Partial("_MealPlan", Model,
+                                                new ViewDataDictionary(ViewData) {
+                                                    { "Name", Translate.Message("L3556") },
+                                                    { "Meat", @Model.FirstNutPlanArray.GetValue(0, 0) },
+                                                    { "Milk", @Model.FirstNutPlanArray.GetValue(1, 0) },
+                                                    { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 0) },
+                                                    { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 0) },
+                                                    { "Starch", @Model.FirstNutPlanArray.GetValue(4, 0) },
+                                                })
+                                            @Html.Partial("_MealPlan", Model,
+                                                new ViewDataDictionary(ViewData) {
+                                                    { "Name", Translate.Message("L3557") },
+                                                    { "Meat", @Model.FirstNutPlanArray.GetValue(0, 1) },
+                                                    { "Milk", @Model.FirstNutPlanArray.GetValue(1, 1) },
+                                                    { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 1) },
+                                                    { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 1) },
+                                                    { "Starch", @Model.FirstNutPlanArray.GetValue(4, 1) },
+                                                })
+                                        </div>
+                                    </div>
+                                    <div class="cell large-6">
+                                        <div class="grid-x">
+                                            @Html.Partial("_MealPlan", Model,
+                                                new ViewDataDictionary(ViewData) {
+                                                    { "Name", Translate.Message("L3558") },
+                                                    { "Meat", @Model.FirstNutPlanArray.GetValue(0, 2) },
+                                                    { "Milk", @Model.FirstNutPlanArray.GetValue(1, 2) },
+                                                    { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 2) },
+                                                    { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 2) },
+                                                    { "Starch", @Model.FirstNutPlanArray.GetValue(4, 2) },
+                                                })
+                                            @Html.Partial("_MealPlan", Model,
+                                                new ViewDataDictionary(ViewData) {
+                                                    { "Name", Translate.Message("L3559") },
+                                                    { "Meat", @Model.FirstNutPlanArray.GetValue(0, 3) },
+                                                    { "Milk", @Model.FirstNutPlanArray.GetValue(1, 3) },
+                                                    { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 3) },
+                                                    { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 3) },
+                                                    { "Starch", @Model.FirstNutPlanArray.GetValue(4, 3) },
+                                                })
+                                        </div>
+                                    </div>
+                                    <div class="cell large-6">
+                                        <div class="grid-x">
+                                            @Html.Partial("_MealPlan", Model,
+                                                new ViewDataDictionary(ViewData) {
+                                                    { "Name", Translate.Message("L3812") },
+                                                    { "Meat", @Model.FirstNutPlanArray.GetValue(0, 4) },
+                                                    { "Milk", @Model.FirstNutPlanArray.GetValue(1, 4) },
+                                                    { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 4) },
+                                                    { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 4) },
+                                                    { "Starch", @Model.FirstNutPlanArray.GetValue(4, 4) },
+                                                })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cell small-12 preventive-container" id="plan-a-diet">
+                                <div class="grid-x grid-margin-x">
+                                    <div class="cell large-6">
+                                        <h3 class="" id="diet-title-a">@Translate.Message("L515")</h3>
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>@Translate.Message("L526")</th>
+                                                    <th>@Translate.Message("L516")</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>@Translate.Message("L517")</td>
+                                                    <td>@Model.NutFatNum.Value-@Model.NewNutFatNum<span> g</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@Translate.Message("L518")</td>
+                                                    <td>@Translate.Message("L1641") @Model.NutSatFatNum<span> g</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@Translate.Message("L1637")</td>
+                                                    <td>@Model.NutTransFatNum</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@Translate.Message("L1231")</td>
+                                                    <td>@Model.NutCholNum</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@Translate.Message("L1638")</td>
+                                                    <td>@Model.NutCarbFrom-@Model.NutCarbTo<span> g</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@Translate.Message("L520")</td>
+                                                    <td>10-25 g</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@Translate.Message("L1639")</td>
+                                                    <td>@Translate.Message("L1641") @Model.NutSugNum<span> g</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@Translate.Message("L522")</td>
+                                                    <td>@Translate.Message("L523")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@Translate.Message("L524")</td>
+                                                    <td>@Translate.Message("L527") @Model.NutDrinkWaterNum @Translate.Message("L528")</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="cell large-6" id="common-measurements-a">
+                                        <h3>@Translate.Message("L529")</h3>
+                                        @Html.Partial("_CommonMeasurements")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.NutMaint == true)
+                    {
+                        <div class="tabs-panel clearfix" id="plan-b">
+                            <div class="grid-x grid-margin-x">
+                                <div class="cell small-12" id="plan-b-meal">
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="cell large-6">
+                                            @Html.Partial("_MealPlan", Model,
+                                                new ViewDataDictionary(ViewData) {
+                                                    { "Name", Translate.Message("L3556") },
+                                                    { "Meat", @Model.SecondNutPlanArray.GetValue(0, 0) },
+                                                    { "Milk", @Model.SecondNutPlanArray.GetValue(1, 0) },
+                                                    { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 0) },
+                                                    { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 0) },
+                                                    { "Starch", @Model.SecondNutPlanArray.GetValue(4, 0) },
+                                                })
+                                            @Html.Partial("_MealPlan", Model,
+                                                new ViewDataDictionary(ViewData) {
+                                                    { "Name", Translate.Message("L3557") },
+                                                    { "Meat", @Model.SecondNutPlanArray.GetValue(0, 1) },
+                                                    { "Milk", @Model.SecondNutPlanArray.GetValue(1, 1) },
+                                                    { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 1) },
+                                                    { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 1) },
+                                                    { "Starch", @Model.SecondNutPlanArray.GetValue(4, 1) },
+                                                })
+                                        </div>
+                                        <div class="cell large-6">
+                                            @Html.Partial("_MealPlan", Model,
+                                                new ViewDataDictionary(ViewData) {
+                                                    { "Name", Translate.Message("L3558") },
+                                                    { "Meat", @Model.SecondNutPlanArray.GetValue(0, 2) },
+                                                    { "Milk", @Model.SecondNutPlanArray.GetValue(1, 2) },
+                                                    { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 2) },
+                                                    { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 2) },
+                                                    { "Starch", @Model.SecondNutPlanArray.GetValue(4, 2) },
+                                                })
+                                            @Html.Partial("_MealPlan", Model,
+                                                new ViewDataDictionary(ViewData) {
+                                                    { "Name", Translate.Message("L3559") },
+                                                    { "Meat", @Model.SecondNutPlanArray.GetValue(0, 3) },
+                                                    { "Milk", @Model.SecondNutPlanArray.GetValue(1, 3) },
+                                                    { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 3) },
+                                                    { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 3) },
+                                                    { "Starch", @Model.SecondNutPlanArray.GetValue(4, 3) },
+                                                })
+                                        </div>
+                                        <div class="cell large-6">
+                                            @Html.Partial("_MealPlan", Model,
+                                                new ViewDataDictionary(ViewData) {
+                                                    { "Name", Translate.Message("L3812") },
+                                                    { "Meat", @Model.SecondNutPlanArray.GetValue(0, 4) },
+                                                    { "Milk", @Model.SecondNutPlanArray.GetValue(1, 4) },
+                                                    { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 4) },
+                                                    { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 4) },
+                                                    { "Starch", @Model.SecondNutPlanArray.GetValue(4, 4) },
+                                                })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="cell small-12" id="plan-b-diet">
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="cell large-6">
+                                            <h3 class="" id="diet-title-b">@Translate.Message("L515")</h3>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>@Translate.Message("L526")</th>
+                                                        <th>@Translate.Message("L516")</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>@Translate.Message("L517")</td>
+                                                        <td>@Model.NutLtFatNum-@Model.NewNutLtFatNum<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L518")</td>
+                                                        <td>@Translate.Message("L1641") @Model.NutLtSatFatNum<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L1637")</td>
+                                                        <td>@Model.NutTransFatNum</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L1231")</td>
+                                                        <td>@Model.NutCholNum</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L1638")</td>
+                                                        <td>@Model.NutLtCarbFrom-@Model.NutLtCarbTo<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L520")</td>
+                                                        <td>10-25 g</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L1639")</td>
+                                                        <td>@Translate.Message("L1641") @Model.NutSugNum<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L522")</td>
+                                                        <td>@Translate.Message("L523")</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L524")</td>
+                                                        <td>@Translate.Message("L527") @Model.NutDrinkWaterNum @Translate.Message("L528")</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="cell large-6" id="common-measurements-b">
+                                            <h3>@Translate.Message("L529")</h3>
+                                            @Html.Partial("_CommonMeasurements")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="show-for-print tab-for-print">
+                <div>
+                    <ul class="tabs">
+                        <li class="tabs-title"><a>@Translate.Message("L1640") @Model.FirstNutPlan</a></li>
+                    </ul>
+                    <div class="">
+                        <div class="is-active clearfix">
+                            <div class="grid-x grid-margin-x">
+                                <div class="cell small-12" id="plan-a-meal">
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="cell medium-6">
+                                            <div class="grid-x">
+                                                @Html.Partial("_MealPlan", Model,
+                                                    new ViewDataDictionary(ViewData) {
+                                                        { "Name", Translate.Message("L3556") },
+                                                        { "Meat", @Model.FirstNutPlanArray.GetValue(0, 0) },
+                                                        { "Milk", @Model.FirstNutPlanArray.GetValue(1, 0) },
+                                                        { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 0) },
+                                                        { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 0) },
+                                                        { "Starch", @Model.FirstNutPlanArray.GetValue(4, 0) },
+                                                    })
+                                                @Html.Partial("_MealPlan", Model,
+                                                    new ViewDataDictionary(ViewData) {
+                                                        { "Name", Translate.Message("L3557") },
+                                                        { "Meat", @Model.FirstNutPlanArray.GetValue(0, 1) },
+                                                        { "Milk", @Model.FirstNutPlanArray.GetValue(1, 1) },
+                                                        { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 1) },
+                                                        { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 1) },
+                                                        { "Starch", @Model.FirstNutPlanArray.GetValue(4, 1) },
+                                                    })
+                                            </div>
+                                        </div>
+                                        <div class="cell medium-6">
+                                            <div class="grid-x">
+                                                @Html.Partial("_MealPlan", Model,
+                                                    new ViewDataDictionary(ViewData) {
+                                                        { "Name", Translate.Message("L3558") },
+                                                        { "Meat", @Model.FirstNutPlanArray.GetValue(0, 2) },
+                                                        { "Milk", @Model.FirstNutPlanArray.GetValue(1, 2) },
+                                                        { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 2) },
+                                                        { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 2) },
+                                                        { "Starch", @Model.FirstNutPlanArray.GetValue(4, 2) },
+                                                    })
+                                                @Html.Partial("_MealPlan", Model,
+                                                    new ViewDataDictionary(ViewData) {
+                                                        { "Name", Translate.Message("L3559") },
+                                                        { "Meat", @Model.FirstNutPlanArray.GetValue(0, 3) },
+                                                        { "Milk", @Model.FirstNutPlanArray.GetValue(1, 3) },
+                                                        { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 3) },
+                                                        { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 3) },
+                                                        { "Starch", @Model.FirstNutPlanArray.GetValue(4, 3) },
+                                                    })
+                                            </div>
+                                        </div>
+                                        <div class="cell medium-6">
+                                            <div class="grid-x">
+                                                @Html.Partial("_MealPlan", Model,
+                                                    new ViewDataDictionary(ViewData) {
+                                                        { "Name", Translate.Message("L3812") },
+                                                        { "Meat", @Model.FirstNutPlanArray.GetValue(0, 4) },
+                                                        { "Milk", @Model.FirstNutPlanArray.GetValue(1, 4) },
+                                                        { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 4) },
+                                                        { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 4) },
+                                                        { "Starch", @Model.FirstNutPlanArray.GetValue(4, 4) },
+                                                    })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="cell small-12 preventive-container" id="plan-a-diet">
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="cell medium-6">
+                                            <h3 class="" id="diet-title-a">@Translate.Message("L515")</h3>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>@Translate.Message("L526")</th>
+                                                        <th>@Translate.Message("L516")</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>@Translate.Message("L517")</td>
+                                                        <td>@Model.NutFatNum.Value-@Model.NewNutFatNum<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L518")</td>
+                                                        <td>@Translate.Message("L1641") @Model.NutSatFatNum<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L1637")</td>
+                                                        <td>@Model.NutTransFatNum</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L1231")</td>
+                                                        <td>@Model.NutCholNum</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L1638")</td>
+                                                        <td>@Model.NutCarbFrom-@Model.NutCarbTo<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L520")</td>
+                                                        <td>10-25 g</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L1639")</td>
+                                                        <td>@Translate.Message("L1641") @Model.NutSugNum<span> g</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L522")</td>
+                                                        <td>@Translate.Message("L523")</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@Translate.Message("L524")</td>
+                                                        <td>@Translate.Message("L527") @Model.NutDrinkWaterNum @Translate.Message("L528")</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="cell medium-6" id="common-measurements-a">
+                                            <h3>@Translate.Message("L529")</h3>
+                                            @Html.Partial("_CommonMeasurements")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (Model.NutMaint == true)
+                {
+                    <div>
+                        <ul class="tabs">
+                            <li class="tabs-title"><a>@Translate.Message("L1640") @Model.NutMaintMealPlan</a></li>
+                        </ul>
+                        <div class="">
+                            <div class="is-active clearfix">
+                                <div class="grid-x grid-margin-x">
+                                    <div class="cell small-12" id="plan-b-meal">
+                                        <div class="grid-x grid-margin-x">
+                                            <div class="cell medium-6">
+                                                @Html.Partial("_MealPlan", Model,
+                                                    new ViewDataDictionary(ViewData) {
+                                                        { "Name", Translate.Message("L3556") },
+                                                        { "Meat", @Model.SecondNutPlanArray.GetValue(0, 0) },
+                                                        { "Milk", @Model.SecondNutPlanArray.GetValue(1, 0) },
+                                                        { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 0) },
+                                                        { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 0) },
+                                                        { "Starch", @Model.SecondNutPlanArray.GetValue(4, 0) },
+                                                    })
+                                                @Html.Partial("_MealPlan", Model,
+                                                    new ViewDataDictionary(ViewData) {
+                                                        { "Name", Translate.Message("L3557") },
+                                                        { "Meat", @Model.SecondNutPlanArray.GetValue(0, 1) },
+                                                        { "Milk", @Model.SecondNutPlanArray.GetValue(1, 1) },
+                                                        { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 1) },
+                                                        { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 1) },
+                                                        { "Starch", @Model.SecondNutPlanArray.GetValue(4, 1) },
+                                                    })
+                                            </div>
+                                            <div class="cell medium-6">
+                                                @Html.Partial("_MealPlan", Model,
+                                                    new ViewDataDictionary(ViewData) {
+                                                        { "Name", Translate.Message("L3558") },
+                                                        { "Meat", @Model.SecondNutPlanArray.GetValue(0, 2) },
+                                                        { "Milk", @Model.SecondNutPlanArray.GetValue(1, 2) },
+                                                        { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 2) },
+                                                        { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 2) },
+                                                        { "Starch", @Model.SecondNutPlanArray.GetValue(4, 2) },
+                                                    })
+                                                @Html.Partial("_MealPlan", Model,
+                                                    new ViewDataDictionary(ViewData) {
+                                                        { "Name", Translate.Message("L3559") },
+                                                        { "Meat", @Model.SecondNutPlanArray.GetValue(0, 3) },
+                                                        { "Milk", @Model.SecondNutPlanArray.GetValue(1, 3) },
+                                                        { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 3) },
+                                                        { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 3) },
+                                                        { "Starch", @Model.SecondNutPlanArray.GetValue(4, 3) },
+                                                    })
+                                            </div>
+                                            <div class="cell medium-6">
+                                                @Html.Partial("_MealPlan", Model,
+                                                    new ViewDataDictionary(ViewData) {
+                                                        { "Name", Translate.Message("L3812") },
+                                                        { "Meat", @Model.SecondNutPlanArray.GetValue(0, 4) },
+                                                        { "Milk", @Model.SecondNutPlanArray.GetValue(1, 4) },
+                                                        { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 4) },
+                                                        { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 4) },
+                                                        { "Starch", @Model.SecondNutPlanArray.GetValue(4, 4) },
+                                                    })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="cell small-12" id="plan-b-diet">
+                                        <div class="grid-x grid-margin-x">
+                                            <div class="cell medium-6">
+                                                <h3 class="" id="diet-title-b">@Translate.Message("L515")</h3>
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>@Translate.Message("L526")</th>
+                                                            <th>@Translate.Message("L516")</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>@Translate.Message("L517")</td>
+                                                            <td>@Model.NutLtFatNum-@Model.NewNutLtFatNum<span> g</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L518")</td>
+                                                            <td>@Translate.Message("L1641") @Model.NutLtSatFatNum<span> g</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L1637")</td>
+                                                            <td>@Model.NutTransFatNum</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L1231")</td>
+                                                            <td>@Model.NutCholNum</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L1638")</td>
+                                                            <td>@Model.NutLtCarbFrom-@Model.NutLtCarbTo<span> g</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L520")</td>
+                                                            <td>10-25 g</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L1639")</td>
+                                                            <td>@Translate.Message("L1641") @Model.NutSugNum<span> g</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L522")</td>
+                                                            <td>@Translate.Message("L523")</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Translate.Message("L524")</td>
+                                                            <td>@Translate.Message("L527") @Model.NutDrinkWaterNum @Translate.Message("L528")</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="cell medium-6" id="common-measurements-b">
+                                                <h3>@Translate.Message("L529")</h3>
+                                                @Html.Partial("_CommonMeasurements")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x" id="nutrition-text">
+        <div class="small-12 cell avoid-page-break-inside">
+            <h3>@Translate.Message("L530")</h3>
+            <div class="small-12 cell">
+                @if (Model.nutRecommendations.Count() > 0)
+                {
+                    <ul class="decorated orange">
+                        @for (int i = 0; i < Model.nutRecommendations.Count; i++)
+                        {
+                            @Html.Raw(Model.nutRecommendations[i])
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<a class="close-button hide-for-print" data-close>&#215;</a>
+<script>
+
+    @if (!Model.onlydiet)
+    {
+        @: $("#plan-a-meal").removeClass("");
+        @: $("#plan-b-meal").removeClass("");
+        @: $("#nutmaint").removeClass("");
+    }
+    @if (!Model.onlymeal)
+    {
+        @: $("#plan-a-diet").removeClass("");
+        @: $("#plan-b-diet").removeClass("");
+        @: $("#diet").removeClass("");
+    }
+    @if(!Model.onlymeal && !Model.onlydiet)
+    {
+        @: $("#diet-title-a").removeClass("");
+        @: $("#diet-title-b").removeClass("");
+        @: $("#diet").addClass("");
+        @: $("#nutrition").removeClass("");
+        @: $("#nutrition-text").removeClass("");
+        @: $("#nutrition-intro").removeClass("");
+        @: $("#common-measurements-a").removeClass("");
+        @: $("#common-measurements-b").removeClass("");
+    }
+</script>

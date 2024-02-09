@@ -1,0 +1,308 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+@model InterventWebApp.ReportSelectModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x scheduler-offset-small-only">
+                <div class="small-12 large-6 left cell">
+                    @Html.Partial("_ReportSelect", Model, new ViewDataDictionary(ViewData) { { "Kind", "NoShowReport" } })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="panel filters">
+            <fieldset>
+                <legend>Report Criteria</legend>
+                <div class="grid-x grid-padding-x">
+                    <div class="small-12 medium-6 cell">
+                        <input id="StartDate" type="text" placeholder="Start Date..." />
+                        <input id="HStartDate" type="hidden" />
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <input id="EndDate" type="text" placeholder="End Date..." />
+                        <input id="HEndDate" type="hidden" />
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.AppointmentType, Model.AppointmentTypeList, "--Select Appointment Type--", new Dictionary<string, object> { { "class", "primary-select" } })
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.TimeZoneType, Model.TimeZoneList, "--Select TimeZone--", new Dictionary<string, object> { { "class", "primary-select" } })
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <select id="review" autocomplete="off" class="primary-select">
+                            <option value="" selected>--Reviewed / Not Reviewed--</option>
+                            <option value="1">Reviewed</option>
+                            <option value="0">Not Reviewed</option>
+                        </select>
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <select id="Language" autocomplete="off" class="primary-select">
+                            <option value="" selected>--Select Language--</option>
+                            <option value="en-us">en-us</option>
+                            <option value="es">es</option>
+                        </select>
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.Organization, Model.OrganizationList, "--Select Organization--", new Dictionary<string, object> { { "class", "primary-select" } })
+                    </div>
+                    <div class="small-12 medium-6 cell text-right">
+                        <button class="button" id="filter-appt-data">
+                            <div class="loading-spinner hide" show-if-submitting></div>
+                            <i class="fa fa-filter"></i>
+                            Search
+                        </button>
+                        <button class="secondary-color small" id="download-log-data">
+                            <div class="loading-spinner hide" id="download-spinner"></div>
+                            <i class="fa fa-download"></i>
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 medium-6 cell">
+                <button id="review-button" class="small left hide">
+                    <i class="fa fa-check"></i>
+                    Review
+                </button>
+            </div>
+        </div>
+        <div class="small-12 cell" id="report">
+			<div class="table-container">
+				<table class='table basic-table1' id="noshow-appt-report"></table>
+			</div>
+        </div>
+        <div class="cell small-12">
+            <!-- pagination Start -->
+            <div class="pagination-area hide" id="pagination-centered">
+                <ul>
+                    <li id="numeric"></li>
+                </ul>
+                <!-- page-link Start -->
+                <div class="page-link">
+                    <label>@Translate.Message("L4041")</label>
+                    <div class="grid-x">
+                        <input type="text" id="jumptoPageNo">
+                        <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                    </div>
+                </div>
+                <!-- page-link End -->
+            </div>
+            <!-- pagination End -->
+        </div>
+    </div>
+</section>
+
+<div id="action-confirmation" class="reveal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <input type="hidden" id="apptid" />
+    <div class="grid-x grid-margin-x">
+        <div class="cell"><h2 id="chat-header">Did you take action?</h2></div>
+    </div>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="reviewAction">Yes</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="cancelChatNote">Cancel</button></div>
+    </div>
+</div>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/downloadcsv.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    var download = false;
+    var appIdSeries = [];
+    $("#StartDate").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#StartDate').val()));
+    });
+    $("#EndDate").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#EndDate').val()));
+    });
+    $(document).ready(function () {
+        $("#StartDate").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        }).on('change', function (selected) {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#EndDate').fdatepicker('setDate', minDate);
+            }
+            $('#EndDate').fdatepicker('setStartDate', minDate);
+            $("#EndDate").trigger("change");
+        });
+        $("#EndDate").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        });
+        @if (Model.tempData != null) {
+             @: currentPage = @Model.tempData.page;
+             @: totalRecords = @Model.tempData.totalRecords;
+             @: $("#StartDate").val('@Model.tempData.startDate');
+             @: $("#EndDate").val('@Model.tempData.endDate');
+             @: $("#AppointmentType").val(@Model.tempData.appointmentType);
+             @: $("#Language").val('@Model.tempData.language');
+             @: $("#Organization").val(@Model.tempData.organization);
+             @: $("#TimeZoneType").val('@Model.tempData.TimeZoneType');
+             @: $("#review").val('@Model.tempData.isReviewed');
+             @: if ($("#StartDate").val() != ""){
+             @:   $("#StartDate").val(toLocalDateFormat($('#StartDate').val()));
+             @: $("#StartDate").trigger("change");}
+             @: if ($("#EndDate").val() != "") {
+             @:   $("#EndDate").val(toLocalDateFormat($('#EndDate').val()));
+             @: $("#EndDate").trigger("change");}
+             @: ListApptReport();
+        }
+        if (window.performance.navigation.type == 1) {
+            window.location = "../AdminReports/NoShowReport";
+        }
+    });
+    $('#filter-appt-data').on('click', function () {
+        $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+        $('[show-if-submitting]').removeClass('hide');
+        startIndex = 0;
+        pageSize = 10;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        download =false;
+        ListApptReport();
+    });
+
+    $('#download-log-data').on('click', function () {
+        $('#download-spinner').parent().prop('disabled', 'disabled');
+        $('#download-spinner').removeClass('hide');
+        download = true;
+        ListApptReport();
+    });
+
+    function ListApptReport() {
+        var StartDate = $('#HStartDate').val();
+        var EndDate = $('#HEndDate').val();
+        var orgId = $('#Organization').val();
+        var language = $('#Language').val();
+        var ApptType = $('#AppointmentType').val();
+        var TimeZone = $('#TimeZoneType').val();
+        var isReviewed = $('#review').val() ? Boolean(parseInt($('#review').val())) : null;
+        $('#alert-message1').addClass('hide');
+        $.ajax({
+            url: "@Url.Action("ListNoShowReport", "AdminReports")",
+            data: { orgId: orgId, ApptType: ApptType, isReviewed: isReviewed, TimeZone: TimeZone, language: language, startDate: StartDate, enddate: EndDate, page: currentPage, pageSize: pageSize, totalRecords: totalRecords, download : download },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if(download){
+                    var filename = 'noshowlog_' + new Date().toLocaleDateString() + '.csv';
+                    downloadCSV(data.Records, filename);
+                    download = false;
+                }
+                else{
+                    totalRecords = data.TotalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    displayApptReport(data);
+                    if (totalRecords <= 0) {
+                        $('#noshow-appt-report').html("<center>No data were found.</center>");
+                    }
+                    AddPager();
+                    $('[show-if-submitting]').parent().prop('disabled', '');
+                    $('[show-if-submitting]').addClass('hide');
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    function displayApptReport(data) {
+        var noshowdata = data.Records;
+        $('#noshow-appt-report').html("");
+        var noshowhtml = "";
+        noshowhtml += "<thead><tr><th>UserId</th>";
+        noshowhtml += "<th>Name</th>";
+        noshowhtml += "<th>Language</th>";
+        noshowhtml += "<th>Type</th>";
+        noshowhtml += "<th>Date</th>";
+        noshowhtml += "<th>Coach</th>";
+        noshowhtml += "<th>Text Message</th>";
+        noshowhtml += "<th>Review</th>";
+        noshowhtml += "<th>Organization</th>";
+        noshowhtml += "<th>Future Appt</th></tr></thead>";
+        var k = 0;
+        for (i in noshowdata) {
+            var noshow = noshowdata[i];
+            noshowhtml += "<tr><td><a style='text-decoration: underline;color:deepskyblue;' onclick='ViewParticipant(" + noshow.UserId + ")'>" + noshow.UserId + "</td>";
+            noshowhtml += "<td>" + noshow.Name + "</td>";
+            noshowhtml += "<td>" + noshow.Language + "</td>";
+            noshowhtml += "<td>" + noshow.AppointmentType + "</td>";
+            noshowhtml += "<td>" +noshow.AppointmentDate + "</td>";
+            noshowhtml += "<td>" + noshow.CoachName + "</td>";
+            noshowhtml += "<td>" + noshow.TextMessage + "</td>";
+            if (noshow.ReviewdBy)
+                noshowhtml += "<td>" + noshow.ReviewdBy + "</td>";
+            else
+                noshowhtml += "<td><input type='checkbox' name='reviewChkbox' id='" + noshow.Id + "'onChange='Reviewed();'></input></td>";
+            noshowhtml += "<td>" + noshow.Organization + "</td>";
+            if (noshow.FutureAppt)
+                noshowhtml += "<td>" + noshow.FutureAppt + "</td></tr>";
+            else
+                noshowhtml += "<td>" + " " + "</td></tr>";
+            k++;
+        }
+        $('#noshow-appt-report').append(noshowhtml);
+    }
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListApptReport();
+    }
+    function ViewParticipant(Id) {
+        var link = '@Url.Action("ParticipantProfile", "Participant", new { Id = "PId", fromNoShowReport = true })';
+        window.location.href = link.replace("PId", Id)
+    }
+    function Reviewed() {
+        appIdSeries = [];
+        var data = document.getElementsByName("reviewChkbox");
+        $('#review-button').addClass('hide');
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].checked == true)
+                appIdSeries.push(data[i].id);
+            else
+                $("#selectall").prop('checked', false);
+        }
+        if (appIdSeries.length > 0) {
+            $('#review-button').removeClass('hide');
+        }
+    }
+    $("#review-button").on('click', function () {
+        $("#action-confirmation").foundation('open');
+    });
+    $("#reviewAction").on('click', function () {
+        var appIds = appIdSeries.join(',');
+        $.ajax({
+            url: "@Url.Action("ReviewNoShow", "AdminReports")",
+            data: { appIds: appIds },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                appIdSeries = [];
+                $("#action-confirmation").foundation('close');
+                $("#review-button").addClass('hide');
+                ListApptReport();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+    $("#cancelChatNote").on('click', function () {
+        var apptid = $('#apptid').val();
+        $("#Review-" + apptid +"").prop('checked', false);
+        $("#action-confirmation").foundation('close');
+    });
+</script>
+

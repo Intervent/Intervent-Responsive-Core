@@ -1,0 +1,369 @@
+﻿@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <div class="grid-x main-chart-header">
+            <div class="cell medium-6">
+                <h6>@Translate.Message("L3982"): </h6>
+                <div class="graph-selector-container" id="graph-selector-container">
+                    <span data-toggle="graph-date-filter" data-value="wt-week-data">@Translate.Message("L2741")</span>
+                    <div class="graph-selector dropdown-pane" id="graph-date-filter" data-dropdown data-close-on-click="true">
+                        <ul>
+                            <li data-value="wt-week-data">@Translate.Message("L2741")</li>
+                            <li data-value="wt-month-data">@Translate.Message("L2740")</li>
+                            <li data-value="wt-90days-data">@Translate.Message("L2739")</li>
+                            <li data-value="wt-yesterday-data">@Translate.Message("L2742")</li>
+                            <li data-value="wt-date-range">@Translate.Message("L2744")</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="graph-date-range hide">
+                    <form id="date-search">
+                        <div class="input-container">
+                            <label for="graph-start-date">
+                                <input type="text" name="graph-start-date" placeholder="@Translate.Message("L1445")" id="graph-start-date" autocomplete="off" />
+                                <input id="HStartDate" type="hidden" />
+                            </label>
+                            <label for="graph-end-date">
+                                <input type="text" name="graph-end-date" placeholder="@Translate.Message("L4001")" id="graph-end-date" autocomplete="off" />
+                                <input id="HEndDate" type="hidden" />
+                            </label>
+                        </div>
+                        <div class="button-group align-center">
+                            <button type="reset" class="button hollow" id="reset-date">@Translate.Message("L3967")</button>
+                            <button type="submit" class="button" id="submit-date">@Translate.Message("L963")</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @*<div class="chart-update-date cell medium-6 text-right">Last Update <strong><span id="recentDate"></span></strong></div>*@
+        </div>
+    </div>
+    <div id="no-graph" class="cell main-graph-container hide">
+        <div class="cell main-chart ">
+            <div class="no-graph-info text-center">
+                <img src="~/Images/device/no-data.png" alt="Alternate Text">
+                <span>@Translate.Message("L4000")</span>
+            </div>
+        </div>
+    </div>
+    <div id="has-data" class="cell">
+        <div class="main-graph-container wt-graph-container">
+            <div class="units-list">
+                <ul>
+                    <li><span class="unit-count" id="latestWeight"></span> @Translate.Message("L4002")</li>
+                    <li><span class="unit-count" id="latestBMI"></span> @Translate.Message("L736") <span class="units-tag green" id="RangeBMI">@Translate.Message("L4010")</span><i class="fa fa-info" data-toggle="weight-bmi1"></i></li>
+                </ul>
+                @*<p style="text-align:center">Last update <strong><span class="unit-count" id="lastUpdate"></span></strong></p>*@
+
+                <div class="dropdown-pane device-tooltip" data-position="top" data-alignment="center" id="weight-bmi1" data-dropdown data-v-offset="12" data-auto-focus="true" data-hover="true" data-hover-pane="true">
+                    <p>@Translate.Message("L4003")</p>
+                </div>
+            </div>
+
+            <div id="chart-data" class="main-chart"></div>
+
+            <div class="main-graph-summary grid-x grid-padding-x">
+                <div class="cell medium-3">
+                    <div class="callout callout-select" onclick="showRecentGraph(false);">
+                        @Html.Raw(String.Format(Translate.Message("L4005"), "<p><span id='weightCount'></span>", "</p>"))
+                    </div>
+                </div>
+                <div class="cell medium-3">
+                    <div class="callout" onclick="showRecentGraph(true);">
+                        @Translate.Message("L4006") <p><span id="recentDiff"></span> @Html.Raw(String.Format(Translate.Message("L4007"), "<span id='weightchangeText'></span>", "<span id='recentDiffDays'></span>"))</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-graph-details wtbmi-graph-details">
+            <h5>@Html.Raw(String.Format(Translate.Message("L4008"), "<span id='pastDays'>7</span>"))</h5>
+
+            <div class="wt-activity-details">
+                <div class="grid-x grid-padding-y">
+                    <div class="cell medium-3">
+                        @Translate.Message("L2779")
+                        <p><span id="startingWeight"></span> @Translate.Message("L4009")</p>
+                    </div>
+                    <div class="cell medium-3">
+                        @Translate.Message("L4012")
+                        <p><span id="latestWeightValue"></span> @Translate.Message("L4009")</p>
+                    </div>
+                    <div class="cell medium-3">
+                        @Translate.Message("L4013")
+                        <p><span id="avgWeight"></span> @Translate.Message("L4009")</p>
+                    </div>
+                    <div class="cell medium-3">
+                        @Translate.Message("L4014")
+                        <p><span id="weightDiffHist">@Translate.Message("L1149")</span> <spam id="weightDiffHistText"></spam></p>
+                    </div>
+                </div>
+                <div class="grid-x grid-padding-y">
+                    <div class="cell medium-3">
+                        @Translate.Message("L4015")
+                        <p><span id="startingBMI"></span></p>
+                    </div>
+                    <div class="cell medium-3">
+                        @Translate.Message("L4016")
+                        <p><span id="latestBMIValue"></span></p>
+                    </div>
+                    <div class="cell medium-3">
+                        @Translate.Message("L4017")
+                        <p><span id="avgBMI"></span></p>
+                    </div>
+                    <div class="cell medium-3">
+                        @Translate.Message("L4018")
+                        <p><span id="bmiDiffHist"></span> <span id="bmiDiffHistText"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="@Url.Content("~/Scripts/moment.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var notApplicable = "@Translate.Message("L1149")";
+    $(document).ready(function () {
+        var graphData;
+        LoadData(7);
+        $("#graph-start-date").on("change", function () {
+            $('#HStartDate').val(toSystemDateFormat($('#graph-start-date').val()));
+        });
+        $("#graph-end-date").on("change", function () {
+            $('#HEndDate').val(toSystemDateFormat($('#graph-end-date').val()));
+        });
+        $(".graph-selector ul li").on("click", function () {
+            var showData = $(this).data("value");
+            var showText = $(this).text();
+            $(".graph-selector-container span").text(showText);
+            $(".graph-selector-container span").data('value', showData);
+            $("#graph-date-filter").foundation("close");
+            changeGraph();
+        });
+
+        $("#graph-start-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()}).on('change', function (selected) {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#graph-end-date').fdatepicker('setDate', minDate);
+            }
+            $('#graph-end-date').fdatepicker('setStartDate', minDate);
+            $("#graph-end-date").trigger("change");
+        });
+        $("#graph-end-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()
+        });
+
+        $("#date-search").on('submit', function (ev) {
+            LoadData(0);
+            ev.preventDefault();
+            $(".graph-date-range").addClass("hide");
+        });
+
+		$(document).on('click', function(){
+			$('.graph-date-range').addClass("hide");
+		});
+		$('.graph-date-range, .datepicker, .graph-selector').on('click', function(e){
+			e.stopPropagation();
+		});
+    });
+
+    function changeGraph() {
+        if ($(".graph-selector-container span").data('value') == "wt-week-data") {
+            $(".graph-date-range").addClass("hide");
+            LoadData(7);
+            $("#pastDays").html(7);
+        }
+        else if ($(".graph-selector-container span").data('value') == "wt-month-data") {
+            $(".graph-date-range").addClass("hide");
+            LoadData(30);
+            $("#pastDays").html(30);
+        }
+        else if ($(".graph-selector-container span").data('value') == "wt-90days-data") {
+            $(".graph-date-range").addClass("hide");
+            LoadData(90);
+            $("#pastDays").html(90);
+        }
+		else if ($(".graph-selector-container span").data('value').includes("date-range")) {
+            $(".graph-date-range").removeClass("hide");
+            $("#graph-start-date").val("");
+            $("#graph-end-date").val("");
+		}
+        else {
+            $(".graph-date-range").addClass("hide");
+            LoadData(1);
+            $("#pastDays").html(1);
+        }
+    }
+
+    function LoadData(days) {
+        var startDate, endDate;
+        if ($(".graph-selector-container span").data('value').includes("date-range")) {
+            startDate = $("#HStartDate").val();
+            endDate = $("#HEndDate").val();
+            var diffDays = Math.round((new Date(new Date(endDate) - new Date(startDate))) / 1000 / 60 / 60 / 24);
+            $("#pastDays").html(diffDays);
+        }
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            data: {days: days, startDate : startDate, endDate : endDate},
+            url: "@Url.Action("ListWeightData", "Devices")",
+            success: function (data) {
+                if (data.graphdata.length == 0) {
+                    $("#no-graph").removeClass("hide");
+                    $("#has-data").addClass("hide");
+                }
+                else {
+                    $("#no-graph").addClass("hide");
+                    $("#has-data").removeClass("hide");
+                    //let recentDate = moment(data.recentDate,"DD-MM-YYYY");
+                    //$("#lastUpdate").text(recentDate.format("MMM D"));
+                    $("#recentDate").text(data.recentDate);
+                    $("#latestWeight").text(data.avgWeight);
+                    $("#latestBMI").text(ReplaceWithNA(data.avgBMI));
+                    $("#RangeBMI").removeClass("green red");
+                    if (data.recentBMI <= 24.9 && data.recentBMI >= 18.5) {
+                        $("#RangeBMI").addClass("green");
+                        $("#RangeBMI").text("@Translate.Message("L4010")");
+                    }
+                    else {
+                        $("#RangeBMI").addClass("red");
+                        $("#RangeBMI").text("@Translate.Message("L4011")");
+                    }
+                    $("#weightCount").text(data.Count);
+                    if (data.graphdata.length == 1) {
+                        $("#recentDiff").parents('div').addClass("callout-disabled");
+                    }
+                    else {
+                        $("#recentDiff").parents('div').removeClass("callout-disabled");
+                    }
+                    $("#recentDiff").text(data.weightDiffRecent);
+                    $("#recentDiffDays").text(data.diffDays);
+                    $("#startingWeight").text(data.StartingWeight);
+                    $("#latestWeightValue").text(data.latestWeight);
+                    $("#avgWeight").text(data.avgWeight);
+                    if (data.graphdata.length == 1) {
+                        $("#weightDiffHist").text(notApplicable);
+                        $("#weightDiffHistText").text("");
+                    }
+                    else {
+                        $("#weightDiffHist").text(data.weightDiffHistory);
+                        $("#weightDiffHistText").text("@Translate.Message("L4009")");
+                    }
+                    $("#startingBMI").text(ReplaceWithNA(data.startingBMI));
+                    $("#latestBMIValue").text(ReplaceWithNA(data.recentBMI));
+                    $("#avgBMI").text(ReplaceWithNA(data.avgBMI));
+                    if (data.graphdata.length == 1) {
+                        $("#bmiDiffHist").text(notApplicable);
+                    }
+                    else {
+                        $("#bmiDiffHist").text(ReplaceWithNA(data.overallBMIdiff));
+                    }
+                    graphData = data.graphdata;
+                    createChart(data.graphdata);
+                }
+                $("#weightCount").parents('div').trigger("click");
+            }
+        });
+    }
+
+    $('.main-graph-summary .callout').on('click', function () {
+        $('.main-graph-summary .callout').removeClass('callout-select');
+        $(this).addClass('callout-select');
+    });
+
+    function ReplaceWithNA(data) {
+        return data == 0 ? notApplicable : data;
+    }
+
+    function showRecentGraph(recent) {
+        var data = graphData;
+        if (recent)
+            data = graphData.slice(0, 2);
+        createChart(data);
+
+        var $listParent = $(".main-graph-container");
+        if ($(window).width() < 640) {
+            windowScrollClass($listParent, 45, 500);
+        }
+        else {
+            windowScrollClass($listParent, 65, 500);
+        }
+    }
+
+    function windowScrollClass(element, offset, speed) {
+        var $element = element;
+        var speed = speed ? speed : 500;
+        var offset = offset ? offset : 70;
+        var scrollPos = $element.offset().top
+
+        $("html, body").animate({
+            scrollTop: scrollPos - offset
+        }, speed);
+    }
+
+    function createChart(data) {
+        // Create chart instance
+        var chart = am4core.create("chart-data", am4charts.XYChart);
+        //chart.dateFormatter.inputDateFormat = "dd-MM-yyyy";
+        chart.responsive.enabled = true;
+
+        // Create axes
+        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis.startLocation = 0;
+        dateAxis.endLocation = 1;
+        dateAxis.renderer.cellStartLocation = 0;
+        dateAxis.renderer.cellEndLocation = 1;
+        dateAxis.renderer.grid.template.disabled = true;
+        dateAxis.dateFormats.setKey("day", "dd\nMMM");
+        dateAxis.renderer.labels.template.fill = am4core.color("#999999");
+        dateAxis.renderer.grid.template.location = 0;
+
+        // Create value axis
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.renderer.opposite = true;
+        valueAxis.renderer.labels.template.fill = am4core.color("#999999");
+        valueAxis.renderer.minGridDistance = 100;
+        valueAxis.title.text = "@Translate.Message("L4002")";
+
+        // Create series
+        var series2 = chart.series.push(new am4charts.LineSeries());
+        series2.dataFields.valueY = "value";
+        series2.dataFields.dateX = "date";
+        series2.stroke = am4core.color("#dc6dff");
+        series2.tensionX = 0.93;
+        series2.strokeWidth = 2;
+        series2.fill = am4core.color("#dc6dff");
+        series2.bullets.push(new am4charts.CircleBullet());
+        series2.data = data;
+
+        /* Add a single HTML-based tooltip to first series */
+        series2.tooltipHTML = `<p style="font-size: 14px; margin-bottom: 4px; color: #bcbcbc;" > {dateX.formatDate('dd MMMM')} </p>
+        <ul>
+        <li style="color: #dc6dff; font-size: 20px;">
+            <p style="font-size: 12px; margin-bottom: 10px; color: #bcbcbc;">@Translate.Message("L504") <br><strong style="font-size: 16px; color: #fff;">{valueY}</strong> @Translate.Message("L4002")</p>
+        </li>
+        </ul>`;
+        series2.tooltip.getFillFromObject = false;
+        series2.tooltip.background.fill = am4core.color("#484848");
+        series2.tooltip.pointerOrientation = "vertical";
+        series2.tooltip.background.filters.clear();
+
+        var fillModifier2 = new am4core.LinearGradientModifier();
+        fillModifier2.opacities = [0.2, 0];
+        fillModifier2.offsets = [0, 0.5];
+        fillModifier2.gradient.rotation = 90;
+        series2.segments.template.fillModifier = fillModifier2;
+
+        chart.cursor = new am4charts.XYCursor();
+    }
+</script>
+

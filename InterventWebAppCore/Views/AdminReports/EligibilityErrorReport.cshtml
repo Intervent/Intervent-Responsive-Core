@@ -1,0 +1,183 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+@model InterventWebApp.ReportSelectModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x scheduler-offset-small-only">
+                <div class="small-12 large-6 left cell">
+                    @Html.Partial("_ReportSelect", Model, new ViewDataDictionary(ViewData) { { "Kind", "EligibilityErrorReport" } })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="panel filters">
+            <fieldset>
+                <legend>Report Criteria</legend>
+                <div class="grid-x grid-padding-x">
+                    <div class="small-12 medium-6 cell">
+                        <input id="eligibility-errorStartDate" type="text" placeholder="Start Date..." />
+                        <input id="HStartDate" type="hidden" />
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <input id="eligibility-errorEndDate" type="text" placeholder="End Date..." />
+                        <input id="HEndDate" type="hidden" />
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.Organization, Model.OrganizationList, "--Select Organization--", new Dictionary<string, object> { { "class", "primary-select" } })
+                    </div>
+                    <div class="small-12 medium-6 cell text-right">
+                        <button class="button" id="filter-eligibility-error-data">
+                            <div class="loading-spinner hide" show-if-submitting></div>
+                            <i class="fa fa-filter"></i>
+                            Search
+                        </button>
+                        <button class="secondary-color small" id="download-log-data" onclick="Downloaddata()">
+                            <div class="loading-spinner hide" id="download-spinner"></div>
+                            <i class="fa fa-download"></i>
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="small-12 cell">
+			<div class="table-container">
+				<table class='table basic-table1' id="eligibility-error-report"></table>
+			</div>
+        </div>
+        <div id="log-details" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+            <div class="grid-x grid-margin-x">
+                <div class="small-12 cell">
+                    <h3>Error:</h3>
+                    <p id="Error" style="word-wrap: break-word;"></p>
+                </div>
+            </div>
+        </div>
+        <div class="cell small-12">
+            <!-- pagination Start -->
+            <div class="pagination-area hide" id="pagination-centered">
+                <ul>
+                    <li id="numeric"></li>
+                </ul>
+                <!-- page-link Start -->
+                <div class="page-link">
+                    <label>@Translate.Message("L4041")</label>
+                    <div class="grid-x">
+                        <input type="text" id="jumptoPageNo">
+                        <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                    </div>
+                </div>
+                <!-- page-link End -->
+            </div>
+            <!-- pagination End -->
+        </div>
+    </div>
+</section>
+
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $("#eligibility-errorStartDate").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#eligibility-errorStartDate').val()));
+    });
+    $("#eligibility-errorEndDate").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#eligibility-errorEndDate').val()));
+    });
+        $(document).ready(function () {
+            $("#eligibility-errorStartDate").fdatepicker({
+                format: "@Model.DateFormat.ToLower()",
+                endDate: new Date()
+            }).on('change', function (selected) {
+                var endDate = new Date($("#HStartDate").val());
+                var minDate = new Date($("#HEndDate").val());
+                if (endDate < minDate) {
+                    $('#eligibility-errorEndDate').fdatepicker('setDate', minDate);
+                }
+                $('#eligibility-errorEndDate').fdatepicker('setStartDate', minDate);
+                $("#eligibility-errorEndDate").trigger("change");
+            });
+            $("#eligibility-errorEndDate").fdatepicker({
+                format: "@Model.DateFormat.ToLower()",
+                endDate: new Date()
+            });
+        });
+        $('#filter-eligibility-error-data').on('click', function () {
+            $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+            $('[show-if-submitting]').removeClass('hide');
+            startIndex = 0;
+            pageSize = 10;
+            totalRecords = 0;
+            currentPage = 0;
+            totalPages = 0;
+            ListeligibilityerrorReport();
+        });
+
+    function Downloaddata() {
+        var StartDate = $('#HStartDate').val();
+        var EndDate = $('#HEndDate').val();
+        var organization = $('#Organization').val();
+        window.location = "../AdminReports/DownloadEligibilityErrorLogReport?StartDate=" + StartDate + "&EndDate=" + EndDate + "&organization=" + organization;
+
+    }
+
+    function ListeligibilityerrorReport() {
+        var StartDate = $('#HStartDate').val();
+        var EndDate = $('#HEndDate').val();
+        var organization = $('#Organization').val();
+        $.ajax({
+            url: "@Url.Action("ListEligibilityErrorReport", "AdminReports")",
+            data: { startDate: StartDate, endDate: EndDate, page: currentPage, pageSize: pageSize, totalRecords: totalRecords, organization: organization },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                totalRecords = data.TotalRecords;
+                totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                displayeligibilityerrorReport(data.Records);
+                if (totalRecords <= 0) {
+                    $('#eligibility-error-report').html("<center>No data were found.</center>");
+                }
+                AddPager();
+                $('[show-if-submitting]').parent().prop('disabled', '');
+                $('[show-if-submitting]').addClass('hide');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function displayeligibilityerrorReport(eligibilityerrordata) {
+        $('#eligibility-error-report').html("");
+        var eligibilityerrorHtml = "";
+        eligibilityerrorHtml += "<thead><tr><th>Unique Id</th>";
+        eligibilityerrorHtml += "<th>Name</th>";
+        eligibilityerrorHtml += "<th>Log Date</th>";
+        eligibilityerrorHtml += "<th>Error</th></tr></thead>";
+        for (i in eligibilityerrordata) {
+            var eligibilityerror = eligibilityerrordata[i];
+            var error = eligibilityerror.Error;
+            if (error != null) {
+                error = error.substring(0, 50);
+            }
+            eligibilityerrorHtml += "<tr><td>" + eligibilityerror.UniqueId + "</td>";
+            eligibilityerrorHtml += "<td>" + eligibilityerror.Name + "</td>";
+			eligibilityerrorHtml += "<td class='no-wrap'>" + eligibilityerror.LogDate + "</td>";
+            eligibilityerrorHtml += "<td>" + error + "..</td></tr>";
+        }
+        $('#eligibility-error-report').append(eligibilityerrorHtml);
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListeligibilityerrorReport();
+    }
+</script>

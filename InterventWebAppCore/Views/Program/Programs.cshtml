@@ -1,0 +1,440 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+@{
+    ViewBag.Title = "AdminUsers";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="cell">
+				<div class="main-content-wrapper">
+					<div class="grid-x grid-margin-x">
+						<div class="cell">
+							<div class="primary-section-top">
+								<div class="grid-x grid-margin-x">
+									<div class="cell medium-8">
+										<h2>Programs</h2>
+									</div>
+									<div class="cell medium-4 text-right">
+										<button id="add-data-button" data-open="add-program-data" onclick="$('#kit-list-body').html('')" class="button"><i class="fa fa-plus"></i>Add</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="cell">
+							<div id="search-results" class="main-results-table-container programs-list-table"></div>
+						</div>
+
+						<div class="cell">
+							<!-- pagination Start -->
+							<div class="pagination-area main-results-table-container hide" id="pagination-centered">
+								<ul>
+									<li id="numeric"></li>
+								</ul>
+								<!-- page-link Start -->
+								<div class="page-link">
+									<label>@Translate.Message("L4041")</label>
+									<div class="grid-x">
+										<input type="text" id="jumptoPageNo">
+										<button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+									</div>
+								</div>
+								<!-- page-link End -->
+							</div>
+							<!-- pagination End -->
+						</div>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="add-program-data" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form id="add-program-data" data-abide novalidate class="form-component">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <h3>Add/Edit Program</h3>
+            </div>
+            <div class="cell medium-4">
+				<label>
+					Name
+					<input type="text" value="" id="progName" aria-errormessage="progNameerror" required />
+					<small class="form-error" id="progNameerror">Required</small>
+				</label>
+            </div>
+            <div class="cell medium-4">
+				<label>
+					Description
+					<input type="text" value="" id="progDesc" aria-errormessage="progDescerror" required />
+					<small class="form-error" id="progDescerror">Required</small>
+				</label>
+            </div>
+            <div class="cell medium-4">
+				<label>
+					Program Type
+					<select id="progType" onchange="changeProgType()" aria-errormessage="progTypeerror" required>
+						<option value="1">Self-Help</option>
+						<option value="2">Coaching</option>
+					</select>
+					<small class="form-error" id="progTypeerror">Required</small>
+				</label>
+            </div>
+            <div class="cell medium-4" id="risk-level-div">
+				<label>
+					Risk Level
+					<select id="riskLevel">
+						<option value="1">Low</option>
+						<option value="2">Medium</option>
+						<option value="3">High</option>
+					</select>
+				</label>
+            </div>
+            <div class="cell medium-4">
+				<label>
+					Program Image
+					<input type="text" value="" id="imageUrl" />
+				</label>
+            </div>
+			<div class="cell medium-4">
+				<div class="tick-buttons">
+					<label for="progActive">
+						<input type="checkbox" value="" id="progActive" />
+						<span class="checkmark"></span>
+						Active?
+					</label>
+				</div>
+			</div>
+			<div class="cell medium-4">
+				<div class="tick-buttons">
+					<label for="progSmoke">
+						<input type="checkbox" value="" id="progSmoke" />
+						<span class="checkmark"></span>
+						Smoking Related?
+					</label>
+				</div>
+			</div>
+			<div class="cell medium-4">
+				<div class="tick-buttons">
+					<label for="progPregnancy">
+						<input type="checkbox" value="" id="progPregnancy" />
+						<span class="checkmark"></span>
+						Pregnancy Related?
+					</label>
+				</div>
+			</div>
+            <div class="cell">
+                <button class="small" type="submit">@Translate.Message("L968")</button>
+            </div>
+            <div id="saveAlert" data-alert class="small-10 cell callout success">
+                <span>Saved Successfully</span>
+            </div>
+        </div>
+    </form>
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-6"><h2>Kits</h2></div>
+        <div class="cell medium-6 text-right small-only-text-center">
+            <button id="add-kit" class="button small"><i class="fa fa-plus"></i>Add Kit</button>
+        </div>
+        <div id="kit-list-body" class="cell medium-12"></div>
+        <div class="cell medium-12">
+            <div id="kit-block" style="display:none;">
+                <form id="add-kit-program" data-abide novalidate class="form-component">
+                    <div class="grid-x">
+                        <div class="cell">
+							<label>
+								Kit
+								<select id="kits" required></select>
+							</label>
+                        </div>
+                        <div class="cell">
+							<label>
+								Order
+								<input type="number" id="order" required />
+							</label>
+                        </div>
+                    </div>
+                    <div class="grid-x button-set">
+                        <div class="cell medium-6 medium-text-left">
+                            <button type="button" class="small" id="save-kit">Save</button>
+                        </div>
+                        <div class="cell medium-6 medium-text-right">
+                            <button class="small secondary" type="reset" id="close-save-kit">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--<a class="close-reveal-modal">&#215;</a>-->
+    <button class="close-button" data-close aria-label="Close reveal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<input type="hidden" id="hdProgId" />
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    //Activate the detailed info
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+    $('.callout').hide();
+    $(document).ready(function () {
+        ListPrograms();
+        $('#closeProgram').on('click', function () {
+            $('#add-program-data').foundation('close');
+        });
+    });
+
+    function ListPrograms() {
+        $('#search-results').html("");
+        $.ajax({
+            url: "@Url.Action("ListPrograms", "Program")",
+            data: {page: currentPage, pageSize: pageSize, totalRecords: totalRecords },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    var chartData = [];
+                    if (data.Records != null) {
+                        totalRecords = data.TotalRecords;
+                        totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                        var programsHtml = [];
+						var programsHtml = "<table class='table basic-table1'>";
+						programsHtml += "<thead><tr><th><span>Name</span></th><th><span>Program Type</span></th><th><span>Active</span></th><th><span></span></th></tr></thead>"
+                        for (var i = 0; i < data.Records.length; i++) {
+                            var program = data.Records[i];
+                            var programType;
+                            if (program.ProgramType == 1)
+                                programType = "Self-Help";
+                            else
+                                programType = "Coaching";
+                            programsHtml += "<tr><td>" + program.Name + "</td>" + "<td>" + programType + "</td>" + "<td>" + program.Active + "</td>" +
+                                                    "<td><a class='anchor-blue' onClick='ReadProgram(" + program.Id + ")'><i class='fa fa-pencil fa-fw'></i></a></td>" +
+                                                    "</tr>";
+                        }
+                        programsHtml += "</table>";
+                        $('#search-results').append(programsHtml);
+                        $('#pagination-centered').removeClass("hide");
+                    }
+                    AddPager();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListPrograms();
+    }
+    function ReadProgram(id) {
+        $("#hdProgId").val(id);
+        $.ajax({
+            url: "@Url.Action("ReadProgram", "Program")",
+            data: { id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    if (data != null) {
+                        $("#progName").val(data.Name);
+                        $("#progDesc").val(data.Description);
+                        $("#progType").val(data.ProgramType);
+                        $("#imageUrl").val(data.ImageUrl);
+                        if (data.ProgramType == 1) {
+                            $("#riskLevel").val('');
+                            $("#risk-level-div").hide();
+                        }
+                        else {
+                            $("#riskLevel").val(data.RiskLevel);
+                            $("#risk-level-div").show();
+                        }
+                        $("#progActive").prop("checked", data.Active);
+                        $("#progSmoke").prop("checked", data.Smoking);
+                        $("#progPregnancy").prop("checked", data.Pregancy);
+                        $('#add-program-data').foundation('open');
+                        if (data.eduKits != null)
+                            LoadKits(data.eduKits)
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $('#kit-block').hide();
+    }
+    $('#add-program-data').foundation();
+    $('#add-program-data').on('formvalid.zf.abide', function () {
+        var id = $("#hdProgId").val();
+        var name = $("#progName").val();
+        var desc = $("#progDesc").val();
+        var type = $('#progType').val();
+        var riskLevel = $('#riskLevel').val();
+        var active = $('#progActive').is(':checked');
+        var pregancy = $('#progPregnancy').is(':checked');
+        var smoking = $('#progSmoke').is(':checked');
+        var imageUrl = $('#imageUrl').val();
+        $("#loader-wrapper").fadeIn();
+        $.ajax({
+            url: "@Url.Action("AddEditProgram", "Program")",
+            data: { id: id, name: name, desc: desc, type: type, riskLevel: riskLevel, active: active, smoking: smoking, pregancy: pregancy, imageUrl: imageUrl },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data.Record != null) {
+                    $("#hdProgId").val(data.Record.Id)
+                    ListPrograms();
+                    $('#saveAlert').removeClass('alert-close');
+                    $('#saveAlert').show();
+                    setTimeout(function () {
+                        $('#saveAlert').hide();
+                    }, 1000);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    })
+
+    $("#add-data-button").on('click', function () {
+        $("#hdProgId").val('');
+        $("#progName").val('');
+        $("#progDesc").val('');
+        $("#progType").val('');
+        $("#riskLevel").val('');
+        $("#progSmoke").prop("checked", false);
+        $('#imageUrl').val('');
+    });
+
+    function changeProgType() {
+        if ($("#progType").val() == 1) {
+            $("#riskLevel").val('');
+            $("#risk-level-div").hide();
+        }
+        else
+            $("#risk-level-div").show();
+    }
+
+    $('#add-kit').on('click', function () {
+        $('#kits').val('');
+        $('#order').val('');
+        $('#kit-block').show();
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            data: { page: null, pageSize: null, totalRecords: null },
+            url: "@Url.Action("ListEduKits", "Kit")",
+            success: function (data) {
+                $("#kits").append("<option value=''>-- Select --</option>");
+                for (i = 0; i < data.Records.length; i++) {
+                    $("#kits").append("<option value=" + data.Records[i].Id + ">" + data.Records[i].Name + "</option>");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    $("#save-kit").on('click', function () {
+        var programId = $("#hdProgId").val();
+        var kitId = $("#kits").val();
+        var order = $("#order").val();
+        if (kitId && order) {
+            $.ajax({
+            url: "@Url.Action("AddKittoProgram", "Program")",
+            data: { kitId: kitId, programId: programId, order: order },
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.Record != null) {
+                    $("#kit-block").hide();
+                    ListKitsinProgram(programId);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+    });
+
+    function ListKitsinProgram(programId) {
+        $.ajax({
+            url: "@Url.Action("GetKitsinProgram", "Program")",
+            data: { programId: programId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != false || data != null) {
+                    if (data.Records != null) {
+                        LoadKits(data.Records)
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function LoadKits(data) {
+        $("#kit-list-body").html("");
+        var html = "";
+        if (data.length > 0) {
+            html = html + "<table class='columns medium-12'><thead><tr><th>Name</th><th>Order</th><th></th></tr></thead>"
+            for (var i = 0; i < data.length; i++) {
+                html = html + "<tr><td>" + data[i].Name + "</td><td> " + data[i].Order + "</td><td><a onclick='RemoveKit(" + data[i].Id + ")'><i class='fa fa-times'></i></a></td></tr>";
+            }
+            html = html + "</table>"
+        }
+        $("#kit-list-body").html(html);
+    }
+
+    function RemoveKit(kitId) {
+        var programId = $("#hdProgId").val();
+        $.ajax({
+            url: "@Url.Action("DeleteKitfromProgram", "Program")",
+            data: { ProgramId: programId, KitId: kitId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    ListKitsinProgram(programId);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    $('#close-save-kit').on('click', function () {
+        $('#kit-block').hide();
+    });
+
+    $('.pagination-area .dropdown').on('click', function () {
+        $('.pagination-area .dropdown ul').toggle();
+        $('.pagination-area .dropdown ul').jScrollPane({
+            showArrows: false,
+            resizeSensor: true
+        });
+    });
+
+</script>

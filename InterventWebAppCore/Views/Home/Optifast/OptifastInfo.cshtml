@@ -1,0 +1,166 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass info">
+    @Html.Partial("Optifast/_OptifastHeader")
+</section>
+<div id="sign-up-modal" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="cell medium-12">
+        <h2 class="text-center">@Translate.Message("L431")</h2>
+    </div>
+    <div class="cell">@Html.Partial("_SignUp")</div>
+    <div class="cell text-center">
+        <a href="#" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</a>
+    </div>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+    
+    <section class="container feature">
+        <a name="OPTIFAST" class="compass anchor">
+            <div class="grid-container">
+                <div class="grid-x grid-margin-x">
+                    <div class="feature-icon cell medium-5 text-center">
+                        <img src="~/Images/OPTIFAST.svg" alt="" />
+                    </div>
+                    <div class="feature-info cell medium-7">
+                        <h2>@Translate.Message("L2607")</h2>
+                        <p>@Translate.Message("L2630")</p>
+                        <p>@Translate.Message("L2631")</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>
+    <section class="container feature">
+        <a name="ResearchHighlights" class="compass anchor">
+            <div class="grid-container">
+                <div class="grid-x grid-margin-x">
+                    <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                        <img src="~/Images/research.svg" alt="" />
+                    </div>
+                    <div class="feature-info cell medium-7 medium-order-1">
+                        <h2>@Translate.Message("L2608")</h2>
+                        <h3>@Translate.Message("L2632")</h3>
+                        <p>@Translate.Message("L2633")</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+    </section>
+    <section class="container feature">
+        <a name="OurMission" class="compass anchor">
+            <div class="grid-container">
+                <div class="grid-x grid-margin-x">
+                    <div class="feature-icon cell medium-5 text-center">
+                        <img src="~/Images/INTERVENTWM.svg" alt="" />
+                    </div>
+                    <div class="feature-info cell medium-7">
+                        <h2>@Translate.Message("L2609")</h2>
+                        <p>@Translate.Message("L2634")</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>
+
+    <section class="container feature">
+        <a name="APhaseApproach-BoosterPhase" class="compass anchor">
+            <div class="grid-container">
+                <div class="grid-x grid-margin-x">
+                    <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                        <img src="~/Images/booster.svg" alt="" />
+                    </div>
+                    <div class="feature-info cell medium-7 medium-order-1">
+                        <h2>@Translate.Message("L2610")</h2>
+                        <p>@Translate.Message("L2635")</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>
+
+    <section class="container feature">
+        <a name="APhaseApproach-TransitionPhase" class="compass anchor">
+            <div class="grid-container">
+                <div class="grid-x grid-margin-x">
+                    <div class="feature-icon cell medium-5 text-center">
+                        <img src="~/Images/transition.svg" alt="" />
+                    </div>
+                    <div class="feature-info cell medium-7">
+                        <h2>@Translate.Message("L2611")</h2>
+                        <p>@Translate.Message("L2636")</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>
+
+    <section class="container feature">
+        <a name="APhaseApproach-ManagementPhase" class="compass anchor">
+            <div class="grid-container">
+                <div class="grid-x grid-margin-x">
+                    <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                        <img class="smaller" src="~/Images/management.svg" alt="" />
+                    </div>
+                    <div class="feature-info cell medium-7 medium-order-1">
+                        <h2>@Translate.Message("L2643")</h2>
+                        <p>@Translate.Message("L2637")</p>
+                        <p>@Translate.Message("L2638")</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>
+
+    <section class="container feature">
+        <a name="EducationalMaterialsandTools" class="compass anchor">
+            <div class="grid-container">
+                <div class="grid-x grid-margin-x">
+                    <div class="feature-icon cell medium-5 text-center">
+                        <img src="~/Images/tools.svg" alt="" />
+                    </div>
+                    <div class="feature-info cell medium-7">
+                        <h2>@Translate.Message("L2612")</h2>
+                        <p>@Translate.Message("L2639")</p>
+                        <p>@Translate.Message("L2640")</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>
+
+    <section class="container feature">
+        <a name="ExpertGuidance" class="compass anchor">
+            <div class="grid-container">
+                <div class="grid-x grid-margin-x">
+                    <div class="feature-icon cell medium-5  medium-order-2 text-center">
+                        <img src="~/Images/health-professionals.svg" alt="" />
+                    </div>
+                    <div class="feature-info cell medium-7 medium-order-1">
+                        <h2>@Translate.Message("L2613")</h2>
+                        <p>@Translate.Message("L2641")</p>
+                    </div>
+                </div>  
+            </div>
+        </a>
+    </section>
+    <section class="container feature">
+        <a name="NeverStruggleWithWeightLossAgain" class="compass anchor">
+            <div class="grid-container">
+                <div class="grid-x grid-margin-x">
+                    <div class="feature-icon cell medium-5 text-center">
+                        <img class="smaller" src="~/Images/scale.svg" alt="" />
+                    </div>
+                    <div class="feature-info cell medium-7">
+                        <h2>@Translate.Message("L2614")</h2>
+                        <p>@Translate.Message("L2642")</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </section>

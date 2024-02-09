@@ -1,0 +1,98 @@
+﻿@using InterventWebApp.Models;
+@model EligibilityClaimsModel
+<form>
+    <fieldset class="form-section">
+        <legend>Conditions</legend>
+        @if (Model.ClaimsConditions.Count() > 0)
+        {
+	        <div class="claims-table">
+		        <table>
+			        <thead>
+				        <tr>
+					        <th><span>Condition</span></th>
+					        <th><span>First Condition Date</span></th>
+					        <th><span>Recent Condition Date</span></th>
+				        </tr>
+			        </thead>
+			        @foreach (var item in Model.ClaimsConditions)
+			        {
+				        <tbody>
+					        <tr>
+						        @if (!string.IsNullOrEmpty(item.ConditionCodes))
+						        {
+							        <td><abbr title="@item.ConditionCodes">@item.ConditionType</abbr></td>
+						        }
+						        else
+						        {
+							        <td>@item.ConditionType</td>
+						        }
+						        <td>@item.ConditionDate</td>
+						        <td>@item.RecentConditionDate</td>
+					        </tr>
+				        </tbody>
+			        }
+		        </table>
+	        </div>
+        }
+    </fieldset>
+    <fieldset class="form-section">
+        <legend>Condition Cost</legend>
+        @if (Model.ClaimsConditionCosts.Count() > 0)
+        {
+			<div class="claims-table">
+				<table>
+					<thead>
+						<tr>
+							<th><span>Condition Type</span></th>
+							<th><span>Date</span></th>
+							<th><span>Billed amount</span></th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var item in Model.ClaimsConditionCosts)
+						{
+							<tr>
+								<td>@item.ConditionType</td>
+								<td>@item.ConditionDate</td>
+								<td>@item.BilledAmount</td>
+							</tr>
+						}
+
+					</tbody>
+				</table>
+			</div>
+        }
+
+    </fieldset>
+    <fieldset class="form-section">
+        <legend>Medications</legend>
+        @if (Model.ClaimsMedications.Count() > 0)
+        {
+			<div class="claims-table">
+				<table>
+					<thead>
+						<tr>
+							<th><span>Medication Name</span></th>
+							<th><span>Medication Type</span></th>
+							<th><span>Date</span></th>
+							<th><span>Total amount paid</span></th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var item in Model.ClaimsMedications)
+						{
+							<tr>
+								<td>@item.MedicationName</td>
+								<td>@item.MedicationType</td>
+								<td>@item.MedicationDate</td>
+								<td>@item.TotalAmountPaid</td>
+							</tr>
+						}
+
+					</tbody>
+				</table>
+			</div>
+        }
+    </fieldset>
+</form>
+<a class="close-button" data-close>&#215;</a>

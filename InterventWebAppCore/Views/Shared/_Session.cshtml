@@ -1,0 +1,62 @@
+﻿@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div id="session-timeout-modal" class="reveal session-timeout-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell text-center">
+                <img src="~/Images/time-glass-icon.svg" alt="" />
+                <h2>@Translate.Message("L3684")</h2>
+                <p>@Translate.Message("L3685")</p>
+            </div>
+            <div class="cell align-spaced flex-container">
+                <a class="button" onclick="KeepSession()">@Translate.Message("L3686")</a>
+                <a class="button hollow" href="@Url.Action("Logout", "Account")">@Translate.Message("L1680")</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on('click', function () {
+        setSession('@HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.SessionTimeout)');
+    });
+
+    var sessionTimeoutWarning, sTimeout, sessionExpired, timeout1, timeout2;
+    setSession('@HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.SessionTimeout)');
+
+    function setSession(timeout) {
+        if (timeout != '') {
+            sessionTimeoutWarning = timeout;
+            sTimeout = parseInt(sessionTimeoutWarning - 1) * 60 * 1000;
+            sessionExpired = parseInt(sessionTimeoutWarning) * 61 * 1000;
+            window.clearTimeout(timeout1);
+            window.clearTimeout(timeout2);
+            timeout1 = setTimeout('SessionWarning();', sTimeout);
+            timeout2 = setTimeout('SessionExpired();', sessionExpired);
+        }
+    }
+
+    function SessionWarning() {
+        $('#session-timeout-modal').foundation('open');
+    }
+
+    function SessionExpired() {
+        location.reload();
+    }
+
+    function KeepSession() {
+        setSession('@HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.SessionTimeout)');
+        $.ajax({
+            url: "@Url.Action("KeepSession", "Participant")",
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#session-timeout-modal').foundation('close')
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+</script>

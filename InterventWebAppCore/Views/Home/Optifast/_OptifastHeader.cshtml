@@ -1,0 +1,103 @@
+﻿@using InterventWebApp
+
+<div class="intro-header @ViewData["headerStyle"]">
+    <div class="contain-to-grid">
+        <div class="compass-menu">
+            <div class="menu-top">
+                <div class="menu-icon"><i class="fa fa-bars"></i></div>
+                <div class="menu-logo name logo"><a href="~/Home/Optifast"><h1>@Translate.Message("L424")</h1><span>@Translate.Message("L425")</span></a></div>
+                <div class="menu-login">
+                    <a href="" onclick="$('#login-modal').foundation('open'); return false;">
+                        <i class="fa fa-user hide-for-small-only"></i> @Translate.Message("L426")
+                    </a>
+                </div>
+            </div>
+            <div class="menu-content">
+                <div class="menu-header">
+                    <div class="menu-close"><i class="fa fa-times"></i></div>
+                    <div class="menu-logo name logo"><h1>@Translate.Message("L424")</h1><span>@Translate.Message("L425")</span></div>
+                    <div class="menu-login">
+                        <a href="" onclick="$('#login-modal').foundation('open'); return false;">
+                            <i class="fa fa-user hide-for-small-only"></i> @Translate.Message("L426")
+                        </a>
+                    </div>
+                </div>
+                <ul>
+                    <li><a href="~/Home/Optifast">@Translate.Message("L1347")</a></li>
+                    <li><a href="~/Home/OptifastInfo#OPTIFAST">@Translate.Message("L2607")</a></li>
+                    <li><a href="~/Home/OptifastInfo#ResearchHighlights">@Translate.Message("L2608")</a></li>
+                    <li><a href="~/Home/OptifastInfo#OurMission">@Translate.Message("L2609")</a></li>
+                    <li><a href="~/Home/OptifastInfo#APhaseApproach-BoosterPhase">@Translate.Message("L2610")</a></li>
+                    <li><a href="~/Home/OptifastInfo#APhaseApproach-TransitionPhase">@Translate.Message("L2611")</a></li>
+                    <li><a href="~/Home/OptifastInfo#APhaseApproach-ManagementPhase">@Translate.Message("L2643")</a></li>
+                    <li><a href="~/Home/OptifastInfo#EducationalMaterialsandTools">@Translate.Message("L2612")</a></li>
+                    <li><a href="~/Home/OptifastInfo#ExpertGuidance">@Translate.Message("L2613")</a></li>
+                    <li><a href="~/Home/OptifastInfo#NeverStruggleWithWeightLossAgain">@Translate.Message("L2614")</a></li>
+                </ul>
+            </div>
+            <div class="menu-overlay hide"></div>
+        </div>
+        <!--
+        <div class="chi-banner">
+            <a href="~/Home/Optifast"><img src=""/>@Translate.Message("L2644")</a>
+        </div>
+        -->
+    </div>
+</div>
+
+@Html.Partial("_Login", new ViewDataDictionary(ViewData) { { "ShowSignUp", "True" } })
+
+@Html.Partial("_ForgotPassword")
+
+@Html.Partial("_EmailConfirmation")
+
+@Html.Partial("_ResendConfirmEmail")
+<!--Signup Modal-->
+
+
+<script type="text/javascript">
+    $(".intro-header").sticky({ topSpacing: 0 });
+    //menu v2
+    function showMenu() {
+        $('.menu-content').addClass('active');
+        $('.menu-overlay').removeClass('hide');
+    }
+
+    function hideMenu() {
+        $('.menu-content').removeClass('active');
+        $('.menu-overlay').addClass('hide');
+    }
+
+    $('.menu-icon').on('click', function () {
+        showMenu();
+    });
+
+    $('.menu-close').on('click', function () {
+        hideMenu();
+    });
+
+    $('.menu-overlay').on('click', function () {
+        hideMenu();
+    });
+
+    $('.menu-content li a').on('click', function () {
+        hideMenu();
+    });
+
+    function changeLanguage(language) {
+        $.ajax({
+            url: "@Url.Action("ChangeLanguage", "Home")",
+            dataType: "json",
+            data: { language: language },
+            success: function (data) {
+                window.location.reload();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            DisplayError(jqXHR.status);
+        });
+    }
+
+    $(document).on('click', '#language-dropdown li a', function() {
+        changeLanguage($(this).attr('data-lang'));
+    });
+</script>

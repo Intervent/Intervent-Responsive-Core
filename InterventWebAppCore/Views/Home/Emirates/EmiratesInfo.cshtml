@@ -1,0 +1,133 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass chi-memorial info">
+    @Html.Partial("Emirates/_EmiratesHeader")
+</section>
+
+<section class="container feature giftofhealth">
+    <a name="giftofhealth" class="compass mcallen anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="~/Images/gift-box.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>Gift of Health</h2>
+                    <p>Receive a gift of health. The foods you eat, the stress you feel and the physical activity you do all affect your health. Now you can find out how by completing our health assessment.</p>
+                    <p>The health assessment is a free, confidential online assessment that considers your health habits to determine how healthy you are and whether you’re at risk for or could better manage certain common chronic medical conditions. It only takes about 15 minutes to complete.</p>
+                    <p>Once you complete the health assessment, you will immediately receive a personal wellness report and a wealth of useful information individually tailored for you. </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature healthassessment">
+    <a name="healthassessment" class="compass mcallen anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="~/Images/assessment.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>Health Assessment Overview</h2>
+                    <p>The health assessment begins with a questionnaire about your health history, risk factors and health habits. When complete, you receive a personalized wellness report that identifies your risks for chronic conditions, such as heart disease, stroke, diabetes and cancer. You’ll learn your heart age and wellness score. There is a “what if” feature that shows how your scores could change if you improve certain health risk factors. Your personal wellness report provides individualized goals for the various risk factors, outlines key action steps for goal achievement, identifies gaps in your preventive care and gives you access to brief health-related educational content. There’s even a printable summary of your wellness report to share with your doctor or healthcare provider.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature howtocomplete">
+    <a name="howtocomplete" class="compass mcallen anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="~/Images/computermobiletablet.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>How to Complete It</h2>
+                    <p>Begin by creating your account to establish your eligibility, set your password and accept the terms of service. Once you are signed in, you’ll complete your personal profile (if you like, you may even include a photo of yourself), then proceed to complete your health assessment questionnaire.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature information">
+    <a name="information" class="compass mcallen anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="~/Images/scaletape.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>Information You Need</h2>
+                    <p>You’ll need to verify your eligibility when you create your account. When you get to the health measurements section of the health assessment questionnaire, you’ll be asked to provide your current health numbers: blood pressure, results of a fasting blood test (total cholesterol, LDL cholesterol, HDL cholesterol, triglycerides and glucose and/or A1C) and your height, weight and waist measurement. Only your height and weight are mandatory. However, including the other numbers will give you a more complete picture of your overall health.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature whoconducts">
+    <a name="whoconducts" class="compass mcallen anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="~/Images/INTERVENT.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>Who Conducts It </h2>
+                    <p>The health assessment is conducted by INTERVENT, a reputable global health management company that’s been in business for more than 20 years. Over two million participants from around the world have completed an INTERVENT health assessment. Go to www.interventhealth.com to learn more about this credible, trusted and proven provider of wellness programs and services.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature confidentiality">
+    <a name="confidentiality" class="compass mcallen anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="~/Images/privacy.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>Confidentiality</h2>
+                    <p>All information collected for the health assessment is completely confidential and follows guidelines established by international privacy laws and regulations. Only group summary reports are shared with employers to help address the health needs of the organization. Personal health information of individuals is never sold.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature successstories">
+    <a name="successstories" class="compass mcallen anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="~/Images/success.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1351")</h2>
+                    <p>"When I took the health assessment, I was alarmed to learn that I was at high risk of having a heart attack or stroke in the future – and of developing diabetes. Thankfully, I also learned that I could lower my risk by losing some weight, being more physically active and getting my blood pressure and cholesterol levels under better control. I’m proud to say that I have now lost 10 kilos (about 22 pounds). My blood pressure, cholesterol and blood sugar numbers are now in the normal range. I feel fantastic. I wouldn’t have made these changes if I hadn’t taken the first step by completing my health assessment. Taking it was quick and easy. I definitely recommend it to others."</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<script type="text/javascript">
+    $(window).ready(function(){
+        $(".compass-menu").find("a").on('click', function(e) {
+            var url = $(this).attr("href");
+            var arr = url.split('#');
+            var showscroll = arr[1];
+            $("html, body").animate({                
+                scrollTop: $('.' + showscroll).offset().top - 80
+            });
+        });
+    })
+</script>

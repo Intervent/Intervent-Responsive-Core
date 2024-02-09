@@ -1,0 +1,1664 @@
+﻿@using InterventWebApp
+@model InterventWebApp.OrganizationDetailsModel
+@{
+    ViewBag.Title = "Organizations";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Details = "Organization";
+}
+
+<section class="main search-participants org-main-body">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <a href="@Url.Action("Organizations", "Portal")" class="back-btn">Back</a>
+            </div>
+            <div class="cell">
+                <div class="portal-title-section">
+                    <div class="title-section-left">
+                        <div class="portal-name">@Model.Organization.Name</div>
+                        <input type="hidden" value="@Model.Organization.Id" id="orgId" />
+                        @if (Model.Organization.Active)
+                        {
+                            <div class="portal-status active">Active</div>
+                        }
+                        else
+                        {
+                            <div class="portal-status inactive">Inactive</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="portals-main-wrapper">
+                <div class="portal-basic-info portal-details-section">
+                    <div class="new-button">
+                        <a class="button hollow form-edit-btn" id="orgEdit" href="#"><i class="fa fa-pencil fa-fw"></i> Edit</a>
+                        <button class="button form-edit-btn hide" id="orgSave">Save</button>
+                    </div>
+                    <div class="grid-x grid-margin-x portal-form">
+                        <div class="cell medium-4">
+                            <label>Name</label>
+                            <p>@Model.Organization.Name</p>
+                        </div>
+                        <div class="cell medium-6">
+                            <label>Description</label>
+                            <p>@Model.Organization.Description</p>
+                        </div>
+                        <div class="cell medium-4 small-6">
+                            <label>
+                                Parent Organization
+                            </label>
+                            <p>@(Model.Organization.Organization1 != null ? Model.Organization.Organization1.Name : "N/A") </p>
+                        </div>
+                        <div class="cell medium-4 small-6">
+                            <label>Url</label>
+                            <p>@Model.Organization.Url</p>
+                        </div>
+                        <div class="cell medium-4 small-6">
+                            <label>Phone Number</label>
+                            <p>@Model.Organization.ContactNumber</p>
+                        </div>
+                        <div class="cell medium-4 small-6">
+                            <label>Email</label>
+                            <p>@Model.Organization.ContactEmail</p>
+                        </div>
+                        <div class="cell medium-4 small-6">
+                            <label>Group</label>
+                            <p>@string.Join(", ", Model.Organization.UserRoles.Select(x => x.Name))</p>
+                        </div>
+                        <div class="cell medium-4 small-6">
+                            <label>Activation Email?</label>
+                            <p>@(Model.Organization.EmailValidationRequired ? "Required" : "Not Required")</p>
+                        </div>
+                        <div class="cell medium-4 small-6">
+                            <label>Own Coach?</label>
+                            <p>@(Model.Organization.OwnCoach ? "Yes" : "No")</p>
+                        </div>
+                        <div class="cell medium-4 small-6">
+                            <label>SSO</label>
+                            <p>@(Model.Organization.SSO.HasValue && Model.Organization.SSO.Value ? "Yes" : "No")</p>
+                        </div>
+                        <div class="cell medium-4 small-6">
+                            <label>Terms of SSO</label>
+                            <p>@(Model.Organization.TermsForSSO.HasValue && Model.Organization.TermsForSSO.Value ? "Yes" : "No")</p>
+                        </div>
+                    </div>
+
+                    <form class="create-profile-form portal-form hide" id="edit-organization" data-abide novalidate>
+                        <div class="grid-x grid-margin-x grid-margin-y">
+                            <div class="cell medium-4">
+                                <label>Name</label>
+                                <input type="text" value="@Model.Organization.Name" id="orgName" required />
+                                <small class="form-error">Required</small>
+                            </div>
+                            <div class="cell medium-6">
+                                <label>Description</label>
+                                <input type="text" value="@Model.Organization.Description" id="orgDescription" required />
+                                <small class="form-error">Required</small>
+                            </div>
+                            <div class="cell medium-4 small-6">
+                                <label>Parent Organization</label>
+                                @Html.DropDownListFor(m => m.Organization.ParentOrganizationId, Model.ParentOrganizations, "--Select--", new Dictionary<string, object> { { "id", "parentOrg" } })
+                            </div>
+                            <div class="cell medium-4 small-6">
+                                <label>Group</label>
+                                @Html.DropDownListFor(m => m.Group, Model.Groups, new Dictionary<string, object> { { "class", "override-select-org" }, { "multiple", "multiple" }, { "data-prompt", "Select" }, { "required", true } })
+                                <small class="form-error">Required</small>
+                            </div>
+                            <div class="cell medium-4 small-6">
+                                <label>Url</label>
+                                <input type="text" value="@Model.Organization.Url" id="url" required />
+                                <small class="form-error">Required</small>
+                            </div>
+                            <div class="cell medium-4 small-6">
+                                <label>Integrate with</label>
+                                @Html.DropDownListFor(m => m.Organization.IntegrationWith, Model.Integrations, "--Select Integration--", new Dictionary<string, object> { { "id", "integration" } })
+                            </div>
+                            <div class="cell medium-4 small-6">
+                                <label>Contact Number</label>
+                                <input type="text" value="@Model.Organization.ContactNumber" id="contactnumber" required />
+                                <small class="form-error">Required</small>
+                            </div>
+                            <div class="cell medium-4 small-6">
+                                <label>Contact Email</label>
+                                <input type="text" value="@Model.Organization.ContactEmail" id="contactemail" required />
+                                <small class="form-error">Required</small>
+                            </div>
+                            <div class="cell medium-4 small-6">
+                                <div class="tick-buttons check-btn">
+                                    <input type="checkbox" id="IsAutoActivateEmail" />
+                                    <label for="IsAutoActivateEmail">
+                                        Requires account activation email?
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="cell medium-4 small-6">
+                                <div class="tick-buttons check-btn">
+                                    <input type="checkbox" id="IsActive" />
+                                    <label for="IsActive">
+                                        Active
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="cell medium-4 small-6">
+                                <div class="tick-buttons check-btn">
+                                    <input type="checkbox" id="OwnCoach" />
+                                    <label for="OwnCoach">
+                                        Own Coach?
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="cell medium-4 small-6">
+                                <div class="tick-buttons check-btn">
+                                    <input type="checkbox" id="SSO" />
+                                    <label for="SSO">
+                                        Sso?
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="cell medium-4 small-6 hide" id="TermsForSSOCheckbox">
+                                <div class="tick-buttons check-btn">
+                                    <input type="checkbox" id="TermsForSSO" class="hide"/>
+                                    <label for="TermsForSSO">
+                                        Terms for sso?
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-x grid-margin-x button-set new-button hide">
+                            <div class="cell medium-6 medium-order-2 medium-text-right"><button class="button" type="submit" id="edit-org-submit">Save</button></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="portal-details portal-details-section">
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell">
+                            <label class="portal-lists">Portal Details</label>
+                            <div class="portal-details-edit">
+								<div class="details-edit-left portal-lists">
+									@Html.DropDownListFor(m => m.PortalId, Model.Portals, new Dictionary<string, object> { { "id", "selectedPortal" }, { "onchange", "loadPortal()" } })
+									<a onclick="clonePortal()" class="button hollow">Clone Portal</a>
+								</div>
+                                <div class="details-edit-right">
+                                    <a class="button hollow form-edit-btn" id="detailsEdit"><i class="fa fa-pencil fa-fw"></i> Edit</a>
+                                    <button class="button form-edit-btn hide" onclick="EditPortal()" id="detailsSave">Save</button>
+                                    <a data-open="add-portal-data" class="button plus-btn">New Portal</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="portal-details"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Preloader-->
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+
+<div id="add-portal-data" class="reveal add-org-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form id="add-portal-data" data-abide novalidate class="organization-modal-form create-profile-form">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12">
+                <h2>Add New Portal</h2>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <label>Name</label>
+                <input type="text" value="" id="AportalName" required />
+                <small class="form-error">Required</small>
+            </div>
+            <div class="cell medium-6">
+                <label>Start Date</label>
+                <input type="text" value="" id="addportalStartDate" class="fdatepicker input-date" required />
+                <small class="form-error">Required</small>
+                <input id="AportalStartDate" type="hidden" />
+            </div>
+            <div class="cell medium-6">
+                <label>End Date</label>
+                <input type="text" value="" id="addportalEndDate" class="fdatepicker input-date" required />
+                <small class="form-error">Required</small>
+                <input id="AportalEndDate" type="hidden" />
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="submit" id="AddPortal">Save</button></div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closePortal">Cancel</button></div>
+        </div>
+    </form>
+</div>
+
+<div class="reveal large" id="portal-data-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="portal-modal-header">
+        <h2 class="portal-name" id="portalName"></h2>
+        <span class="portal-status active hide" id="portalActive">Active</span>
+        <span class="portal-status inactive hide" id="portalInactive">Inactive</span>
+    </div>
+    <div class="portal-modal-body">
+        <div class="rounded-tabs-list-container">
+            <div data-alert id="form-alert" class="callout form-alert alert-box alert success"><span id="alertMessage"></span></div>
+            <ul class="tabs rounded-tabs status-tabs" data-tabs id="cards-info-tabs">
+                <li class="tabs-title is-active">
+                    <a href="#cards-programs" aria-selected="true" class="programs-cards">Programs</a>
+                </li>
+                <li class="tabs-title">
+                    <a href="#cards-incentives" data-tabs-target="cards-incentives" class="incentives-cards">Incentives</a>
+                </li>
+                <li class="tabs-title">
+                    <a href="#cards-kits" data-tabs-target="cards-kits" class="kits-cards">Kits</a>
+                </li>
+                <li class="tabs-title">
+                    <a href="#cards-emails" data-tabs-target="cards-emails" class="email-cards">Emails</a>
+                </li>
+                <li class="tabs-title">
+                    <a href="#cards-raffles" data-tabs-target="cards-raffles" class="raffles-cards">Raffles</a>
+                </li>
+                <li class="tabs-title">
+                    <a href="#cards-forms" data-tabs-target="cards-forms" class="forms-cards">Forms</a>
+                </li>
+                <li class="tabs-title">
+                    <a href="#cards-coupons" data-tabs-target="cards-coupons" class="coupon-cards">Coupons</a>
+                </li>
+                <li class="tabs-title">
+                    <a href="#cards-kits-followups" data-tabs-target="cards-kits-followups" class="kits-followups-cards">Kits in FollowUps</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tabs-content rounded-tabs-content" data-tabs-content="cards-info-tabs">
+            <div class="tabs-panel is-active" id="cards-programs">
+                <div class="cards-filter">
+                    <div class="search-bar">&nbsp;</div>
+                    <div class="new-button">
+                        <button class="button" id="add-prog-button" data-open="add-program-model">
+                            <i class="fa fa-plus"></i>Add Program
+                        </button>
+                    </div>
+                </div>
+                <div id="program-results" class="programs-list"></div>
+            </div>
+            <div class="tabs-panel" id="cards-incentives">
+                <div class="cards-filter">
+                    <div class="search-bar"></div>
+                    <div class="new-button">
+                        <button class="button" id="addIncentive" data-open="add-incentive">
+                            <i class="fa fa-plus"></i>Add Incentive Program
+                        </button>
+                    </div>
+                </div>
+                <div id="incentive-results" class="programs-list"></div>
+            </div>
+            <div class="tabs-panel" id="cards-kits">
+                <div class="cards-filter">
+                    <div class="search-bar"></div>
+                    <div class="new-button">
+                        <button id="add-kit-button" class="button" onclick="AddEditKits()"><i class="fa fa-plus"></i> Add/Remove Kits</button>
+                    </div>
+                </div>
+                <div class="programs-list" id="kit-results"></div>
+            </div>
+            <div class="tabs-panel" id="cards-emails">
+                <div class="cards-filter">
+                    <div class="search-bar"></div>
+                    <div class="new-button">
+                        <button class="button" id="add-email-button" onclick="AddEditEmails()"><i class="fa fa-plus"></i> Add/Remove Emails</button>
+                    </div>
+                </div>
+                <div class="programs-list" id="email-results"></div>
+            </div>
+            <div class="tabs-panel" id="cards-raffles">
+                <div class="cards-filter">
+                    <div class="search-bar"></div>
+                    <div class="new-button">
+                        <button class="button" id="add-raffle" data-open="add-raffle-data-model"><i class="fa fa-plus"></i> Add Raffles</button>
+                    </div>
+                </div>
+
+                <div class="programs-list" id="raffles-results"></div>
+            </div>
+            <div class="tabs-panel" id="cards-forms">
+                <form class="organization-modal-form create-profile-form">
+                    <div class="grid-x grid-margin-y grid-margin-x">
+                        <div class="medium-6 cell">
+                            <label>Patient Release Form</label>
+                            @Html.TextBoxFor(m => m.portal.PatientReleaseForm, new Dictionary<string, object> { { "id", "patientReleaseForm" } })
+                        </div>
+                        <div class="medium-6 cell">
+                            <label>Medical Clearance Form</label>
+                            @Html.TextBoxFor(m => m.portal.MedicalClearanceForm, new Dictionary<string, object> { { "id", "medicalClearanceForm" } })
+                        </div>
+                        <div class="medium-6 cell">
+                            <label>Know Your Numbers Form</label>
+                            @Html.TextBoxFor(m => m.portal.KnowYourNumbersForm, new Dictionary<string, object> { { "id", "knowYourNumbersForm" } })
+                        </div>
+                        <div class="medium-6 cell">
+                            <label>Testimonial Form</label>
+                            @Html.TextBoxFor(m => m.portal.TestimonialForm, new Dictionary<string, object> { { "id", "testimonialForm" } })
+                        </div>
+                        <div class="medium-6 cell">
+                            <label>Tobacco Form</label>
+                            @Html.TextBoxFor(m => m.portal.TobaccoReleaseForm, new Dictionary<string, object> { { "id", "tobaccoReleaseForm" } })
+                        </div>
+                        <div class="cell">
+                            <div class="form-save-button new-button">
+                                <button class="button" type="button" id="AddForms">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="tabs-panel" id="cards-coupons">
+                <div class="cards-filter align-right">
+                    <div class="new-button">
+                        <button class="button" id="add-coupon-button" data-open="add-coupon-data"><i class="fa fa-plus"></i>New Coupon</button>
+                    </div>
+                </div>
+                <div class="programs-list" id="coupon-results"></div>
+            </div>
+            <div class="tabs-panel" id="cards-kits-followups">
+                <div class="cards-filter">
+                    <div class="search-bar"></div>
+                    @*<div class="new-button">
+                            <button id="add-kit-followup-button" class="button" data-open="add-kit-followup-data"><i class="fa fa-plus"></i>Add Kit</button>
+                        </div>*@
+                </div>
+                <div class="programs-list" id="kit-followup-results"> </div>
+            </div>
+        </div>
+    </div>
+    <button id="portal-modal-div" class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div id="add-incentive-model" class="reveal large add-org-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <h2>Add Incentive</h2>
+        </div>
+    </div>
+    <div id="add-incentive"></div>
+    <a class="close-button" id="closeIncentive" data-close>&#215;</a>
+</div>
+
+<div id="add-program-model" class="reveal large add-org-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <h2>Add Program</h2>
+        </div>
+    </div>
+    <div id="add-program"></div>
+    <a class="close-button" id="closeProgram" data-close>&#215;</a>
+</div>
+
+<div id="add-kit-data" class="reveal small add-org-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+
+</div>
+
+<div id="add-email-data" class="reveal small add-org-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div id="add-raffle-data-model" class="reveal large add-org-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <h2>Add Raffles</h2>
+        </div>
+    </div>
+    <div id="add-raffle-data"></div>
+    <a class="close-button" id="closeRaffle" data-close>&#215;</a>
+</div>
+
+<div id="add-coupon-data" class="reveal small add-org-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form id="add-coupon-data" data-abide novalidate>
+        <div class="grid-x grid-margin-x">
+            <input type="hidden" id="couponid" />
+            <div class="cell small-12">
+                <h2>Add Coupon</h2>
+            </div>
+            <div class="cell medium-12">
+                <label>Name</label>
+                <input type="text" id="couponName" required />
+                <small class="form-error">Required</small>
+            </div>
+            <div class="cell medium-12">
+                <label>Coupon Code</label>
+                <input type="text" id="couponCode" required />
+                <small class="form-error">Required</small>
+            </div>
+            <div class="cell medium-12">
+                <div class="tick-buttons check-btn">
+                    <input type="checkbox" id="IsActiveCoupon" />
+                    <label for="IsActiveCoupon">
+                        Active
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="submit" id="addcoupon">Save</button></div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closecoupon">Cancel</button></div>
+        </div>
+    </form>
+</div>
+<input type="hidden" id="PrograminPortalId" />
+<input type="hidden" id="PortalIncentiveId" />
+<input type="hidden" id="PortalFollowUpId" />
+<input type="hidden" id="Url" value="@Model.BaseUrl" />
+
+<script>
+    $("#addportalStartDate").on("change", function () {
+        $('#AportalStartDate').val(toSystemDateFormat($('#addportalStartDate').val()));
+    });
+    $("#addportalEndDate").on("change", function () {
+        $('#AportalEndDate').val(toSystemDateFormat($('#addportalEndDate').val()));
+    });
+    Foundation.Abide.defaults.validators['validateHRAVer'] = function ($el, required, parent) {
+        if ($('[name="portal.HasHRA"]').val() == 1) {
+            if ($el.val() == "")
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+    Foundation.Abide.defaults.validators['validateAssessmentName'] = function ($el, required, parent) {
+        if ($('[name="portal.HasHRA"]').val() == 1) {
+            if ($el.val() == "")
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateHRAValidity'] = function ($el, required, parent) {
+        if ($('[name="portal.HasHRA"]').val() == 1) {
+            if ($el.val() == "")
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateCarePlanType'] = function ($el, required, parent) {
+        if ($('[name="portal.CarePlan"]').val() == 'True') {
+            if ($el.val() == "")
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateCoachingFollowupType'] = function ($el, required, parent) {
+        if ($('#fuforlm').val() == 'True') {
+            if ($el.val() == "" || $el.val() == null)
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateSelfHelpFollowupType'] = function ($el, required, parent) {
+        if ($('#fuforsh').val() == 'True') {
+            if ($el.val() == "" || $el.val() == null)
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateFollowUpValidity'] = function ($el, required, parent) {
+        if ($('#fuforlm').val() == 'True' || $('#fuforsh').val() == 'True') {
+            if ($el.val() == "")
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+    Foundation.Abide.defaults.validators['validateEligibility'] = function ($el, required, parent) {
+        if ($('#eligibilityImportLoad').val() == 'True') {
+            if ($el.val() == "")
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+    Foundation.Abide.defaults.validators['validateFormat'] = function ($el, required, parent) {
+        if ($('#eligibilityImportLoad').val() == 'True') {
+            if ($el.val() == "")
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+    Foundation.Abide.defaults.validators['validateClaims'] = function ($el, required, parent) {
+        if ($('#ProcessInterventCodes').val() == 'True' || $('#ProcessLivongoCodes').val() == 'True') {
+            if ($el.val() == "")
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateCareplanPath'] = function ($el, required, parent) {
+        if ($('#needCareplanApproval').val() == 'True') {
+            if ($el.val() == "")
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+
+    var updateFor = 2;
+    var isEditEnabled = false, portalRefresh = false;
+    var portalId = $("#selectedPortal").val();
+    var OrganizationId = $("#orgId").val();
+    var PortalIncentives;
+    var validOrgDetails = false;
+    var currentPortal = null;
+    var nowDate = new Date();
+    var compDate = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate());
+    compDate.setDate(compDate.getDate() - 1);
+    var url = $('#Url').val();
+
+    $("#edit-organization").foundation();
+    $("#edit-organization").on('forminvalid.zf.abide', function () {
+    }).on('formvalid.zf.abide', function () {
+        var id = $("#orgId").val();
+        var orgName = $("#orgName").val();
+        var orgDescription = $("#orgDescription").val();
+        var parentOrg = $("#parentOrg").val();
+        var groups = getGroups();
+        var url = $("#url").val();
+        var contactnumber = $("#contactnumber").val();
+        var contactemail = $("#contactemail").val();
+        var IsAutoActivateEmail = $('#IsAutoActivateEmail').is(":checked");
+        var IsActive = $('#IsActive').is(":checked");
+        var SSO = $('#SSO').is(":checked");
+        var TermsForSSO = $('#TermsForSSO').is(":checked");
+        var OwnCoach = $('#OwnCoach').is(":checked");
+        var integrationWith = $('#integration').val();
+        $.ajax({
+            url: "@Url.Action("CreateOrganization", "Portal")",
+            data: {
+                Name: orgName,
+                Description: orgDescription,
+                id: id,
+                parentOrg: parentOrg,
+                groups: groups,
+                url: url,
+                contactnumber: contactnumber,
+                contactemail: contactemail,
+                IsAutoActivateEmail: IsAutoActivateEmail,
+                IsActive: IsActive,
+                SSO: SSO,
+                TermsForSSO: TermsForSSO,
+                OwnCoach: OwnCoach,
+                IntegrationWith : integrationWith
+            },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                validOrgDetails = true;
+                $("#edit-organization").parents(".portal-details-section").find(".portal-form, .form-edit-btn").toggleClass("hide");
+                location.reload();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    });
+
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+    $('.alert-box').hide();
+    $('.callout').hide();
+
+    $(document).ready(function () {
+        @if(Model.Organization.EmailValidationRequired == true){
+            @: $('#IsAutoActivateEmail').trigger('click');
+            @: $('#IsAutoActivateEmail').closest('.check-btn').addClass("selected");
+        }
+        @if(Model.Organization.Active == true){
+            @: $('#IsActive').trigger('click');
+            @: $('#IsActive').closest('.check-btn').addClass("selected");
+        }
+        @if(Model.Organization.SSO == true)
+        {
+            @:$('#SSO').trigger('click');
+            @:$('#SSO').closest('.check-btn').addClass("selected");
+            @:$('#TermsForSSOCheckbox').removeClass("hide");
+        }
+        $('#SSO').on('click', function () {
+            if ($('#SSO').is(":checked"))
+                $('#TermsForSSOCheckbox').removeClass("hide");
+            else {
+                $('#TermsForSSOCheckbox').addClass("hide");
+                if ($('#TermsForSSO').is(":checked")) {
+                    $('#TermsForSSO').trigger('click');
+                    $('#TermsForSSO').parent(".check-btn").removeClass("selected");
+                }
+            }
+        });
+        @if(Model.Organization.TermsForSSO == true)
+        {
+            @:$('#TermsForSSO').trigger('click');
+            @:$('#TermsForSSO').closest('.check-btn').addClass("selected");
+        }
+        @if(Model.Organization.OwnCoach == true){
+            @: $('#OwnCoach').trigger('click');
+            @: $('#OwnCoach').closest('.check-btn').addClass("selected");
+        }
+        $(".check-btn input").on('click', function () {
+            if ($(this).is(":checked")) {
+                $(this).parent(".check-btn").addClass("selected");
+            }
+            else {
+                $(this).parent(".check-btn").removeClass("selected");
+            }
+        });
+
+        $(".portal-cards").on("click", function () {
+                var tabTarget = $(this).data("tab-target");
+                var $target = $("#"+tabTarget);
+                var $target = $("#"+tabTarget);
+
+            $('#cards-info-tabs').foundation('_collapse'); // Collapse active tab
+            $('#cards-info-tabs').foundation('selectTab', $target); // open required tab
+            $("#portal-data-modal").foundation("open"); //open modal window
+            });
+
+        $("#addportalStartDate").fdatepicker({
+            format: "@Model.dateFormat.ToLower()",
+        }).on('change', function (selected) {
+            var endDate = new Date($("#AportalEndDate").val());
+            var minDate = new Date($("#AportalStartDate").val());
+            if (endDate < minDate) {
+                $('#addportalEndDate').fdatepicker('setDate', minDate);
+            }
+            $('#addportalEndDate').fdatepicker('setStartDate', minDate);
+            $("#addportalEndDate").trigger("change");
+		}).on('show', function () {
+			$(".datepicker").css("position", "fixed");
+		});
+
+		$("#addportalStartDate").fdatepicker().on('hide', function () {
+			$(".datepicker").css("position", "absolute");
+		});
+
+        $("#addportalEndDate").fdatepicker({
+            format: "@Model.dateFormat.ToLower()",
+		}).on('show', function () {
+			$(".datepicker").css("position", "fixed");
+		});
+
+        $("#addportalEndDate").fdatepicker().on('hide', function () {
+			$(".datepicker").css("position", "absolute");
+		});
+
+        $('#closeProgram').on('click', function () {
+            $('#add-program-model').foundation('close');
+            $('.programs-cards').trigger('click');
+
+        });
+        $('#closeIncentive').on('click', function () {
+            $('#add-incentive-model').foundation('close');
+            $('.incentives-cards').trigger('click');
+
+        });
+        $('#closeRaffle').on('click', function () {
+            $('#add-raffle-data-model').foundation('close');
+            $('.raffles-cards').trigger('click');
+        });
+
+        $('#closePortal').on('click', function () {
+            $('#add-portal-data').foundation('close');
+        });
+
+        $("#add-portal-data").foundation();
+        $("#add-portal-data").on('formvalid.zf.abide', function () {
+            $("#loader-wrapper").fadeIn();
+            var portalName = $("#AportalName").val();
+            var portalStartDate = $("#AportalStartDate").val();
+            var portalEndDate = $("#AportalEndDate").val();
+            var model = {};
+            var data = {
+                'Name': portalName,
+                'StartDate': portalStartDate.toISOString(),
+                'EndDate': portalEndDate.toISOString(),
+                'OrganizationId': OrganizationId
+            };
+            model.portal = (data);
+            var strData = JSON.stringify(model);
+            $.ajax({
+                url: "@Url.Action("AddPortal", "Portal")",
+                data: strData,
+                type: 'POST',
+                contentType: 'application/json, charset=utf-8',
+                dataType: "json",
+                success: function (data) {
+                    if (data != null && data.Result == "OK")
+                        location.reload();
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+            $("#loader-wrapper").fadeOut();
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        });
+
+        if (portalId != null) {
+            getPortalDetails(portalId);
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: "@Url.Action("GetIncentiveTypes", "Portal")",
+                data: { portalId: portalId },
+                success: function (progData) {
+                    $("#incentiveType").append("<option value=''>-- Select --</option>");
+                    for (i = 0; i < progData.IncentiveTypes.length; i++) {
+                        $("#incentiveType").append("<option value=" + progData.IncentiveTypes[i].Value + ">" + progData.IncentiveTypes[i].Text + "</option>");
+                    }
+
+                    $("#programType").append("<option value=''>-- Select --</option>");
+                    for (i = 0; i < progData.PortalPrograms.length; i++) {
+                        $("#programType").append("<option value=" + progData.PortalPrograms[i].Value + ">" + progData.PortalPrograms[i].Text + "</option>");
+                    }
+                }
+             }).fail(function (jqXHR, textStatus, errorThrown) {
+                 RedirectToErrorPage(jqXHR.status);
+            });
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: "@Url.Action("GetPrograms", "Program")",
+                success: function (progData) {
+                    $("#progName").append("<option value=''>-- Select --</option>");
+                    for (i = 0; i < progData.Options.length; i++) {
+                        $("#progName").append("<option value=" + progData.Options[i].Value + ">" + progData.Options[i].DisplayText + "</option>");
+                    }
+                    $('.ProgramType').hide();
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+
+            $.ajax({
+                type: "GET",
+                dataType: 'json',
+                url: "@Url.Action("GetCallTemplates", "Program")",
+                success: function (callTemplateData) {
+                    $("#apptCallTemplate").append("<option value=''>-- Select --</option>");
+                    for (i = 0; i < callTemplateData.Options.length; i++) {
+                        $("#apptCallTemplate").append("<option value=" + callTemplateData.Options[i].Value + ">" + callTemplateData.Options[i].DisplayText + "</option>");
+                    }
+
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+        else {
+            $('.override-select-org').foundationSelect()
+            $('.portal-details-edit').addClass('align-right');
+			$('.portal-lists').addClass('hide');
+			$('#detailsEdit').addClass('hide');
+            @if(Model.Organization.UserRoles != null)
+            {
+               foreach (var userRole in Model.Organization.UserRoles)
+                {
+                    @:$('#select-Group li[data-value="' + @userRole.Id + '"]').trigger("click");
+                }
+            }
+            $("a.custom-dropdown-button").on("click", function (e) {
+                e.preventDefault();
+            });
+            $('#portal-details').append("<div id='no-graph' class='cell main-graph-container'><div class='cell main-chart'><div class='no-graph-info text-center'><img src='"+ url +"/Images/device/no-data.png' alt='Alternate Text'><span>Sorry, there is no portal for this organization.</span></div></div></div>");
+        }
+
+        $("#loader-wrapper").fadeOut();
+
+        $("#orgEdit").unbind("click").on("click", function (e) {
+            validOrgDetails = false;
+            e.preventDefault();
+            $(this).parents(".portal-details-section").find(".portal-form, .form-edit-btn").toggleClass("hide");
+        });
+
+        $("#orgSave").unbind("click").on("click", function (e) {
+            $('#edit-org-submit').trigger('click');
+        });
+    });
+
+    $("#add-prog-button").on('click', function () {
+        ClearPrograms();
+    });
+
+    $("#add-incentive-button").on('click', function () {
+        ClearIncentives();
+    });
+
+    $("#add-raffle-button").on('click', function () {
+        ClearRaffles();
+    });
+
+    $("#add-prog-link").on('click', function () {
+        ClearPrograms();
+    })
+
+    $("#add-incentive-link").on('click', function () {
+        ClearIncentives();
+    });
+
+    $("#add-raffle-link").on('click', function () {
+        ClearRaffles();
+    });
+
+    $("#portal-modal-div").on('click', function () {
+        getPortalDetails(portalId);
+        if ($("#detailsEdit").hasClass("hide")) {
+            $("#detailsSave, #detailsEdit").toggleClass("hide");
+        }
+    });
+
+    $("#AddForms").on('click', function () {
+        var patientReleaseForm = $('#patientReleaseForm').val();
+        var medicalClearanceForm = $("#medicalClearanceForm").val();
+        var knowYourNumbersForm = $("#knowYourNumbersForm").val();
+        var testimonialForm = $("#testimonialForm").val();
+        var tobaccoReleaseForm = $('#tobaccoReleaseForm').val();
+        $.ajax({
+            url: "@Url.Action("AddForms", "Portal")",
+            data: { portalId: portalId, patientReleaseForm: patientReleaseForm, medicalClearanceForm: medicalClearanceForm, knowYourNumbersForm: knowYourNumbersForm, testimonialForm: testimonialForm, tobaccoReleaseForm: tobaccoReleaseForm},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#list-forms-data').foundation('close');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    function ReadPortalRafflebyId(id) {
+        $("#dates input").remove();
+        $('#addDate').show();
+         $.ajax({
+            url: "@Url.Action("GetPortalRafflesById", "Portal")",
+            data: { Id: id },
+            type: 'POST',
+            dataType: "json",
+             success: function (data) {
+                if (data != null) {
+                    $('#rafflesinPortalId').val(data.Id);
+                    $('#raffleType').val(data.RaffleTypeId);
+                    $('#pointType').val(data.Points);
+                    $('#raffleName').val(data.Name);
+                    for(var i=0; i < data.RaffleDates.length; i++){
+                        var raffle = data.RaffleDates[i];
+                        var dateCell = document.getElementById("dates");
+                        var input = document.createElement("input");
+                        input.type = "text";
+                        input.id = 'raffleDate-'+raffle.Id;
+                        input.name = 'raffleDate';
+                        input.value = raffle.RaffleDateStr;
+                        dateCell.appendChild(input);
+                    }
+                    $('#raffleReward').val(data.Reward);
+                    $('#raffleDesc').val(data.Description);
+                    $("#raffleisActive").prop("checked", data.isActive);
+                    $('#add-raffle-data').foundation('open');
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function ShowAlert(text, success) {
+        $('#saveAlert').text(text);
+        if (success)
+            $('#saveAlert').addClass('success');
+        else
+            $('#saveAlert').removeClass('success');
+        $('#saveAlert').removeClass('alert-close');
+        $('#saveAlert').show();
+        setTimeout(function () {
+            $('#saveAlert').hide();
+        }, 1000);
+    }
+
+    function getPortalDetails(id) {
+        portalRefresh = true;
+        //$('#portalName').html($('select[name="PortalId"] option:selected').text());
+        portalId = id;
+
+        $.ajax({
+            url: "@Url.Action("Portal", "Portal")",
+            data: { id: id },
+            type: 'POST',
+            async: false,
+            success: function (data) {
+                if($(".custom-dropdown-area").length > 0) {
+                    $(".custom-dropdown-area").remove();
+                }
+                $("#portal-details").html("");
+                $("#portal-details").html(data);
+                var portalNameinModal = $('select#selectedPortal option:selected').text();
+				$('h2#portalName').html(portalNameinModal);
+            },
+            complete: function () {
+                $('.override-select-portal').foundationSelect();
+                $('.override-select-org').foundationSelect();
+                FoundationSelect();
+                if($(".custom-dropdown-area").length > 0) {
+                     @if(Model.Organization.UserRoles != null)
+                    {
+                    foreach (var userRole in Model.Organization.UserRoles)
+                        {
+                            @:$('#select-Group li[data-value="' + @userRole.Id + '"]').trigger("click");
+                        }
+                    }
+                    $("a.custom-dropdown-button").on("click", function (e) {
+                        e.preventDefault();
+                    });
+                }
+                $("#edit-Assessment").foundation();
+                $("#edit-Assessment").on('forminvalid.zf.abide', function () {
+                }).on('formvalid.zf.abide', function () {
+                    SerializeData();
+                    isEditEnabled = false;
+                    $(this).parents(".portal-details-section").find(".portal-form, .form-edit-btn").toggleClass("hide");
+                }).on("submit", function (ev) {
+                    ev.preventDefault();
+                });
+                $("#edit-Follow-Up").foundation();
+                $("#edit-Follow-Up").on('forminvalid.zf.abide', function () {
+                }).on('formvalid.zf.abide', function () {
+                    SerializeData();
+                    isEditEnabled = false;
+                    $(this).parents(".portal-details-section").find(".portal-form, .form-edit-btn").toggleClass("hide");
+                }).on("submit", function (ev) {
+                    ev.preventDefault();
+                });
+                $("#edit-Eligibility").foundation();
+                $("#edit-Eligibility").on('forminvalid.zf.abide', function () {
+                }).on('formvalid.zf.abide', function () {
+                    SerializeData();
+                    isEditEnabled = false;
+                    $(this).parents(".portal-details-section").find(".portal-form, .form-edit-btn").toggleClass("hide");
+                }).on("submit", function (ev) {
+                    ev.preventDefault();
+                });
+                $("#edit-Additional-Features").foundation();
+                $("#edit-Additional-Features").on('forminvalid.zf.abide', function () {
+                }).on('formvalid.zf.abide', function () {
+                    SerializeData();
+                    isEditEnabled = false;
+                    $(this).parents(".portal-details-section").find(".portal-form, .form-edit-btn").toggleClass("hide");
+                }).on("submit", function (ev) {
+                    ev.preventDefault();
+                });
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function EditPortal() {
+        $("#loader-wrapper").fadeIn();
+        updateFor = 1;
+        $('#portalStartDate').val($('#HportalStartDate').val());
+        $('#portalEndDate').val($('#HportalEndDate').val());
+        var splz = getMultiSelect('portalSpecializations', false);
+        var langs = getMultiSelect('portalLanguages', false);
+		var serializeData = $("#add-edit-portal").serialize() + '&portal.Id=' + portalId + '&updateFor=' + updateFor + '&portal.languagesStr=' + langs + '&portal.specializationsStr=' + splz;
+        $.ajax({
+            url: "@Url.Action("EditPortal", "Portal")",
+            data: serializeData,
+            type: 'POST',
+            dataType: "json",
+			success: function (data) {
+                if (data != null && data.Result == "OK") {
+                    getPortalDetails(portalId);
+                }
+                $("#selectedPortal").prop("disabled", false)
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    function LanguageChange() {
+        var lang = $('#inLangPick').val();
+        var id = $('#PrograminPortalId').val();
+        $("#inNameforUser").val('');
+        $("#inDescriptionforUser").val('');
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("ReadPrograminPortal", "Portal")',
+            data: { PrograminPortalId: id, language: lang },
+            dataType: 'json',
+            success: function (data) {
+                $("#inNameforUser").val(data.NameforUser);
+                $("#inDescriptionforUser").val(data.DescriptionforUser);
+            }
+        });
+    }
+
+    function getMultiSelect(name, getLabel) {
+        var response = "";
+        var selectObject = $('[name="'+name+'"]')[0].selectedOptions;
+        for (var i = 0; i < selectObject.length; i++) {
+            if (getLabel) {
+                if (response == "") {
+                    response = selectObject[i].label;
+                }
+                else {
+                    response = response + ", " + selectObject[i].label;
+                }
+            }
+            else {
+                if (response == "") {
+                    response = selectObject[i].value;
+                }
+                else {
+                    response = response + "-" + selectObject[i].value;
+                }
+            }
+        }
+        return response;
+    }
+
+    function loadPortal() {
+        getPortalDetails($('#selectedPortal').val());
+    }
+
+    function ReadKitsinFollowups(id) {
+        $.ajax({
+            url: '@Url.Action("KitsinFollowUps", "Portal")',
+            data: { PortalFollowUpId: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $("#kit-followups").html(data);
+                $('#kit-followups').foundation('open');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function ClearPrograms(){
+        $("#progName").val("");
+        $("#progCost").val("");
+        $("#nameforUser").val("");
+        $("#descriptionforUser").val("");
+        $("#nameforAdmin").val("");
+        $("#descriptionforAdmin").val("");
+        $('#moreInfo').val("");
+		$('#PrograminPortalId').val("");
+		$('#progOrderBy').val("");
+        $("#isactive").prop("checked", true);
+    }
+
+    function ClearIncentives() {
+        $('#PortalIncentiveId').val("");
+        $("#point").val("");
+        $("#incentiveType").val("");
+        $("#isPoint").prop("checked", false);
+        $("#incName").val("");
+        $("#langName").val("");
+        $("#isCompanyIncentive").prop("checked", false);
+        $("#isGiftCard").prop("checked", false);
+        $("#removeSurcharge").prop("checked", false);
+        $("#attachment").val("");
+        $("#isActive").prop("checked", true);
+        $("#ImageUrl").val("");
+        $("#incMoreInfo").val("");
+        $("#langInfo").val("");
+        $('.ProgramType').hide();
+        $("#PointsText").val("");
+        $('#programType').val("");
+    }
+
+    function ClearRaffles() {
+        $('#rafflesinPortalId').val('');
+        $('#raffleName').val('');
+        $('#raffleType').val('');
+        $('#pointType').val('');
+        $('#raffleReward').val('');
+        $('#raffleDesc').val('');
+        $("#dates input").remove();
+        $("#raffleisActive").prop("checked", true);
+        $('#addDate').show();
+        $('#add-raffle-data').foundation('open');
+    }
+
+    function getGroups() {
+        var groups = "";
+        var selectObject = $('[name="Group"]')[0].selectedOptions;
+        for (var i = 0; i < selectObject.length; i++) {
+            if (groups == "") {
+                groups = selectObject[i].value
+            }
+            else {
+                groups = groups + "-" + selectObject[i].value;
+            }
+        }
+        return groups;
+    }
+
+
+    function getKits() {
+        var groups = "";
+        var selectObject = $('#kitType')[0].selectedOptions;
+        for (var i = 0; i < selectObject.length; i++) {
+            if (groups == "") {
+                groups = selectObject[i].value
+            }
+            else {
+                groups = groups + "-" + selectObject[i].value;
+            }
+        }
+        return groups;
+    }
+
+    function ReadProgram(id) {
+        $.ajax({
+            url: "@Url.Action("GetProgramDetails", "Portal")",
+            data: { PrograminPortalId: id },
+            type: 'POST',
+            success: function (data) {
+                $("#PrograminPortalId").val(id);
+                $(".programs-list").find("li").removeClass("is-active");
+                $('.editIncentiveDetails').html('');
+                $("#editProgramDetails_" + id + "").html(data);
+                $("#editProgramDetails_" + id + "").parents("li").addClass("is-active");
+
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    //Kits start
+    {
+        function ReadKits(populate) {
+            $.ajax({
+                url: "@Url.Action("ListKitsforPortals", "Portal")",
+                data: { portalId: portalId },
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data != null) {
+                        $('#kitType').val('');
+                        if (!populate && data.Kits != null) {
+                            for (var i = 0; i < data.Kits.length; i++) {
+                                $('#select-kitType li[data-value="' + data.Kits[i].Id + '"]').trigger("click");
+                            }
+                        }
+                        if (populate)
+                            populateKits(data.Kits);
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+
+        function populateKits(kits) {
+            if (kits != null && kits.length > 0) {
+                var kitsHtml = "<ul>";
+                for (var i = 0; i < kits.length; i++) {
+                    var kit = kits[i];
+                    var activeStatus = kit.Active == 1 ? "<span class='portal-status active'>Active</span>" : "<span class='portal-status inactive'>Inactive</span>";
+                    kitsHtml += "<li><div class='grid-x grid-margin-x align-middle'><div class='cell large-8'><p>" + kit.Description + "</p></div><div class='cell large-4 text-right'>" + activeStatus + "</div></div></li>";
+                }
+                kitsHtml += "</ul>";
+                $('#kit-results').html(kitsHtml);
+            }
+            else
+                $('#kit-results').html("<div id='no-graph' class='cell main-graph-container'><div class='cell main-chart'><div class='no-graph-info text-center'><img src='" + url +"/Images/device/no-data.png' alt='Alternate Text'><span>No data found.</span></div></div></div>");
+        }
+
+        $("#CopyKits").on('click', function () {
+            $.ajax({
+                url: "@Url.Action("CopyKitsFromPreviousPortal", "Portal")",
+                data: { portalId: portalId },
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    $('#closeKit').trigger("click");
+                    alert("Kits copied successfully.")
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        });
+    }
+    //Kits end
+
+    //Emails start
+    {
+
+        function ReadEmails(populate) {
+            $.ajax({
+                url: "@Url.Action("GetPortalEmails", "Portal")",
+                data: { portalId: portalId },
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data != null) {
+                        $('#emailType').val('');
+                        if (!populate && data.Emails != null) {
+                            for (var i = 0; i < data.Emails.length; i++) {
+                                $('#select-emailType li[data-value="' + data.Emails[i].Id + '"]').trigger("click");
+                            }
+                        }
+                        if (populate)
+                            populateEmails(data.Emails);
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+
+        function populateEmails(emails) {
+            if (emails != null) {
+                var emailsHtml = "<ul>";
+                for (var i = 0; i < emails.length; i++) {
+                    var email = emails[i];
+                    var activeStatus = email.IsActive == 1 ? "<span class='portal-status active'>Active</span>" : "<span class='portal-status inactive'>Inactive</span>";
+                    emailsHtml += "<li><div class='grid-x grid-margin-x align-middle'><div class='cell large-8'><p>" + email.Description + "</p></div><div class='cell large-4 text-right'>" + activeStatus + "<span><a href='#' onclick='sendEmail(" + email.Id + ")'>Send Email</a></span></div></div>";
+                }
+                emailsHtml += "</ul>";
+                $('#email-results').html(emailsHtml);
+            }
+            else
+                $('#email-results').html("<div id='no-graph' class='cell main-graph-container'><div class='cell main-chart'><div class='no-graph-info text-center'><img src='" + url +"/Images/device/no-data.png' alt='Alternate Text'><span>No data found.</span></div></div></div>");
+        }
+
+        function sendEmail(typeId)
+        {
+            $.ajax({
+                url: "@Url.Action("SendEmail", "Portal")",
+                type: 'POST',
+                dataType: "json",
+                data: { typeId: typeId },
+                success: function (data) {
+                    if (data != null && data.Result == "OK") {
+                        $('#alertMessage').text("Email sent successfully");
+                        $(".form-alert").show('slow');
+                        setTimeout(function () {
+                            $('.form-alert').hide('slow');
+                        }, 3000);
+                        ReadEmails();
+                        $('.email-cards').trigger('click');
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+
+        function getEmails() {
+            var groups = "";
+            var selectObject = $('#emailType')[0].selectedOptions;
+            for (var i = 0; i < selectObject.length; i++) {
+                if (groups == "") {
+                    groups = selectObject[i].value
+                }
+                else {
+                    groups = groups + "-" + selectObject[i].value;
+                }
+            }
+            return groups;
+        }
+    }
+    //Emails end
+
+    //Forms
+    $("#AddForms").on('click', function () {
+        var patientReleaseForm = $('#patientReleaseForm').val();
+        var medicalClearanceForm = $("#medicalClearanceForm").val();
+        var knowYourNumbersForm = $("#knowYourNumbersForm").val();
+        var testimonialForm = $("#testimonialForm").val();
+        var tobaccoReleaseForm = $('#tobaccoReleaseForm').val();
+        $.ajax({
+            url: "@Url.Action("AddForms", "Portal")",
+            data: { portalId: portalId, patientReleaseForm: patientReleaseForm, medicalClearanceForm: medicalClearanceForm, knowYourNumbersForm: knowYourNumbersForm, testimonialForm: testimonialForm, tobaccoReleaseForm: tobaccoReleaseForm},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                alert("Forms saved successfully.")
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    //Forms end
+
+    //Coupon
+    $('#closecoupon').on('click', function () {
+        $('#add-coupon-data').foundation('close');
+        $('.coupon-cards').trigger('click');
+    });
+    $('#add-coupon-data').foundation();
+    $('#add-coupon-data').on('formvalid.zf.abide', function () {
+        var id = $('#couponid').val();
+        var name = $("#couponName").val();
+        var code = $("#couponCode").val();
+        var active = $('#IsActiveCoupon').is(":checked");
+        $.ajax({
+            url: "@Url.Action("AddEditCoupons", "Portal")",
+            type: 'POST',
+            dataType: "json",
+            data: { id: id, orgid: OrganizationId, name: name, code: code, active: active },
+            success: function (data) {
+                ReadCoupon();
+                $('#add-coupon-data').foundation('close');
+                $('.coupon-cards').trigger('click');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    });
+
+    function ReadCoupon() {
+        $.ajax({
+            url: "@Url.Action("ListCoupons", "Portal")",
+            data: { OrganizationId: OrganizationId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    populateCoupons(data.Result);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function populateCoupons(coupons) {
+        if (coupons != null && coupons.length > 0) {
+            var couponHtml = "<ul>";
+            for (var i = 0; i < coupons.length; i++) {
+                var coupon = coupons[i];
+                var activeStatus = coupon.Active == 1 ? "<span class='portal-status active'>Active</span>" : "<span class='portal-status inactive'>Inactive</span>";
+                couponHtml += "<li><div class='grid-x grid-margin-x align-middle'><div class='cell large-5'><p>Name: <strong>" + coupon.Name + "</strong></p>" + activeStatus + "</div><div class='cell large-7 align-justify flex-container'>" +
+                    "<span>Coupon code: <strong>" + coupon.Code + "</strong></span><span><a href='#' onclick='readCoupon(" + coupon.Id + ")'><img src='" + url +"/Images/organization/icon-edit.svg'> Edit</a></span></div></div>";
+                couponHtml += "<div class='portal-form-edit editCouponDetails' id='editCouponDetails_" + coupon.Id + "'></div></li>";
+            }
+            couponHtml += "</ul>";
+            $('#coupon-results').html(couponHtml);
+        }
+        else
+            $('#coupon-results').html("<div id='no-graph' class='cell main-graph-container'><div class='cell main-chart'><div class='no-graph-info text-center'><img src='" + url +"/Images/device/no-data.png' alt='Alternate Text'><span>No data found.</span></div></div></div>");
+    }
+
+    function readCoupon(id) {
+        $.ajax({
+            url: "@Url.Action("ReadCoupon", "Portal")",
+            data: { couponid: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    var checked = data.Active == true ? "checked" : "";
+                    var couponHtml = "<form class='organization-modal-form create-profile-form' id='add-in-coupon' data-abide novalidate><div class='grid-x grid-margin-x grid-margin-y'> <input type='hidden' id='inCouponId' value='" + data.id + "' ><small class='form-error'>Required</small><div class='cell medium-6'><label>Name</label><input type='text' id='inCouponName' required value='" + data.Name + "' /><small class='form-error'>Required</small></div><div class='cell medium-6'><label>Coupon Code</label><input type='text' id='inCouponCode' value='" + data.CouponCode + "' required/><small class='form-error'>Required</small></div><div class='cell medium-6'><div class='tick-buttons check-btn'><input type='checkbox' id='inCouponActive' " + checked + "><label for='inCouponActive'>Active<span class='checkmark'></span></label></div></div><div class='cell'><div class='form-save-button new-button'><button class='button' type='submit'>Save</button></div></div></div></form>";
+                    $(".programs-list").find("li").removeClass("is-active");
+                    $('.editCouponDetails').html('');
+                    $("#editCouponDetails_" + id + "").html(couponHtml);
+                    $("#editCouponDetails_" + id + "").parents("li").addClass("is-active");
+                }
+            },
+            complete: function () {
+                    $('#add-in-coupon').foundation();
+                    $('#add-in-coupon').on('formvalid.zf.abide', function () {
+                        var id = $('#inCouponId').val();
+                        var name = $("#inCouponName").val();
+                        var code = $("#inCouponCode").val();
+                        var active = $('#inCouponActive').is(":checked");
+                        $.ajax({
+                            url: "@Url.Action("AddEditCoupons", "Portal")",
+                            type: 'POST',
+                            dataType: "json",
+                            data: { id: id, orgid: OrganizationId, name: name, code: code, active: active },
+                            success: function (data) {
+                                ReadCoupon();
+                                $('#add-coupon-data').foundation('close');
+                                $('.coupon-cards').trigger('click');
+                            }
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+                    }).on("submit", function (ev) {
+                        ev.preventDefault();
+                    });
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+
+    //Coupon end
+
+    //Followup kits start
+    {
+        function RemoveKit(kitId) {
+            var portalFollowUpId = $("#PortalFollowUpId").val();
+            $.ajax({
+                url: "@Url.Action("DeleteKitfromFollowUp", "Portal")",
+                data: { portalFollowUpId: portalFollowUpId, KitId: kitId },
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data != null) {
+                        ReadFollowUpKits(portalFollowUpId);
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+            });
+        }
+    }
+    //Followup kits end
+
+    //Raffles Start
+    {
+        $("#add-raffle").on("click", function (e) {
+            $.ajax({
+                url: "@Url.Action("GetRaffleDetails", "Portal")",
+                data: { portalId: portalId, raffleId: 0},
+                type: 'POST',
+                success: function (data) {
+                    $("#add-raffle-data").html(data);
+                    $("#add-raffle-data-model").foundation("open");
+                },
+                complete: function () {
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        });
+    }
+    //Raffles End
+
+    //Other Details
+    function EditOtherPortalDetails(serializeData) {
+        $("#loader-wrapper").fadeIn();
+        $.ajax({
+            url: "@Url.Action("EditPortal", "Portal")",
+            data: serializeData,
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null && data.Result == "OK") {
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+        $("#loader-wrapper").fadeOut();
+    }
+    //Other Details ends
+
+	function clonePortal() {
+        $("#loader-wrapper").fadeIn();
+        var currentPortalId = $('#selectedPortal').val();
+        $.ajax({
+            url: "@Url.Action("ClonePortal", "Portal")",
+            data: { portalId : currentPortalId },
+            type: 'POST',
+            dataType: "json",
+			success: function (data) {
+				getPortalDetails(data.PortalId);
+				location.reload();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+		$("#loader-wrapper").fadeOut();
+    }
+
+    function AddEditKits() {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("AddEditKits", "Portal")',
+            success: function (data) {
+                $("#add-kit-data").html(data);
+                $('#add-kit-data').foundation('open');
+            },
+            complete: function () {
+                ReadKits(false);
+                $('.override-select-kit').foundationSelect();
+                $('#closeKit').on('click', function () {
+                    var selectedOptions = document.getElementById("kitType").selectedOptions;
+                    for (var i = 0; i < selectedOptions.length; i++) {
+                        $("#select-kitType li[data-value='" + selectedOptions[i].value + "']").removeClass("selected");
+                    }
+                    $('#add-kit-data').foundation('close');
+                    $('.kits-cards').trigger('click');
+                });
+
+                $("#add-kit-data").on('submit', function (ev) {
+                    $("#loader-wrapper").fadeIn();
+                    var kits = getKits();
+                     $.ajax({
+                        url: "@Url.Action("AddEditPortalKits", "Portal")",
+                        data: { portalId: portalId, kits: kits },
+                        type: 'POST',
+                        dataType: "json",
+                         success: function (data) {
+                             if (data.IsSuccess == true) {
+                                 $('#closeKit').trigger("click");
+                                 $('.kits-cards').trigger('click');
+                             }
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+                    $("#loader-wrapper").fadeOut();
+                    ev.preventDefault();
+                });
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function AddEditEmails() {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("AddEditEmails", "Portal")',
+            success: function (data) {
+                $("#add-email-data").html(data);
+                $('#add-email-data').foundation('open');
+            },
+            complete: function () {
+                ReadEmails(false);
+                $('.override-select-email').foundationSelect();
+                $('#closeEmail').on('click', function () {
+                    var selectedOptions = document.getElementById("emailType").selectedOptions;
+                    for (var i = 0; i < selectedOptions.length; i++) {
+                        $("#select-emailType li[data-value='" + selectedOptions[i].value + "']").removeClass("selected");
+                    }
+                    $('#add-email-data').foundation('close');
+                    $('.email-cards').trigger('click');
+                });
+
+                $("#add-email-data-form").on('submit', function (ev) {
+                    $("#loader-wrapper").fadeIn();
+                    var type = getEmails();
+                     $.ajax({
+                        url: "@Url.Action("AddEditPortalEmails", "Portal")",
+                        data: { portalId: portalId, types: type },
+                        type: 'POST',
+                        dataType: "json",
+                         success: function (data) {
+                             if (data.IsSuccess == true) {
+                                 $('#closeEmail').trigger("click");
+                                 $('.cards-emails').trigger('click');
+                             }
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+                    $("#loader-wrapper").fadeOut();
+                    ev.preventDefault();
+                });
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+</script>

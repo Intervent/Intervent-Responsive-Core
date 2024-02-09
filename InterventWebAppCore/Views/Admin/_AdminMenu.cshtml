@@ -1,0 +1,99 @@
+﻿@using InterventWebApp
+@model InterventWebApp.AdminMenuModel
+
+<section class="health-links-section mobile-sidebar">
+    <div class="side-bar-container">
+        <div class="section-heading search-container">
+            <div class="search-bar search">
+                <input type="text" class="user-picker typeahead1 tt-input" value="" id="userSearch1" placeholder="Search" />
+                <button class="search-btn" onclick="searchByOrgName()"></button>
+            </div>
+            <a href="~/Participant/ParticipantSearch" class="anchor-blue">Advanced Search</a>
+        </div>
+
+        <article class="accordion" data-accordion data-multi-expand="true" disabled>
+            <div class="health-prog health-links accordion-item is-active" data-accordion-item>
+                <a href="#" class="accordion-title">Go To</a>
+                <ul class="accordion-content" data-tab-content>
+                    <li><a><img src="~/Images/admin/my-dashboard.svg" alt="" />My Dashboard</a></li>
+                    @foreach (var view in Model.AdminModules.Where(x => x.Module == 1))
+                    {
+                        <li><a href="~/@view.Url"><img src="~/Images/admin/@view.Image" alt="" />@view.Name @if (view.Name.Equals("Messages")) { <span class='notify-counter'>@Model.MessageCount.ToString()</span> }</a></li>
+                    }
+                </ul>
+            </div>
+
+            @if (Model.AdminModules.Where(x => x.Module == 2).Count() > 0)
+            {
+                <div class="health-details health-links accordion-item is-active" data-accordion-item>
+                    <a href="#" class="accordion-title">Manage</a>
+                    <ul class="accordion-content" data-tab-content>
+                        @foreach (var view in Model.AdminModules.Where(x => x.Module == 2))
+                        {
+                            <li><a href="~/@view.Url"><img src="~/Images/admin/@view.Image" alt="" />@view.Name</a></li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            @if (Model.AdminModules.Where(x => x.Module == 3).Count() > 0)
+            {
+                <div class="health-improve health-links accordion-item is-active" data-accordion-item>
+                    <a href="#" class="accordion-title">Create</a>
+                    <ul class="accordion-content" data-tab-content>
+                        @foreach (var view in Model.AdminModules.Where(x => x.Module == 3))
+                        {
+                            <li><a href="~/@view.Url"><img src="~/Images/admin/@view.Image" alt="" />@view.Name</a></li>
+                        }
+                    </ul>
+                </div>
+            }
+        </article>
+    </div>
+</section>
+<script src="@Url.Content("~/Scripts/typeahead.bundle.min.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    $(document).ready(function () {
+		//typehead
+		var users = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('Name'),
+			queryTokenizer: Bloodhound.tokenizers.whitespace
+			, remote: {
+				url: '../Admin/ListUsers?name=%QUERY',
+				wildcard: "%QUERY"
+			},
+			limit: Number.MAX_VALUE
+		});
+
+		users.initialize();
+
+		$('#userSearch1').typeahead({
+			hint: true,
+			highlight: true,
+			minLength: 3
+		}, {
+			name: 'users',
+			displayKey: 'Name',
+			source: users.ttAdapter(),
+			limit: 100
+		})
+		$('#userSearch1').bind('typeahead:selected', function (ev, user) {
+			window.location.href = "../Participant/ParticipantProfile/" + user.Id;
+		});
+
+        $("#sort-participant").on("change", function () {
+            currentPage = 0;
+            ContactType = $("#sort-participant").val();
+            ParticipantSearch();
+        });
+        //typehead ends
+
+    });
+
+    function enableAccMenu() {
+		$("article.accordion").prop('disabled', false).data('multi-expand', false);
+		$("article.accordion .accordion-item:not(:first-child)").removeClass("is-active");
+
+		$("article.accordion").foundation();
+    }
+</script>

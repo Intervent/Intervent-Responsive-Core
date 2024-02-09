@@ -1,0 +1,14 @@
+﻿@{
+	ViewBag.Title = "Error";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+<section class="main grid-container no-bgimg">
+	<div class="grid-x align-middle error-msg-container">
+		<div class="cell text-center">
+			<img src="~/Images/error-message.png" alt="" />
+			<p>Sorry, the page you tried cannot be found.</p>
+            <p>You can still go back to home</p>
+			<a href="@(TempData.Peek("OrgURL")!= null ? TempData.Peek("OrgURL") : "https://www.myintervent.com/")" class="button">Back to homepage</a>
+		</div>
+	</div>
+</section>

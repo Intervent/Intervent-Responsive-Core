@@ -1,0 +1,48 @@
+﻿@using InterventWebApp
+@model ProgramOptionsModel
+@using System.Text.RegularExpressions
+<div class="grid-container collapse">
+    <div class="grid-x grid-margin-x small-up-1 large-up-2 align-center align-center content-block">
+        @if (Model.hasCoaching && Model.showCoaching && Model.hasCoachingConditions)
+        {
+            <div class="cell align-center">
+                <div>
+                    <h5>@Translate.Message("L769")</h5>
+                    @Html.Raw(Model.coachText)
+                    @if (Model.selfScheduling)
+                    {
+                        <div class="button-set text-center">
+                            <button class="button" onclick="SelectCoach()">@Translate.Message("L1665")</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        else if ((!Model.programType.HasValue || Model.programType != 1) && Model.hasSelfHelp && Model.showSelfHelp)
+        {
+            <div class="cell">
+                <div>
+                    <h5>@Translate.Message("L1666")</h5>
+                    <ul data-equalizer-watch>
+                        <li>@Translate.Message("L1667")</li>
+                        <li>@Translate.Message("L1668")</li>
+                        <li>@Translate.Message("L1901")</li>
+                        <li>@Translate.Message("L1902")</li>
+                    </ul>
+                    <div class="button-set text-center">
+                        <button class="button" onclick="SelectCourse()">@Translate.Message("L1669")</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script>
+    function SelectCoach() {
+        window.location.href = "../Participant/MyCoach"
+    }
+
+    function SelectCourse() {
+        window.location.href = "../Program/CurrentPrograms"
+    }
+</script>

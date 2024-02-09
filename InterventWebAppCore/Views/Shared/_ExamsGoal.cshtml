@@ -1,0 +1,102 @@
+﻿@model InterventWebApp.ExamsGoalModel
+@using InterventWebApp
+
+<div class="grid-container">
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <h2>@Translate.Message("L1649")</h2>
+            <p>
+                @Translate.Message("L1650").
+            </p>
+            <!--Checkups & Tests-->
+            @if (Model.checkupsandGoals != null)
+            {
+			<div class="preventive-container">
+				<h3>@Translate.Message("L221")</h3>
+				<div class="checkup-items">
+					<div class="grid-x grid-margin-x collapse checkup-item title">
+						<div class="cell small-offset-6 medium-offset-8 small-6 medium-4">
+							<h5>@Translate.Message("L217")</h5>
+						</div>
+					</div>
+					@for (int i = 0; i < Model.checkupsandGoals.Count; i++)
+					{
+						if (Model.checkupsandGoals[i].Status == 1 || Model.checkupsandGoals[i].Status == 2)
+						{
+							<div class="grid-x grid-margin-x collapse checkup-item">
+								<div class="cell small-1 medium-4 medium-push-4 text-center">
+									@if (Model.checkupsandGoals[i].Status == 1)
+									{
+										<div class="on-track">
+											<i class="fa fa-smile-o"></i>
+											<span class="hide-for-small-only">@Model.checkupsandGoals[i].StatusMessage</span>
+										</div>
+									}
+									else if (Model.checkupsandGoals[i].Status == 2)
+									{
+										<div class="track">
+											<i class="fa fa-fgrid-x grid-margin-xn-o"></i>
+											<span class="hide-for-small-only">@Model.checkupsandGoals[i].StatusMessage</span>
+										</div>
+									}
+								</div>
+								<div class="cell small-5 medium-4 medium-pull-4">
+									<span>@Model.checkupsandGoals[i].Name</span>
+								</div>
+								<div class="cell small-6 medium-4">
+									<span>@Model.checkupsandGoals[i].Recommended</span>
+								</div>
+							</div>
+						}
+					}
+				</div>
+			</div>
+            }
+            <!--Immunizations-->
+            @if (Model.immunizationandGoals != null)
+            {
+				<div class="preventive-container">
+					<h3>@Translate.Message("L219")</h3>
+					<div class="checkup-items">
+						<div class="grid-x grid-margin-x collapse checkup-item title">
+							<div class="cell small-offset-6 medium-offset-8 small-6 medium-4">
+								<h5>@Translate.Message("L217")</h5>
+							</div>
+						</div>
+						@for (int i = 0; i < Model.immunizationandGoals.Count; i++)
+						{
+							if (Model.immunizationandGoals[i].Status == 1 || Model.immunizationandGoals[i].Status == 2)
+							{
+								<div class="grid-x grid-margin-x collapse checkup-item">
+									<div class="cell small-1 medium-4 medium-push-4 text-center">
+										@if (Model.immunizationandGoals[i].Status == 1)
+										{
+											<div class="on-track">
+												<i class="fa fa-smile-o"></i>
+												<span class="hide-for-small-only">@Model.immunizationandGoals[i].StatusMessage</span>
+											</div>
+										}
+										else if (Model.immunizationandGoals[i].Status == 2)
+										{
+											<div class="track">
+												<i class="fa fa-fgrid-x grid-margin-xn-o"></i>
+												<span class="hide-for-small-only">@Model.immunizationandGoals[i].StatusMessage</span>
+											</div>
+										}
+									</div>
+									<div class="cell small-5 medium-4 medium-pull-4">
+										<span>@Model.immunizationandGoals[i].Name</span>
+									</div>
+									<div class="cell small-6 medium-4">
+										<span>@Model.immunizationandGoals[i].Recommended</span>
+									</div>
+								</div>
+							}
+						}
+					</div>
+				</div>
+            }
+        </div>
+    </div>
+</div>
+<a class="close-button hide-for-print" data-close>&#215;</a>

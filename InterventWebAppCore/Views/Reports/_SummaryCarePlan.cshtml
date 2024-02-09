@@ -1,0 +1,56 @@
+﻿@using InterventWebApp
+@model InterventWebApp.SummaryCarePlansModel
+
+<ul class="tabs rounded-tabs plan-tabs" data-tabs id="summary-plan-tabs">
+    @if (Model.bloodPressure != null)
+    {
+        <li class="tabs-title is-active"><a href="#plan-a" aria-selected="true">@Translate.Message("L503")</a></li>
+    }
+    else if (Model.stroke != null)
+    {
+        <li class="tabs-title is-active"><a href="#plan-b" aria-selected="true">@Translate.Message("L4378")</a></li>
+    }
+    else if (Model.cvdRisk != null)
+    {
+        <li class="tabs-title is-active"><a href="#plan-c" aria-selected="true">@Translate.Message("L4368")</a></li>
+    }
+    else if (Model.weightManagement != null)
+    {
+        <li class="tabs-title is-active"><a href="#plan-d" aria-selected="true">@Translate.Message("L4590")</a></li>
+    }
+</ul>
+
+<div class="tabs-content" data-tabs-content="summary-plan-tabs">
+    @if (Model.bloodPressure != null)
+    {
+        <div class="tabs-panel is-active" id="plan-a">
+            @Html.Partial("_CarePlan", Model.bloodPressure)
+        </div>
+        <!-- Plan A ends -->
+    }
+    @if (Model.stroke != null)
+    {
+        <div class="tabs-panel is-active" id="plan-b">
+            @Html.Partial("_CarePlan", Model.stroke)
+        </div>
+        <!-- Plan B ends -->
+    }
+    @if (Model.cvdRisk != null)
+    {
+        <div class="tabs-panel is-active" id="plan-c">
+            @Html.Partial("_CarePlan", Model.cvdRisk)
+        </div>
+        <!-- Plan C ends -->
+    }
+    @if (Model.weightManagement != null)
+    {
+        <div class="tabs-panel is-active" id="plan-c">
+            @Html.Partial("_CarePlan", Model.weightManagement)
+        </div>
+        <!-- Plan C ends -->
+    }
+</div>
+
+<button class="close-button" data-close aria-label="Close modal" type="button">
+    <span aria-hidden="true">&times;</span>
+</button>

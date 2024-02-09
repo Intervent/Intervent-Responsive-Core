@@ -1,0 +1,327 @@
+﻿@using InterventWebApp
+@model InterventWebApp.StressManagementLogModel
+
+@{
+    ViewBag.Title = "StressManagementLog";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main search-participants">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="small-7 left cell">
+                    <h2>@Translate.Message("L2137")</h2>
+                </div>
+                @if (Model.HasActivePortal)
+                {
+                    <div class="small-5 cell text-right">
+                        <button id="add-stressmanagement-button" data-open="add-stressmanagement" class="button plus-btn right">@Translate.Message("L291")</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <table id="search-results" class='table'></table>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <!-- pagination Start -->
+                <div class="pagination-area hide" id="pagination-centered">
+                    <ul>
+                        <li id="numeric"></li>
+                    </ul>
+                    <!-- page-link Start -->
+                    <div class="page-link">
+                        <label>@Translate.Message("L4041")</label>
+                        <div class="grid-x">
+                            <input type="text" id="jumptoPageNo">
+                            <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                        </div>
+                    </div>
+                    <!-- page-link End -->
+                </div>
+                <!-- pagination End -->
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <div class="panel" id="chart-results" hidden>
+                    <div id="chartdiv" style="width:100%;height:500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="add-stressmanagement" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form data-abide id="stressmanagement-form" novalidate>
+        <h2 class="text-center">@Translate.Message("L2137")</h2>
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <div class="grid-x grid-margin-x">
+                    <div class="cell medium-6">
+                        <label>@Translate.Message("L561")</label>
+                        @Html.TextBoxFor(x => x.streesLog.Date, new Dictionary<string, object> { { "class", "fdatepicker" }, { "required", "required" } })
+                        <small class="form-error">@Translate.Message("L2156")</small>
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <label>@Translate.Message("L2167")</label>
+                        @Html.DropDownListFor(x => x.streesLog.StressRating, Model.StressRatingList, "--" + Translate.Message("L2172") + "--", new { @required = "required" })
+                        <small class="form-error">@Translate.Message("L480")</small>
+                    </div>
+                </div>
+                <div class="grid-x grid-margin-x">
+                    <div class="small-12 medium-6 cell">
+                        <label>@Translate.Message("L2168")</label>
+                        @Html.TextBoxFor(x => x.streesLog.TechniqueUsed, new { @required = "required" })
+                        <small class="form-error">@Translate.Message("L480")</small>
+                    </div>
+                    <div class="cell medium-6">
+                        <label>@Translate.Message("L2169")</label>
+                        @Html.TextBoxFor(x => x.streesLog.MinutesPerformed, new { @required = "required", @type = "number" })
+                        <small class="form-error">@Translate.Message("L480")</small>
+                    </div>
+                </div>
+                <div class="grid-x grid-margin-x">
+                    <div class="small-12 medium-12 cell">
+                        <label>@Translate.Message("L1717")</label>
+                        @Html.TextAreaFor(x => x.streesLog.Notes)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right">
+                <button class="small" type="submit">@Translate.Message("L968")</button>
+            </div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" id="CloseStressManagement">@Translate.Message("L967")</button></div>
+        </div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        @Html.HiddenFor(x => x.streesLog.Id)
+        <input id="streesLogDate" type="hidden">
+    </form>
+</div>
+
+<!-- Preloader-->
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $("#streesLog_Date").on("change", function () {
+        $('#streesLogDate').val(toSystemDateFormat(this.value, "24hour"));
+    });
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+
+    $(document).ready(function () {
+        $('.fdatepicker').fdatepicker({
+            format: '@Model.DateFormat.ToLower() hh:ii',
+            disableDblClickSelection: true,
+            pickTime: true,
+            endDate: new Date()
+        });
+        ListStress();
+        $('#stressmanagement-form').foundation();
+        $('#stressmanagement-form')
+          .on('forminvalid.zf.abide', function () {
+              var invalid_fields = $(this).find('[data-invalid]');
+              console.log(invalid_fields);
+          })
+          .on('formvalid.zf.abide', function () {
+              $('#streesLog_Date').val($('#streesLogDate').val());
+              $("#loader-wrapper").fadeIn();
+              $.ajax({
+                  url: "@Url.Action("AddEditStressManagement", "Journal")",
+                  type: 'POST',
+                  dataType: "json",
+                  data: $("#stressmanagement-form").serialize(),
+                  success: function (data) {
+                      $('#add-stressmanagement').foundation('close');
+                      startIndex = 0;
+                      pageSize = 15;
+                      totalRecords = 0;
+                      currentPage = 0;
+                      totalPages = 0;
+                      ListStress();
+                  }
+              }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+              $("#loader-wrapper").fadeOut();
+          })
+            // to prevent form from submitting upon successful validation
+            .on("submit", function (ev) {
+                ev.preventDefault();
+
+            })
+    });
+
+    $("#add-stressmanagement-button").on('click', function () {
+        $('#streesLog_Id').val('');
+        $("#stressmanagement-form").find('input:text, number, input:password, input:file, select, textarea, :input').val('');
+    })
+
+    function ListStress() {
+        $('#streesLog_Id').val('');
+        $('#search-results').html("");
+        var paginationdata = {
+            'page': currentPage,
+            'pageSize': pageSize,
+            'totalRecords': totalRecords
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+        $.ajax({
+            url: "@Url.Action("ListStressManagement", "Journal")",
+            type: 'POST',
+            data: strData,
+            dataType: "json",
+            contentType: 'application/json, charset=utf-8',
+            success: function (data) {
+                if (data != null) {
+                    totalRecords = data.Records.totalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    if (data.Records != null && data.Records.stressManagementLogs.length > 0) {
+                        var stressHtml = "", date, i, stressData = [], prevDate, stressRating = 0, noOfRecords = 0, averageRating, triggerAdd = false;
+                        stressHtml += "<tr><th class='pink'>@Translate.Message("L561")</th><th class='pink'>@Translate.Message("L2167")</th><th class='pink'>@Translate.Message("L2168")</th><th class='pink'>@Translate.Message("L2169")</th><th class='pink'></th>";
+                        for (i = 0; i < data.Records.stressManagementLog.length; i++) {
+                            var tempStress = data.Records.stressManagementLog[i];
+                            var tempDate = new Date(parseInt(tempStress.Date.substr(6)));
+                            stressHtml += "<tr><td>" + toLocalDateFormat(tempDate) + "</td><td>" + tempStress.StressRating + "</td><td>" + tempStress.TechniqueUsed + "</td><td>" + tempStress.MinutesPerformed + "</td>";
+                            if ('@Model.HasActivePortal.ToString()' == "True") {
+                                stressHtml += "<td><a onclick='Update(" + tempStress.Id + ")'><i class='fa fa-file-o'></i></a></td>";
+                            } else {
+                                stressHtml += "<td></td>";
+                            }
+                        }
+                        for (i = 0; i < data.Records.stressManagementLogs.length; i++) {
+                            stress = data.Records.stressManagementLogs[i];
+                            date = new Date(parseInt(stress.Date.substr(6)));
+                            if (data.Records.stressManagementLogs.length == 1) {
+                                prevDate = date;
+                                stressRating = stress.StressRating;
+                                noOfRecords = 1;
+                            }
+                            else {
+                                if (new Date(prevDate).toDateString() == new Date(date).toDateString()) {
+                                    stressRating = stressRating + stress.StressRating;
+                                    noOfRecords = noOfRecords + 1;
+                                }
+                                else {
+                                    prevDate = date;
+                                    stressRating = stress.StressRating;
+                                    noOfRecords = 1;
+                                }
+                                if (i == data.Records.stressManagementLogs.length - 1 || new Date(date).toDateString() != new Date(parseInt(data.Records.stressManagementLogs[i + 1].Date.substr(6))).toDateString())
+                                    triggerAdd = true;
+                                else
+                                    triggerAdd = false;
+                            }
+                            if (data.Records.stressManagementLogs.length == 1 || triggerAdd == true) {
+                                var warningText;
+                                averageRating = stressRating / noOfRecords;
+                                if (averageRating >= 3) {
+                                    warningText = "@Translate.Message("L2170")";
+                                }
+                                stressData.push({ "date": toSystemDateFormat(prevDate), "rating": averageRating, "warningText": warningText });
+                            }
+                        }
+                        $('#chart-results').show();
+                        $('#search-results').append(stressHtml);
+                        GenerateChart(stressData);
+                    }
+                    else
+                    {
+                        $('#search-results').append('<center>@Translate.Message("L2774")</center>');}
+                    }
+                    AddPager();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListStress();
+    }
+
+    function Update(id) {
+        $.ajax({
+            url: "@Url.Action("ReadStressManagement", "Journal")",
+            data: { id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    $('#streesLog_Id').val(data.Record.Id);
+                    var Stdate = new Date(parseInt(data.Record.Date.substr(6)));
+                    var stressDate = toLocalDateFormat(Stdate, "24hour");
+                    $("#streesLog_Date").val(stressDate);
+                    $("#streesLog_StressRating").val(data.Record.StressRating);
+                    $("#streesLog_TechniqueUsed").val(data.Record.TechniqueUsed);
+                    $("#streesLog_MinutesPerformed").val(data.Record.MinutesPerformed);
+                    $("#streesLog_Notes").val(data.Record.Notes);
+
+                    $('#add-stressmanagement').foundation('open');
+                    $("#streesLog_Date").trigger("change");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    function GenerateChart(data) {
+            am4core.addLicense("CH39169069");
+            // Create chart instance
+            var chart = am4core.create("chartdiv", am4charts.XYChart);
+            chart.dateFormatter.dateFormat = "@Model.DateFormat";
+
+            // Create daily series and related axes
+            var dateAxis1 = chart.xAxes.push(new am4charts.DateAxis());
+            dateAxis1.renderer.grid.template.location = 0;
+            dateAxis1.renderer.minGridDistance = 40;
+
+            var valueAxis1 = chart.yAxes.push(new am4charts.ValueAxis());
+            valueAxis1.title.text = "@Translate.Message("L1713")";
+
+            var series1 = chart.series.push(new am4charts.ColumnSeries());
+            series1.dataFields.valueY = "rating";
+            series1.dataFields.dateX = "date";
+            series1.data = data;
+            series1.xAxis = dateAxis1;
+            series1.yAxis = valueAxis1;
+            series1.tooltipHTML = "<div style='margin:10px; text-align:left;'><span>@Translate.Message("L561"):{dateX}</span><br><span>@Translate.Message("L2171"):{rating}</span><br><span>{warningText}</span>";
+
+            // Add cursor
+            chart.cursor = new am4charts.XYCursor();
+    }
+
+</script>

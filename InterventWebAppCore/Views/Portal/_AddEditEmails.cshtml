@@ -1,0 +1,16 @@
+﻿@model InterventWebApp.PortalModel
+        
+<form id="add-email-data-form" class="organization-modal-form create-profile-form" data-abide novalidate>
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <h2>Add/Remove Emails</h2>
+        </div>
+        <div class="cell medium-12">
+            @Html.DropDownListFor(m => m.emailType, Model.emails, new Dictionary<string, object> { { "id", "emailType" }, { "class", "override-select-email" }, { "multiple", "multiple" }, { "data-prompt", "Select" }, { "required", true } })
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x button-set new-button">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="button" type="submit" id="AddEmail">Save</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="button hollow" type="reset" id="closeEmail">Cancel</button></div>
+    </div>
+</form>

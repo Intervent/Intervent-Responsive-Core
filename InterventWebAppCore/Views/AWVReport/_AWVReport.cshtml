@@ -1,0 +1,29 @@
+﻿
+@model InterventWebApp.AWVModel
+@using InterventWebApp
+<!--ADMIN VIEW-->
+<div class="dashboard-content participant-log cell">
+    <div class="control-bar">        
+        <div class="grid-x grid-margin-x ">
+            <div class="small-12 medium-6 cell">
+                <h3>Annual Wellness Visit Report</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-x grid-margin-x ">
+        <div class="small-12 medium-12 cell">
+            @if (Model.AWV.Count > 0)
+            {
+                foreach (var awv in Model.AWV)
+                {
+                    <br />
+                    <div class="item-container">
+                        Annual Wellness Visit Completed On @CommonUtility.dateFormater(awv.AssessmentDate, false, Context.Session.GetString(SessionContext.DateFormat)) <span class="content"><a href='@Url.Action("ViewReport", "Reports", new { id = awv.Id})' target="_blank"><i class='fa fa-leanpub'></i></a></span>
+                    </div>
+                }
+
+            }
+        </div>
+    </div>
+</div>

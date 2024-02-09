@@ -1,0 +1,30 @@
+﻿@using InterventWebApp
+@model InterventWebApp.ActivateUserProgram
+<div class="grid-x grid-margin-x">
+    <h2>Do you want to reactivate this program?</h2>
+</div>
+<div class="grid-x grid-margin-x button-set">
+    <div class="columns medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="ActivateProgram">Yes</button></div>
+    <div class="columns medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeProgram">Cancel</button></div>
+</div>
+@Html.HiddenFor(m => m.UsersinProgramId)
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#closeProgram').on('click', function () {
+            $('#add-program').foundation('close');
+        });
+        $("#ActivateProgram").on('click', function () {
+            $.ajax({
+                url: "@Url.Action("ActivateUserinProgram", "Program")",
+                data: { UsersinProgramId: $("#UsersinProgramId").val() },               
+                type: 'POST',
+                success: function (data) {
+                    $('#add-program').foundation('close');
+                    GetUserProgramHistory();
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        })
+    });
+</script>

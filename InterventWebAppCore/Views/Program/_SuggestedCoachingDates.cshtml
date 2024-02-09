@@ -1,0 +1,17 @@
+﻿@using InterventWebApp
+@using System.Collections.Generic
+@model SuggestedCoachingDateModel
+
+<table class="table">
+    <tr><th class="orange">Call</th><th class="orange">Date</th></tr>
+    @foreach (var grp in Model.suggestedCoachingDates)
+    {
+        <tr>
+            <td>@grp.Key.ToString()</td>
+            <td>@CommonUtility.dateFormater(grp.Value, false, Model.dateFormat)</td>
+        </tr>
+    }
+</table>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>

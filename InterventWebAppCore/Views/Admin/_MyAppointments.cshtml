@@ -1,0 +1,188 @@
+﻿@model InterventWebApp.AppointmentsListModel
+
+<div class="section-cards-container" data-equalizer data-equalize-on="medium" data-equalize-by-row="true">
+    <div class="grid-x grid-margin-x">
+        @if (Model.Appointments != null)
+        {
+            if (Model.Appointments.Where(x => Convert.ToDateTime(x.UTCDate) > DateTime.UtcNow && x.Active).Count() > 0)
+            {
+                <div class="cell">
+                    <div class="appt-seperator">
+                        <span>Upcoming</span>
+                    </div>
+                </div>
+                foreach (var apt in Model.Appointments.OrderBy(x => x.UTCDate).Where(x => Convert.ToDateTime(x.UTCDate) > DateTime.UtcNow && x.Active).ToList())
+                {
+                    <div class="cell large-6">
+                        <div class="admin-cards meet-notification-card">
+                            <!-- <div class="card-main-info"> -->
+                            <span class="meet-notification">In 20 mins</span>
+                            <div class="card-header">
+                                <div class="profile-detail" data-equalizer-watch>
+                                    <div class="profile-img">
+                                        <img src="@apt.ParticipantPic" alt="" />
+                                    </div>
+                                    <div class="profile-content">
+                                        <p><strong>@apt.UserName</strong></p>
+                                        <p>@apt.UserProgram</p>
+                                    </div>
+                                </div>
+                                <div class="card-option">
+                                    <i data-toggle="appt-action-@apt.Id" class="fa fa-ellipsis-v"></i>
+                                    <div class="dropdown-pane" id="appt-action-@apt.Id" data-close-on-click="true" data-dropdown data-auto-focus="true">
+                                        <ul>
+                                            <li><a data-open='cancel-appointment' data-modal-path='/Scheduler/CancelAppointment?appid=@apt.Id'>Cancel</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- card header ends -->
+                            <div class="card-body">
+                                <div class="status-tags">
+                                    <span class="status-tag">@apt.AppointmentType.Type</span>
+                                </div>
+                                <div class="details-section-wrapper">
+                                    <div class="detail-section">
+                                        <p class="section-title">Scheduled from</p>
+                                        <p>@apt.StartTime</p>
+                                    </div>
+                                    <div class="detail-section">
+                                        <p class="section-title">Duration</p>
+                                        <p>@apt.Minutes Minute</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- card body ends -->
+                            <div class="card-footer">
+                                <a onclick="ViewParticipant(@apt.UserId)" class="anchor-blue">View Profile</a>
+                                <a onclick="ViewParticipant(@apt.UserId)" class="anchor-blue">Reschedule</a>
+                            </div>
+                            <!-- card footer ends -->
+                        </div>
+                        <!-- Admin card ends -->
+                    </div>
+                }
+            }
+    
+            if (Model.Appointments.Where(x => !x.Active).Count() > 0)
+        {
+            <div class="cell">
+                <div class="appt-seperator">
+                    <span>Missed</span>
+                </div>
+            </div>
+
+            foreach (var apt in Model.Appointments.OrderBy(x => x.UTCDate).Where(x => !x.Active).ToList())
+            {
+                <div class="cell large-6">
+                    <div class="admin-cards">
+                        <!-- <div class="card-main-info"> -->
+                        <div class="card-header">
+                            <div class="profile-detail" data-equalizer-watch>
+                                <div class="profile-img">
+                                    <img src="@apt.ParticipantPic" alt="" />
+                                </div>
+                                <div class="profile-content">
+                                    <p><strong>@apt.UserName</strong></p>
+                                    <p>@apt.UserProgram</p>
+                                </div>
+                            </div>
+                            <div class="card-option">
+                                <i data-toggle="appt-action-@apt.Id" class="fa fa-ellipsis-v"></i>
+                                <div class="dropdown-pane" id="appt-action-@apt.Id" data-close-on-click="true" data-dropdown data-auto-focus="true">
+                                    <ul>
+                                        <li><a onclick='RevertNoShow("@apt.Id")'>Revert</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- card header ends -->
+                        <div class="card-body">
+                            <div class="status-tags">
+                                <span class="status-tag">@apt.AppointmentType.Type</span>
+                            </div>
+                            <div class="details-section-wrapper">
+                                <div class="detail-section">
+                                    <p class="section-title">Scheduled from</p>
+                                    <p>@apt.StartTime</p>
+                                </div>
+                                <div class="detail-section">
+                                    <p class="section-title">Duration</p>
+                                    <p>@apt.Minutes Minutes</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a onclick="ViewParticipant(@apt.UserId)" class="anchor-blue">View Profile</a>
+                        </div>
+                        <!-- card footer ends -->
+                    </div>
+                    <!-- Admin card ends -->
+                </div>
+            }
+        }
+    
+            if (Model.Appointments.Where(x => Convert.ToDateTime(x.UTCDate) < DateTime.UtcNow && x.Active).Count() > 0)
+        {
+            <div class="cell">
+                <div class="appt-seperator">
+                    <span>Completed</span>
+                </div>
+            </div>
+
+            foreach (var apt in Model.Appointments.OrderBy(x => x.UTCDate).Where(x => Convert.ToDateTime(x.UTCDate) < DateTime.UtcNow && x.Active).ToList())
+            {
+                <div class="cell large-6">
+                    <div class="admin-cards">
+                        <!-- <div class="card-main-info"> -->
+                        <div class="card-header">
+                            <div class="profile-detail" data-equalizer-watch>
+                                <div class="profile-img">
+                                    <img src="@apt.ParticipantPic" alt="" />
+                                </div>
+                                <div class="profile-content">
+                                    <p><strong>@apt.UserName</strong></p>
+                                    <p>@apt.UserProgram</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- card header ends -->
+                        <div class="card-body">
+                            <div class="status-tags">
+                                <span class="status-tag">@apt.AppointmentType.Type</span>
+                            </div>
+                            <div class="details-section-wrapper">
+                                <div class="detail-section">
+                                    <p class="section-title">Scheduled from</p>
+                                    <p>@apt.StartTime</p>
+                                </div>
+                                <div class="detail-section">
+                                    <p class="section-title">Duration</p>
+                                    <p>@apt.Minutes Minutes</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a onclick="ViewParticipant(@apt.UserId)" class="anchor-blue">View Profile</a>
+                        </div>
+                        <!-- card footer ends -->
+                    </div>
+                    <!-- Admin card ends -->
+                </div>
+            }
+        }
+        }
+        else
+        {
+            <div class="cell">
+    			<div class="flex-container align-center-middle empty-appointment-container">
+    				<div class="text-center">
+    					<img src="~/Images/admin/empty-appointments.png" alt="" />
+    					<p>You have no scheduled appointments on <span>@Model.Date.ToString("dd MMMM yyyy")</span></p>
+    					<a href="@Url.Action("ParticipantAdvancedSearch", "Participant")" class="button">Schedule an Appointment</a>
+    				</div>
+    			</div>
+            </div>
+        }
+    </div>
+</div>

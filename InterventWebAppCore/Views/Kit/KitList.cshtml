@@ -1,0 +1,278 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+@{
+    ViewBag.Title = "KitList";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<!--ADMIN VIEW-->
+<section class="main search-participants admin-main-body">
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="cell">
+				<div class="main-content-wrapper">
+					<div class="grid-x grid-margin-x">
+						<div class="cell">
+							<div class="primary-section-top">
+								<div class="grid-x grid-margin-x">
+									<div class="cell medium-6">
+										<h2>Kits</h2>
+									</div>
+									<div class="cell medium-6 text-right button-group-spaced">
+										<button id="add-kit-button" data-open="add-kit-data" class="button"><i class="fa fa-plus"></i>Add</button>
+										<button id="add-kitlang-button" data-open="add-kitlang-data" class="secondary-color small"><i class="fa fa-plus"></i>Add language file</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="cell">
+							<div class="search-results" id="kits-container">
+								<div class="search-results main-results-table-container kit-list-table" id="kits">
+								</div>
+							</div>
+						</div>
+
+						<div class="cell">
+							<!-- pagination Start -->
+							<div class="pagination-area main-results-table-container hide" id="pagination-centered">
+								<ul>
+									<li id="numeric"></li>
+								</ul>
+								<!-- page-link Start -->
+								<div class="page-link">
+									<label>@Translate.Message("L4041")</label>
+									<div class="grid-x">
+										<input type="text" id="jumptoPageNo">
+										<button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+									</div>
+								</div>
+								<!-- page-link End -->
+							</div>
+							<!-- pagination End -->
+						</div>
+					</div>
+                </div>
+            </div>
+
+		</div>
+	</div>
+</section>
+
+<div id="add-kit-data" class="add-kit-data reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+	<div class="grid-container">
+		<div class="grid-x">
+			<div class="cell">
+				<form id="add-kit-data" data-abide novalidate class="form-component">
+					<div class="grid-x">
+						<div class="cell">
+							<label for="name">
+								Name
+								<input type="text" id="name" aria-errormessage="nameError" required />
+								<small class="form-error" id="nameError">Required</small>
+							</label>
+						</div>
+						<div class="cell">
+							<label for="description">
+								Description
+								<input type="text" id="description" aria-errormessage="descriptionError" required />
+								<small class="form-error" id="descriptionError">Required</small>
+							</label>
+						</div>
+						<div class="cell">
+							<label for="topic">
+								Topic
+								<select id="topic" aria-errormessage="topicError" required></select>
+								<small class="form-error" id="topicError">Required</small>
+							</label>
+						</div>
+					</div>
+					<div class="grid-x button-set">
+						<div class="cell medium-6 medium-text-left"><button class="small" type="submit" id="addKit">Save</button></div>
+						<div class="cell medium-6 medium-text-right"><button class="small secondary" type="reset" id="closeKit">Cancel</button></div>
+
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="add-kitlang-data" class="add-kitlang-data reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+	<div class="grid-container">
+		<div class="grid-x">
+			<div class="cell">
+				<form id="add-kitlang-data" data-abide novalidate class="form-component">
+					<div class="grid-x grid-margin-x">
+						<div class="cell">
+							<div class="collapse">
+								<h4>Please pick the right language and the file.</h4>
+								<label for="language">
+									Language
+									@Html.DropDownList("language", ViewData["languageList"] as IEnumerable<SelectListItem>)
+								</label>
+							</div>
+							<div class="file-upload file-upload-new button secondary small">
+								<span>Translate Kit</span>
+								<input type="file" id="kitUpload" class="upload" name="files" onchange="KitUpload();" />
+							</div>
+						</div>
+					</div>
+					<div id="result" hidden>
+						<div class="grid-x grid-margin-x">
+							<div class="small-12 cell">
+								<div class="panel filters">
+									<div class="grid-x grid-margin-x">
+										<span id="kitrows"></span>
+									</div>
+									<div class="grid-x grid-margin-x">
+										<span id="kiterrors"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    //Activate the detailed info
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+    $(document).ready(function () {
+        ListKits();
+        $('#closeKit').on('click', function () {
+            $('#add-kit-data').foundation('close');
+        });
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetKitTopics", "Kit")",
+            success: function (progData) {
+                $("#topic").append("<option value=''>--Select--</option>");
+                for (i = 0; i < progData.Options.length; i++) {
+                    $("#topic").append("<option value=" + progData.Options[i].Id + ">" + progData.Options[i].Name + "</option>");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListKits();
+    }
+
+    function KitUpload() {
+        if (confirm("Are you sure you want to upload this file?")) {
+            var lang;
+            lang = $("#language").val();
+            if (lang == "@Intervent.Web.DTO.ListOptions.DefaultLanguage") {
+                alert("Default Language")
+            }
+            var formData = new FormData();
+            var file = document.getElementById("kitUpload").files[0];
+            formData.append("language", lang);
+            if (!file) {
+                return false;
+            }
+            formData.append("FileUpload", file);
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("UploadKitFile", "Kit")',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $('#result').show();
+                    document.getElementById('kitrows').innerHTML = '';
+                    document.getElementById('kiterrors').innerHTML = '';
+                    if (response.Count > 0) {
+                        document.getElementById('kitrows').innerHTML = response.Count + " row(s) were inserted successfully.";
+                    }
+                    if (response.Error.length > 0) {
+                        document.getElementById('kiterrors').innerHTML = response.Error;
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+    }
+
+    function ListKits() {
+        $.ajax({
+            url: "@Url.Action("ListEduKits", "Kit")",
+            data: { page: currentPage, pageSize: pageSize, totalRecords: totalRecords },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    totalRecords = data.TotalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    var kitsHtml = [];
+					kitsHtml.push("<table class='table basic-table1'><thead><tr><th><span>Name</span></th><th><span>Topic</span></th><th><span></span></th></tr></thead>");
+                    for (var i = 0; i < data.Records.length; i++) {
+                        var kit = data.Records[i];
+                        kitsHtml.push("<tr><td>" + kit.Name + "</td><td>" + kit.KitTopic.Name + "</td>" +
+                            "<td><a class='anchor-blue' href='../Kit/KitDetails/" + kit.Id + "'><i class='fa fa-pencil fa-fw'></i></a></tr>");
+                    }
+                    kitsHtml.push("</table>");
+                    $('#kits').html(kitsHtml.join(''));
+                    AddPager();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    $("#add-kit-data").foundation();
+        $('#add-kit-data').on('formvalid.zf.abide', function () {
+            var name = $("#name").val();
+            var description = $("#description").val();
+            var topic = $("#topic").val();
+            var formSubmit = false;
+            if (!formSubmit) {
+                $.ajax({
+                url: "@Url.Action("AddKit", "Kit")",
+                data: { name: name, description: description, topic: topic },
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    startIndex = 0;
+                    pageSize = 15;
+                    totalRecords = 0;
+                    currentPage = 0;
+                    totalPages = 0;
+                    formSubmit = true;
+                    ListKits();
+                    $('#add-kit-data').foundation('close');
+                    $("#add-kit-data").find('input:text, input:password, input:file, select, textarea').val('');
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            }
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        });
+</script>

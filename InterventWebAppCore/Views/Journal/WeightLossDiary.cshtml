@@ -1,0 +1,180 @@
+﻿<!--USER VIEW-->
+@model InterventWebApp.WeightLossDiaryModel
+@using InterventWebApp
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<section class="main search-participants">
+
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="small-7 cell">
+                    <h2>@Translate.Message("L556") </h2>
+                </div>
+                @if (Model.HasActivePortal)
+                {
+                    <div class="small-5 cell text-right">
+                        <button id="add-stress-button" data-open="add-weight-loss" data-modal-path="@Html.Raw(Url.Action("AddtoWeightLoss", "Journal"))" class="button plus-btn right">@Translate.Message("L291")</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div id="search-results"></div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <!-- pagination Start -->
+                <div class="pagination-area hide" id="pagination-centered">
+                    <ul>
+                        <li id="numeric"></li>
+                    </ul>
+                    <!-- page-link Start -->
+                    <div class="page-link">
+                        <label>@Translate.Message("L4041")</label>
+                        <div class="grid-x">
+                            <input type="text" id="jumptoPageNo">
+                            <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                        </div>
+                    </div>
+                    <!-- page-link End -->
+                </div>
+                <!-- pagination End -->
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell">
+                <div class="panel" id="chart-results" hidden>
+                    <div id="chartdiv" style="width:100%;height:500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="add-weight-loss" class="reveal large" data-reveal>
+</div>
+
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $(document).ready(function () {
+        ListWeightLossDiary();
+    });
+
+    function ListWeightLossDiary() {
+        $('#search-results').html("");
+        var paginationdata = {
+            'page': currentPage,
+            'pageSize': pageSize,
+            'totalRecords': totalRecords
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+        var act = "@Html.Raw(@Url.Action("AddtoWeightLoss", "Journal"))";
+        $.ajax({
+            url: "@Url.Action("ListWeightLossDiary", "Journal")",
+            data: strData,
+            type: 'POST',
+            contentType: 'application/json, charset=utf-8',
+            dataType: "json",
+            success: function (data) {
+                totalRecords = data.Records.totalRecords;
+                totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                if (data != null && data.Records != null && data.Records.weightLossLists != null && data.Records.weightLossLists.length > 0) {
+                    var weightLossData = [], firstDate, lastDate;
+                    var html = "<table class='table'>";
+                    html += "<tr><th class='green'>@Translate.Message("L561")</th><th class='green'>@Translate.Message("L2178")</th><th class='green'>@Model.WeightText</th><th class='green'></th></tr>"
+                    for (var i = 0; i < data.Records.weightLossList.length; i++) {
+                        var item = data.Records.weightLossList[i];
+                        item.Weight = item.Weight == null ? 0 : item.Weight;
+                        var date = new Date(parseInt(item.Date.substr(6)));
+                        html += "<tr><td>" + toLocalDateFormat(item.DateString) + "</td><td>" + item.DayNo + "</td><td>" + item.Weight + "</td>";
+                        if ('@Model.HasActivePortal.ToString()' == "True") {
+                            html += "<td><a data-open='add-weight-loss' data-modal-path='" + act + "/" + item.Id + "' aria-controls='add-weight-loss' aria-haspopup='true' tabindex='0'><i class='fa fa-pencil fa-fw'></i></a></td>";
+                        }
+                        html += "</tr></div></div>";
+                    }
+                    for (var i = 0; i < data.Records.weightLossLists.length; i++) {
+                        var item = data.Records.weightLossLists[i];
+                        item.Weight = item.Weight == null ? 0 : item.Weight;
+                        var date = toSystemDateFormat(new Date(parseInt(item.Date.substr(6))));
+                        weightLossData.push({ "date": date, "value": item.Weight });
+
+                    }
+                    html += "</table>";
+                    $('#chart-results').show();
+                    $('#search-results').append(html);
+                    GenerateChart(weightLossData);
+					$(document).foundation();
+                }
+                else {
+                    $('#search-results').append('<center>@Translate.Message("L2774")</center>');
+                }
+                AddPager();
+				$("[data-open]").on('click', function(e){
+					showmodal($(this), e)
+				});
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListWeightLossDiary();
+    }
+
+    function GenerateChart(data) {
+        am4core.addLicense("CH39169069");
+        var chart = am4core.create("chartdiv", am4charts.XYChart);
+        chart.dateFormatter.dateFormat = "@Model.DateFormat";
+
+        // Create daily series and related axes
+        var dateAxis1 = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis1.renderer.grid.template.location = 0;
+        dateAxis1.renderer.minGridDistance = 40;
+
+        var valueAxis1 = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis1.title.text = "@Translate.Message("L275")";
+
+        var series2 = chart.series.push(new am4charts.LineSeries());
+        series2.dataFields.valueY = "value";
+        series2.dataFields.dateX = "date";
+        series2.data = data;
+        series2.xAxis = dateAxis1;
+        series2.yAxis = valueAxis1;
+        series2.stroke = am4core.color("#FFFF00");
+        series2.strokeWidth = 1;
+        series2.tensionX = 0.8;
+        series2.tooltipHTML = "@Translate.Message("L561") : {dateX} <br> @Translate.Message("L275"): {value}";
+
+        var durationBullet = series2.bullets.push(new am4charts.Bullet());
+        var durationRectangle = durationBullet.createChild(am4core.Rectangle);
+        durationBullet.horizontalCenter = "middle";
+        durationBullet.verticalCenter = "middle";
+        durationBullet.width = 7;
+        durationBullet.height = 7;
+        durationRectangle.width = 7;
+        durationRectangle.height = 7;
+
+        // Add cursor
+        chart.cursor = new am4charts.XYCursor();
+    }
+</script>

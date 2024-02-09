@@ -1,0 +1,164 @@
+﻿@using InterventWebApp
+@{
+    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <h3 align="center">INTERVENT Help</h3>
+        <h4>Technical Compatibility</h4>
+        <p style="color:green;">
+            Which internet browsers are compatible with myintervent.com?
+        </p>
+        <p>
+            Compatible browsers include Internet Explorer 11 and the latest versions of Firefox, Chrome and Safari.
+        </p>
+        <p style="color:green;">
+            Can I use myintervent.com on my smartphone?
+        </p>
+        <p>
+            Yes, myintervent.com can be viewed on a smartphone. It is a mobile responsive system.
+        </p>
+        <p style="color:green;">
+            Will myintervent.com log me out of my session automatically?
+        </p>
+        <p>
+            Yes, myintervent.com will log you out after 10 minutes of inactivity. If this occurs, you will be required to login again for security reasons.
+        </p>
+        <h4>Health Assessment (HRA)</h4>
+        <p style="color:green;">
+            How do I begin my health assessment (HRA)?
+        </p>
+        <p>
+            Please create an account on our website by entering the required information accurately. Then, click 'Sign Up'. Remember to provide a valid email address. Don’t forget your password and keep it somewhere safe so you can return to our site
+        </p>
+        <p style="color:green;">
+            How do I complete the health assessment (HRA) for my spouse (who is not a Compass associate)?
+        </p>
+        <p>
+            Please ask your spouse to create a separate account with a separate email address. When creating the account, your spouse will be required to enter all of his/her information: first name, last name, date of birth, personnel type: spouse.  Then he/she will need your personnel ID number that is 8 digits and begins with a ‘0’ or ‘00. The personnel ID number will belong to the primary member of the medical plan.
+        </p>
+        <p>
+            If you are the spouse of an associate, please watch: <i class="fa fa-play-circle" href="#" onclick="$('#startingHRA').foundation('open'); return false;"></i>
+        </p>
+        <p style="color:green;">
+            How do I sign up for a coaching program?
+        </p>
+        <p>
+            Create an account and complete a health assessment (HRA). You will be able to sign up for a telephone session with a personal coach once you’ve completed your health assessment (HRA).
+        </p>
+        <h4>Your Account</h4>
+        <p style="color:green;">
+            How do I create an account?
+        </p>
+        <p>
+            Please complete the ‘Create Account’ form.
+            <ul>
+                <li>Enter your first name, last name, date of birth, personnel type and personnel number. Please provide a unique, valid email address.</li>
+                <li>Spouses may not use the same email address.</li>
+                <li>Create a password that is a minimum of 8 characters, including at least one upper case letter and one number.</li>
+            </ul>
+            <i href="#" class="fa fa-play-circle" onclick="$('#createAccount').foundation('open'); return false;"></i>
+        </p>
+        <h4>Personnel ID Number</h4>
+        <p style="color:green;">
+            Where do I find my personnel ID number?
+        </p>
+        <p>
+            If you are the associate, you can find your personnel ID number on your pay stub. The personnel ID number is 8 digits and begins with '0' or '00'. If you do not have a pay stub handy, please consult your employer to retrieve this information.
+        </p>
+        <p style="color:green;">
+            My spouse and I are both associates. Whose personnel ID number do we use to complete the health assessment (HRA)?
+        </p>
+        <p>
+            Please enter the ID of the primary member of the medical plan.
+        </p>
+        <i href="#" class="fa fa-play-circle" onclick="$('#shareMedicalPlan').foundation('open'); return false;"></i>
+        <h4>Spouse Account</h4>
+        <p style="color:green;">
+            Can my spouse use my email and password?
+        </p>
+        <p>
+            No, each person must have a separate account associated with a unique, valid email address. If you login using your email and password, you will only have access to your own account, your HRA, and your coaching program. Your spouse will need to create a separate account using a separate email address.
+        </p>
+        <i href="#" class="fa fa-play-circle" onclick="$('#creatingEmail').foundation('open'); return false;"></i>
+        <h4>Log In Issues</h4>
+        <p style="color:green;">
+            Why isn’t my password from last year working?
+        </p>
+        <p>
+            We’ve updated our website for the 2016-17 program year. Please create a new account and complete your health assessment (HRA) in order to receive your $3 weekly wellness reward.
+        </p>
+        <p style="color:green;">
+            How do I reset my password?
+        </p>
+        <p>
+            Please click ‘Login’ on the top right of the website. Then click ‘Forgot Password.’  Enter the email address you originally used to create your account. You will receive an email from us with the subject: Forgot Password. Open the email and click the 'reset password' button.
+        </p>
+        <i href="#" class="fa fa-play-circle" onclick="$('#resetPassword').foundation('open'); return false;"></i>
+        <p style="color:green;">
+            Which email do I use to log in?
+        </p>
+        <p>
+            Please enter the email you used to create an account with us for 2016-17. If you do not remember which email you used to create the account, please call us for further assistance.
+        </p>
+        <p style="color:green;">
+            Request:  I need to enroll in benefits/insurance/medical plan
+        </p>
+        @if (1 == 1)
+        {
+            <p>Please visit <a href="http://www.altogethergreat.com/rewards/enrollment-center/">http://www.altogethergreat.com/rewards/enrollment-center/ </a>or call 1-877-311-4747 to enroll in benefits for 2017.</p>
+
+        }
+        else
+        {
+            <p>Please visit <a href="http://crothall.com/benefits/benefits-enrollment/">http://crothall.com/benefits/benefits-enrollment/ </a>or call 1-877-311-4747 to enroll in benefits for 2017.</p>
+        }
+
+    </div>
+</div>
+
+
+<div id="startingHRA" class="reveal small" data-reveal data-close-on-click="true">
+    <video width="100%" height="100%" controls>
+        <source src="../Videos/FAQ 4 - Starting HRA as a Spouse-20170116.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div id="createAccount" class="reveal small" data-reveal data-close-on-click="true">
+    <video width="100%" height="100%" controls>
+        <source src="../Videos/FAQ 1 - Creating Your Account-20170116.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div id="shareMedicalPlan" class="reveal small" data-reveal data-close-on-click="true">
+    <video width="100%" height="100%" controls>
+        <source src="../Videos/FAQ 5 - Two Associates That Share a Medical Plan-20170116.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div id="creatingEmail" class="reveal small" data-reveal data-close-on-click="true">
+    <video width="100%" height="100%" controls>
+        <source src="../Videos/FAQ 2 - Creating an Email Account-20170116" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <a class="close-reveal">&#215;</a>
+</div>
+<div id="resetPassword" class="reveal small" data-reveal data-close-on-click="true">
+    <video width="100%" height="100%" controls>
+        <source src="../Videos/FAQ 3 - Resetting Your Password-20170116" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+
+</div>

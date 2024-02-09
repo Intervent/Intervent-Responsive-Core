@@ -1,0 +1,119 @@
+﻿@model InterventWebApp.JournalModel
+
+<!--USER VIEW-->
+@using InterventWebApp
+<section class="main recommendations">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="grid-x grid-margin-x grid-padding-y cards">
+                    @if (Model.FoodDiaryAccess > 0)
+                    {
+                        <div class="small-12 medium-6 large-4 cell">
+                            <a href="@Html.Raw(Url.Action("FoodDiary", "Journal"))">
+                                <div class="recommendation-item green">
+                                    <div class="slider">&nbsp;</div>
+                                    <div><i class="fa fa-cutlery"></i></div>
+                                    <div class="title">@Translate.Message("L1705")</div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    @if (Model.ExerciseDiaryAccess > 0)
+                    {
+                        <div class="small-12 medium-6 large-4 cell">
+                            <a href="@Html.Raw(Url.Action("ExerciseDiary", "Journal"))">
+                                <div class="recommendation-item purple">
+                                    <div class="slider">&nbsp;</div>
+                                    <div><i class="fa fa-bicycle"></i></div>
+                                    <div class="title">@Translate.Message("L1706")</div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    @if (Model.TobaccoLogAccess > 0)
+                    {
+                        <div class="small-12 medium-6 large-4 cell">
+                            <a href="@Html.Raw(Url.Action("TobaccoLog", "Journal"))">
+                                <div class="recommendation-item pink">
+                                    <div class="slider">&nbsp;</div>
+                                    <div><i class="fa fa-scissors"></i></div>
+                                    <div class="title">@Translate.Message("L2135")</div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    @if (Model.StrengthTrainingLogAccess > 0)
+                    {
+                        <div class="small-12 medium-6 large-4 cell">
+                            <a href="@Html.Raw(Url.Action("StrengthTrainingLog", "Journal"))">
+                                <div class="recommendation-item orange">
+                                    <div class="slider">&nbsp;</div>
+                                    <div><i class="fa fa-tag"></i></div>
+                                    <div class="title">@Translate.Message("L2455")</div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    @if (Model.BoosterJournalAccess > 0)
+                    {
+                        <div class="small-12 medium-6 large-4 cell">
+                            <a href="@Html.Raw(Url.Action("WeightLossDiary", "Journal"))">
+                                <div class="recommendation-item orange">
+                                    <div class="slider">&nbsp;</div>
+                                    <div><i class="fa fa-cutlery"></i></div>
+                                    <div class="title">@Translate.Message("L556")</div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    @if (Model.sleepLogAcess > 0)
+                    {
+                        <div class="small-12 medium-6 large-4 cell">
+                            <a href="@Html.Raw(Url.Action("SleepLog", "Journal"))">
+                                <div class="recommendation-item orange">
+                                    <div class="slider">&nbsp;</div>
+                                    <div><i class="fa fa fa-bed"></i></div>
+                                    <div class="title">@Translate.Message("L2136")</div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    @if (Model.StressLogAccess > 0)
+                    {
+                        <div class="small-12 medium-6 large-4 cell">
+                            <a href="@Html.Raw(Url.Action("StressDiary", "Journal"))">
+                                <div class="recommendation-item pink">
+                                    <div class="slider">&nbsp;</div>
+                                    <div><i class="fa fa-leaf"></i></div>
+                                    <div class="title">@Translate.Message("L557")</div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    @if (Model.StressManagementLogAccess > 0)
+                    {
+                        <div class="small-12 medium-6 large-4 cell">
+                            <a href="@Html.Raw(Url.Action("StressManagementLog", "Journal"))">
+                                <div class="recommendation-item pink">
+                                    <div class="slider">&nbsp;</div>
+                                    <div><i class="fa fa-street-view"></i></div>
+                                    <div class="title">@Translate.Message("L2137")</div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    <div class="small-12 medium-6 large-4 cell">
+                        <a href="@Html.Raw(Url.Action("DailyVitalsLog", "Journal"))">
+                            <div class="recommendation-item pink">
+                                <div class="slider">&nbsp;</div>
+                                <div><i class="fa fa-heartbeat" aria-hidden="true"></i></div>
+                                <div class="title">@Translate.Message("L2830")</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

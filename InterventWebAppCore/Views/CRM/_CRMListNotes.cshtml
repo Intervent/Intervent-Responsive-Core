@@ -1,0 +1,138 @@
+﻿@model InterventWebApp.CRMProfileModel
+@using InterventWebApp
+
+<div id="new-record" class="grid-x grid-margin-x">
+    @{ Html.RenderPartial("_CRMProfileDetails", Model); }
+    <div class="cell large-8">
+        <div class="crm-form-title align-justify align-middle flex-container crm-details-container">
+            <h2>Record Details</h2>
+            <a href="" id="close-record-details">Close</a>
+        </div>
+    <div class="create-profile-form">
+        <div class="record-detail-top">
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6 record-details-filter-left">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search" id="noteSearchField">
+                        <button onclick="RefreshListNotes(@Model.CRM_Contact.Id, 0);" id="noteSearchbtn" type="button" class="search-btn"><img src="~/Images/icon-search.png" alt=""></button>
+                    </div>
+                    <div class="align-middle flex-container record-detail-switch-filter">
+                        <div class="switch switch-primary">
+                            <input onclick="RefreshListNotes(@Model.CRM_Contact.Id, 0);" class="switch-input" id="IsComplaintsNoteList" type="checkbox" name="IsComplaintsNoteList">
+                            <label class="switch-paddle" for="IsComplaintsNoteList">
+                                <span class="show-for-sr">See only complaints</span>
+                            </label>
+                        </div>
+                        <label>See only complaints</label>
+                    </div>
+                </div>
+
+                <div class="cell medium-6 text-right record-details-filter-right">
+                    <button type="button" class="button plus-btn" id="add-new-record" onclick="AddEditNotes(@Model.CRM_Contact.Id, null)">New Record</button>
+
+                    <div class="align-middle flex-container align-right record-detail-switch-filter">
+                        <div class="switch switch-primary">
+                            <input onclick="RefreshListNotes(@Model.CRM_Contact.Id, 0);" class="switch-input" id="IsRequiresRMA" type="checkbox" name="IsRequiresRMA">
+                            <label class="switch-paddle" for="IsRequiresRMA">
+                                <span class="show-for-sr">Requires RMA</span>
+                            </label>
+                        </div>
+                        <label>Requires RMA</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @{ Html.RenderPartial("_CRMNotesDetails"); }
+    </div>
+    </div>
+    <div id="change-log-modal" class="reveal large change-log-modal" data-reveal>
+        <h2>Change Log</h2>
+
+        <div class="log-container">
+            <div class="log-title">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p>
+                                    <span>Profile Name</span>
+                                    <strong id="profileName"></strong>
+                                </p>
+                            </td>
+                            <td>
+                                <p>
+                                    <span>Type</span>
+                                    <strong id="noteType"></strong>
+                                    <div id="dispositionsType"></div>
+                                </p>
+                            </td>
+                            <td>
+                                <p>
+                                    <span>Agent</span>
+                                    <strong id="noteName"></strong>
+                                </p>
+                            </td>
+                            <td>
+                                <p>
+                                    <span>Date Created</span>
+                                    <strong id="dateText"></strong>
+                                    <span id="timeText"></span>
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="change-log-table" class="log-table">
+
+            </div>
+        </div>
+
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        $('#IsComplaintsNoteList').prop('checked', noteComplaintSwitch);
+        $('#IsRequiresRMA').prop('checked', noteRequiresRMA);
+        $('#noteSearchField').val(noteSearch);
+        $('#newContactId').val(@Model.CRM_Contact.Id);
+
+        $("#records-list").foundation();
+        $("#change-log-modal").foundation();
+        $("#profile-change-log-modal").foundation();
+    });
+
+    $("#close-record-details").on('click', function (e) {
+        e.preventDefault();
+        currentPage = currentPage - 1;
+        SearchRecord();
+        $('#newContactId').val("");
+        $(".search-records-container, .records-list-container, .add-new-records-container").toggleClass("hide");
+    });
+
+    function ViewChangeLog(noteId, type, name, dateText, timeText) {
+        $("#noteType").html(type);
+        $("#noteName").html(name);
+        $("#profileName").html('@Model.CRM_Contact.FirstName' + " " + '@Model.CRM_Contact.LastName');
+        $("#dateText").html(dateText);
+        $("#timeText").html(timeText);
+        var isContactLog = false;
+        $.ajax({
+            data: { refId : noteId, isContactLog: isContactLog },
+            dataType: "json",
+            type: 'POST',
+            url: '@Url.Action("GetChangeLog", "CRM")',
+            success: function (data) {
+                var logHtml = ProcessLogData(data.changeLog);
+                $("#change-log-table").html(logHtml);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+</script>

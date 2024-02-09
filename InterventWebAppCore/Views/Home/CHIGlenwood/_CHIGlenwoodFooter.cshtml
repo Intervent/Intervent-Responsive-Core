@@ -1,0 +1,113 @@
+﻿@using InterventWebApp
+<section class="parallax-wrapper">
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x"> 
+                 <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="@Url.Content("~/Images/HeartApple.svg")" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>Welcome to INTERVENT – a partner with CHI Memorial</h2>
+                    <p>Take the first step to optimize your health by creating your account, signing up and completing your health assessment. Then, log in to access your personal reports and program. You’ll receive a wealth of valuable resources brought to you by your health care team at CHI Memorial and INTERVENT. For technical assistance, call 1-855-494-1093.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x"> 
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="@Url.Content("~/Images/wellness-score.svg")" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L444")</h2>
+                    <p>@Translate.Message("L2076")</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x"> 
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img class="smaller" src="@Url.Content("~/Images/wellness_report.svg")" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L446")</h2>
+                    <p>@Translate.Message("L2077")</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature ">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x"> 
+                <div class="feature-icon cell medium-5 text-center">
+                    <img class="smaller" src="@Url.Content("~/Images/goals.svg")" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L451")</h2>
+                    <p>
+                        @Translate.Message("L2075")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x"> 
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img class="smaller" src="@Url.Content("~/Images/engage-coach.svg")" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L2047")</h2>
+                    <p>
+                        @Translate.Message("L2078")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x"> 
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="@Url.Content("~/Images/HandsHeartpinkblue.svg")" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L2049")</h2>
+                    <p>
+                        @Html.Raw(string.Format(Translate.Message("L2079"), "<a style='color:deepskyblue' href='~/Home/CHIGlenwoodInfo#hearchhospital'>resources</a>"))
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x"> 
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img class="smaller" src="@Url.Content("~/Images/on-the-go.svg")" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L459")</h2>
+                    <p>@Translate.Message("L2080")</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature final">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x"> 
+                <div class="cell text-center">
+                    <img src="@Url.Content("~/Images/collage-horizontal.svg")" alt="" />
+                    <h2>@Translate.Message("L1346")</h2>
+                    <button class="pink" onclick="$('#sign-up-modal').foundation('open'); return false;">
+                        @Translate.Message("L443")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>

@@ -1,0 +1,215 @@
+﻿@model InterventWebApp.AdvancedSearchModel
+@using InterventWebApp
+@using System
+
+<ul class="custom-table">
+
+    <li class="grid-x">
+        <div class="cell small-6 medium-2 col-profile" id="col-profile">Profile</div>
+        <div class="cell small-1 hide-for-small-only col-prog" id="col-prog">Program</div>
+        <div class="cell small-2 hide-for-small-only col-org" id="col-org">Organization</div>
+        <div class="cell small-2 hide-for-small-only col-stats" id="col-stats">
+            Recent stats
+        </div>
+        <div class="cell small-1 hide-for-small-only col-hra" id="col-hra">HRA Status</div>
+        <div class="cell small-6 medium-4 col-contact" id="col-contact">
+            Contact requirement
+        </div>
+    </li>
+    @if (Model.TotalRecords > 0)
+    {
+        foreach (var user in Model.Result)
+        {
+            <li class="grid-x">
+                <div class="cell small-6 medium-2 col-profile">
+                    <p class="profile-name">
+                        <img src="@(!string.IsNullOrEmpty(user.ProfilePicture) ? "../ProfilePictures/" + user.ProfilePicture : (user.Gender == 1 ? "../Images/avatar-male.svg" : "../Images/avatar-female.svg"))" alt=""> <span>@user.FirstName @user.LastName</span>
+                    </p>
+                </div>
+                <div class="cell small-6 medium-1 hide-for-small-only col-prog">
+                    <label class="show-for-small-only">Program</label>
+                    <p>@(user.ProgramType == 1 ? "Self-Help" : user.ProgramType == 2 ? "Coaching" : "-" )</p>
+                </div>
+                <div class="cell small-6 medium-2 hide-for-small-only col-org">
+                    <label class="show-for-small-only">Organisation</label>
+                    <p>@user.Organization</p>
+                </div>
+                <div class="cell small-6 medium-2 hide-for-small-only col-stats">
+                    <label class="show-for-small-only">Recent stats</label>
+                    @if (user.Glucose.HasValue)
+                    {
+                        <p>Blood Glucose: @user.Glucose.Value mg/dL</p>
+                    }
+                    @if (user.Systolic.HasValue && user.Diastolic.HasValue)
+                    {
+                        <p>Blood Pressure: @user.Systolic.Value/@user.Diastolic.Value</p>
+                    }
+                    @if (user.LastUpdatedBP.HasValue && user.LastUpdatedGlucose.HasValue)
+                    {
+                        if (user.LastUpdatedBP.Value < user.LastUpdatedGlucose.Value)
+                        {
+                            <p class="additional-info">Updated On : @user.LastUpdatedGlucose.Value.ToString("MM/dd/yyyy")</p>
+                        }
+                        else
+                        {
+                            <p class="additional-info">Updated On : @user.LastUpdatedBP.Value.ToString("MM/dd/yyyy")</p>
+                        }
+                    }
+                    else if (user.LastUpdatedBP.HasValue)
+                    {
+                        <p class="additional-info">Updated On : @user.LastUpdatedBP.Value.ToString("MM/dd/yyyy")</p>
+                    }
+                    else if (user.LastUpdatedGlucose.HasValue)
+                    {
+                        <p class="additional-info">Updated On : @user.LastUpdatedGlucose.Value.ToString("MM/dd/yyyy")</p>
+                    }
+                    else
+                    {
+                        <p>N/A</p>
+                    }
+                </div>
+                <div class="cell small-6 medium-1 hide-for-small-only col-hra">
+                    <label class="show-for-small-only">HRA Status</label>
+                    <p>@(user.HRAPercent != 0 && user.HRAPercent != 100 ? Html.Raw("<img src='../Images/participant/hra-wip-icon.svg'>") : user.HRAPercent == 100 ? Html.Raw("<img src='../Images/icon-green-tick.svg'>") : Html.Raw("<img src='../Images/labs/rejected.svg'>"))</p>
+                </div>
+                <div class="cell small-6 medium-4 list-trigger col-contact">
+                    @if (user.AlertCreatedTime.HasValue)
+                    {
+                        int outBound = user.ProgramType == 2 ? user.CoachingOutBound.Value : user.SelfHelpOutBound.Value;
+                        var within = user.AlertCreatedTime.Value.AddDays(user.AppointmentWithIn.HasValue ? user.AppointmentWithIn.Value : 0);
+                        var date = user.AlertCreatedTime.Value.AddDays(outBound);
+                        TimeSpan diff = DateTime.UtcNow - date;
+                        if (date > DateTime.UtcNow || Math.Truncate(diff.TotalDays) == 0)
+                        {
+                            <p><i class="fa fa-exclamation-circle fa-yellow"></i> @String.Format(user.ProgramType == 2 ? user.CoachingMessage : user.SelfHelpMessage, date.ToString(), within)</p>
+                        }
+                        else
+                        {
+                            <p><i class="fa fa-exclamation-circle fa-red"></i> Call Overdue by @(Math.Truncate(diff.TotalDays)) Days</p>
+                        }
+                        if (user.AlertValue.HasValue)
+                        {
+                            <p class="additional-info"><i class="fa fa-exclamation-circle fa-yellow"></i> (For Glucose Value: @user.AlertValue.Value mg/dL)</p>
+                        }
+                    }
+                    else
+                    {
+                        <p><i class="fa fa-exclamation-circle fa-green"></i> None</p>
+                    }
+                    <i class="acc-trigger"></i>
+                </div>
+                <div class="cell">
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-9">
+                            <div class="flex-container col-additional-info">
+                                <div class="info-item">
+                                    <label for="">User ID</label>
+                                    <p>@user.Id</p>
+                                </div>
+                                <div class="info-item">
+                                    <label for="">Unique ID</label>
+                                    <p>@user.UniqueId</p>
+                                </div>
+                                @if (!string.IsNullOrEmpty(user.Email))
+                                {
+                                    <div class="info-item">
+                                        <label for="">Email</label>
+                                        <p>@user.Email</p>
+                                    </div>
+                                }
+                                @if (user.LastAccessedOn.HasValue)
+                                {
+                                    <div class="info-item">
+                                        <label for="">Last accessed on</label>
+                                        <p>@TimeZoneInfo.ConvertTimeFromUtc(user.LastAccessedOn.Value, TimeZoneInfo.FindSystemTimeZoneById(User.TimeZone())).ToString("dd MMMM yyyy")</p>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(user.MedicalPlanCode))
+                                {
+                                    <div class="info-item">
+                                        <label for="">Medical Plan Code</label>
+                                        <p>@user.MedicalPlanCode</p>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(user.CoachName))
+                                {
+                                    <div class="info-item">
+                                        <label for="">Coach</label>
+                                        <p>@user.CoachName</p>
+                                    </div>
+                                }
+                                @if (user.LastAppointment.HasValue)
+                                {
+                                    <div class="info-item">
+                                        <label for="">Last Appointment</label>
+                                        <p>@TimeZoneInfo.ConvertTimeFromUtc(user.LastAppointment.Value, TimeZoneInfo.FindSystemTimeZoneById(User.TimeZone())).ToString("dd MMMM yyyy")</p>
+                                    </div>
+                                }
+                                @if (user.NextAppointment.HasValue)
+                                {
+                                    <div class="info-item">
+                                        <label for="">Next Appointment</label>
+                                        <p>@TimeZoneInfo.ConvertTimeFromUtc(user.NextAppointment.Value, TimeZoneInfo.FindSystemTimeZoneById(User.TimeZone())).ToString("dd MMMM yyyy")</p>
+                                        <p><a onclick="Reschedule(@user.Id)">Reschedule</a></p>
+                                    </div>
+                                }
+                                @if (user.HRACompleteDate.HasValue)
+                                {
+                                    <div class="info-item">
+                                        <label for="">HRA completed on</label>
+                                        <p>@TimeZoneInfo.ConvertTimeFromUtc(user.HRACompleteDate.Value, TimeZoneInfo.FindSystemTimeZoneById(User.TimeZone())).ToString("dd MMMM yyyy")</p>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(user.RiskCode))
+                                {
+                                    var UOMIVRisk = "";
+                                    if (user.UOMRisk <= 2)
+                                    {
+                                        UOMIVRisk = user.UOMRisk + "L";
+                                    }
+                                    else if (user.UOMRisk <= 4)
+                                    {
+                                        UOMIVRisk = user.UOMRisk + "M";
+                                    }
+                                    else
+                                    {
+                                        UOMIVRisk = user.UOMRisk + "H";
+                                    }
+                                    if (user.IVRisk < 2.5)
+                                    {
+                                        UOMIVRisk = UOMIVRisk + " - " + user.IVRisk + "L";
+                                    }
+                                    else if (user.IVRisk < 4.5)
+                                    {
+                                        UOMIVRisk = UOMIVRisk + " - " + user.IVRisk + "M";
+                                    }
+                                    else
+                                    {
+                                        UOMIVRisk = UOMIVRisk + " - " + user.IVRisk + "H";
+                                    }
+                                    <div class="info-item">
+                                        <label for="">Risk Code</label>
+                                        <p class="risk-code risk-@user.RiskColor">@user.RiskCode (@UOMIVRisk)</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="cell medium-3 text-right">
+                            <button onclick="ViewParticipant(@user.Id)">View Profile</button>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        }
+    }
+    else
+    {
+        <li>
+            <div class="no-graph-info text-center">
+                <img src="../Images/device/no-data.png" alt="">
+                <span>No data were found.</span>
+            </div>
+        </li>
+    }
+</ul>
+<input type="hidden" id="TotalUser" value="@Model.TotalRecords">

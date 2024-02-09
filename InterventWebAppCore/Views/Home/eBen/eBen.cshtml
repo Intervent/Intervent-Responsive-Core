@@ -1,0 +1,224 @@
+﻿@using InterventWebApp
+@model InterventWebApp.LoginModel
+@{
+    ViewBag.Title = "LandingPages";
+    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+    ViewBag.Details = "LandingPage";
+}
+
+@Html.Partial("eBen/_eBenHeader", new ViewDataDictionary(ViewData) { { "MenuClass", "lmc-menu-hidden" } })
+
+<section class="lmc-index lmc-wrapper title-casing">
+    <section class="lmc-login">
+        <div class="grid-container">
+            <div class="grid-x">
+                <div class="cell large-11">
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-6">
+                            <h1>@Translate.Message("L1893")</h1>
+
+                            <p>
+                                @Translate.Message("L4418")
+                            </p>
+                            <img src="~/Images/ebenconcepts-partner.png" alt="eBen" />
+                            <img src="~/Images/lmc/bicycle-girl.svg" alt="" class="bicycle-girl" />
+                        </div>
+                        <div class="cell medium-6 large-5 large-offset-1">
+                            <div class="form-white-bg hide-for-small-only">
+                                <form id="inline-login-form" class="form-login-box" data-abide novalidate>
+                                    <!--Login Form-->
+                                    <div data-alert="" id="inline-login-form-inline-login-error" class="callout alert alert-box hide"></div>
+                                    <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+                                    <div>
+                                        <label>@Translate.Message("L572")</label>
+                                        @Html.TextBoxFor(m => m.UserName, new Dictionary<string, object> { { "placeholder", Translate.Message("L986") }, { "required", "required" }, { "id", "loginUserName" } })
+                                        <small class="form-error">@Translate.Message("L463")</small>
+                                    </div>
+
+                                    <div class="password-field-box">
+                                        <label>@Translate.Message("L466")</label>
+                                        @Html.PasswordFor(m => m.Password, new Dictionary<string, object> { { "placeholder", Translate.Message("L466") }, { "required", "required" } })
+                                        <span class="toggle-password fa fa-fw fa-eye"></span>
+                                        <small class="form-error">@Translate.Message("L464")</small>
+                                    </div>
+
+                                    <input class="DeviceId" type="hidden" id="DeviceId" name="DeviceId" value="" />
+
+                                    <p><a href="#" data-open="forgot-password-modal">@Translate.Message("L465")</a></p>
+
+                                    <div class="lmc-login-container">
+                                        <button type="submit" class="button expanded">
+                                            <div class="loading-spinner hide" show-if-submitting></div>
+                                            @Translate.Message("L426")
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div id="device-verification-inline-login-form"></div>
+
+                            </div>
+
+                            <div class="show-for-small-only lmc-mobile-form">
+                                <button class="button expanded" data-open="login-modal">@Translate.Message("L426")</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Login section ends-->
+
+	<section class="landing-video-section">
+		<div class="grid-container">
+			<div class="grid-x align-center text-center">
+				<div class="large-7 medium-10 cell">
+                    <h2> @Translate.Message("L4419")</h2>
+                    <h3 class="text-center">@Translate.Message("L4423")</h3>
+
+					<div class="landing-video-wrapper">
+						<div class="video-container" data-open="landing-page-video">
+							<img src="~/Images/yt_pogo_img.png" alt="Alternate Text">
+
+							<div class="player-icon"><img src="~/Images/program/slider-video-icon.png" alt=""></div>
+						</div>
+						<p>@Translate.Message("L4420")</p>
+					</div>
+				</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="lmc-offers-section">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x text-center" data-equalizer>
+                <div class="cell medium-4">
+                    <div class="column-container">
+                        <img src="~/Images/lmc/columns-image-3.png" alt="" />
+                        <h4 data-equalizer-watch>@Translate.Message("L3224")</h4>
+                        <p data-equalizer-watch>@Translate.Message("L3225")</p>
+                    </div>
+                </div>
+                <div class="cell medium-4">
+                    <div class="column-container">
+                        <img src="~/Images/lmc/columns-image-2.png" alt="" />
+                        <h4 data-equalizer-watch>@Translate.Message("L3226")</h4>
+                        <p data-equalizer-watch>@Translate.Message("L454")</p>
+                    </div>
+                </div>
+                <div class="cell medium-4">
+                    <div class="column-container">
+                        <img src="~/Images/lmc/columns-image-1.png" alt="" />
+                        <h4 data-equalizer-watch>@Translate.Message("L4421")</h4>
+                        <p data-equalizer-watch>@Translate.Message("L4422")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="lmc-contact-section">
+        <div class="grid-container">
+            <div class="grid-x align-center">
+                <div class="cell large-6 medium-9">
+                    <h2>@Translate.Message("L3460")</h2>
+                    <form id="contact-form" data-abide novalidate>
+                        <div class="grid-x grid-margin-x grid-margin-y">
+                            <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+                            <input type="hidden" id="subject" name="subject" value="eBen" />
+                            <div class="cell medium-6">
+                                <label>@Translate.Message("L3233")</label>
+                                <input type="text" id="name" name="name" required />
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                            <div class="cell medium-6">
+                                <label>@Translate.Message("L572")</label>
+                                <input type="email" id="email" name="email" required />
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                            <div class="cell">
+                                <label>@Translate.Message("L3234")</label>
+                                <textarea id="meassage" name="meassage" required></textarea>
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                            <div class="cell text-center">
+                                <button type="submit" class="button">@Translate.Message("L3235")</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Contact section ends-->
+
+    <section class="lmc-get-started">
+        <div class="grid-container">
+            <div class="grid-x align-center">
+                <div class="cell large-6 medium-9 text-center ">
+                    <h2>@Translate.Message("L3680")</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Get started section ends-->
+</section>
+
+<!-- Error Modal-->
+<div id="error-modal" class="reveal small" data-reveal>
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <h2 class="text-center"></h2>
+            <p>
+                <span id="error-message-genericmodal"></span>
+            </p>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="reveal" data-reveal data-close-on-click="false" data-close-on-esc="false" data-reset-on-close="true" id="landing-page-video">
+	<div class="flex-video">
+        <iframe width="683" height="384" src="https://www.youtube.com/embed/UqkRb2T_X_0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+	<button class="close-button" data-close><span aria-hidden="true">&times;</span></button>
+</div>
+
+<script>;
+    $(document).ready(function () {
+        $('#contact-form').foundation();
+        $('#contact-form')
+            //When Not Valid
+            .on('forminvalid.zf.abide', function () {
+            })
+            //When Valid
+            .on('formvalid.zf.abide', function () {
+                $.ajax({
+                    url: "@Url.Action("SendUserMessage", "Home")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#contact-form").serialize(),
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#contact-form :input').val("");
+                            alert("@Translate.Message("L3461")");
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    DisplayError(jqXHR.status);
+                });
+            }).on("submit", function (ev) {
+                    ev.preventDefault();
+            })
+    });
+
+</script>
+
+<script>
+    $("input#login-switch").on('click', function () {
+        $(".form-login-box, .form-signup-box").toggleClass("hide");
+    });
+
+</script>

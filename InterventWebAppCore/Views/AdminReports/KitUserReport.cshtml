@@ -1,0 +1,95 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+@model InterventWebApp.ReportSelectModel
+@{
+    /**/
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x scheduler-offset-small-only">
+                <div class="small-12 large-6 left cell">
+                    @Html.Partial("_ReportSelect", Model, new ViewDataDictionary(ViewData) { { "Kind", "KitUserReport" } })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="panel filters">
+            <fieldset>
+                <div class="callout hide" id="alert-message1" data-closable>
+                    <div id="alert"></div>
+                    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <legend>Report Criteria</legend>
+                <div class="grid-x grid-padding-x">
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.portal, Model.PortalList, "--Select Portal--", new Dictionary<string, object> { { "required", "required" }, { "class", "primary-select" } })
+                        <small class="form-error">@string.Format(Translate.Message("L1895"), "Portal").</small>
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.kit, Model.KitsInPortalList, "--Select Kit--", new Dictionary<string, object> { { "required", "required" }, {"class", "primary-select" } })
+                        <small class="form-error">@string.Format(Translate.Message("L1895"), "Kit").</small>
+                    </div>
+                    <div class="small-12 medium-6 medium-offset-6 cell text-right">
+                        <button class="secondary-color small" onclick="DownloadData();" type="submit">
+                            <i class="fa fa-download"></i>
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</section>
+
+<script src="@Url.Content("../Scripts/downloadcsv.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    $(document).ready(function () {
+        if (window.performance.navigation.type == 1) {
+            window.location = "../AdminReports/KitUserReport";
+        }
+    });
+
+    function DownloadData() {
+        var portalId = $('#portal').val();
+        var kitId = $('#kit').val();
+
+        if (portalId && kitId) {
+            $('#alert-message1').addClass('hide');
+            window.location = "../AdminReports/DownloadKitUserReport?portalId=" + portalId + "&kitId=" + kitId;
+        }
+        else {
+            $('#alert-message1').removeClass('hide');
+            if (!portalId || !kitId)
+                $('#alert').html('Portal and Kit are required.');
+        }
+    }
+
+    $('#portal').on('change', function () {
+        var portalId = $('#portal').val();
+        if (portalId !== '') {
+            $("#kit").empty();
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: "@Url.Action("ListKitsInPortal", "AdminReports")",
+                data: { PortalId: portalId },
+                success: function (data) {
+                    $("#kit").append("<option value=''>--Select Kit--</option>");
+                    for (i = 0; i < data.Records.length; i++) {
+                        $("#kit").append("<option value=" + data.Records[i].Value + ">" + data.Records[i].Text + "</option>");
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+    });
+
+</script>
+

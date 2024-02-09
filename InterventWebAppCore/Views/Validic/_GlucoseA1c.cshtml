@@ -1,0 +1,204 @@
+﻿@using InterventWebApp
+<section class="dashboard-content main search-participants">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <h2>@Translate.Message("L165")</h2>
+            </div>
+        </div>
+        <div class="filters grid-x grid-margin-x">
+            <div class="small-12 medium-4 cell">
+                <select id="Glucosedays" onchange="daysOptions()">
+                    <option>--@Translate.Message("L421")--</option>
+                    <option value="90">@Translate.Message("L2739")</option>
+                    <option value="30">@Translate.Message("L2740")</option>
+                    <option value="7">@Translate.Message("L2741")</option>
+                    <option value="2">@Translate.Message("L2742")</option>
+                    <option value="1">@Translate.Message("L2743")</option>
+                    <option value="0" selected="selected">@Translate.Message("L2744")</option>
+
+                </select>
+            </div>
+            <div class="small-12 medium-4 cell">
+                <input type="text" placeholder="From" id="GlucoseStartDate" name="GlucoseStartDate" value="@DateTime.Now.AddDays(-180).ToString("MM/dd/yyyy")">
+            </div>
+            <div class="small-12 medium-4 cell">
+                <input type="text" placeholder="To" id="GlucoseEndDate" name="GlucoseEndDate" value="@DateTime.Now.ToString("MM/dd/yyyy")">
+            </div>
+            <div class="small-12 medium-6 cell">
+                <button class="secondary-color button small" id="filter-Glucose-data">
+                    <div class="loading-spinner hide" show-if-submitting></div>
+                    <i class="fa fa-filter"></i>
+                    @Translate.Message("L963")
+                </button>
+            </div>
+            <div class="cell">
+                <div id="Glucose-results"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>
+<script src="@Url.Content("~/Scripts/amcharts/gauge.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts/plugins/responsive/responsive.min.js")"></script>
+<script>
+    $(document).ready(function () {
+        $("#GlucoseStartDate").fdatepicker({
+            endDate: new Date()
+        }).on('change', function (selected) {
+            var endDate = new Date($("#GlucoseEndDate").val());
+            var minDate = new Date($("#GlucoseStartDate").val());
+            if (endDate < minDate) {
+                $('#GlucoseEndDate').fdatepicker('setDate', minDate);
+            }
+            $('#GlucoseEndDate').fdatepicker('setStartDate', minDate);
+        });
+        $("#GlucoseEndDate").fdatepicker({
+            endDate: new Date()
+        });
+    });
+        function daysOptions() {
+            if ($("#Glucosedays").val() == 0) {
+                $("#GlucoseStartDate").val("@DateTime.Now.AddDays(-180).ToString("MM/dd/yyyy")");
+                $("#GlucoseEndDate").val("@DateTime.Now.ToString("MM/dd/yyyy")");
+                $('#GlucoseEndDate').fdatepicker('setStartDate', new Date($("#GlucoseStartDate").val()));
+                $("#GlucoseStartDate").removeAttr('readonly');
+                $("#GlucoseEndDate").removeAttr('readonly');
+        }
+        else {
+                $("#GlucoseStartDate").val("");
+                $("#GlucoseEndDate").val("");
+                $("#GlucoseStartDate").attr('readonly', 'readonly');
+                $("#GlucoseEndDate").attr('readonly', 'readonly');
+        }
+    }
+
+        $("#filter-Glucose-data").click(function () {
+            $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+            $('[show-if-submitting]').removeClass('hide');
+            var StartDate = $("#GlucoseStartDate").val();
+            var EndDate = $("#GlucoseEndDate").val();
+            var Days = $("#Glucosedays").val();
+        $.ajax({
+            url: "@Url.Action("ListDiabetesData", "Validic")",
+            data: { externalId: $("#ExternalId").val(), Days: Days, StartDate: StartDate, EndDate: EndDate },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#Glucose-results').html("");
+                if (data != null) {
+                    if (data.Records != null && data.Records.length > 0) {
+                        displayDiabetesData(data);
+                    }
+                    else {
+                        $.ajax({
+                            url: "@Url.Action("ListGlucoseData", "Participant")",
+                            data: { Days: Days, StartDate: StartDate, EndDate: EndDate },
+                            type: 'POST',
+                            dataType: "json",
+                            success: function (data) {
+                                if (data != null) {
+                                    if (data.Records != null && data.Records.length > 0) {
+                                        displayDiabetesData(data);
+                                    }
+                                    else {
+                                         $('#Glucose-results').append('<center>@Translate.Message("L2774")</center>');
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+                else {
+                    $('#Glucose-results').append('<center>@Translate.Message("L2774")</center>');
+                }
+                $('[show-if-submitting]').parent().prop('disabled', '');
+                $('[show-if-submitting]').addClass('hide');
+            }
+        });
+        $("#loader-wrapper").fadeOut();
+        })
+        function displayDiabetesData(data) {
+            $('#Glucose-results').show();
+            var glucometerHtml = "";
+            for (var i = 0; i < data.Records.length; i++) {
+                var glucoseDiv = "", glucoseName = ""; comparesign = ">=";
+                glucometerHtml = "";
+                var glucometer = data.Records[i];
+                glucometerHtml += "<div class='row'><div class='small-12 cell'><h4>" + glucometer.Name + "</h4></div></div>";
+                if (glucometer.NameLI == "L2764")
+                    glucometerHtml += "<div class='row chart-container'><div class='small-6 small-push-2 centered cell'><div class='circle-chart blue glucose-avg-blood'><div class='value'>" + glucometer.Value + "</div><div class='unit'>mg/dL</div></div></div>";
+                else if (glucometer.NameLI == "L2765") {
+                    glucoseDiv = "glucose-avg-fasting-chart";
+                    glucoseName = "Average Fasting";
+                    glucometerHtml += "<div class='row chart-container'><div class='small-12 medium-6 cell'><div id='glucose-avg-fasting-chart' style='width:100%;height:250px;'></div></div>";
+                }
+                else if (glucometer.NameLI == "L2766") {
+                    glucoseDiv = "glucose-avg-post-meal-chart";
+                    glucoseName = "Post Meal Glucose";
+                    glucometerHtml += "<div class='row chart-container'><div class='small-12 medium-6 cell'><div id='glucose-avg-post-meal-chart' style='width:100%;height:250px;'></div></div>";
+                }
+                glucometerHtml += "<div class='small-12 medium-6 cell padded-divs'><div>@Translate.Message("L2761"): " + glucometer.ChecksperDay + " </div>";
+                glucometerHtml += "<div>@Translate.Message("L2747"): " + glucometer.Min + " @Translate.Message("L2763") " + glucometer.Max + " mg/dl </div>";
+                if (glucometer.NameLI != "L2764") {
+                    glucometerHtml += "<div>@Translate.Message("L2760") @Translate.Message("L2762"): " + glucometer.GoalsCount + " @Translate.Message("L2750") " + glucometer.Count + " </div>";
+                }
+                glucometerHtml += "<div>@Translate.Message("L2760") >=" + glucometer.Range3Value + " mg/dl: " + glucometer.Range3Count + " @Translate.Message("L2750") " + glucometer.Count + "</div>";
+                glucometerHtml += "<div>@Translate.Message("L2760") <=" + glucometer.Range2Value + " mg/dl: " + glucometer.Range2Count + " @Translate.Message("L2750") " + glucometer.Count + "</div>";
+                glucometerHtml += "<div>@Translate.Message("L2760") <" + glucometer.Range1Value + " mg/dl: " + glucometer.Range1Count + " @Translate.Message("L2750") " + glucometer.Count + "</div></div></div></div>";
+                glucometerHtml += "<div class='row'><div class='small-12 cell'><div class='note'>@Translate.Message("L582"): " + glucometer.Notes + " </div></div>";
+                glucometerHtml += "</div>";
+                glucometerHtml += "<br>";
+                $('#Glucose-results').append(glucometerHtml);
+                if (glucoseName != "") {
+                    var maxLimit = 220;
+                    if (glucometer.Max > 220)
+                        maxLimit = glucometer.Max;
+                    var limitColor = "#ffcc00";
+                    if (glucometer.Diabetic != "True")
+                        limitColor = '#00cc00';
+                    buildGlucoseChart(glucoseDiv, glucometer.Value, glucoseName, 'mg/dL', [0, 53, 70, 79, glucometer.Range3Value, maxLimit], limitColor);
+                }
+            }
+        }
+
+        function buildGlucoseChart(div, value, text, unit, limits, limitColor) {
+            var chart = AmCharts.makeChart(div, {
+                "type": "gauge",
+                "theme": "dark",
+                "axes": [{
+                    "axisThickness": 1,
+                    "axisAlpha": 0.2,
+                    "tickAlpha": 0.2,
+                    //"valueInterval": 30,
+                    "bands": [{
+                        "color": "#cc0000",
+                        "endValue": limits[1],
+                        "startValue": limits[0]
+                    }, {
+                        "color": "#ff7d67",
+                        "endValue": limits[2],
+                        "startValue": limits[1]
+                    }, {
+                        "color": limitColor,
+                        "endValue": limits[3],
+                        "startValue": limits[2]
+                    }, {
+                        "color": "#00cc00",
+                        "endValue": limits[4],
+                        "startValue": limits[3],
+                    }, {
+                        "color": "#cc0000",
+                        "endValue": limits[5],
+                        "startValue": limits[4]
+                    }],
+                    "bottomText": value + ' ' + unit,
+                    "bottomTextYOffset": -20,
+                    "endValue": limits[5]
+                }],
+                "arrows": [{ "value": value }],
+            });
+        };
+</script>

@@ -1,0 +1,494 @@
+﻿@using InterventWebApp;
+@model InterventWebApp.UserDrugModel
+
+<div class="cell">
+    <div class="grid-x grid-margin-x drug-view-block med-block section-medication">
+        <div class="cell large-12 medium-12 cell">
+            <div class="header-area grid-x grid-margin-x">
+                <div class="cell medium-text-right">
+                    @if (Model.DiscontinuedDrugs.Count > 0)
+                    {
+                        <a href="#" class="button hollow" data-open="popup-admin-table">Medication History</a>
+                    }
+                    @if (Model.HasActivePortal) {
+                        <a class="button plus-btn" onclick="AddNewDrug()">Add Medication</a>
+                    }
+                </div>
+            </div>
+            @if (Model.drugs.Count > 0)
+            {
+                <div class="card-block">
+                    <table class="table-expand exercise-plan">
+                        <thead class="header-blue">
+                            <tr class="table-expand-row table-header">
+                                <th></th>
+                                <th>
+                                    <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                        <li class="filter-tabs">
+                                            <a class="main-link">Medication name & dosage</a>
+                                        </li>
+                                    </ul>
+                                </th>
+                                <th>
+                                    <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                        <li class="filter-tabs">
+                                            <a href="#0" class="main-link">Condition</a>
+                                        </li>
+                                    </ul>
+                                </th>
+                                <th>
+                                    <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                        <li class="filter-tabs">
+                                            <a href="#0" class="main-link">Allergies/ Side Effects</a>
+                                        </li>
+                                    </ul>
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var drug in Model.drugs)
+                            {
+                                <tr class="table-expand-row table-info">
+                                    <td class="row-open">
+                                        <img src="../@drug.ImageUrl" alt=" ">
+                                    </td>
+                                    <td class="row-open">
+                                        @drug.medication<br>
+                                        @if (!string.IsNullOrEmpty(drug.Ingredient))
+                                        {
+                                            <span>@drug.Ingredient</span><br>
+                                        }
+                                        <span>@drug.Dosage</span>
+                                    </td>
+                                    <td class="row-open">@drug.Condition</td>
+                                    <td class="row-open">@drug.Allergy</td>
+                                    @if (Model.HasActivePortal)
+                                    {
+                                        <td>
+                                            <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                                <li class="filter-tabs">
+                                                    <a class="actn-link">Actions</a>
+                                                    <ul class="menu">
+                                                        <li><a onCLick="EditDrug(@drug.Id);" data-open="popup-admin"><img src="~/Images/icon-edit.png"> Edit</a></li>
+                                                        <li><a href="#" onclick="Discontinue(@drug.Id);"><img src="~/Images/icon-delete.png">Discontinue</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    }
+                                </tr>
+                                <tr class="expanded-row" style="display: none;">
+                                    <td colspan="5">
+                                        <div class="medicine-dropdown-details">
+                                            <div class="cell inline">
+                                                <span>Intake details:</span>
+                                                <p>@drug.Quantity @drug.Formulation, @drug.Frequency.<br />From: @drug.MedicationStartDate.ToLongDateString() For: @drug.Duration</p>
+                                            </div>
+                                            <div class="cell inline">
+                                                <span>Notes:</span>
+                                                <p>@drug.Notes</p>
+                                            </div>
+                                            <div class="cell inline">
+                                                <span>Details of Allergies/Side effects:</span>
+                                                <p>@drug.AllergyNotes</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="blk-row">
+                                    <td colspan="5" class="row-space" height="10"></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>}
+        </div>
+    </div>
+</div>
+
+
+<!-- popup -->
+<div class="reveal large admin-popup-form" id="popup-admin" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog" data-close-on-click="false">
+    <h2>Add medication for @Model.Name</h2>
+    <form id="add-medication" data-abide novalidate>
+        <div class="block-a grid-x grid-margin-x medi-search">
+            <div class="cell large-8 cell small-12 medium-8">
+                <label>Medication name and dosage</label>
+                <input type="search" placeholder="Select medicine from the list" class="animated-search-form" id="search-id" required />
+                <small class="form-error" hidden>Required</small>
+                <input type="hidden" id="drug" />
+                <input type="hidden" id="dosage" />
+                <input type="hidden" id="Id" />
+
+                <div class="ini-medi-list">
+                    <div class="no-search-result text-center" id="no-results"></div>
+                    <div class="medi-search-list" id="ini-medi-list"></div>
+                </div>
+            </div>
+            <div class="cell large-4 cell small-12 medium-4">
+                <label>Condition to treat</label>
+                @Html.DropDownListFor(x => x.Condition, Model.ConditionList, "Select a condition", new { required = "required" })
+                <small class="form-error" hidden>Required</small>
+            </div>
+        </div>
+        <div class="block-b grid-x grid-margin-x">
+            <div class="cell large-4 cell medium-4">
+                <label>Intake amount</label>
+                <div class="grid-x grid-padding-x">
+                    <div class="large-3 medium-3 cell cust-input small-3">
+                        <input type="text" id="Quantity" required>
+                        <small class="form-error" hidden>Required</small>
+                    </div>
+                    <div class="large-9 medium-9 cell cust-select small-9">
+                        @Html.DropDownListFor(x => x.Formulation, Model.FormulationList, new { required = "required" })
+                        <small class="form-error" hidden>Required</small>
+                    </div>
+                </div>
+            </div>
+            <div class="cell large-4 cell medium-4">
+                <label>How often do you take your medication?</label>
+                @Html.DropDownListFor(x => x.Frequency, Model.FrequencyList, "Select", new { required = "required" })
+                <small class="form-error" hidden>Required</small>
+            </div>
+        </div>
+        <div class="block-c grid-x grid-margin-x">
+            <div class="cell large-4 cell">
+                <label>Medication start date</label>
+                <input type="text" class="animated-date" id="date" value="@CommonUtility.dateFormater(DateTime.Now, false, Model.DateFormat)" required>
+                <small class="form-error" hidden>Required</small>
+                <input id="hdate" type="hidden" />
+            </div>
+            <div class="cell large-4 cell">
+                <label>How long are you taking the medication for?</label>
+                @Html.DropDownListFor(x => x.Duration, Model.DurationList, "Select", new { required = "required" })
+                <small class="form-error" hidden>Required</small>
+            </div>
+        </div>
+        <div class="block-c grid-x grid-margin-x">
+            <div class="cell large-12 cell">
+                <label>Notes if any <span class="sub-label"></span></label>
+                <textarea id="notes" rows="3" placeholder="Enter your comments/notes"></textarea>
+            </div>
+        </div>
+        <div class="block-d grid-x grid-margin-x">
+            <div class="cell large-8 cell ">
+                <label>Any allergies / side effects?</label>
+                <span class="inp">No</span>
+                <div class="switch primary">
+                    <input class="switch-input" id="primary-switch" type="checkbox" name="primary-switch">
+                    <label class="switch-paddle" for="primary-switch"></label>
+                </div>
+                <span class="inp">Yes</span>
+            </div>
+            <div class="cell" id="allergyMoreQuestions" style="display:none">
+                <div class="cell large-8 cell">
+                    <label>Types of Allergies / Side effects to this medication</label>
+                    @Html.DropDownListFor(x => x.Allergy, Model.DrugAllergy, "Select")
+                </div>
+                <div class="cell large-12 cell">
+                    <label>Details about your reaction <span class="sub-label">(Optional)</span></label>
+                    <textarea id="allergy-comments" rows="3" placeholder="Briefly explain your allergic reaction / side effects"></textarea>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="UpdateAllergyId" />
+		<div class="block-e grid-x grid-margin-x align-justify">
+			<button href="#" type="submit" class="button" onclick="document.getElementById('saveandUpdate').value = '1';">Save and add another</button>
+			<button href="#" type="submit" class="button hollow button-save" onclick="document.getElementById('saveandUpdate').value = '';">Save</button>
+		</div>
+    </form>
+
+    <button class="close-button" data-close aria-label="Close modal" onclick="RefreshGrid()" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <input type="hidden" id="saveandUpdate" value="" />
+    <input type="hidden" id="isAdmin" value="1" hidden>
+</div>
+<!-- popup -->
+<form class="reveal large popup-admin-table drug-view-block" id="popup-admin-table" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    @if (Model.DiscontinuedDrugs.Count > 0)
+    {
+        <div class="card-block">
+            <table class="table-expand exercise-plan">
+                <thead class="header-blue">
+                    <tr class="table-expand-row table-header">
+                        <th></th>
+                        <th>
+                            <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                <li class="filter-tabs">
+                                    <a class="main-link">Medication name & dosage</a>
+                                </li>
+                            </ul>
+                        </th>
+                        <th>
+                            <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                <li class="filter-tabs">
+                                    <a href="#0" class="main-link">All Condition </a>
+                                </li>
+                            </ul>
+                        </th>
+                        <th>
+                            <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                <li class="filter-tabs">
+                                    <a href="#0" class="main-link">Intake details</a>
+                                </li>
+                            </ul>
+                        </th>
+                        <th>
+                            <ul class="dropdown menu menu-cust" data-dropdown-menu>
+                                <li class="filter-tabs">
+                                    <a href="#0" class="main-link">Allergies/ Side Effects</a>
+                                </li>
+                            </ul>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var drug in Model.DiscontinuedDrugs)
+                    {
+                        <tr class="table-expand-row table-info">
+                            <td class="row-open">
+                                <img src="../@drug.ImageUrl" alt=" ">
+                            </td>
+                            <td class="row-open">
+                                @drug.medication<br>
+                                <span>@drug.Dosage</span>
+                            </td>
+                            <td class="row-open">@drug.Condition</td>
+                            <td class="row-open">@drug.Allergy</td>
+                            <td class="row-open">Discontinued On @drug.DiscontinuedOn</td>
+                        </tr>
+
+                        <tr class="expanded-row" style="display: none;">
+                            <td colspan="3">
+                                <span>Notes:</span><br>
+                                @drug.Notes
+                            </td>
+                            <td colspan="2">
+                                @if (!string.IsNullOrEmpty(drug.AllergyNotes))
+                                {
+                                    <span>Allergy Notes:</span><br>
+                                    @drug.AllergyNotes
+                                }
+                            </td>
+                        </tr>
+
+                        <tr class="blk-row">
+                            <td colspan="5" class="row-space" height="10"></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</form>
+<script src="@Url.Content("~/Scripts/medication.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    $("#date").on("change", function () {
+        $('#hdate').val(toSystemDateFormat($('#date').val()));
+    });
+    $(document).ready(function () {
+		$("#date").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            onRender: function (date) {
+                var d = new Date();
+                d.setDate(d.getDate() - 365);
+                return date.valueOf() > Date.now() || date.valueOf() < d.valueOf() ? 'disabled' : '';
+            }
+        });
+        $('#date').trigger("change");
+
+		$("#search-id").autocomplete("instance")._renderItem = function (ul, item) {
+			return $("<li>")
+				.append("<div class='medi-name'><img src='" + Drug_Formulation[item.FormulationType] + "' alt=''><p><span>" + item.label + "</span>" + item.Ingredient + "</p></div><div class='medi-type text-right'><p><span>" + item.ProductsForm + "</span>" + item.Dosage + "<p/></div>")
+				.appendTo(ul);
+		};
+	});
+
+     $("#primary-switch").on('change', function () {
+        $("#allergyMoreQuestions")[this.checked == true ? 'slideDown' : 'slideUp']();
+    });
+    var Drug_Formulation = ["", "../../Images/Capsuls.png", "../../Images/Teaspoon.png", "../../Images/Tablespoons.png", "../../Images/Spray.png", "../../Images/icon-card1.png", "../../Images/icon-card1.png", "../../Images/Patches.png", "../../Images/Drops.png", "../../Images/icon-card1.png", "../../Images/Suppository.png", "../../Images/Others_Applications.png", "../../Images/Others_Applications.png"];
+    var mDosage = "";
+    var mDrugText = "";
+    var mIngredient = "";
+    var listdrugurl = "@Url.Action("SearchDrugData", "Drug")";
+    var adddrugurl = "@Url.Action("AddUserDrug", "Drug")";
+    var editdrugurl = "@Url.Action("ReadUserDrug", "Drug")";
+    var minSearchLength = 3, sliceListLength = 250;
+    var emptyResultText = "@Translate.Message("L4487")", naText = "@Translate.Message("L1149")";
+    $('#add-medication').foundation();
+        $('#add-medication')
+            .on("forminvalid.zf.abide", function (ev, frm) {
+                if (invalid_fields) {
+                    var invalid_fields = $(this).find('[data-invalid]');
+                    var scrollTo = $('#' + invalid_fields[0].id).offset().top;
+                    $('#bloodtest-form').parents('.reveal-overlay').animate({
+                        scrollTop: scrollTo
+                    }, 400);
+                }
+            })
+            .on('formvalid.zf.abide', function (ev, frm) {
+                var admindrug = $("#search-id").val();
+                var id = $("#Id").val();
+                var counter = $("#Quantity").val();
+                var Frequency = $("#Frequency").val();
+                var Condition = $("#Condition").val();
+                var Formulation = $("#Formulation").val();
+                var Allergy = $('#add-medication').find("#Allergy").val();
+                var Comments = $('#add-medication').find("#allergy-comments").val();
+                var Duration = $("#Duration").val();
+                var date = $("#hdate").val();
+                if (admindrug != '' && counter > 0 && Formulation != '' && Condition != '' && Frequency != '' && Duration != '' && date != '' && ($('#primarySwitch:checkbox:checked').length <= 0 || Allergy != '')) {
+                    var drug = $("#drug").text();
+                    var Formulation = $("#Formulation").val();
+                    var notes = $("#notes").val();
+                    var model = {};
+                    var strdata = {
+                        'Id': id,
+                        'medication': mDrugText,
+                        'Dosage': mDosage,
+                        'Ingredient': mIngredient,
+                        'Quantity': counter,
+                        'Formulation': Formulation,
+                        'Frequency': Frequency,
+                        'Condition': Condition,
+                        'MedicationStartDate': date.toISOString(),
+                        'Duration': Duration,
+                        'Notes': notes
+                    };
+                    model = (strdata);
+                    var drugData = JSON.stringify(model);
+                    $.ajax({
+                        url: adddrugurl,
+                        contentType: 'application/json, charset=utf-8',
+                        type: 'POST',
+                        dataType: "json",
+                        data: drugData,
+                        success: function (data) {
+                            if (data.Result == 'success') {
+                                if (($('#primary-switch:checkbox:checked').length > 0 && (data.drugId != null || id != ''))) {
+                                    var drugIds = data.drugId != null ? data.drugId : id;
+                                    AddDrugAllergy(drugIds, Allergy, Comments, false);
+                                }
+                                if ($("#UpdateAllergyId").val() != '') {
+                                    var remove = $('#primarySwitch:checkbox:checked').length <= 0 ? true : false;
+                                    AddDrugAllergy($("#UpdateAllergyId").val(), Allergy, Comments, remove);
+                                }
+                                if ($("#saveandUpdate").val() == "1") {
+                                    AddNewDrug();
+                                }
+                                else {
+                                    $('#popup-admin').foundation('close');
+                                    $("#popup-admin-table").remove();
+                                    $("#medication-link").trigger("click");
+                                }
+                            }
+                            else if (data.Result == 'Duplicate') {
+                                alert('Duplicate entry.');
+                            }
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+                }
+            }).on("submit", function (ev) {
+                ev.preventDefault();
+            })
+
+    function EditDrug(Id) {
+        $("#UpdateAllergyId").val("");
+        $("#Id").val(Id);
+        $.ajax({
+            url: editdrugurl,
+            data: { Id: Id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    $("#search-id").val(data.MedicationName);
+                    mDrugText = data.MedicationName;
+                    mDosage = data.Dosage;
+                    mIngredient = data.Ingredient;
+                    $("#Quantity").val(data.Quantity);
+                    $("#Formulation").val(data.Formulation);
+                    $("#Frequency").val(data.Frequency);
+                    $("#Condition").val(data.Condition);
+                    $("#notes").val(data.Notes);
+                    $("#Duration").val(data.Duration);
+                    $('#date').val(toLocalDateFormat(data.Date));
+                    if (data.Allergy != null) {
+                        $("#primary-switch:checkbox").prop("checked", true);
+                        $("#allergyMoreQuestions")['slideDown']();
+                        $("#UpdateAllergyId").val(data.Allergy.UserDrugId);
+                        $('#add-medication').find("#Allergy").val(data.Allergy.AllergyId);
+                        $('#add-medication').find("#allergy-comments").val(data.Allergy.Notes);
+                    }
+                    $('#date').trigger("change");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    function Discontinue(drugId) {
+      $.ajax({
+            url: "@Url.Action("DiscontinueDrug", "Drug")",
+            data: { Id: drugId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    $("#popup-admin-table").remove();
+                    $("#medication-link").trigger("click");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    function AddAllergy(drugDetails, id) {
+        $("#drug-details").html(drugDetails);
+        $("#drugId").val(id);
+    }
+    $("#btncnt3").on('click', function () {
+        var Id = $('#allergy-popup').find("#drugId").val();
+        var Allergy = $('#allergy-popup').find("#Allergy").val();
+        var Comments = $('#allergy-popup').find("#allergy-comments").val();
+        if (Allergy != '') {
+            AddDrugAllergy(Id, Allergy, Comments, false);
+        }
+    });
+    function AddDrugAllergy(id, allergy, comments, remove) {
+            $.ajax({
+                url: "@Url.Action("AddDrugAllergy", "Drug")",
+                type: 'POST',
+                dataType: "json",
+                data: { drugId: id, allergy: allergy, Comments: comments, Remove: remove },
+                success: function (data) {
+                    $('#popup-admin').foundation('close');
+                    $("#popup-admin-table").remove();
+                    $("#medication-link").trigger("click");
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+    }
+    function AddNewDrug() {
+        document.getElementById("add-medication").reset();
+        $("#Id").val('');
+        $("#allergyMoreQuestions")['slideUp']();
+        $("#UpdateAllergyId").val("");
+        $('#popup-admin').foundation('open');
+    }
+    function RefreshGrid() {
+        $("#popup-admin-table").remove();
+        $("#medication-link").trigger("click");
+    }
+
+   
+</script>

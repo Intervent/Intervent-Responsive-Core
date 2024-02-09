@@ -1,0 +1,803 @@
+﻿@model InterventWebApp.ParticipantInfoModel
+@using InterventWebApp
+
+@{
+	ViewBag.Title = "_ParticipantProfile";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+	ViewBag.Details = "ParticipantInfoPage";
+}
+<!--ADMIN PAGE-->
+<section class="main dashboard">
+	<div class="grid-container">
+		<div class="grid-x collapse">
+			<div class="medium-12 medium-centered cell">
+				<div class="grid-x collapse">
+					<div class="medium-4 large-3 cell end">
+						@*<div class="sticky" data-sticky-container data-sticky data-options="marginTop:2.8125;">*@ @*Commented for now*@
+						<div class="admin-sidebar">
+							<div class="user-photo">
+								@{
+									string className = "";
+
+                                    if (Model.Gender.HasValue && Model.Gender.Value == 2)
+									{
+										className = "anonymous-female";
+									}
+									else
+									{
+										className = "anonymous-male";
+									}
+								}
+								@if (Model.User.Picture != null)
+								{
+									var url = "";
+                                    url = Model.BaseUrl;
+									url = url + "/ProfilePictures/" + Model.User.Picture;
+									<img id="profilepic" class="photo-frame @className" data-open="user-profile" style="background-image:url('@url')" data-modal-path="@Html.Raw(Url.Action("userprofile", "Account", new { module = "Admin" }))" />
+								}
+								else
+								{
+									<img id="profilepic" class="photo-frame @className" data-open="user-profile" data-modal-path="@Html.Raw(Url.Action("userprofile", "Account", new { module = "Admin" }))" />
+								}
+							</div>
+							<div class="user-info">
+								<div class="name">@Model.User.FirstName @Model.User.LastName</div>
+								<div class="grid-x collapse gauges-container gauges-units">
+									<div class="small-6 cell">
+										<div class="gauge-title">Age in years</div>
+										<div class="gauge">@Model.age</div>
+									</div>
+									<div class="small-6 cell">
+										<div class="gauge-title">@Model.WeightText</div>
+										<div class="gauge title" aria-hidden="true" data-tooltip aria-haspopup="true" title='@(Model.WellnessDate != null ? "Date: "+Model.WellnessDate+"" : "")@(Model.BMI.HasValue ? "; BMI: "+Model.BMI+"" : "")'>@Model.Weight</div>
+									</div>
+
+                                    <div class="small-12 cell align-center">
+                                        <div class="profile-info" id="info-link">
+                                            <span>
+                                                <i class="fa fa-info-circle"></i> Participant Info
+                                            </span>
+                                        </div>
+                                    </div>
+								</div>
+							</div>
+
+							<div class="grid-x grid-padding-x align-center menu-buttons">
+								<div class="cell small-11">
+									<div class="grid-x grid-padding-x">
+										<div class="small-4 cell">
+											<div class="menu-button first" id="calendar-link">
+												<span data-tooltip title="Appointments">
+													<img src="../../Images/participant/calendar-icon.svg" />
+													<img src="../../Images/participant/calendar-icon_green.svg" class="hover-icon" />
+												</span>
+											</div>
+										</div>
+										<div class="small-4 cell">
+											<div class="menu-button" id="messages-link">
+												<span data-tooltip title="Chat Messages">
+													<img src="../../Images/participant/mail-icon.svg" />
+													<img src="../../Images/participant/mail-icon_green.svg" class="hover-icon" />
+												</span>
+												@if (Model.MessageCount != 0)
+												{
+                                                    <span class="chat-notification">@Model.MessageCount</span>
+                                                }
+											</div>
+										</div>
+										<div class="small-4 cell">
+											<div class="menu-button last" id="log-link">
+												<span data-tooltip title="Notes">
+													<img src="../../Images/participant/notes-icon.svg" />
+													<img src="../../Images/participant/notes-icon_green.svg" class="hover-icon" />
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="grid-x user-tabs">
+								<div class="cell">
+									<div class="menu-link" id="lab-link">
+										<img src="../../Images/participant/lab-icon.svg" /><img src="../../Images/participant/lab-icon_green.svg" class="hover-icon" /> <span>Labs</span>
+										@if (Model.labAlert)
+										{
+										<i class='fa fa-bell'></i>
+										}
+									</div>
+									@if (Model.hraLink)
+									{
+                                        <div class="menu-link" id="hra-link">
+                                            <img src="../../Images/participant/assessment-icon.svg" /><img src="../../Images/participant/assessment-icon_green.svg" class="hover-icon" /> @Translate.Message("L2447")
+                                            @if (Model.followUpDue)
+                                            {
+                                                <i class='fa fa-bell'></i>
+                                            }
+                                        </div>
+									}
+									<div class="menu-link" id="programs-link"><img src="../../Images/participant/program-icon.svg" /><img src="../../Images/participant/program-icon_green.svg" class="hover-icon" /> @Translate.Message("L2448")</div>
+									<div class="menu-link active" id="wellness-data-link"><img src="../../Images/participant/bar-chart-icon.svg" /><img src="../../Images/participant/bar-chart-icon_green.svg" class="hover-icon" /> @Translate.Message("L2449")</div>
+									@if (Model.challengesLink)
+									{
+									<div class="menu-link" id="challenges-link"><img src="../../Images/participant/trophy-icon.svg" /><img src="../../Images/participant/trophy-icon_green.svg" class="hover-icon" /> @Translate.Message("L332")</div>
+									}
+									<div class="menu-link" id="medication-link"><img src="../../Images/participant/medicine-icon.svg" width="27" /><img src="../../Images/participant/medicine-icon_green.svg" class="hover-icon" width="27" /> Medication</div>
+									@if (Model.patientReleaseForm != null || Model.medicalClearanceForm != null)
+									{
+									<div class="menu-link" id="forms-link">
+										<img src="../../Images/participant/doc-icon.svg" /><img src="../../Images/participant/doc-icon_green.svg" class="hover-icon" /> Forms
+										@if (Model.patientReleaseForm != null && !Model.patientReleaseForm.Approved || Model.medicalClearanceForm != null && !Model.medicalClearanceForm.Approved)
+											{
+										<i class='fa fa-bell'></i>
+											}
+									</div>
+									}
+									@if (Model.ShowTimeTracker)
+									{
+									<div class="menu-link" id="timer-link"><img src="../../Images/participant/timer-report.svg" /><img src="../../Images/participant/timer-report_green.svg" class="hover-icon" /> Timer History</div>
+									}
+									@if (Model.hasExternalReport)
+									{
+									<div class="menu-link" id="report-link"><img src="../../Images/participant/trophy-icon.svg" /><img src="../../Images/participant/trophy-icon_green.svg" class="hover-icon" /> Report List</div>
+									}
+                                    @if ((Model.fromLabReport.HasValue && Model.fromLabReport.Value) || (Model.fromNoShowReport.HasValue && Model.fromNoShowReport.Value) || (Model.fromCoachReport.HasValue && Model.fromCoachReport.Value) || (Model.fromAdminTasks.HasValue && Model.fromAdminTasks.Value) || (Model.fromUnapprovedCarePlan.HasValue && Model.fromUnapprovedCarePlan.Value))
+									{
+									<div class="menu-link" id="back-to-report"><img src="../../Images/participant/back_to_report.svg" width="30" /> Back to Report</div>
+									}
+									else if (Model.fromCRMProfile.HasValue && Model.fromCRMProfile.Value)
+									{
+									<div class="menu-link" id="back-to-report"><img src="../../Images/participant/back_to_report.svg" width="30" /> Back to CRM</div>
+									}
+									@if (Model.sendReportsLink)
+									{
+									<div class="menu-link" id="send-reports-link"><img src="../../Images/participant/trophy-icon.svg" /><img src="../../Images/participant/trophy-icon_green.svg" class="hover-icon" /> Send Reports</div>
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+                    <div class="medium-8 large-9 cell">
+                        <div id="profile-content" class="grid-x grid-padding-x profile-dashboard">
+                            @Html.Partial("_ParticipantInfo", Model)
+                        </div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<div id="time-tracker"></div>
+
+<ivt-chat-box title="Notes" minimize-button="1" color="red above-all" @(Model.HasActivePortal.HasValue && Model.HasActivePortal.Value ? "" : "hidden")>
+	<div class="grid-x collapse">
+		<div class="cell small-12">
+			<span class="chat-text">
+				Activity Type
+			</span>
+			<div>
+				<select id="activityList" onchange="showReferralList();">
+					<option value="0">--Select Note Type--</option>
+				</select>
+			</div>
+			<div id="referralListDiv" hidden>
+				<span class="chat-text">
+					Referral Type
+				</span>
+				<select id="referralList">
+				</select>
+			</div>
+		</div>
+	</div>
+	<div class="grid-x collapse">
+		<div class="cell small-12">
+			<span class="chat-text">Details</span>
+			<div>
+				<textarea placeholder="Brief summary of your discussion with the participant." id="briefNoteText" rows="3"></textarea>
+			</div>
+		</div>
+	</div>
+	<div class="flex-container align-justify chat-box-buttons">
+		<button class="small primary" id="SaveBriefNotes">Save</button>
+		<button class="small secondary" id="ClearBriefNotes">Cancel</button>
+	</div>
+</ivt-chat-box>
+<div id="add-note-chat" class="reveal large" data-reveal data-close-on-esc="false" data-close-on-click="false">
+	<form data-abide novalidate id="add-note-chat">
+		<a class="close-button" data-close aria-label="Close">&#215;</a>
+		<div class="grid-x grid-margin-x">
+			<div class="cell">
+				<!--make changes to NoteContent.js if the id for header and content are changed-->
+				<h2 id="chat-header"></h2>
+				<span id="chat-content"></span>
+				<label>
+					<select id="appId" hidden required>
+						@if (Model.Appointments != null)
+						{
+							<option value="">--Select Appointment--</option>
+							<option value="Additional Appoointment">Additional Appointment</option>
+							for (var i = 0; i < Model.Appointments.Count(); i++)
+							{
+								<option value="@Model.Appointments[i].Id">@Model.Appointments[i].Date @Model.Appointments[i].StartTime</option>
+							}
+						}
+					</select>
+					<small class="form-error">Required</small>
+				</label>
+			</div>
+		</div>
+		<div class="grid-x grid-margin-x button-set">
+			<div class="cell medium-6 medium-order-2 medium-text-right hide" id="ApptNote"><button class="small" type="submit">Confirm</button></div>
+			<div class="cell medium-6 medium-order-2 medium-text-right hide" id="saveChatNote"><button class="small" type="button">Yes</button></div>
+			<div class="cell medium-6 medium-order-1 medium-text-left hide" id="cancelChatNote"><button class="small secondary" type="reset">Cancel</button></div>
+		</div>
+	</form>
+</div>
+<!--User Profile-->
+<div id="user-profile" class="reveal large" data-reveal></div>
+<!--Add Program-->
+<div id="add-program" class="reveal small" data-reveal data-close-on-esc="false" data-close-on-click="false">
+</div>
+<!--Add Kit-->
+<div id="add-kit" class="reveal large" data-reveal data-close-on-esc="false" data-close-on-click="false"></div>
+<div id="review-kit" class="review-kit reveal large" data-reveal data-close-on-click="false"></div>
+<!--Appointment Options-->
+<div id="appointment-options" class="reveal large" data-reveal data-close-on-esc="false" data-close-on-click="false">
+	@Html.Partial("_BookingOptions")
+</div>
+<!--Add Appointment-->
+<div id="add-appointment" class="reveal large" data-reveal data-close-on-esc="false" data-close-on-click="false"></div>
+<!--Book Appointment-->
+<div id="book-appointment" class="reveal large" data-reveal data-close-on-esc="false" data-close-on-click="false">
+</div>
+<!--Cancel Appointment-->
+<div id="cancel-appointment" class="reveal large" data-reveal data-close-on-esc="false" data-close-on-click="false"></div>
+<!--Add Note Modal-->
+<div id="add-note-entry" class="reveal large" data-reveal data-close-on-esc="false" data-close-on-click="false"></div>
+<!--Add Data Modal-->
+<div id="add-wellness-data" class="reveal large" data-reveal data-close-on-esc="false" data-close-on-click="false"></div>
+<!--video-->
+@*<div id="modal-video" class="reveal large rec-modal exercise" data-reveal data-close-on-esc="false" data-close-on-click="false">
+		<a class="close-button" data-close>&#215;</a>
+	</div>*@
+<!--rpe-->
+<div id="rpe" class="reveal large rec-modal exercise" data-reveal data-close-on-esc="false" data-close-on-click="false">
+	@Html.Partial("_RPE")
+	<a class="close-button" data-close>&#215;</a>
+</div>
+<!--suggested coaching dates-->
+<div id="suggested-coaching-dates" class="reveal large" data-reveal>
+</div>
+<div id="complete-profile" class="reveal large" data-reveal data-close-on-esc="false" data-close-on-click="false">
+	<div class="grid-x grid-margin-x">
+		<h2>You must complete the profile to continue </h2>
+	</div>
+	<div class="grid-x grid-margin-x button-set">
+		<div class="cell medium-6 medium-order-2 medium-text-right"><button type="button" data-open="user-profile" data-modal-path="@Html.Raw(Url.Action("userprofile", "Account", new { module = "Admin" }))">Go to profile</button></div>
+		<div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="profilealert">Cancel</button></div>
+	</div>
+</div>
+<div id="eligibility-claim-details" class="eligibility reveal large" data-reveal></div>
+
+<div id="add-timedetails" class="reveal" data-reveal>
+    <p>Please add the time details below</p>
+	<div hidden id="alert-timer" class="alert callout"></div>
+    <form class="form-component" id="add-timedetails">
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>
+                    Select start date
+                    <input type="text" id="add-timer-startDate" name="name" value="" class="fdatepicker input-date" autocomplete="off" />
+                </label>
+            </div>
+            <div class="cell medium-6">
+                <label>
+                    Select end date
+                    <input type="text" id="add-timer-endDate" name="name" value="" class="fdatepicker input-date" autocomplete="off"/>
+                </label>
+            </div>
+            <div class="cell">
+                <label>
+                    Select activity type
+                    <select name="add-disposition-list" id="add-disposition-list" class="primary-select">
+                        <option value="0">Select activity type</option>
+                        @foreach (var data in Model.TimeTrackingDispositionList)
+                        {
+                            <option value="@data.Value">@data.Text</option>
+                        }
+                    </select>
+                </label>
+            </div>
+        </div>
+        <div class="flex-container align-middle align-justify">
+            <button class="button" id="add-timer-log">Create</button>
+            <button class="button hollow" id="close-timer-log" data-close>Cancel</button>
+        </div>
+    </form>
+    <button id="close-timer-log-btn" class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/NoteContent.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/IVCharts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/ivt-chat-box.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/ivt-modal.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/Pager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var appId;
+    $(document).chatBox();
+    $(document).ivtModal();
+    //Wellness Score
+    $(document).ready(function () {
+        if ('@Model.HasActivePortal' == "True" && '@Model.ShowTimeTracker' == 'True') {
+            LoadTimeTracker();
+        }
+        addRemoveActiveClass("info-link");
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetNotesTypes", "Participant")",
+            success: function (data) {
+                for (i = 0; i < data.Options.length; i++) {
+                    $("#activityList").append("<option value=" + data.Options[i].Value + ">" + data.Options[i].DisplayText + "</option>");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetNoteReferralTypes", "Participant")",
+            success: function (data) {
+                $("#referralList").append("<option value='0'>--Select Referral Type--</option>");
+                for (i = 0; i < data.Options.length; i++) {
+                    $("#referralList").append("<option value=" + data.Options[i].Value + ">" + data.Options[i].Text + "</option>");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+
+        $("#add-note-chat").foundation();
+        $('#add-note-chat')
+            .on('formvalid.zf.abide', function () {
+            $("#appId").hide();
+            $("#saveChatNote").removeClass('hide');
+            $("#cancelChatNote").removeClass('hide');
+            if($("#activityList").val() == 1){
+                $("#chat-header").text("Did you complete a telephonic coaching session with the participant?");
+                $("#chat-content").text("Please make sure this is a coaching note. Not coaching attempts or outreach attempts");
+            }
+            else if($("#activityList").val() == 7){
+                $("#chat-header").text("Are you sure this is a 'Biometric Review' Note?");
+                $("#chat-content").text("Please make sure this is a Biometric Only Note.");
+            }
+            $("#ApptNote").addClass('hide');
+        }).on("submit", function (ev) {
+        ev.preventDefault();
+        });
+        if ('@Model.openAppointment' == 'True')
+            $("#calendar-link").trigger('click');
+    });
+
+    $("#SaveBriefNotes").on('click', function () {
+        appId = null;
+        $("#add-note-chat #appId").hide();
+        $("#add-note-chat #ApptNote").addClass('hide');
+        $("#saveChatNote").removeClass('hide');
+        $("#cancelChatNote").removeClass('hide');
+        $('#add-note-chat').foundation('open');
+        var Type = $("#activityList").val();
+        if (Type == null || Type == 0 || $("#briefNoteText").val() == "" || (Type == 6 && $("#referralList").val() == 0)) {
+            $("#chat-header").text("");
+            $("#chat-content").text("Please select activity type and enter the details");
+            $("#saveChatNote").addClass('hide');
+            $("#cancelChatNote").addClass('hide');
+            return;
+        }
+        else {
+            @{ var count = Model.Appointments!= null ? Model.Appointments.Count() : 0;}
+            GenerateNoteContent(Type, "#chat-header", "#chat-content", '@Model.AppId', '@count' , null);
+        }
+    });
+
+    $(document).on('click', '#cancelChatNote', function () {
+        $('#add-note-chat').foundation('close');;
+    });
+
+    $(document).on('click', '#saveChatNote', function () {
+        $('#add-note-chat').foundation('close');;
+        SaveCoachChatNote();
+    })
+
+    $('#profilealert').on('click', function () {
+        $('#complete-profile').foundation('close');
+    });
+
+    function LoadParticipantInfo() {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("ParticipantInfo", "Participant")',
+            success: function (data) {
+                $("#profile-content").html(data);
+            },
+            complete: function () {
+                if ('@Model.ShowTimeTracker' == 'True' && timeSpentSeconds == 0) {
+                    $('.start-timer').toggleClass("hide");
+                    $('.start-timer').on('click', function () {
+                        $(this).addClass('hide');
+                        $('.stop-timer').removeClass('hide').addClass('is-active');
+                        if (timeSpentSeconds == 0) {
+                            StartTimer();
+                        }
+                    });
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function SaveCoachChatNote() {
+        var Type = $("#activityList").val();
+        var refId = $("#referralList").val();
+        var Text = $("#briefNoteText").val().replace(/"/g, '\\"');
+        if((Type == 7) && !appId)
+            appId = $("#appId").val();
+        if (Type == 1 && !appId) {
+            @if (!(Model.UserinProgramId.HasValue && Model.ProgramType.HasValue && Model.ProgramType.Value == 2)){
+                @: alert("Please enroll the user in a coaching program before saving a coach note.");
+                @: return;
+            }
+            else {
+                @:appId = $("#appId").val();
+            }
+        }
+        $.ajax({
+            url: "@Url.Action("AddEditNotes", "Participant")",
+            type: 'POST',
+            dataType: "json",
+            data: { Type: Type, Text: Text, RefId2 : appId, RefId : refId },
+            success: function (data) {
+                if (data.success) {
+                    $("#briefNoteText").val("");
+                    $("#activityList").val("0");
+                    $("#referralList").val("0");
+                    if (data.notesPage == true) {
+                        GetNotes();
+                    }
+                    if (Type == 4) {
+                        $("#activityList option[value='4']").remove();
+                    }
+                    if (Type == 1) {
+                        $("#activityList option[value='1']").remove();
+                    }
+                    if (Type == 7) {
+                        $("#activityList option[value='7']").remove();
+                    }
+                    if ($("#info-link").hasClass("active")) {
+                        LoadParticipantInfo();
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    $(document).ready(function(){
+        $("#briefNoteText").val("");
+
+        $("#add-timedetails .fdatepicker").fdatepicker({
+            format: '@Model.DateFormat.ToLower()' + ' hh:ii',
+	    	disableDblClickSelection: true,
+            pickTime: true,
+            startDate: new Date((new Date()).setHours(-50)),
+            endDate: new Date()
+        });
+
+        $('#add-timer-startDate').fdatepicker({
+        }).on('change', function () {
+            var newDate = new Date($("#add-timer-startDate").val());
+            if ('@Model.DateFormat.ToLower()' == 'dd/mm/yyyy') {
+                var date = $("#add-timer-startDate").val().split('/');
+                newDate = new Date(date[1] + '/' + date[0] + '/' + date[2]);
+            }
+            newDate.setMinutes(newDate.getMinutes() + 15);
+            $('#add-timer-endDate').fdatepicker("setDate", new Date(newDate));
+            $('#add-timer-endDate').trigger("change");
+        });
+     })
+
+    $("#ClearBriefNotes").on('click', function () {
+        $("#briefNoteText").val("");
+        $("#activityList").val("");
+    });
+
+    //Links
+    $(document).on('click', '#wellness-data-link', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("WellnessData","Participant")',
+            success: function (data) {
+                $("#profile-content").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        addRemoveActiveClass("wellness-data-link");
+    });
+
+    $(document).on('click', '#hra-link', function () {
+        if ('@Model.hasEMR' == 'True') {
+             $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ListAWVReports", "AWVReport")',
+                data: { userId: @Model.User.Id },
+                success: function (data) {
+                    $("#profile-content").html(data);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            addRemoveActiveClass("hra-link");
+        }
+        else if ('@Model.User.Complete' == 'True') {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Assessment", "Participant")',
+                success: function (data) {
+                    $("#profile-content").html(data);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            addRemoveActiveClass("hra-link");
+        }
+        else {
+            $('#complete-profile').foundation('open');
+        }
+    });
+    $(document).on('click', '#lab-link', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("AdminView", "Lab")',
+            success: function (data) {
+                $("#profile-content").html(data);
+                setTimeout(function() {
+                    $(document).foundation();
+                }, 500);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+        addRemoveActiveClass("lab-link");
+    });
+    $(document).on('click', '#forms-link', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Forms", "Participant")',
+            success: function (data) {
+                $("#profile-content").html(data);
+                setTimeout(function() {
+                    $(document).foundation();
+                }, 500);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        addRemoveActiveClass("forms-link");
+    });
+
+    $(document).on('click', '#report-link', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("ExternalReports", "Participant")',
+            success: function (data) {
+                $("#profile-content").html(data);
+                $('#close-report').addClass('hide');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        addRemoveActiveClass("report-link");
+    });
+
+    $(document).on('click', '#challenges-link', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Challenges", "Challenge")',
+            success: function (data) {
+                $("#profile-content").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        addRemoveActiveClass("challenges-link");
+    });
+    $(document).on('click', '#medication-link', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("AdminMedicationDashboard", "Drug")',
+            success: function (data) {
+                $("#popup-admin").remove();
+                $("#profile-content").html(data);
+            },
+            complete: function () {
+                $(document).foundation();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+        addRemoveActiveClass("medication-link");
+    });
+    $(document).on('click', '#back-to-report', function () {
+        if ('@Model.fromLabReport' == 'True') {
+            window.location.href = '@Url.Action("LabAlertReport", "AdminReports", new { BackToReport = true })';
+        }
+        else if ('@Model.fromNoShowReport' == 'True') {
+            window.location.href = '@Url.Action("NoShowReport", "AdminReports", new { BackToReport = true })';
+        }
+        else if ('@Model.fromCoachReport' == 'True') {
+            window.location.href = '@Url.Action("CoachTrackingReport", "AdminReports", new { BackToReport = true })';
+        } 
+        else if ('@Model.fromUnapprovedCarePlan' == 'True') {
+            window.location.href = '@Url.Action("UnapprovedCarePlans", "AdminReports", new { BackToReport = true })';
+        }
+        else if ('@Model.fromAdminTasks' == 'True') {
+            window.location.href = '@Url.Action("TaskManagement", "Admin", new { BackToReport = true })';
+        }
+        else if ('@Model.fromCRMProfile' == 'True') {
+            window.location.href = '@Url.Action("CRM", "CRM", new { BackToCRM = true })';
+        }
+    });
+    $(document).on('click', '#programs-link', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UserPrograms", "Program")',
+            success: function (data) {
+                $("#profile-content").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        addRemoveActiveClass("programs-link");
+    });
+    $(document).on('click', '#info-link', function () {
+        LoadParticipantInfo();
+        addRemoveActiveClass("info-link");
+    });
+    $(document).on('click', '#calendar-link', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Appointments", "Scheduler")',
+            success: function (data) {
+                $("#profile-content").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        addRemoveActiveClass("calendar-link");
+    });
+
+    $(document).on('click', '#messages-link', function () {
+        if ('@Model.ParticipantId' == '@Model.AdminId') {
+			var html = "<div class='cell dashboard-content'><div class='grid-x grid-padding-y'><div class='cell'>&nbsp;</div><div class='cell'><div class='no-graph-info text-center'><p><img src='../../Images/messages/no-msg.jpg'></p><p><a class='anchor-blue' href='@Url.Action("Stream", "Participant", new { ForceParticipant = true })'>Go To Participant View</a> to see chat details.</p></div></div><div class='cell'>&nbsp;</div></div></div>";
+            $("#profile-content").html(html);
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ChatMessage", "Participant")',
+                success: function (data) {
+                    $("#profile-content").html(data);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+        addRemoveActiveClass("messages-link");
+    });
+
+    $(document).on('click', '#log-link', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Notes","Participant")',
+            success: function (data) {
+                $("#profile-content").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        addRemoveActiveClass("log-link");
+    });
+
+    $(document).on('click', '#send-reports-link', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("SendReports", "Reports")',
+            success: function (data) {
+                $("#profile-content").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        addRemoveActiveClass("send-reports-link");
+    });
+
+    $(document).on('click', '#timer-link', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("TimerReport", "Participant")',
+            success: function (data) {
+                $("#profile-content").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+		addRemoveActiveClass("timer-link");
+    });
+
+    //addremove active class
+    function addRemoveActiveClass(id) {
+        $(".active").removeClass("active");
+        $("#" + id).addClass("active");
+    }
+
+    function UpdateProfileStatus() {
+        location.reload();
+    }
+    function TakeAction(id) {
+        $.ajax({
+            url: "@Url.Action("TakeAction", "Lab")",
+            data: { Id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                document.getElementById("action-" + id + "").disabled = true;
+                document.getElementById("action-" + id + "").innerHTML = '@Translate.Message("L2732")';
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    $(window).on('beforeunload', function () {
+        var Type = $("#activityList").val();
+        if (Type == null || Type == 0 || $("#briefNoteText").val() == "") {
+            return;
+        }
+        else {
+            return 'Notes you have entered may not be saved.';
+        }
+    });
+
+    function showReferralList() {
+        if ($("#activityList").val() == 6) {
+            $("#referralListDiv").show();
+        }
+        else {
+            $("#referralListDiv").hide();
+        }
+    }
+
+    function LoadTimeTracker() {
+        $.ajax({
+            url: "@Url.Action("TimeTracker", "Participant", new { InfoPage = true })",
+            type: 'POST',
+            success: function (data) {
+                if ($("#time-tracker").length != 0)
+                    $('#time-tracker').html(data);
+            },
+            complete: function () {
+                $("#stop-timer").foundation();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+</script>

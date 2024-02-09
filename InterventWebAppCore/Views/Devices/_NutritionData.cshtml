@@ -1,0 +1,471 @@
+﻿@using InterventWebApp
+@model NutritionData
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <div class="grid-x main-chart-header">
+            <div class="cell medium-6">
+                <h6>@Translate.Message("L4036"): </h6>
+                <div class="graph-selector-container" id="graph-selector-container">
+                    <span data-toggle="graph-date-filter" data-value="wt-week-data">@Translate.Message("L2741")</span>
+                    <div class="graph-selector dropdown-pane" id="graph-date-filter" data-dropdown data-close-on-click="true">
+                        <ul>
+                            <li data-value="wt-week-data">@Translate.Message("L2741")</li>
+                            <li data-value="wt-month-data">@Translate.Message("L2740")</li>
+                            <li data-value="wt-90days-data">@Translate.Message("L2739")</li>
+                            <li data-value="wt-yesterday-data">@Translate.Message("L2742")</li>
+                            <li data-value="wt-date-range">@Translate.Message("L2744")</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="graph-date-range hide">
+                    <form id="date-search">
+                        <div class="input-container">
+                            <label for="graph-start-date">
+                                <input type="text" name="graph-start-date" placeholder="@Translate.Message("L1445")" id="graph-start-date" autocomplete="off" />
+                                <input id="HStartDate" type="hidden" />
+                            </label>
+                            <label for="graph-end-date">
+                                <input type="text" name="graph-end-date" placeholder="@Translate.Message("L4001")" id="graph-end-date" autocomplete="off" />
+                                <input id="HEndDate" type="hidden" />
+                            </label>
+                        </div>
+                        <div class="button-group align-center">
+                            <button type="reset" class="button hollow" id="reset-date">@Translate.Message("L3967")</button>
+                            <button type="submit" class="button" id="submit-date">@Translate.Message("L963")</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @*<div class="chart-update-date cell medium-6 text-right">Last Update <strong><span id="recentDate"></span></strong></div>*@
+        </div>
+    </div>
+    <div id="no-graph" class="cell main-graph-container hide">
+        <div class="cell main-chart ">
+            <div class="no-graph-info text-center">
+                <img src="~/Images/device/no-data.png" alt="Alternate Text">
+                <span>@Translate.Message("L4000")</span>
+            </div>
+        </div>
+    </div>
+    <div id="has-data" class="cell">
+        <div class="main-graph-container nutrition-graph-container">
+            <div class="units-list">
+                <ul>
+                    <li>
+                        <span class="unit-count"><span id="avgCalories"></span></span> @Translate.Message("L2784")
+                        @*<span class="units-tag red">Not In Range</span><i class="fa fa-info" data-toggle="weight-bmi1"></i>*@
+                    </li>
+                </ul>
+                @*<p style="text-align:center">Last update <strong><span class="unit-count" id="lastUpdated"></span></strong></p>*@
+                <div class="dropdown-pane device-tooltip" data-position="top" data-alignment="center" id="physical-tooltip1" data-dropdown data-v-offset="12" data-auto-focus="true" data-hover="true" data-hover-pane="true">
+                    <p>@Translate.Message("L4037")</p>
+                </div>
+            </div>
+
+            <div id="main-nutrition-chartdiv" class="main-chart">
+                <div class="grid-x grid-margin-x grid-margin-y">
+                    @*<div class="cell medium-3">
+                            <div class="nutrient-count">
+                                <p><strong>Protein</strong> <span class="daily-nutrient daily-protein" id="proteinAvg"></span></p>
+                                <p>Recommended <i class="fa fa-info" data-toggle="weight-bmi1"></i><span class="monthly-nutrient" id="proteinGoal">N/A</span></p>
+                            </div>
+                        </div>*@
+                    <div class="cell medium-4">
+                        <div class="nutrient-count">
+                            <p><strong>@Translate.Message("L517")</strong> <span class="daily-nutrient daily-crab" id="fatAvg">@Translate.Message("L1149")</span></p>
+                            <p>@Translate.Message("L223") <i onclick="OpenModal('mealplan');" class="fa fa-info" data-toggle="weight-bmi1"></i><span></span></p>
+                            <spam id="fatGoal">
+                            </spam>
+                        </div>
+                    </div>
+                    <div class="cell medium-4">
+                        <div class="nutrient-count">
+                            <p><strong>@Translate.Message("L1638")</strong> <span class="daily-nutrient daily-crab" id="carbAvg">@Translate.Message("L1149")</span></p>
+                            <p>@Translate.Message("L223") <i onclick="OpenModal('mealplan');" class="fa fa-info" data-toggle="weight-bmi1"></i><span class="monthly-nutrient"></span></p>
+                            <spam id="carbGoal">
+                            </spam>
+                        </div>
+                    </div>
+                    <div class="cell medium-4">
+                        <div class="nutrient-count">
+                            <p><strong>@Translate.Message("L522")</strong> <span class="daily-nutrient daily-crab" id="sodiumAvg">@Translate.Message("L1149")</span></p>
+                            <p>@Translate.Message("L223") <i onclick="OpenModal('mealplan');" class="fa fa-info" data-toggle="weight-bmi1"></i><span class="monthly-nutrient"></span></p>
+                            <spam id="sodiumGoal">
+                            </spam>
+                        </div>
+                    </div>
+                    @*<div class="cell medium-3">
+                            <div class="nutrient-count">
+                                <p><strong>Others</strong> <span class="daily-nutrient daily-other">24 g</span></p>
+                                <p>Target</p><span class="monthly-nutrient">124 g <br />15 f</span><span class="monthly-nutrient">124 g</span>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+
+			<div class="main-graph-details nut-graph-details">
+
+				<h5>@Html.Raw(String.Format(Translate.Message("L4038"), "<span id='pastDays'>7</span>"))</h5>
+
+				<div class="nutrition-details">
+					<div class="hide-for-large table-gradient"></div>
+					<table class="unstriped">
+						<thead>
+							<tr>
+								<th>@Translate.Message("L4039")</th>
+								<th width="240">@Translate.Message("L2788")</th>
+								<th>@Translate.Message("L2784")</th>
+								<th>@Translate.Message("L2785")</th>
+								<th>@Translate.Message("L4040")</th>
+								<th>@Translate.Message("L2787")</th>
+								<th>@Translate.Message("L2789")</th>
+								<th>@Translate.Message("L2790")</th>
+							</tr>
+						</thead>
+
+						<tbody id="nutritionData"></tbody>
+					</table>
+				</div>
+
+
+				<div class="grid-x grid-padding-x">
+					<div class="cell">
+						<!-- <ul class="pagination text-center" id="pagination-centered">
+				<li id="first" aria-disabled="true"><a>&laquo;</a></li>
+				<li id="previous" class="pagination-previous" aria-disabled="true"><a>&lt;</a></li>
+				<li id="numeric"></li>
+				<li id="next" class="pagination-next"><a>&gt;</a></li>
+				<li id="last"><a>&raquo;</a></li>
+			</ul> -->
+						<!-- pagination Start -->
+						<div class="pagination-area">
+							<ul>
+								@*<li id="previous" class="sprev-arrow"><img src="~/Images/s-arrow.svg" alt="" /></li>*@
+								<li id="numeric"></li>
+								@*<li id="next" class="snext-arrow"><img src="~/Images/s-arrow.svg" alt="" /></li>*@
+							</ul>
+							<!-- page-link Start -->
+							<div class="page-link">
+								<label>@Translate.Message("L4041")</label>
+								<div class="grid-x">
+									<input type="text" id="jumptoPageNo">
+									<button type="submit" id="gotoPage" class="button">@Translate.Message("L4042")</button>
+								</div>
+							</div>
+							<!-- page-link End -->
+						</div>
+						<!-- pagination End -->
+					</div>
+				</div>
+			</div>
+
+        </div>
+    </div>
+</div>
+<div id="details-modal" class="reveal large device-chart-container" data-reveal>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<script>
+    var startIndex = 1;
+    var pageSize = 10;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    var startDate, endDate;
+    var notApplicable = "@Translate.Message("L1149")";
+    $("#graph-start-date").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#graph-start-date').val()));
+    });
+    $("#graph-end-date").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#graph-end-date').val()));
+    });
+    $(document).ready(function () {
+        LoadNutritionData(7, false);
+
+        $(".graph-selector ul li").on("click", function () {
+            var showData = $(this).data("value");
+            var showText = $(this).text();
+            $(".graph-selector-container span").text(showText);
+            $(".graph-selector-container span").data('value', showData);
+            $("#graph-date-filter").foundation("close");
+            changeGraph();
+        });
+
+        //Date range picker for graphs
+        $("#graph-start-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()}).on('change', function (selected) {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#graph-end-date').fdatepicker('setDate', minDate);
+            }
+            $('#graph-end-date').fdatepicker('setStartDate', minDate);
+            $("#graph-end-date").trigger("change");
+        });
+        $("#graph-end-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()
+        });
+
+        $("#date-search").on('submit', function (ev) {
+            LoadNutritionData(0, false);
+            ev.preventDefault();
+            $(".graph-date-range").addClass("hide");
+        });
+
+        $(document).on('click', function () {
+            $('.graph-date-range').addClass("hide");
+        });
+        $('.graph-date-range, .datepicker, .graph-selector').on('click', function (e) {
+            e.stopPropagation();
+        });
+
+
+
+        $('.pagination-area .dropdown').on('click', function () {
+            $('.pagination-area .dropdown ul').toggle();
+            $('.pagination-area .dropdown ul').jScrollPane({
+                showArrows: false,
+                resizeSensor: true
+            });
+        });
+    });
+
+    function changeGraph() {
+        startIndex = 0;
+        pageSize = 10;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        ListData(false);
+    }
+
+    function ListData(pageChange) {
+        if ($(".graph-selector-container span").data('value').includes("week-data")) {
+            $(".graph-date-range").addClass("hide");
+            LoadNutritionData(7, false);
+            $("#pastDays").html(7);
+        }
+        else if ($(".graph-selector-container span").data('value').includes("month-data")) {
+            $(".graph-date-range").addClass("hide");
+            LoadNutritionData(30, false);
+            $("#pastDays").html(30);
+        }
+        else if ($(".graph-selector-container span").data('value').includes("90days-data")) {
+            $(".graph-date-range").addClass("hide");
+            LoadNutritionData(90, false);
+            $("#pastDays").html(90);
+        }
+        else if ($(".graph-selector-container span").data('value').includes("date-range")) {
+            $(".graph-date-range").removeClass("hide");
+            $("#graph-start-date").val("");
+            $("#graph-end-date").val("");
+            if (pageChange)
+                LoadNutritionData(0, pageChange);
+        }
+        else {
+            $(".graph-date-range").addClass("hide");
+            LoadNutritionData(1, false);
+            $("#pastDays").html(1);
+        }
+    }
+    function LoadNutritionData(days, pageChange) {
+        if (!pageChange) {
+            startDate = null;
+            endDate = null;
+            if ($(".graph-selector-container span").data('value').includes("date-range")) {
+                startDate = $("#HStartDate").val();
+                endDate = $("#HEndDate").val();
+                var diffDays = Math.round((new Date(new Date(endDate) - new Date(startDate))) / 1000 / 60 / 60 / 24);
+                $("#pastDays").html(diffDays);
+            }
+        }
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            data: { days: days, startDate: startDate, endDate: endDate, page: currentPage, pageSize: pageSize, totalRecords: totalRecords },
+            url: "@Url.Action("ListNutritionData", "Devices")",
+            success: function (data) {
+                if(data.data.length == 0){
+                    $("#no-graph").removeClass("hide");
+                    $("#has-data").addClass("hide");
+                }
+                else
+                {
+                    $("#no-graph").addClass("hide");
+                    $("#has-data").removeClass("hide");
+                    //$("#lastUpdated").text(data.recentDate);
+                    $('#nutritionData').html("");
+                    totalRecords = data.totalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    if(data != null){
+                        $('#avgCalories').text(data.avgCalories);
+                        //$('#recentDate').text(data.data[0].datestamp);
+                        var html = "";
+                        var previous = "";
+                        var className = "nut-date-odd";
+                        for(var i=0; i < data.data.length; i++){
+                            var nutrition = data.data[i];
+                            if(nutrition.datestamp != previous)
+                            {
+                                if(className == "nut-date-even")
+                                    className = "nut-date-odd";
+                                else
+                                    className = "nut-date-even"
+                                previous = nutrition.datestamp;
+                                html += "<tr class='" + className + "'>";
+                                html += "<th colspan='8'>";
+                                html += nutrition.datestamp;
+                                html += "</th></tr>";
+                            }
+                            html += "<tr class='" + className + "'>";
+                            html += "<td>" + nutrition.timestamp + "</td>";
+                            html += "<td>" + nutrition.meal + "</td>";
+                            html += "<td>" + nutrition.calories + "</td>";
+                            html += "<td>" + nutrition.carbohydrates + "</td>";
+                            html += "<td>" + nutrition.fat + "</td>";
+                            html += "<td>" + nutrition.fiber + "</td>";
+                            html += "<td>" + nutrition.protein + "</td>";
+                            html += "<td>" + nutrition.sodium + "</td>";
+                            html += "</tr>";
+                        }
+                        //$("#fatAvg").removeClass("daily-protein daily-fat daily-crab");
+                        //$("#carbAvg").removeClass("daily-protein daily-fat daily-crab");
+                        if (data.avgFat != null && data.avgFat != 0)
+                            $("#fatAvg").html(data.avgFat + " g");
+                        else
+                            $("#fatAvg").html(notApplicable)
+                        //if(Number(data.avgFat) < 38){
+                        //    $("#fatAvg").addClass("daily-crab");
+                        //}
+                        //else if(Number(data.avgFat) > 38 && Number(data.avgFat) < 66){
+                        //     $("#fatAvg").addClass("daily-protein");
+                        //}
+                        //else if(Number(data.avgFat) > 66){
+                        //    $("#fatAvg").addClass("daily-fat");
+                        //}
+                        if (data.avgCarb != null && data.avgCarb != 0)
+                            $("#carbAvg").html(data.avgCarb + " @Translate.Message("L4043")");
+                        else
+                            $("#carbAvg").html(notApplicable)
+                        if (data.avgSodium != null && data.avgSodium != 0)
+                            $("#sodiumAvg").html(data.avgSodium + " @Translate.Message("L4044")");
+                        else
+                            $("#sodiumAvg").html(notApplicable)
+                        //if(Number(data.avgFat) < 191){
+                        //    $("#carbAvg").addClass("daily-crab");
+                        //}
+                        //else if(Number(data.avgFat) > 191 && Number(data.avgFat) < 276){
+                        //     $("#carbAvg").addClass("daily-protein");
+                        //}
+                        //else if(Number(data.avgFat) > 276){
+                        //    $("#carbAvg").addClass("daily-fat");
+                        //}
+                        $("#carbGoal").html(data.carbGoal);
+                        $("#sodiumGoal").html(data.sodiumGoal);
+                        $("#fatGoal").html(data.fatGoal);
+                        $('#nutritionData').append(html);
+                    }
+                    var LastIndex = parseInt(startIndex + pageSize); // this is the last displaying record
+                    if (LastIndex > totalRecords) { // in case that last page includes records less than the size of the page
+                        LastIndex = totalRecords;
+                    }
+
+                    //$("#pageInfo").html("Page ( <b>" + parseInt(currentPage + 1) + "</b> of <b>" + totalPages + "</b> )      Displaying <b>" + parseInt(startIndex) + "-" + LastIndex + "</b> of <b>" + totalRecords + "</b> Records."); // displaying current records interval  and currnet page infromation
+
+                    if (currentPage > 0) {
+                        $("#first").unbind("click"); // remove previous click events
+                        $("#first").removeClass("unavailable"); // remove the inactive page style
+                        $("#first").on('click', function () { // set goto page to first page
+                            GotoPage(0);
+                        });
+                        $("#previous").unbind("click");
+                        $("#previous").removeClass("unavailable");
+                        $("#previous").on('click', function () {
+                            GotoPage(currentPage - 1); // set the previous page next value  to current page – 1
+                        });
+                    }
+                    else {
+                        $("#first").addClass("unavailable");
+                        $("#first").unbind("click");
+                        $("#previous").addClass("unavailable");
+                        $("#previous").unbind("click");
+                    }
+
+                    if (currentPage < totalPages - 1) { // if you are not displaying the last index
+                        $("#next").unbind("click");
+                        $("#next").removeClass("unavailable");
+                        $("#next").on('click', function () {
+                            GotoPage(currentPage + 1);
+                        });
+                        $("#last").unbind("click");
+                        $("#last").removeClass("unavailable");
+                        $("#last").on('click', function () {
+                            GotoPage(totalPages - 1);
+                        });
+                    } else {
+                        $("#next").addClass("unavailable");
+                        $("#next").unbind("click");
+                        $("#last").addClass("unavailable");
+                        $("#last").unbind("click");
+                    }
+
+                    // displaying the numeric pages by default there are 10 numeric pages
+                    var firstPage = 0;
+                    var lastPage = 4;
+                    if (currentPage >= 3) {
+                        lastPage = currentPage + 2;
+                        firstPage = currentPage - 2
+                    }
+                    if (lastPage > totalPages) {
+                        lastPage = totalPages;
+                        firstPage = lastPage - 4;
+                    }
+                    if (firstPage < 0) {
+                        firstPage = 0;
+                    }
+                    var pagesString = "";
+                    for (var i = firstPage; i < lastPage; i++) {
+                        if (i == currentPage) {
+                            pagesString += "<li class='current' ><a>" + parseInt(i + 1) + "</a></li>"
+                        }
+                        else {
+                            pagesString += "<li><a onclick='GotoPage(" + i + ")'>" + parseInt(i + 1) + "</a></li>" // add goto page event
+                        }
+                    }
+                    $("#numeric").html(pagesString);
+                    window.scrollTo(500, 0);
+                }
+            }
+        });
+    }
+    function GotoPage(page) {
+        if (totalPages <= page)
+            page = totalPages - 1;
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListData(true);
+    }
+
+    $("#gotoPage").on('click', function () {
+        var pageNo = $("#jumptoPageNo").val();
+        GotoPage(pageNo - 1);
+        $("#jumptoPageNo").val("");
+    });
+
+    var mealurl = "@Html.Raw(Url.Action("NutritionRecommendation", "Reports", new { onlymeal = true }))";
+    function OpenModal(name) {if (name == 'mealplan') {
+            $('#details-modal').html("");
+            var link = mealurl;
+            $('#details-modal').load(link);
+            $('#details-modal').foundation('open');
+        }
+    }
+</script>

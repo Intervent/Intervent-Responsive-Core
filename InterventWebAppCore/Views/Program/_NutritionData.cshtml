@@ -1,0 +1,341 @@
+﻿@model InterventWebApp.NutritionGoalModel
+@using InterventWebApp
+
+<div class="meal-plan-container">
+    <div class="tab-title-container">
+        <h4>@Translate.Message("L272")</h4>
+        <h4>@Translate.Message("L515")</h4>
+        <p>@Model.nutGoalIntro</p>
+        @*<a href="#" class="link">Link</a>*@
+    </div>
+
+    <div class="nutrition-tips">
+        <h6>
+            @Translate.Message("L530")
+            <span data-open="nutrition-guidelines-modal">See All</span>
+        </h6>
+        <div class="tips-slider">
+            @if (Model.nutRecommendations.Count() > 0)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    <div class="tips-thumb">
+                        <div class="media">
+                            <img src="~/Images/program/tips-icon.svg" />
+                        </div>
+                        <div class="content">
+                            <p>@Html.Raw(Model.nutRecommendations[i])</p>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <h4>@Translate.Message("L513")</h4>
+    @if (Model.NutMaint == true)
+    {
+        <h6>
+            @Translate.Message("L1636")
+        </h6>
+    }
+
+
+</div>
+<div class="kit-header plan-tabs-main">
+    <ul class="tabs rounded-tabs plan-tabs" data-tabs id="plan-tabs">
+        <li class="tabs-title is-active"><a href="#plan-a" aria-selected="true">@Translate.Message("L1640") @Model.FirstNutPlan</a></li>
+        @if (Model.NutMaint == true)
+            {
+            <li class="tabs-title"><a href="#plan-b">@Translate.Message("L1640") @Model.NutMaintMealPlan</a></li>
+            }
+    </ul>
+</div>
+<div class="tabs-content" data-tabs-content="plan-tabs">
+    <div class="tabs-panel is-active" id="plan-a">
+        <ul class="tabs line-tabs fooding-tabs" data-tabs id="fooding-tabs">
+            <li class="tabs-title is-active"><a href="#breakfast" aria-selected="true">@Translate.Message("L3556")</a></li>
+            <li class="tabs-title"><a href="#snacks">@Translate.Message("L3558")</a></li>
+            <li class="tabs-title"><a href="#lunch">@Translate.Message("L3557")</a></li>
+            <li class="tabs-title"><a href="#dinner">@Translate.Message("L3559")</a></li>
+        </ul>
+        <div class="tabs-content fooding-tabs-content" data-tabs-content="fooding-tabs">
+            <div class="tabs-panel is-active" id="breakfast">
+                <div class="food-top-section">
+                    @Html.Partial("_MealPlanData", Model,
+                            new ViewDataDictionary(ViewData) {
+                                { "Name", Translate.Message("L3556") },
+                                { "Meat", @Model.FirstNutPlanArray.GetValue(0, 0) },
+                                { "Milk", @Model.FirstNutPlanArray.GetValue(1, 0) },
+                                { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 0) },
+                                { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 0) },
+                                { "Starch", @Model.FirstNutPlanArray.GetValue(4, 0) },
+                                { "FoodId", "breakfast" },
+                            })
+                </div>
+            </div>
+            <div class="tabs-panel" id="snacks">
+                <div class="food-top-section">
+                    @Html.Partial("_MealPlanData", Model,
+                            new ViewDataDictionary(ViewData) {
+                                { "Name", Translate.Message("L3558") },
+                                { "Meat", @Model.FirstNutPlanArray.GetValue(0, 2) },
+                                { "Milk", @Model.FirstNutPlanArray.GetValue(1, 2) },
+                                { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 2) },
+                                { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 2) },
+                                { "Starch", @Model.FirstNutPlanArray.GetValue(4, 2) },
+                                { "FoodId", "snacks" },
+                            })
+                </div>
+            </div>
+            <div class="tabs-panel" id="lunch">
+                <div class="food-top-section">
+                    @Html.Partial("_MealPlanData", Model,
+                            new ViewDataDictionary(ViewData) {
+                                { "Name", Translate.Message("L3557") },
+                                { "Meat", @Model.FirstNutPlanArray.GetValue(0, 1) },
+                                { "Milk", @Model.FirstNutPlanArray.GetValue(1, 1) },
+                                { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 1) },
+                                { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 1) },
+                                { "Starch", @Model.FirstNutPlanArray.GetValue(4, 1) },
+                                { "FoodId", "lunch" },
+                            })
+                </div>
+            </div>
+            <div class="tabs-panel" id="dinner">
+                <div class="food-top-section">
+                    @Html.Partial("_MealPlanData", Model,
+                            new ViewDataDictionary(ViewData) {
+                                { "Name", Translate.Message("L3559") },
+                                { "Meat", @Model.FirstNutPlanArray.GetValue(0, 3) },
+                                { "Milk", @Model.FirstNutPlanArray.GetValue(1, 3) },
+                                { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 3) },
+                                { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 3) },
+                                { "Starch", @Model.FirstNutPlanArray.GetValue(4, 3) },
+                                { "FoodId", "dinner" },
+                            })
+                </div>
+            </div>
+
+            <div class="food-btm-section">
+                <div class="food-list-section small-order-2 medium-order-1">
+                    <h5>@Translate.Message("L515")</h5>
+                    <div class="food-list">
+                        <ul class="diet-intake-list">
+                            <li>
+                                <span>@Translate.Message("L526")</span>
+                                <span>@Translate.Message("L516")</span>
+                            </li>
+                            <li>
+                                <span>@Translate.Message("L517")</span>
+                                <span>@Model.NutFatNum.Value-@Model.NewNutFatNum<span> g</span></span>
+                            </li>
+                            <li>
+                                <span>@Translate.Message("L518")</span>
+                                <span>@Translate.Message("L1641") @Model.NutSatFatNum<span> g</span></span>
+                            </li>
+                            <li>
+                                <span>@Translate.Message("L1637")</span>
+                                <span>@Model.NutTransFatNum</span>
+                            </li>
+                            <li>
+                                <span>@Translate.Message("L1231")</span>
+                                <span>@Model.NutCholNum</span>
+                            </li>
+                            <li>
+                                <span>@Translate.Message("L1638")</span>
+                                <span>@Model.NutCarbFrom-@Model.NutCarbTo<span> g</span></span>
+                            </li>
+                            <li>
+                                <span>@Translate.Message("L520")</span>
+                                <span>10-25 g</span>
+                            </li>
+                            <li>
+                                <span>@Translate.Message("L1639")</span>
+                                <span>@Translate.Message("L1641") @Model.NutSugNum<span> g</span></span>
+                            </li>
+                            <li>
+                                <span>@Translate.Message("L522")</span>
+                                <span>@Translate.Message("L523")</span>
+                            </li>
+                            <li>
+                                <span>@Translate.Message("L524")</span>
+                                <span>@Translate.Message("L527") @Model.NutDrinkWaterNum @Translate.Message("L528")</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="food-list-section small-order-1 medium-order-2">
+                    <h5>@Html.Raw(Translate.Message("L4079"))</h5>
+                    <div class="food-list">
+                        @Html.Partial("_MealPlanData", Model,
+                                    new ViewDataDictionary(ViewData) {
+                                        { "Name", Translate.Message("L3812") },
+                                        { "Meat", @Model.FirstNutPlanArray.GetValue(0, 4) },
+                                        { "Milk", @Model.FirstNutPlanArray.GetValue(1, 4) },
+                                        { "Fruit", @Model.FirstNutPlanArray.GetValue(2, 4) },
+                                        { "NonStarch", @Model.FirstNutPlanArray.GetValue(3, 4) },
+                                        { "Starch", @Model.FirstNutPlanArray.GetValue(4, 4) },
+                                        { "FoodId", "total" },
+                                    })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Plan A tab end -->
+    @if (Model.NutMaint == true)
+    {
+        <div class="tabs-panel" id="plan-b">
+            <ul class="tabs line-tabs fooding-tabs" data-tabs id="fooding-tabs">
+                <li class="tabs-title is-active"><a href="#breakfast2" aria-selected="true">@Translate.Message("L3556")</a></li>
+                <li class="tabs-title"><a href="#snacks2">@Translate.Message("L3558")</a></li>
+                <li class="tabs-title"><a href="#lunch2">@Translate.Message("L3557")</a></li>
+                <li class="tabs-title"><a href="#dinner2">@Translate.Message("L3559")</a></li>
+            </ul>
+            <div class="tabs-content fooding-tabs-content" data-tabs-content="fooding-tabs">
+                <div class="tabs-panel is-active" id="breakfast2">
+                    <div class="food-top-section">
+                        @Html.Partial("_MealPlanData", Model,
+                                    new ViewDataDictionary(ViewData) {
+                                        { "Name", Translate.Message("L3556") },
+                                        { "Meat", @Model.SecondNutPlanArray.GetValue(0, 0) },
+                                        { "Milk", @Model.SecondNutPlanArray.GetValue(1, 0) },
+                                        { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 0) },
+                                        { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 0) },
+                                        { "Starch", @Model.SecondNutPlanArray.GetValue(4, 0) },
+                                        { "FoodId", "breakfast2" },
+                                    })
+                    </div>
+                </div>
+
+                <div class="tabs-panel" id="snacks2">
+                    <div class="food-top-section">
+                        @Html.Partial("_MealPlanData", Model,
+                                    new ViewDataDictionary(ViewData) {
+                                        { "Name", Translate.Message("L3558") },
+                                        { "Meat", @Model.SecondNutPlanArray.GetValue(0, 2) },
+                                        { "Milk", @Model.SecondNutPlanArray.GetValue(1, 2) },
+                                        { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 2) },
+                                        { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 2) },
+                                        { "Starch", @Model.SecondNutPlanArray.GetValue(4, 2) },
+                                        { "FoodId", "snacks2" },
+                                    })
+                    </div>
+                </div>
+
+                <div class="tabs-panel" id="lunch2">
+                    <div class="food-top-section">
+                        @Html.Partial("_MealPlanData", Model,
+                                    new ViewDataDictionary(ViewData) {
+                                        { "Name", Translate.Message("L3557") },
+                                        { "Meat", @Model.SecondNutPlanArray.GetValue(0, 1) },
+                                        { "Milk", @Model.SecondNutPlanArray.GetValue(1, 1) },
+                                        { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 1) },
+                                        { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 1) },
+                                        { "Starch", @Model.SecondNutPlanArray.GetValue(4, 1) },
+                                        { "FoodId", "lunch2" },
+                                    })
+                    </div>
+                </div>
+
+                <div class="tabs-panel" id="dinner2">
+                    <div class="food-top-section">
+                        @Html.Partial("_MealPlanData", Model,
+                                    new ViewDataDictionary(ViewData) {
+                                        { "Name", Translate.Message("L3558") },
+                                        { "Meat", @Model.SecondNutPlanArray.GetValue(0, 3) },
+                                        { "Milk", @Model.SecondNutPlanArray.GetValue(1, 3) },
+                                        { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 3) },
+                                        { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 3) },
+                                        { "Starch", @Model.SecondNutPlanArray.GetValue(4, 3) },
+                                        { "FoodId", "dinner2" },
+                                    })
+                    </div>
+                </div>
+
+
+                <div class="food-btm-section">
+                    <div class="food-list-section small-order-2 medium-order-1">
+                        <h5>@Translate.Message("L515")</h5>
+                        <div class="food-list">
+                            <ul class="diet-intake-list">
+                                <li>
+                                    <span>@Translate.Message("L526")</span>
+                                    <span>@Translate.Message("L516")</span>
+                                </li>
+                                <li>
+                                    <span>@Translate.Message("L517")</span>
+                                    <span>@Model.NutLtFatNum-@Model.NewNutLtFatNum<span> g</span></span>
+                                </li>
+                                <li>
+                                    <span>@Translate.Message("L518")</span>
+                                    <span>@Translate.Message("L1641") @Model.NutLtSatFatNum<span> g</span></span>
+                                </li>
+                                <li>
+                                    <span>@Translate.Message("L1637")</span>
+                                    <span>@Model.NutTransFatNum</span>
+                                </li>
+                                <li>
+                                    <span>@Translate.Message("L1231")</span>
+                                    <span>@Model.NutCholNum</span>
+                                </li>
+                                <li>
+                                    <span>@Translate.Message("L1638")</span>
+                                    <span>@Model.NutLtCarbFrom-@Model.NutLtCarbTo<span> g</span></span>
+                                </li>
+                                <li>
+                                    <span>@Translate.Message("L520")</span>
+                                    <span>10-25 g</span>
+                                </li>
+                                <li>
+                                    <span>@Translate.Message("L1639")</span>
+                                    <span>@Translate.Message("L1641") @Model.NutSugNum<span> g</span></span>
+                                </li>
+                                <li>
+                                    <span>@Translate.Message("L522")</span>
+                                    <span>@Translate.Message("L523")</span>
+                                </li>
+                                <li>
+                                    <span>@Translate.Message("L524")</span>
+                                    <span>@Translate.Message("L527") @Model.NutDrinkWaterNum @Translate.Message("L528")</span>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="food-list-section small-order-1 medium-order-2">
+                    <h5>@Html.Raw(Translate.Message("L4079"))</h5>
+                        <div class="food-list">
+                            @Html.Partial("_MealPlanData", Model,
+                                        new ViewDataDictionary(ViewData) {
+                                            { "Name", Translate.Message("L3812") },
+                                            { "Meat", @Model.SecondNutPlanArray.GetValue(0, 4) },
+                                            { "Milk", @Model.SecondNutPlanArray.GetValue(1, 4) },
+                                            { "Fruit", @Model.SecondNutPlanArray.GetValue(2, 4) },
+                                            { "NonStarch", @Model.SecondNutPlanArray.GetValue(3, 4) },
+                                            { "Starch", @Model.SecondNutPlanArray.GetValue(4, 4) },
+                                            { "FoodId", "total2" },
+                                        })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <!-- Plan B tab end -->
+</div>
+
+@if (Model.nutRecommendations.Count() > 0)
+{
+    <div class="reveal nutrition-guidelines-modal guidelines-modal" id="nutrition-guidelines-modal" data-reveal data-close-on-esc="false" data-close-on-click="false">
+        <h6>@Translate.Message("L530")</h6>
+        <ul class="guidelines-list">
+            @for (int i = 0; i < Model.nutRecommendations.Count; i++)
+            {
+                @Html.Raw(Model.nutRecommendations[i])
+            }
+        </ul>
+        <button class="close-button" data-close aria-label="Close modal" type="button"></button>
+    </div>
+}

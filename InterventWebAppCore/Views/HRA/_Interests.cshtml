@@ -1,0 +1,540 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp;
+@model InterventWebApp.InterestModel
+<div class="inner-survey-modal">
+<h2 class="text-center">@Translate.Message("L487")</h2>
+<p>@Translate.Message("L594")</p>
+<form data-abide id="interests-form" novalidate>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                @{
+                    int i = 0;
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L147")
+                            </div>
+                        </div>
+                        <div class="qBody rubric weight-group" data-validator-limit="1,3">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.WeightManProg, 0, new Dictionary<string, object> { { "id", "WeightManProg0" }, { "data-validator", "validateWeight" } })
+                                <label for="WeightManProg0">0</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.WeightManProg, 1, new Dictionary<string, object> { { "id", "WeightManProg1" }, { "data-validator", "validateWeight" } })
+                                <label for="WeightManProg1">1</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.WeightManProg, 2, new Dictionary<string, object> { { "id", "WeightManProg2" }, { "data-validator", "validateWeight" } })
+                                <label for="WeightManProg2">2</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.WeightManProg, 3, new Dictionary<string, object> { { "id", "WeightManProg3" }, { "data-validator", "validateWeight" } })
+                                <label for="WeightManProg3">3</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.WeightManProg, 4, new Dictionary<string, object> { { "id", "WeightManProg4" }, { "data-validator", "validateWeight" } })
+                                <label for="WeightManProg4">4</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.WeightManProg, 5, new Dictionary<string, object> { { "id", "WeightManProg5" }, { "data-validator", "validateWeight" } })
+                                <label for="WeightManProg5">5</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.WeightManProg, 6, new Dictionary<string, object> { { "id", "WeightManProg6" }, { "data-validator", "validateWeight" } })
+                                <label for="WeightManProg6">6</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.WeightManProg, 7, new Dictionary<string, object> { { "id", "WeightManProg7" }, { "data-validator", "validateWeight" } })
+                                <label for="WeightManProg7">7</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.WeightManProg, 8, new Dictionary<string, object> { { "id", "WeightManProg8" }, { "data-validator", "validateWeight" } })
+                                <label for="WeightManProg8">8</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.WeightManProg, 9, new Dictionary<string, object> { { "id", "WeightManProg9" }, { "data-validator", "validateWeight" } })
+                                <label for="WeightManProg9">9</label>
+                            </div>
+                            <small class="form-error">@Translate.Message("L480")</small>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L151")
+                            </div>
+                        </div>
+                        <div class="qBody rubric exercise-group" data-validator-limit="1,3">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.ExerProg, 0, new Dictionary<string, object> { { "id", "ExerProg0" }, { "data-validator", "validateExercise" } })
+                                <label for="ExerProg0">0</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.ExerProg, 1, new Dictionary<string, object> { { "id", "ExerProg1" }, { "data-validator", "validateExercise" } })
+                                <label for="ExerProg1">1</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.ExerProg, 2, new Dictionary<string, object> { { "id", "ExerProg2" }, { "data-validator", "validateExercise" } })
+                                <label for="ExerProg2">2</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.ExerProg, 3, new Dictionary<string, object> { { "id", "ExerProg3" }, { "data-validator", "validateExercise" } })
+                                <label for="ExerProg3">3</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.ExerProg, 4, new Dictionary<string, object> { { "id", "ExerProg4" }, { "data-validator", "validateExercise" } })
+                                <label for="ExerProg4">4</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.ExerProg, 5, new Dictionary<string, object> { { "id", "ExerProg5" }, { "data-validator", "validateExercise" } })
+                                <label for="ExerProg5">5</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.ExerProg, 6, new Dictionary<string, object> { { "id", "ExerProg6" }, { "data-validator", "validateExercise" } })
+                                <label for="ExerProg6">6</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.ExerProg, 7, new Dictionary<string, object> { { "id", "ExerProg7" }, { "data-validator", "validateExercise" } })
+                                <label for="ExerProg7">7</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.ExerProg, 8, new Dictionary<string, object> { { "id", "ExerProg8" }, { "data-validator", "validateExercise" } })
+                                <label for="ExerProg8">8</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.ExerProg, 9, new Dictionary<string, object> { { "id", "ExerProg9" }, { "data-validator", "validateExercise" } })
+                                <label for="ExerProg9">9</label>
+                            </div>
+                            <small class="form-error">@Translate.Message("L480")</small>
+                        </div>
+                    </div>
+
+                    if (Model.isSmoker.HasValue && Model.isSmoker == 1)
+                    {
+                        <div class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++i).</div>
+                                <div class="qText">
+                                    @Translate.Message("L152")
+                                </div>
+                            </div>
+                            <div class="qBody rubric smoking-group" data-validator-limit="1,3">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.QuitSmokeProg, 0, new Dictionary<string, object> { { "id", "QuitSmokeProg0" }, { "data-validator", "validateSmoking" } })
+                                    <label for="QuitSmokeProg0">0</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.QuitSmokeProg, 1, new Dictionary<string, object> { { "id", "QuitSmokeProg1" }, { "data-validator", "validateSmoking" } })
+                                    <label for="QuitSmokeProg1">1</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.QuitSmokeProg, 2, new Dictionary<string, object> { { "id", "QuitSmokeProg2" }, { "data-validator", "validateSmoking" } })
+                                    <label for="QuitSmokeProg2">2</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.QuitSmokeProg, 3, new Dictionary<string, object> { { "id", "QuitSmokeProg3" }, { "data-validator", "validateSmoking" } })
+                                    <label for="QuitSmokeProg3">3</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.QuitSmokeProg, 4, new Dictionary<string, object> { { "id", "QuitSmokeProg4" }, { "data-validator", "validateSmoking" } })
+                                    <label for="QuitSmokeProg4">4</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.QuitSmokeProg, 5, new Dictionary<string, object> { { "id", "QuitSmokeProg5" }, { "data-validator", "validateSmoking" } })
+                                    <label for="QuitSmokeProg5">5</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.QuitSmokeProg, 6, new Dictionary<string, object> { { "id", "QuitSmokeProg6" }, { "data-validator", "validateSmoking" } })
+                                    <label for="QuitSmokeProg6">6</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.QuitSmokeProg, 7, new Dictionary<string, object> { { "id", "QuitSmokeProg7" }, { "data-validator", "validateSmoking" } })
+                                    <label for="QuitSmokeProg7">7</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.QuitSmokeProg, 8, new Dictionary<string, object> { { "id", "QuitSmokeProg8" }, { "data-validator", "validateSmoking" } })
+                                    <label for="QuitSmokeProg8">8</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.QuitSmokeProg, 9, new Dictionary<string, object> { { "id", "QuitSmokeProg9" }, { "data-validator", "validateSmoking" } })
+                                    <label for="QuitSmokeProg9">9</label>
+                                </div>
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    }
+
+                    if (Model.isPregnant.HasValue && Model.isPregnant == 1)
+                    {
+                        <div class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++i).</div>
+                                <div class="qText">
+                                    @Translate.Message("L3160")
+                                </div>
+                            </div>
+                            <div class="qBody rubric maternity-group" data-validator-limit="1,3">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.MaternityProg, 0, new Dictionary<string, object> { { "id", "MaternityProg0" }, { "data-validator", "validateMaternity" } })
+                                    <label for="MaternityProg0">0</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.MaternityProg, 1, new Dictionary<string, object> { { "id", "MaternityProg1" }, { "data-validator", "validateMaternity" } })
+                                    <label for="MaternityProg1">1</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.MaternityProg, 2, new Dictionary<string, object> { { "id", "MaternityProg2" }, { "data-validator", "validateMaternity" } })
+                                    <label for="MaternityProg2">2</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.MaternityProg, 3, new Dictionary<string, object> { { "id", "MaternityProg3" }, { "data-validator", "validateMaternity" } })
+                                    <label for="MaternityProg3">3</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.MaternityProg, 4, new Dictionary<string, object> { { "id", "MaternityProg4" }, { "data-validator", "validateMaternity" } })
+                                    <label for="MaternityProg4">4</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.MaternityProg, 5, new Dictionary<string, object> { { "id", "MaternityProg5" }, { "data-validator", "validateMaternity" } })
+                                    <label for="MaternityProg5">5</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.MaternityProg, 6, new Dictionary<string, object> { { "id", "MaternityProg6" }, { "data-validator", "validateMaternity" } })
+                                    <label for="MaternityProg6">6</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.MaternityProg, 7, new Dictionary<string, object> { { "id", "MaternityProg7" }, { "data-validator", "validateMaternity" } })
+                                    <label for="MaternityProg7">7</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.MaternityProg, 8, new Dictionary<string, object> { { "id", "MaternityProg8" }, { "data-validator", "validateMaternity" } })
+                                    <label for="MaternityProg8">8</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.interests.MaternityProg, 9, new Dictionary<string, object> { { "id", "MaternityProg9" }, { "data-validator", "validateMaternity" } })
+                                    <label for="MaternityProg9">9</label>
+                                </div>
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L153")
+                            </div>
+                        </div>
+                        <div class="qBody rubric nutrition-group" data-validator-limit="1,3">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.NutProg, 0, new Dictionary<string, object> { { "id", "NutProg0" }, { "data-validator", "validateNutrition" } })
+                                <label for="NutProg0">0</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.NutProg, 1, new Dictionary<string, object> { { "id", "NutProg1" }, { "data-validator", "validateNutrition" } })
+                                <label for="NutProg1">1</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.NutProg, 2, new Dictionary<string, object> { { "id", "NutProg2" }, { "data-validator", "validateNutrition" } })
+                                <label for="NutProg2">2</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.NutProg, 3, new Dictionary<string, object> { { "id", "NutProg3" }, { "data-validator", "validateNutrition" } })
+                                <label for="NutProg3">3</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.NutProg, 4, new Dictionary<string, object> { { "id", "NutProg4" }, { "data-validator", "validateNutrition" } })
+                                <label for="NutProg4">4</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.NutProg, 5, new Dictionary<string, object> { { "id", "NutProg5" }, { "data-validator", "validateNutrition" } })
+                                <label for="NutProg5">5</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.NutProg, 6, new Dictionary<string, object> { { "id", "NutProg6" }, { "data-validator", "validateNutrition" } })
+                                <label for="NutProg6">6</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.NutProg, 7, new Dictionary<string, object> { { "id", "NutProg7" }, { "data-validator", "validateNutrition" } })
+                                <label for="NutProg7">7</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.NutProg, 8, new Dictionary<string, object> { { "id", "NutProg8" }, { "data-validator", "validateNutrition" } })
+                                <label for="NutProg8">8</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.NutProg, 9, new Dictionary<string, object> { { "id", "NutProg9" }, { "data-validator", "validateNutrition" } })
+                                <label for="NutProg9">9</label>
+                            </div>
+                            <small class="form-error">@Translate.Message("L480")</small>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L154")
+                            </div>
+                        </div>
+                        <div class="qBody rubric stress-group" data-validator-limit="1,3">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.StressManProg, 0, new Dictionary<string, object> { { "id", "StressManProg0" }, { "data-validator", "validateStress" } })
+                                <label for="StressManProg0">0</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.StressManProg, 1, new Dictionary<string, object> { { "id", "StressManProg1" }, { "data-validator", "validateStress" } })
+                                <label for="StressManProg1">1</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.StressManProg, 2, new Dictionary<string, object> { { "id", "StressManProg2" }, { "data-validator", "validateStress" } })
+                                <label for="StressManProg2">2</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.StressManProg, 3, new Dictionary<string, object> { { "id", "StressManProg3" }, { "data-validator", "validateStress" } })
+                                <label for="StressManProg3">3</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.StressManProg, 4, new Dictionary<string, object> { { "id", "StressManProg4" }, { "data-validator", "validateStress" } })
+                                <label for="StressManProg4">4</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.StressManProg, 5, new Dictionary<string, object> { { "id", "StressManProg5" }, { "data-validator", "validateStress" } })
+                                <label for="StressManProg5">5</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.StressManProg, 6, new Dictionary<string, object> { { "id", "StressManProg6" }, { "data-validator", "validateStress" } })
+                                <label for="StressManProg6">6</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.StressManProg, 7, new Dictionary<string, object> { { "id", "StressManProg7" }, { "data-validator", "validateStress" } })
+                                <label for="StressManProg7">7</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.StressManProg, 8, new Dictionary<string, object> { { "id", "StressManProg8" }, { "data-validator", "validateStress" } })
+                                <label for="StressManProg8">8</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.StressManProg, 9, new Dictionary<string, object> { { "id", "StressManProg9" }, { "data-validator", "validateStress" } })
+                                <label for="StressManProg9">9</label>
+                            </div>
+                            <small class="form-error">@Translate.Message("L480")</small>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L155")
+                            </div>
+                        </div>
+                        <div class="qBody rubric comp-group" data-validator-limit="1,3">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.CompProg, 0, new Dictionary<string, object> { { "id", "CompProg0" }, { "data-validator", "validateComp" } })
+                                <label for="CompProg0">0</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.CompProg, 1, new Dictionary<string, object> { { "id", "CompProg1" }, { "data-validator", "validateComp" } })
+                                <label for="CompProg1">1</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.CompProg, 2, new Dictionary<string, object> { { "id", "CompProg2" }, { "data-validator", "validateComp" } })
+                                <label for="CompProg2">2</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.CompProg, 3, new Dictionary<string, object> { { "id", "CompProg3" }, { "data-validator", "validateComp" } })
+                                <label for="CompProg3">3</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.CompProg, 4, new Dictionary<string, object> { { "id", "CompProg4" }, { "data-validator", "validateComp" } })
+                                <label for="CompProg4">4</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.CompProg, 5, new Dictionary<string, object> { { "id", "CompProg5" }, { "data-validator", "validateComp" } })
+                                <label for="CompProg5">5</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.CompProg, 6, new Dictionary<string, object> { { "id", "CompProg6" }, { "data-validator", "validateComp" } })
+                                <label for="CompProg6">6</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.CompProg, 7, new Dictionary<string, object> { { "id", "CompProg7" }, { "data-validator", "validateComp" } })
+                                <label for="CompProg7">7</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.CompProg, 8, new Dictionary<string, object> { { "id", "CompProg8" }, { "data-validator", "validateComp" } })
+                                <label for="CompProg8">8</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.interests.CompProg, 9, new Dictionary<string, object> { { "id", "CompProg9" }, { "data-validator", "validateComp" } })
+                                <label for="CompProg9">9</label>
+                            </div>
+                            <small class="form-error">@Translate.Message("L480")</small>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="grid-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small button" type="submit">@Translate.Message("L481")</button></div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeInterest">@Translate.Message("L967")</button></div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    var formsubmit = true;
+Foundation.Abide.defaults.validators['validateWeight'] = function ($el, required, parent) {
+        var group = parent.closest('.weight-group');
+        var limit = group.attr('data-validator-limit').split(',');
+        var countC = group.find(':checked').length;
+        if (countC >= limit[0] && countC <= limit[1]) {
+            group.find('small.form-error').hide();
+            group.find('small.form-error').removeClass('is-visible');
+            return true;
+        } else {
+            group.find('small.form-error').css({ display: 'block' });
+            return false;
+        }
+    };
+    Foundation.Abide.defaults.validators['validateExercise'] = function ($el, required, parent) {
+        var group = parent.closest('.exercise-group');
+        var limit = group.attr('data-validator-limit').split(',');
+        var countC = group.find(':checked').length;
+        if (countC >= limit[0] && countC <= limit[1]) {
+            group.find('small.form-error').hide();
+            group.find('small.form-error').removeClass('is-visible');
+            return true;
+        } else {
+            group.find('small.form-error').css({ display: 'block' });
+            return false;
+        }
+    };
+    Foundation.Abide.defaults.validators['validateSmoking'] = function ($el, required, parent) {
+        var group = parent.closest('.smoking-group');
+        var limit = group.attr('data-validator-limit').split(',');
+        var countC = group.find(':checked').length;
+        if (countC >= limit[0] && countC <= limit[1]) {
+            group.find('small.form-error').hide();
+            group.find('small.form-error').removeClass('is-visible');
+            return true;
+        } else {
+            group.find('small.form-error').css({ display: 'block' });
+            return false;
+        }
+    };
+    Foundation.Abide.defaults.validators['validateMaternity'] = function ($el, required, parent) {
+        var group = parent.closest('.maternity-group');
+        var limit = group.attr('data-validator-limit').split(',');
+        var countC = group.find(':checked').length;
+        if (countC >= limit[0] && countC <= limit[1]) {
+            group.find('small.form-error').hide();
+            group.find('small.form-error').removeClass('is-visible');
+            return true;
+        } else {
+            group.find('small.form-error').css({ display: 'block' });
+            return false;
+        }
+    };
+    Foundation.Abide.defaults.validators['validateNutrition'] = function ($el, required, parent) {
+        var group = parent.closest('.nutrition-group');
+        var limit = group.attr('data-validator-limit').split(',');
+        var countC = group.find(':checked').length;
+        if (countC >= limit[0] && countC <= limit[1]) {
+            group.find('small.form-error').hide();
+            group.find('small.form-error').removeClass('is-visible');
+            return true;
+        } else {
+            group.find('small.form-error').css({ display: 'block' });
+            return false;
+        }
+    };
+    Foundation.Abide.defaults.validators['validateStress'] = function ($el, required, parent) {
+        var group = parent.closest('.stress-group');
+        var limit = group.attr('data-validator-limit').split(',');
+        var countC = group.find(':checked').length;
+        if (countC >= limit[0] && countC <= limit[1]) {
+            group.find('small.form-error').hide();
+            group.find('small.form-error').removeClass('is-visible');
+            return true;
+        } else {
+            group.find('small.form-error').css({ display: 'block' });
+            return false;
+        }
+    };
+    Foundation.Abide.defaults.validators['validateComp'] = function ($el, required, parent) {
+        var group = parent.closest('.comp-group');
+        var limit = group.attr('data-validator-limit').split(',');
+        var countC = group.find(':checked').length;
+        if (countC >= limit[0] && countC <= limit[1]) {
+            group.find('small.form-error').hide();
+            group.find('small.form-error').removeClass('is-visible');
+            return true;
+        } else {
+            group.find('small.form-error').css({ display: 'block' });
+            return false;
+        }
+    };
+    $(document).ready(function () {
+         @if (Model.readOnly)
+         {
+             @: $("#interests-form :input").prop("disabled", true);
+             @: $('#closeInterest').attr('disabled', false);
+         }
+        $('#closeInterest').on('click', function () {
+            $('#survey-modal').foundation('close');
+            $('#survey-modal .inner-survey-modal').remove();
+            RealignPage();
+            //removeForm('interests-form');
+
+        });
+        $("#interests-form").foundation();
+        $('#interests-form')
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                if (invalid_fields) {
+                    var scrollTo = $('#' + invalid_fields[0].id).parent('div').position().top;
+                    $('#interests-form').parents('.reveal-overlay').animate({
+                        scrollTop: scrollTo
+                    }, 400);
+                }
+            })
+            .on('formvalid.zf.abide', function () {
+                if (formsubmit == true) {
+                    $.ajax({
+                        url: "@Url.Action("Interests", "HRA")",
+                        type: 'POST',
+                        dataType: "json",
+                        data: $("#interests-form").serialize(),
+                        success: function (data) {
+                            if (data == "success") {
+                                $(document).on('closed.zf.reveal', '[data-reveal]', function () {
+                                    UpdateHRAStatus("IN");
+                                });
+                                $('#survey-modal').foundation('close');
+                                //removeForm('interests-form');
+                            }
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+                    formsubmit = false;
+                }
+            })
+            // to prevent form from submitting upon successful validation
+            .on("submit", function (ev) {
+                ev.preventDefault();
+
+            })
+    });
+</script>
+<button class="close-button" data-close aria-label="Close modal" type="button" onclick="removeForm('interests-form')">
+    <span aria-hidden="true">&times;</span>
+</button>
+</div>

@@ -1,0 +1,1043 @@
+﻿@using InterventWebApp;
+@model InterventWebApp.IntuityEligibilityModel
+
+@if (Model.IntuityEligibility != null && Model.IntuityEligibilityLog != null)
+{
+<div>
+    <form id="intuity-eligibility-form" data-abide novalidate class="form-component">
+        @if (Model.IntuityEligibilityLog != null && !Model.ShowNewForm)
+        {
+            <label id="userEditLabel" hidden>Please update personal information and shipping address in the user profile.</label>
+            <br />
+            <fieldset class="form-section">
+                <legend>A few things to note</legend>
+                <table class="table few-notes-table">
+                    @if (Model.FormSubmittedDate.HasValue)
+                    {
+                        <tr>
+                            <td>Enrollment Form Submission Date</td>
+                            <td> @Model.FormSubmittedDate.Value.ToShortDateString()</td>
+                        </tr>
+                    }
+                    @if (Model.PatternsRegDate.HasValue)
+                    {
+                        <tr>
+                            <td>Patterns Registration Date</td>
+                            <td>@Model.PatternsRegDate.Value.ToShortDateString()</td>
+                        </tr>
+                    }
+                </table>
+            </fieldset>
+        }
+
+        <fieldset class="form-section">
+            <legend>Personal Information</legend>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6">
+                    <label>
+                        First Name
+                        @Html.TextBoxFor(m => m.IntuityEligibilityLog.FirstName, new { @id = "intuityFirstName", @pattern = "[a-zA-Z]+", @required = "required" })
+                        <small class="form-error">First name is mandatory</small>
+                    </label>
+                </div>
+                <div class="cell medium-6">
+                    <label>
+                        Last Name
+                        @Html.TextBoxFor(m => m.IntuityEligibilityLog.LastName, new { @id = "intuityLastName", @pattern = "[a-zA-Z]+", @required = "required" })
+                        <small class="form-error">Last name is mandatory</small>
+                    </label>
+                </div>
+                <div class="cell medium-6">
+                    <label>
+                        Preferred Email
+                        @Html.TextBoxFor(m => m.IntuityEligibilityLog.email, new { @id = "intuityEmail", @type = "email", @required = "required" })
+                        <small class="form-error">Email is mandatory</small>
+                    </label>
+                </div>
+                <div class="cell medium-6">
+                    <label>
+                        Preferred Phone Number
+                        @Html.TextBoxFor(m => m.IntuityEligibilityLog.PhoneNumber, new Dictionary<string, object> { { "id", "phone" }, { "data-validator", "validatePhoneNo" }, { "required", "required" } })
+                        <small id="error-phoneno" class="form-error">Preferred Phone number is mandatory.</small>
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="form-section">
+            <legend>Shipping Address</legend>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-8">
+                    <label>
+                        Address Line 1
+                        @Html.TextBoxFor(m => m.IntuityEligibilityLog.AddressLine1, new { @id = "address1", @required = "required" })
+                        <small class="form-error">Address line 1 is mandatory</small>
+                    </label>
+                </div>
+                <div class="cell medium-8">
+                    <label>
+                        Address 2
+                        @Html.TextBoxFor(m => m.IntuityEligibilityLog.AddressLine2, new { @id = "address2" })
+                    </label>
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-4">
+                    <label>
+                        City
+                        @Html.TextBoxFor(m => m.IntuityEligibilityLog.City, new { @id = "city", @required = "required" })
+                        <small class="form-error">City is mandatory</small>
+                    </label>
+                </div>
+                <div class="cell medium-4">
+                    <label>
+                        Select Country
+                        @Html.DropDownListFor(m => m.IntuityEligibilityLog.Country, Model.Countries, "", new { @id = "country", @required = "required" })
+                        <small class="form-error">Country is mandatory</small>
+                    </label>
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-4">
+                    <label>
+                        Select State
+                        @Html.DropDownListFor(m => m.IntuityEligibilityLog.State, Model.States, "", new { @id = "state", @required = "required" })
+                        <small class="form-error">State is mandatory</small>
+                    </label>
+                </div>
+
+                <div class="cell medium-4">
+                    <label>
+                        Zip Code
+                        @Html.TextBoxFor(m => m.IntuityEligibilityLog.Zip, new { @id = "zip", @required = "required" })
+                        <small class="form-error">Zip code is mandatory</small>
+                    </label>
+                </div>
+                @if (!Model.ShowNewForm)
+                {
+                    <div class="cell medium-8">
+                        <button id="profileUpdateBtn" class="button hollow" type="submit">Update</button>
+                    </div>
+                }
+            </div>
+        </fieldset>
+        <fieldset class="form-section">
+            <legend>Questions</legend>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-8">
+                    <label class="options-main-label">Have you been diagnosed with diabetes?</label>
+                    <div class="tick-buttons radio-btn">
+                        <label>
+                            @Html.RadioButtonFor(m => m.IntuityEligibilityLog.HasDiabetes, 1, new Dictionary<string, object> { { "id", "HasDiabetesYes" }, { "Name", "IntuityEligibilityLog.HasDiabetes" }, { "required", "required" }, { "class", "readonly" } })
+
+                            <span class="checkmark"></span>
+                            @Translate.Message("L2")
+                        </label>
+                    </div>
+
+                    <div class="tick-buttons radio-btn">
+                        <label>
+                            @Html.RadioButtonFor(m => m.IntuityEligibilityLog.HasDiabetes, 2, new Dictionary<string, object> { { "id", "HasDiabetesNo" }, { "Name", "IntuityEligibilityLog.HasDiabetes" }, { "required", "required" }, { "class", "readonly" } })
+
+                            <span class="checkmark"></span>
+                            @Translate.Message("L3")
+                        </label>
+                    </div>
+                    <small data-form-error-for="HasDiabetesNo" class="form-error inline-form-error">This question is mandatory</small>
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6 large-4 diagnosed-diabetes">
+                    <label>
+                        Choose one
+                        @Html.DropDownListFor(M => M.IntuityEligibilityLog.DiabetesType, Model.DiabetesTypes, "Choose One", new Dictionary<string, object> { { "data-validator", "validateDiabetesType" }, { "class", "readonly" } })
+                        <small class="form-error">Required</small>
+                    </label>
+                </div>
+                <div class="cell medium-6 large-4 diagnosed-diabetes">
+                    <label>
+                        When were you diagnosed?
+                        @Html.TextBoxFor(M => M.IntuityEligibilityLog.DiabetesDate, new Dictionary<string, object> { { "class", "fdatepicker readonly input-date" }, { "data-validator", "validateDiabetesDate" } })
+                        <small class="form-error">Required</small>
+                        <input id="diabetesDate" type="hidden">
+                    </label>
+                </div>
+                <div class="cell medium-8 has-prediabetes">
+                    <label class="options-main-label">
+                        Do you have prediabetes?
+                    </label>
+                    <div class="tick-buttons radio-btn">
+                        <label>
+                            @Html.RadioButtonFor(m => m.IntuityEligibilityLog.HasPreDiabetes, 1, new Dictionary<string, object> { { "id", "HasPreDiabetesYes" }, { "Name", "IntuityEligibilityLog.HasPreDiabetes" }, { "class", "readonly" } })
+
+                            <span class="checkmark"></span>
+                            @Translate.Message("L2")
+                        </label>
+                    </div>
+                    <div class="tick-buttons radio-btn">
+                        <label>
+                            @Html.RadioButtonFor(m => m.IntuityEligibilityLog.HasPreDiabetes, 2, new Dictionary<string, object> { { "id", "HasPreDiabetesNo" }, { "Name", "IntuityEligibilityLog.HasPreDiabetes" }, { "class", "readonly" } })
+
+                            <span class="checkmark"></span>
+                            @Translate.Message("L3")
+                        </label>
+                    </div>
+                </div>
+                <div class="cell medium-8">
+                    <label class="options-main-label">Did you take medication to manage your diabetes?</label>
+                    <div class="tick-buttons radio-btn">
+                        <label>
+                            @Html.RadioButtonFor(m => m.IntuityEligibilityLog.TakeDiabetesMed, 1, new Dictionary<string, object> { { "id", "TakeDiabetesMedYes" }, { "Name", "IntuityEligibilityLog.TakeDiabetesMed" }, { "required", "required" }, { "class", "readonly" } })
+
+                            <span class="checkmark"></span>
+                            @Translate.Message("L2")
+                        </label>
+                    </div>
+                    <div class="tick-buttons radio-btn">
+                        <label>
+                            @Html.RadioButtonFor(m => m.IntuityEligibilityLog.TakeDiabetesMed, 2, new Dictionary<string, object> { { "id", "TakeDiabetesMedNo" }, { "Name", "IntuityEligibilityLog.TakeDiabetesMed" }, { "required", "required" }, { "class", "readonly" } })
+
+                            <span class="checkmark"></span>
+                            @Translate.Message("L3")
+                        </label>
+                    </div>
+                    <small data-form-error-for="TakeDiabetesMedNo" class="form-error inline-form-error">This question is mandatory</small>
+                </div>
+                <div class="cell medium-8 take-insulin">
+                    <label class="options-main-label">Did you take insulin?</label>
+                    <div class="tick-buttons radio-btn">
+                        <label>
+                            @Html.RadioButtonFor(m => m.IntuityEligibilityLog.TakeInsulin, 1, new Dictionary<string, object> { { "id", "TakeInsulinYes" }, { "Name", "IntuityEligibilityLog.TakeInsulin" }, { "data-validator", "validateTakeInsulin" }, { "class", "readonly" } })
+
+                            <span class="checkmark"></span>
+                            @Translate.Message("L2")
+                        </label>
+                    </div>
+                    <div class="tick-buttons radio-btn">
+                        <label>
+                            @Html.RadioButtonFor(m => m.IntuityEligibilityLog.TakeInsulin, 2, new Dictionary<string, object> { { "id", "TakeInsulinNo" }, { "Name", "IntuityEligibilityLog.TakeInsulin" }, { "data-validator", "validateTakeInsulin" }, { "class", "readonly" } })
+
+                            <span class="checkmark"></span>
+                            @Translate.Message("L3")
+                        </label>
+                    </div>
+                    <small data-form-error-for="TakeInsulinNo" class="form-error inline-form-error">This question is mandatory</small>
+                </div>
+                <div class="cell medium-8">
+                    <label class="options-main-label">Have you had an A1C test?</label>
+                    <div class="tick-buttons radio-btn">
+                        <label>
+                            @Html.RadioButtonFor(m => m.IntuityEligibilityLog.HadA1CTest, 1, new Dictionary<string, object> { { "id", "HadA1CTestYes" }, { "Name", "IntuityEligibilityLog.HadA1CTest" }, { "required", "required" }, { "class", "readonly" } })
+
+                            <span class="checkmark"></span>
+                            @Translate.Message("L2")
+                        </label>
+                    </div>
+                    <div class="tick-buttons radio-btn">
+                        <label>
+                            @Html.RadioButtonFor(m => m.IntuityEligibilityLog.HadA1CTest, 2, new Dictionary<string, object> { { "id", "HadA1CTestNo" }, { "Name", "IntuityEligibilityLog.HadA1CTest" }, { "required", "required" }, { "class", "readonly" } })
+
+                            <span class="checkmark"></span>
+                            @Translate.Message("L3")
+                        </label>
+                    </div>
+                    <small data-form-error-for="HadA1CTestNo" class="form-error inline-form-error">This question is mandatory</small>
+                </div>
+                <div class="cell medium-8 a1c-test-no">
+                    <div class="a1c-test-no">
+                        <label>
+                            Choose one
+                            @Html.DropDownListFor(M => M.IntuityEligibilityLog.NoA1cTestReason, Model.NoA1cTestReason, "Choose One", new Dictionary<string, object> { { "data-validator", "validateA1cTestReasons" }, { "class", "readonly" } })
+                            <small class="form-error">Required</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-x grid-margin-x">
+                <div class="cell large-4 medium-6 a1c-test">
+                    <div class="a1c-test">
+                        <label>
+                            When was your most recent test?
+                            @Html.TextBoxFor(M => M.IntuityEligibilityLog.A1CTestDate, new Dictionary<string, object> { { "class", "fdatepicker input-date readonly" }, { "data-validator", "validateA1CTestDate" } })
+                            <small class="form-error">Required</small>
+                            <input id="a1cTestDate" type="hidden">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="cell large-4 medium-6 a1c-test">
+                    <div class="a1c-test">
+                        <label>
+                            What was your A1C value?
+                            @Html.TextBoxFor(M => M.IntuityEligibilityLog.A1CValue, new Dictionary<string, object> { { "data-validator", "validateA1C" }, { "class", "readonly" } })
+                            <small class="form-error">Required</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-7 large-5">
+                    <label class="options-main-label">What is your height?</label>
+                    <div class="flex-container">
+                        <div class="input-group">
+                            @Html.TextBoxFor(M => M.HeightFeet, new Dictionary<string, object> { { "class", "input-group-field readonly" } })
+                            <span class="input-group-label postfix">Feet</span>
+                        </div>
+                        <div class="input-group">
+                            @Html.TextBoxFor(M => M.HeightInch, new Dictionary<string, object> { { "class", "input-group-field readonly" } })
+                            <span class="input-group-label postfix">Inches</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cell medium-5 large-3">
+                    <label class="options-main-label">What is your weight?</label>
+                    <div class="flex-container">
+                        <div class="input-group">
+                            @Html.TextBoxFor(M => M.IntuityEligibilityLog.Weight, new Dictionary<string, object> { { "class", "input-group-field readonly" } })
+                            <span class="input-group-label postfix">Pounds</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (Model.ShowNewForm)
+            {
+                <div class="cell medium-4">
+                    <button id="profileUpdateBtn" class="button" type="submit">Save</button>
+                </div>
+            }
+        </fieldset>
+
+        @Html.HiddenFor(x => x.IntuityEligibilityLog.Id)
+        @Html.HiddenFor(x => x.IntuityEligibilityLog.EligibilityId)
+        @Html.HiddenFor(x => x.ShowNewForm, new Dictionary<string, object> { { "Name", "ShowNewForm" } })
+        @Html.HiddenFor(x => x.PortalId, new Dictionary<string, object> { { "Name", "PortalId" } })
+        @Html.HiddenFor(x => x.UniqueId, new Dictionary<string, object> { { "Name", "IntuityEligibility.UniqueId" } })
+        @Html.HiddenFor(x => x.UniqueId, new Dictionary<string, object> { { "Name", "UniqueId" } })
+        @Html.Hidden("IntuityEligibility.UniqueId", Model.UniqueId, new { id = "IntuityEligibility.UniqueId" })
+        @Html.Hidden("IntuityEligibilityLog.UniqueId", Model.UniqueId, new { id = "IntuityEligibilityLog.UniqueId" })
+        @Html.Hidden("IntuityEligibilityLog.OrganizationCode", Model.OrganizationCode, new { id = "IntuityEligibilityLog.OrganizationCode" })
+        @Html.HiddenFor(x => x.OrganizationId, new Dictionary<string, object> { { "Name", "OrganizationId" } })
+        @Html.Hidden("IntuityEligibilityLog.OrganizationId", Model.OrganizationId, new { id = "IntuityEligibilityLog.OrganizationId" })
+    </form>
+
+    @if (Model.IntuityEligibilityLog != null && !Model.ShowNewForm)
+    {
+        <fieldset class="form-section form-component">
+            <legend>Eligibility Status Details</legend>
+            <div class="grid-x grid-margin-x align-bottom">
+                <div class="cell medium-6 large-3">
+                    <label>
+                        Eligibility Status
+                        @Html.DropDownListFor(M => M.IntuityEligibilityLog.EligibilityStatus, Model.EligibilityStatusList, "Choose One", new Dictionary<string, object> { { "id", "EligibilityStatus" }, { "class", "elgStatus" } })
+                    </label>
+                </div>
+                <div class="cell medium-6">
+                    <label>
+                        Eligibility Reason
+                        @Html.DropDownListFor(M => M.IntuityEligibilityLog.EligibilityReason, Model.EligibilityReasonsList, "Choose One", new Dictionary<string, object> { { "id", "EligibilityReason" }, { "class", "elgStatus" } })
+                    </label>
+                </div>
+                <div class="cell medium-6 large-3">
+                    <button class="button hollow elgStatus" type="submit" id="UpdateEligibilityStatus">Update</button>
+                </div>
+            </div>
+        </fieldset>
+    }
+
+    @if (Model.IntuityEligibilityLog != null && Model.UserEligible)
+    {
+        <form id="intuity-qoh-form" data-abide novalidate class="form-component">
+            <fieldset class="form-section qoh-section">
+                <legend>Quantity on hand</legend>
+                <div class="grid-x grid-margin-x">
+                    <div class="cell"><label class="options-main-label">Cartridge Quantity</label></div>
+                    <div class="cell">
+                        <div class="grid-x grid-margin-x align-middle">
+                            <div class="cell medium-6 large-3"><input type="number" min="1" id="qohinput" data-validator="validateQoh" required /></div>
+                            <div class="cell medium-4">
+                                <button class="button hollow">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <small class="form-error" data-form-error-for="qohinput">Required</small>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+
+        if (Model.IntuityQOH != null && Model.IntuityQOH.Count > 0)
+        {
+            <fieldset class="form-section">
+                <legend>Quantity On Hand History</legend>
+                <div class="content-table">
+                    <table id="search-results">
+                        <thead><tr><th><span>Date Entered</span></th><th><span>Quantity on Hand (Cartridges)</span></th><th><span>Status</span></th></tr></thead>
+                        <tbody>
+                            @foreach (var intuityQOH in Model.IntuityQOH)
+                            {
+                                <tr>
+                                    <td> @intuityQOH.CreatedOn.ToShortDateString()</td>
+                                    <td> @intuityQOH.QuantityOnHand</td>
+                                    <td>
+                                        @(intuityQOH.Submitted.HasValue && intuityQOH.Submitted.Value ? "Submitted" : "Pending")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        }
+
+        if (Model.IntuityFulfillments != null && Model.IntuityFulfillments.Count > 0)
+        {
+            <fieldset class="form-section">
+                <legend>Fulfillment History</legend>
+                <div class="content-table">
+                    <table id="search-results">
+                        <thead><tr><th><span>Refill Sent Date</span></th><th><span>Refill Sent</span></th><th><span>Send Meter</span></th><th><span>Serial Number</span></th><th><span>Tracking Number</span></th></tr></thead>
+                        <tbody>
+                            @foreach (var intuityFulfillment in Model.IntuityFulfillments)
+                            {
+                                <tr>
+                                    <td> @intuityFulfillment.RefillSentDate.Value.ToShortDateString()</td>
+                                    <td> @intuityFulfillment.RefillSent</td>
+                                    @if (intuityFulfillment.SendMeter.HasValue && intuityFulfillment.SendMeter.Value)
+                                    {
+                                        <td>
+                                            <i class='fa fa-check-square'></i>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>&nbsp;</td>
+                                    }
+                                    <td> @intuityFulfillment.SerialNumber</td>
+                                    <td> @intuityFulfillment.TrackingNumber</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        }
+
+        if (Model.ShowFulfillment)
+        {
+            <form id="intuity-replenishment-form" data-abide novalidate class="form-component">
+                <fieldset class="form-section">
+                    <legend>Custom Replenishment</legend>
+
+                    <p class="enrollment-form"><a style='color:deepskyblue' id="readonlyalter"></a></p>
+                    <div id="intuity-replenishment-request" class="grid-x grid-margin-x">
+                        @if (!Model.IntuityFulfillments.Any(x => x.SendMeter.HasValue && x.SendMeter.Value))
+                        {
+                            <div class="cell medium-8" id="sendMeterDiv">
+                                <div class="tick-buttons">
+                                    <label>
+                                        <input type="checkbox" id="sendMeter" />
+                                        <span class="checkmark"></span>
+                                        Send Meter
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                        <div class="cell medium-8">
+                            <label>
+                                Quantity (Tubes)
+                                <input type="number" min="1" max="3" id="replenishmentQuantity" data-validator="validateQuantity" required />
+                                <small id="error-quantity" class="form-error">Required</small>
+                            </label>
+                        </div>
+                        <div class="cell medium-8">
+                            <label>
+                                Reason
+                                <input type="text" maxlength="50" id="replenishmentReason" required />
+                                <small class="form-error">Required</small>
+                            </label>
+                        </div>
+                        <div class="cell">
+                            <button class="button" id="AddReplenishment">Send</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        }
+
+        <div id="fulfillmentRequests_div">
+            <fieldset class="form-section">
+                <legend>Fulfillment Request History</legend>
+                <div id="fulfillmentRequests_table" class="content-table">
+                </div>
+            </fieldset>
+        </div>
+        <fieldset class="form-section">
+            <legend>Opting out of Monitor Use</legend>
+            <div class="grid-x grid-margin-x align-middle">
+                <div class="cell medium-6">
+                    <div class="tick-buttons">
+                        <label>
+                            <input onchange="UpdateOptingOut()" type="checkbox" id="OptingOutInput" />
+                            <span class="checkmark"></span>
+                            <span id="OptingOutLabel">Opting out of monitor use</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    }
+    </div>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/NoZipCountries.js")?v=@CommonUtility.GetRandom()"></script>
+    <script>
+    $("#IntuityEligibility_DiabetesDate").on("change", function () {
+        $('#diabetesDate').val(toSystemDateFormat(this.value));
+    });
+    $("#IntuityEligibility_A1CTestDate").on("change", function () {
+        $('#a1cTestDate').val(toSystemDateFormat(this.value));
+    });
+
+    Foundation.Abide.defaults.validators['validateDiabetesType'] = function ($el, required, parent) {
+        if ($('#HasDiabetesYes').is(":checked")) {
+            if ($el.val() == "")
+                        return false;
+                    else
+                return true;
+        }
+                else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateDiabetesDate'] = function ($el, required, parent) {
+        if ($('#HasDiabetesYes').is(":checked")) {
+            if ($el.val() == "")
+                        return false;
+                    else
+                return true;
+        }
+                else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateTakeInsulin'] = function ($el, required, parent) {
+        if ($('#TakeDiabetesMedYes').is(":checked")) {
+            if ($("input[name='IntuityEligibilityLog.TakeInsulin']:checked").length == 0)
+                        return false;
+                    else
+                return true;
+        }
+                else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateA1C'] = function ($el, required, parent) {
+        if ($('#HadA1CTestYes').is(":checked")) {
+            if ($el.val() == "")
+                        return false;
+                    else
+                return true;
+        }
+                else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateA1CTestDate'] = function ($el, required, parent) {
+        if ($('#HadA1CTestYes').is(":checked")) {
+            if ($el.val() == "")
+                        return false;
+                    else
+                return true;
+        }
+                else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateA1cTestReasons'] = function ($el, required, parent) {
+        if ($('#HadA1CTestNo').is(":checked")) {
+            if ($el.val() == "")
+                        return false;
+                    else
+                return true;
+        }
+                else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateQuantity'] = function ($el, required, parent) {
+        if ($el.val() == "") {
+                    $('#error-quantity').html("Required");
+            return false;
+        }
+                else if ($el.val() <= 0) {
+                    $('#error-quantity').html("Quantity should be more than 1.");
+            return false;
+        }
+                else if ($el.val() > 0 && $el.val() < 4) {
+                    $('#error-quantity').html("");
+            return true;
+        }
+                else {
+                    $('#error-quantity').html("Quantity can't be more than 3.");
+            return false;
+        }
+    };
+
+    Foundation.Abide.defaults.validators['validatePhoneNo'] = function ($el, required, parent) {
+        var phoneNumber = ('' + $el.val()).replace(/\D/g, '');
+        if (phoneNumber == "") {
+                    $('#error-phoneno').html("Preferred Phone number is mandatory.");
+            return false;
+        } else if (phoneNumber.length != 10) {
+                    $('#error-phoneno').html("Not a Valid Phone Number.");
+            return false;
+        } else {
+                    $el.val(phoneNumber);
+            return true;
+        }
+    };
+
+    Foundation.Abide.defaults.validators['validateQoh'] = function ($el, required, parent) {
+        if ($el.val() == "" || $el.val() < 0)
+                    return false;
+                else
+            return true;
+    };
+
+    function toUSADateFormat(dateTime) {
+        if (dateTime != "undefined") {
+            var date = new Date(dateTime);
+            var year = date.getFullYear();
+            var month = (1 + date.getMonth()).toString();
+            month = month.length > 1 ? month : '0' + month;
+            var day = date.getDate().toString();
+            day = day.length > 1 ? day : '0' + day;
+            return month + '/' + day + '/' + year;
+        }
+    }
+
+    $(document).ready(function () {
+
+        $("input[type='radio'], input[type='checkbox']").on("change", function () {
+            var groupName = $(this).attr("name");
+            $("[name='" + groupName + "']").each(function () {
+                var grpId = $(this).attr("id");
+                $("small[data-form-error-for='" + grpId + "']").removeClass("is-visible");
+            });
+        });
+
+        $('input[name="IntuityEligibilityLog.HasDiabetes"]').on('click', function () {
+            if (this.value == 1) {
+                $(".diagnosed-diabetes").show();
+                $(".has-prediabetes").hide();
+                $("#HasPreDiabetesYes").prop("checked", false);
+                $("#HasPreDiabetesNo").prop("checked", false);
+            }
+            else {
+                $(".diagnosed-diabetes").hide();
+                $(".has-prediabetes").show();
+                $("#IntuityEligibilityLog_DiabetesType").val(null);
+                $("#IntuityEligibilityLog_DiabetesDate").val(null);
+            }
+        });
+
+        $('input[name="IntuityEligibilityLog.TakeDiabetesMed"]').on('click', function () {
+            if (this.value == 1) {
+                $(".take-insulin").show();
+            }
+            else {
+                $(".take-insulin").hide();
+                $("#TakeInsulinYes").prop("checked", false);
+                $("#TakeInsulinNo").prop("checked", false);
+            }
+        });
+
+        $('input[name="IntuityEligibilityLog.HadA1CTest"]').on('click', function () {
+            if (this.value == 1) {
+                $(".a1c-test").show();
+                $(".a1c-test-no").hide();
+                $("#IntuityEligibilityLog_NoA1cTestReason").val(null);
+            }
+            else {
+                $(".a1c-test").hide();
+                $(".a1c-test-no").show();
+                $("#IntuityEligibilityLog_A1CTestDate").val(null);
+                $("#IntuityEligibilityLog_A1CValue").val(null);
+            }
+        });
+
+        $('#IntuityEligibility_Country').on('change', function () {
+            CountryChange('IntuityEligibility_Country', '', 'IntuityEligibility_State', 'IntuityEligibility_Zip', "@Url.Action("ListStates", "Common")", '', "", false, "@Url.Action("CheckIfCountryHasZipCode", "Common")");
+        });
+
+        $('.fdatepicker').fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        }).on('show', function () {
+            $(".datepicker").css("position", "fixed");
+        });
+
+        if ('@Model.diabetesDate' != '') {
+            $("#IntuityEligibility_DiabetesDate").val(toUSADateFormat('@Model.diabetesDate'));
+        }
+
+        if ('@Model.a1cTestDate' != '') {
+            $("#IntuityEligibility_A1CTestDate").val(toUSADateFormat('@Model.a1cTestDate'));
+        }
+
+        $('#intuity-eligibility-form').foundation();
+        $('#intuity-eligibility-form')
+        .on('forminvalid.zf.abide', function (e) {
+            e.preventDefault();
+            var invalid_fields = $(this).find('[data-invalid]');
+            console.log(invalid_fields);
+        })
+        .on('formvalid.zf.abide', function (e) {
+            $('#IntuityEligibility_DiabetesDate').val($('#diabetesDate').val());
+            $('#IntuityEligibility_A1CTestDate').val($('#a1cTestDate').val());
+            e.preventDefault();
+            $("#loader-wrapper").fadeIn();
+            $.ajax({
+                type: 'POST',
+                url: "@Url.Action("UpdateIntuityEligibility", "IntuityEligibility")",
+                dataType: "json",
+                data: $("#intuity-eligibility-form").serialize(),
+                success: function (data) {
+                    if (data.Result) {
+                        if (data.Status == "Eligible") {
+                            showAlertMessage("Eligibile for the Diabetes Management program.");
+                            GetIntuityDetails();
+                        }
+                        else if (data.Status == "NotEligible") {
+                            showAlertMessage("Not eligibile for the Diabetes Management program.");
+                            GetIntuityDetails();
+                        } else {
+                            showAlertMessage("Updated successfully.");
+                        }
+                    }
+                },
+                complete: function (data) {
+                    $("#loader-wrapper").fadeOut();
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }).on('submit', function (e) {
+            e.preventDefault();
+        });
+
+        $(".diagnosed-diabetes").hide();
+        $(".has-prediabetes").hide();
+        $(".take-insulin").hide();
+        $(".a1c-test").hide();
+        $(".a1c-test-no").hide();
+
+        if ('@Model.IntuityEligibilityLog' != '' && '@Model.ShowNewForm' == 'False')
+        {
+            $("#IntuityEligibility_DiabetesDate").trigger("change");
+            $("#IntuityEligibility_A1CTestDate").trigger("change");
+            $(".readonly").prop("disabled", true);
+
+            @if (Model.IntuityEligibilityLog != null && Model.IntuityEligibilityLog.HasDiabetes.HasValue)
+            {
+                if (Model.IntuityEligibilityLog.HasDiabetes.Value == 1)
+                {
+                    <text>
+                        $(".diagnosed-diabetes").show();
+                        $(".has-prediabetes").hide();
+                    </text>
+                }
+                else if (Model.IntuityEligibilityLog.HasDiabetes.Value == 2)
+                {
+                    <text>
+                        $(".diagnosed-diabetes").hide();
+                        $(".has-prediabetes").show();
+                    </text>
+                }
+            }
+
+            @if ((Model.IntuityEligibilityLog != null) && (Model.IntuityEligibilityLog.TakeDiabetesMed.HasValue && Model.IntuityEligibilityLog.TakeDiabetesMed.Value == 1))
+            {
+                <text>
+                    $(".take-insulin").show();
+                </text>
+            }
+
+            @if ((Model.IntuityEligibilityLog != null) && (Model.IntuityEligibilityLog.HadA1CTest.HasValue))
+            {
+                if (Model.IntuityEligibilityLog.HadA1CTest.Value == 1)
+                {
+                    <text>
+                        $(".a1c-test").show();
+                    </text>
+                }
+                else
+                {
+                    <text>
+                        $(".a1c-test-no").show();
+                    </text>
+
+                }
+            }
+
+            if ('@Model.OverrideStatus' == 'True') {
+                $(".elgStatus").prop("disabled", true);
+                $('#UpdateEligibilityStatus').prop('disabled', 'disabled');
+            }
+
+            if ('@Model.EligibilityStatus' == 'Terminated') {
+                $("#intuity-eligibility-form :input").prop("disabled", true);
+                $("#intuity-qoh-form :input").prop("disabled", true);
+                $("#intuity-qoh-form").addClass("hide");
+                if ('@Model.ShowFulfillment' == 'True') {
+                    $("#intuity-replenishment-form :input").prop("disabled", true);
+                    $("#intuity-replenishment-form").addClass("hide");
+                }
+                $(".elgStatus").prop("disabled", true);
+                $("#OptingOutInput").prop("disabled", true);
+            }
+
+            var isUserExists = '@(Model.IsUserExists)' == 'True' ? true : false;
+            if (isUserExists) {
+                $("#userEditLabel").show();
+                $("#intuityFirstName").addClass("readonly");
+                $("#intuityLastName").addClass("readonly");
+                $("#intuityEmail").addClass("readonly");
+                $("#phone").addClass("readonly");
+                $("#address1").addClass("readonly");
+                $("#address2").addClass("readonly");
+                $("#city").addClass("readonly");
+                $("#state").addClass("readonly");
+                $("#country").addClass("readonly");
+                $("#zip").addClass("readonly");
+                $("#profileUpdateBtn").addClass("readonly");
+                $(".readonly").prop("disabled", true);
+            }
+
+            $('#UpdateEligibilityStatus').on('click', function () {
+                $("#loader-wrapper").fadeIn();
+                var status = $('#EligibilityStatus :selected').val();
+                var reason = $('#EligibilityReason :selected').val();
+                $.ajax({
+                    url: "@Url.Action("UpdateEligiblityStatus", "IntuityEligibility")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: { unique_id: '@Model.UniqueId', organizationid: '@Model.OrganizationId', eligiblityStatus: status, eligiblityReason: reason},
+                    success: function (data) {
+                        if (data.response) {
+                            $(".elgStatus").prop("disabled", true);
+                            $('#UpdateEligibilityStatus').prop('disabled', 'disabled');
+                            showAlertMessage("Status updated successfully.");
+                            GetIntuityDetails();
+                        }
+                    },
+                    complete: function (data) {
+                        $("#loader-wrapper").fadeOut();
+                    }
+                });
+            });
+        }
+
+        @if (Model.IntuityEligibility.OptingOut.HasValue && !Model.IntuityEligibilityLog.HasDiabetes.HasValue)
+        {
+            @: $("#intuity-eligibility-form").addClass('hide');
+        }
+        var isOptedOut = '@(Model.IntuityEligibilityLog != null && Model.IntuityEligibilityLog.OptingOut.HasValue)' == 'True' ? true : false;
+        if (isOptedOut) {
+            $("#intuity-eligibility-form :input").prop("disabled", true);
+            $("#intuity-qoh-form :input").prop("disabled", true);
+            $("#intuity-qoh-form").addClass("hide");
+            if ('@Model.ShowFulfillment' == 'True') {
+                $("#intuity-replenishment-form :input").prop("disabled", true);
+                $("#intuity-replenishment-form").addClass("hide");
+            }
+            $('#OptingOutDateDiv').show();
+            $('#OptingOutInput').prop('checked', true);
+            $('#OptingOutLabel').html('Opted out of monitor use on ' + '@(Model.IntuityEligibilityLog != null && Model.IntuityEligibilityLog.OptingOut.HasValue ? Model.IntuityEligibilityLog.OptingOut.Value.ToShortDateString() : new DateTime().ToShortDateString())');
+            $(".elgStatus").prop("disabled", true);
+            $('#UpdateEligibilityStatus').prop('disabled', 'disabled');
+        } else {
+            $('#OptingOutDateDiv').hide();
+            $('#OptingOutInput').prop('checked', false);
+        }
+
+        if ('@Model.IntuityEligibilityLog' != '' && '@Model.UserEligible' == 'True')
+        {
+            var qohinput = document.getElementById("qohinput");
+            qohinput.addEventListener("keydown", function (e) {
+                if ([69, 187, 188, 189, 190].includes(e.keyCode)) {
+                    e.preventDefault();
+                }
+            });
+
+            if ('@Model.ShowFulfillment' == 'True') {
+                var replenishmentQuantity = document.getElementById("replenishmentQuantity");
+                replenishmentQuantity.addEventListener("keydown", function (e) {
+                    if ([69, 187, 188, 189, 190].includes(e.keyCode)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            var fulfillmentRequests = JSON.parse('@Html.Raw(Model.IntuityFulfillmentRequests)');
+            UpdateFulfillmentRequestsList(fulfillmentRequests);
+
+            if ('@Model.ShowFulfillment' == 'True') {
+                $('#intuity-replenishment-form').foundation();
+                $('#intuity-replenishment-form')
+                    .on('forminvalid.zf.abide', function (e) {
+                        e.preventDefault();
+                        var invalid_fields = $(this).find('[data-invalid]');
+                        console.log(invalid_fields);
+                    })
+                    .on('formvalid.zf.abide', function (e) {
+                        var sendMeter = $('#sendMeter').length != 0 && $('#sendMeter').prop("checked");
+                        var quantity = $("#replenishmentQuantity").val();
+                        var reason = $("#replenishmentReason").val();
+                        $("#loader-wrapper").fadeIn();
+                        if (confirm("Are you sure ?")) {
+                            $.ajax({
+                                url: "@Url.Action("UpdateIntuityFulfillmentRequest", "IntuityEligibility")",
+                                type: 'POST',
+                                dataType: "json",
+                                data: { intuityEligibilityId: '@Model.IntuityEligibilityId', quantity: quantity, reason: reason, sendMeter: sendMeter },
+                                success: function (data) {
+                                    if (data.Status) {
+                                        UpdateFulfillmentRequestsList(JSON.parse(data.FulfillmentRequestsList));
+                                        $('#replenishmentQuantity').val("");
+                                        $('#replenishmentReason').val("");
+                                        showAlertMessage("Request submitted successfully.");
+                                        GetIntuityDetails();
+                                    }
+                                },
+                                complete: function (data) {
+                                    $("#loader-wrapper").fadeOut();
+                                }
+                            });
+                        } else {
+                            $("#loader-wrapper").fadeOut();
+                        }
+                    }).on('submit', function (e) {
+                        e.preventDefault();
+                    });
+            }
+
+            $('#intuity-qoh-form').foundation();
+            $('#intuity-qoh-form')
+            .on('forminvalid.zf.abide', function (e) {
+                e.preventDefault();
+                var invalid_fields = $(this).find('[data-invalid]');
+                console.log(invalid_fields);
+            })
+            .on('formvalid.zf.abide', function (e) {
+                var quantity = $("#qohinput").val();
+                $("#loader-wrapper").fadeIn();
+                $.ajax({
+                    url: "@Url.Action("UpdateIntuityQuantityonHand", "IntuityEligibility")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: { intuityEligibilityId: '@Model.IntuityEligibilityId', quantity: quantity },
+                    success: function (data) {
+                        if (data.response) {
+                            showAlertMessage("Updated successfully.");
+                            GetIntuityDetails();
+                        } else {
+                            showAlertMessage("Try after some time.");
+                        }
+                        $('#qohinput').val("");
+                    },
+                    complete: function (data) {
+                        $("#loader-wrapper").fadeOut();
+                    }
+                });
+            }).on('submit', function (e) {
+                e.preventDefault();
+            });
+        }
+
+    });
+
+    function UpdateOptingOut() {
+        var OptingOutInput = $('#OptingOutInput').prop("checked");
+        if (OptingOutInput) {
+            if (confirm("Do you want to opt out ?"))
+                UpdateOptingOutValue(true);
+            else
+                $('#OptingOutInput').prop("checked", false);
+        }
+        else if (confirm("Do you want to rejoin the employer program ?")) {
+            UpdateOptingOutValue(false);
+        }
+        else
+            $('#OptingOutInput').prop("checked", true);
+    }
+
+    function UpdateOptingOutValue(optingOut) {
+        $("#loader-wrapper").fadeIn();
+        $("#intuity-eligibility-form :input").prop("disabled", false);
+        var json = $("#intuity-eligibility-form").serialize() + '&OptingOut=' + optingOut;
+        $("#intuity-eligibility-form :input").prop("disabled", true);
+        $.ajax({
+            url: "@Url.Action("UpdateIntuityOptingOut", "IntuityEligibility")",
+            type: 'POST',
+            dataType: "json",
+            data: json,
+            success: function (data) {
+                if (data.Status) {
+                    if (optingOut)
+                        $('#OptingOutLabel').html('Opted out of monitor use on ' + data.OptingOut);
+                    else
+                        $('#OptingOutLabel').html('Opting out of monitor use');
+                    showAlertMessage("Saved successfully.");
+                    GetIntuityDetails();
+                } else {
+                    $('#OptingOutInput').prop('checked', !optingOut);
+                    showAlertMessage("Try after some time.");
+                }
+            },
+            complete: function (data) {
+                $("#loader-wrapper").fadeOut();
+            }
+        });
+        }
+
+    if ('@Model.IntuityEligibilityLog' != '' && '@Model.UserEligible' == 'True')
+    {
+        function UpdateFulfillmentRequestsList(fulfillmentRequests) {
+            if (fulfillmentRequests != null && fulfillmentRequests.length > 0) {
+                $('#fulfillmentRequests_table').html('');
+                var table = "<table id='search-results'><thead><tr><th><span>Refill Requested Date</span></th><th><span>Quantity</span></th><th><span>Send Meter</span></th><th><span>Reason</span></th><th><span>Request Status</span></th></tr></thead><tbody>";
+                var tr = "";
+                for (i = 0; i < fulfillmentRequests.length; i++) {
+                    tr += "<tr><td>" + toUSADateFormat(fulfillmentRequests[i].CreatedOn) + "</td>" +
+                        "<td align='center'>" + fulfillmentRequests[i].ReplenishmentQuantity + "</td>" +
+                        "<td align='center'>" + (fulfillmentRequests[i].SendMeter ? "<i class='fa fa-check-square'></i>" : "") + "</td>" +
+                        "<td>" + fulfillmentRequests[i].Reason + "</td><td>";
+                    tr += fulfillmentRequests[i].Submitted ? "Submitted" : "Pending";
+                    tr += "</td></tr>";
+                    if (fulfillmentRequests[i].SendMeter)
+                        $('#sendMeterDiv').hide();
+                }
+                table = table + tr + "</tbody></table>";
+                $('#fulfillmentRequests_div').show();
+                $('#fulfillmentRequests_table').html(table);
+            } else {
+                $('#fulfillmentRequests_div').hide();
+            }
+        }
+    }
+    </script>
+}
+else if (Model.IntuityEligibility == null)
+{
+    <fieldset>
+        <label>Not eligibile for the Diabetes Management program.</label>
+    </fieldset>
+}
+else
+{
+    <fieldset>
+        <label>No record found.</label>
+    </fieldset>
+}

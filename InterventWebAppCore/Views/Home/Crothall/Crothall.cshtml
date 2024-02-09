@@ -1,0 +1,190 @@
+﻿@using InterventWebApp
+@{
+    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+<section class="feature reversed intro compass">
+    @Html.Partial("Crothall/_CrothallHeader",  new ViewDataDictionary(ViewData) { { "headerStyle", "transparent" }, { "OrgId", ViewData["OrgId"] } })
+    <div class="grid-container">
+        <div class="intro-body grid-x grid-margin-x">
+            <div class="intro-text medium-7 cell">
+                <h2>@Translate.Message("L427")</h2>
+                <p>
+                    @string.Format(Translate.Message("L1894"), "Crothall", ViewData["OrgContactNumber"])
+                </p>
+            </div>  
+            <div class="intro-box medium-5 cell">
+                <div class="show-for-medium-up cell">
+                    <div class="login-form intro-box">
+                        <h3 class="text-center">@Translate.Message("L431")</h3>
+                        <form id="sign-up-inlineform" data-abide novalidate>
+                        <!--replace with compass organization id-->
+                            <input type="hidden" id="organizationId" name="OrganizationId" value="@ViewData["OrgId"]" />
+                            <div class="small-12 cell">
+                                <input type="text" id="infirstName" name="FirstName" placeholder="@Translate.Message("L938")" required pattern="[a-zA-Z]+">
+                                <small class="form-error">@Translate.Message("L432")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="text" id="inlastName" name="LastName" placeholder="@Translate.Message("L939")" required pattern="[a-zA-Z]+">
+                                <small class="form-error">@Translate.Message("L433")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="text" id="inDOB" name="DOB" placeholder="@Translate.Message("L1362")" class="fdatepicker" data-validator="validateInAGE" required>
+                                <small id="inAgeError" class="form-error">@Translate.Message("L1903")</small>
+                            </div>
+                            <div class="small-12 cell select">
+                                <select id="inUserType" name="PersonnelType" required>
+                                    <option value="">@Translate.Message("L1896")</option>
+                                    <option value="E">@Translate.Message("L1897")</option>
+                                    <option value="S">@Translate.Message("L1899")</option>
+                                </select>
+                                <small class="form-error">@Translate.Message("L1900").</small>
+                                <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip data-allow-html="true" aria-haspopup="true" title="@string.Format(Translate.Message("L238"), ViewData["Name"], ViewData["ShortName"], ViewData["IDText"])"></i>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="text" id="inCouponCode" name="UniqueID" placeholder="@ViewData["IDText"]" required>
+                                <small class="form-error">@string.Format(Translate.Message("L1895"), ViewData["IDText"]).</small>
+                                <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip data-allow-html="true" aria-haspopup="true" title="@ViewData["IDInfo"]"></i>
+                            </div>
+                            <div class="small-12 cell email">
+                                <input type="email" id="inemail" name="EmailAddress" placeholder="@Translate.Message("L986")" required>
+                                <small class="form-error">@Translate.Message("L434")</small>
+                                <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip data-allow-html="true" aria-haspopup="true" title="@Translate.Message("L1988")"></i>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="email" placeholder="@Translate.Message("L2468")" data-equalto="inemail">
+                                <small class="form-error">@Translate.Message("L2469")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="password" id="inpassword" name="Password" placeholder="@Translate.Message("L466")" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+                                       required data-tooltip data-allow-html="true" aria-haspopup="true" class="has-tip tip-top" title="@Translate.Message("L1929")">
+                                <small class=" error">@Translate.Message("L1929")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="password" placeholder="@Translate.Message("L1628")" data-equalto="inpassword">
+                                <small class="form-error">@Translate.Message("L438")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                <input type="checkbox" required>@Translate.Message("L441") <a href="#" data-open="terms-and-conditions">@Translate.Message("L440")</a>
+                                <small class="form-error">@Translate.Message("L442")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                <button type="submit" value="" class="expand pink">@Translate.Message("L443")</button>
+                            </div>
+                            <input type="hidden" name="IDText" value="@ViewData["IDText"]" />
+                            <input type="hidden" id="SignUpDate" name="SignUpDate" value="" />
+                        </form>
+                        <!--<a href='@Url.Action("TechnicalHelp", "Home")' target="_blank"><i class="fa fa-weixin"></i>Help</a>-->
+                    </div>
+                </div>
+            </div>
+            <div class="small-12 cell show-for-small-only intro-buttons">
+                <button class="intro-button pink expand" onclick="$('#sign-up-modal').foundation('open'); return false;">
+                    @Translate.Message("L443")
+                </button>
+                <button class="intro-button pink expand" onclick="scrollDown();">@Translate.Message("L1232")</button>
+            </div>
+        </div>
+    </div>
+</section>
+@Html.Partial("Crothall/_CrothallFooter")
+
+<!--Signup Modal-->
+<div id="sign-up-modal" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="cell medium-12">
+        <h2 class="text-center">@Translate.Message("L431")</h2>
+        <div data-alert id="signup-error" class="alert-box alert hide">
+            @Translate.Message("L1931")
+            <a href="#" class="close">&times;</a>
+        </div>
+    </div>
+    @Html.Partial("_OldCompassSignUp")
+    <div class="cell text-center">
+        <a href="#" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</a>
+    </div>
+    <a class="close-button" id="close">&#215;</a>
+</div>
+
+@Html.Partial("_ResetPassword")
+<div class="nav-to-top">
+    <a href="#" class="button"><i class="fa fa-chevron-up"></i></a>
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/AgeValidation.js")?v=@CommonUtility.GetRandom()"></script>
+@section scripts
+{
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('.fdatepicker').fdatepicker({
+            format: 'mm/dd/yyyy',
+            disableDblClickSelection: true,
+            pickTime: false,
+            onRender: function (date) {
+                return date.valueOf() > Date.now() ? 'disabled' : '';
+            }
+        });
+        $('#sign-up-inlineform').foundation();
+        //When Not Valid
+        $('#sign-up-inlineform')
+        .on('forminvalid.zf.abide', function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+            console.log(invalid_fields);
+        })
+        //When Valid
+        .on('formvalid.zf.abide', function () {
+            $('#SignUpDate').val(toSystemDateFormat(new Date().toLocaleDateString()));
+            $.ajax({
+                url: "@Url.Action("RegisterUsingEligibility", "Account")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#sign-up-inlineform").serialize(),
+                    success: function (data) {
+                        if (data.Success) {
+                            $('#confirmation-modal').foundation('open');
+                            $('.register-modal-email').text($('#inemail').val());
+                        }
+                        else {
+                            if (data.Action != undefined) {
+                                if (data.Action == 'VerifyPrimaryInfo') {
+                                    //verify primary user info
+                                    $('#register-primaryuserinfo-confirmation-modal').foundation('open');
+                                    $('#primaryVerificationRegisterInfo').val(data.RegisterData);
+                                }
+
+                            }
+                            else {
+                                $('#error-modal').foundation('open');
+                                $("#error-message-genericmodal").text(data.ErrorMessage);
+                                $('#primaryVerificationRegisterInfo').val(data.RegisterData);
+                            }
+                        }
+                    }
+                });
+            })
+            .on("submit", function (ev) {
+                ev.preventDefault();
+            })
+
+           Foundation.Abide.defaults.validators['validateInAGE'] = function ($el, required, parent) {
+                var DOB = $("#inDOB").val();
+                var valid = validateage(DOB);
+                if (valid == false) {
+                    $("#inAgeError").text('@InterventWebApp.Translate.Message("L1986")');
+                    return valid;
+                }
+                else
+                    return valid;
+           };
+        });
+
+        //Homepage Scroll function
+        function scrollDown() {
+            $('html, body').animate({
+                scrollTop: $(".parallax-wrapper").offset().top
+            }, 1000);
+        }
+
+        $(document).on('click', '#register-modal-close', function () {
+            $('#register-modal').foundation('close');
+        });
+    </script>
+}

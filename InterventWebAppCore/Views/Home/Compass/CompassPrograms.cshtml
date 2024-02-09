@@ -1,0 +1,557 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+
+@Html.Partial("Compass/_CompassHeader", new ViewDataDictionary(ViewData) { { "OrgId", ViewData["OrgId"] }, { "MenuClass", "" } })
+
+<section class="lmc-prog-wrapper lmc-index title-casing">
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="cell large-3 medium-4" data-sticky-container>
+				<article class="lmc-sidebar sticky" data-sticky data-margin-top="3.75" data-btm-anchor="success-stories:bottom" data-sticky-on="small">
+					<div class="prog-sidebar-links">
+						<p>@Translate.Message("L3598")</p>
+
+						<ul>
+							<li class="is-active"><a href="#coached-section" data-offset="70"><img src="~/Images/lmc/lmc-icon-coach-prog.png" alt="">@Translate.Message("L1912")</a></li>
+							<li><a href="#diabetes-section" data-offset="70"><img src="~/Images/lmc/lmc-icon-diabetes.png" alt="">@Translate.Message("L2865")</a></li>
+							<li><a href="#tobacco-section" data-offset="70"><img src="~/Images/lmc/lmc-icon-tobacco-free.png" alt="">@Translate.Message("L3599")</a></li>
+							<li><a href="#self-help-section" data-offset="70"><img src="~/Images/lmc/lmc-icon-self-help.png" alt="">@Translate.Message("L1913")</a></li>
+						</ul>
+					</div>
+					<div class="prog-sidebar-links">
+						<p class="mobile-dropdown">@Translate.Message("L1348")</p>
+
+						<ul>
+							<li><a href="#wellness-section" data-offset="70"><img src="~/Images/lmc/lmc-icon-wellness.png" alt="">@Translate.Message("L3600")</a></li>
+							<li><a href="#maternity-section" data-offset="70"><img src="~/Images/lmc/lmc-icon-gift-card.png" alt="">@Translate.Message("L1354")</a></li>
+						</ul>
+					</div>
+					<div class="prog-sidebar-links">
+						<p>@Translate.Message("L1919")</p>
+
+						<ul>
+							<li><a href="#reward-section" data-offset="70"><img src="~/Images/lmc/lmc-icon-reward-point.png" alt="">@Translate.Message("L3601")</a></li>
+						</ul>
+					</div>
+					<div class="prog-sidebar-links">
+						<p>@Translate.Message("L3602")</p>
+
+						<ul>
+							<li><a href="#health-section" data-offset="70"><img src="~/Images/lmc/lmc-icon-health-assess.png" alt="">@Translate.Message("L3603")</a></li>
+						</ul>
+					</div>
+
+					<div class="prog-sidebar-links">
+						<p>@Translate.Message("L1351")</p>
+
+						<ul>
+							<li><a href="#success-stories" data-offset="70"><img src="~/Images/assessment.svg" height="23" width="23" alt="">@Translate.Message("L1351")</a></li>
+						</ul>
+					</div>
+
+				</article>
+			</div>
+
+			<div class="cell large-9 medium-8">
+				<section class="prog-detail-section lmc-accordion-sec" id="coached-section">
+					<div class="title-section">
+						<div class="title-content">
+							<h3><span>@Translate.Message("L3598")</span>@Translate.Message("L3604")</h3>
+						</div>
+					</div>
+
+					<div class="content-section">
+						<ul class="accordion" data-accordion data-allow-all-closed="true">
+							<li class="accordion-item white-container prog-detail-section is-active" data-accordion-item>
+								<!-- Accordion tab title -->
+								<a href="#" class="accordion-title">@Translate.Message("L1912")</a>
+
+								<div class="accordion-content" data-tab-content>
+									<p>@Translate.Message("L3605")</p>
+									<p>@Translate.Message("L3606")</p>
+									<p>@Translate.Message("L3607")</p>
+									<p>@Translate.Message("L3608")</p>
+								</div>
+							</li>
+
+							<li class="accordion-item white-container prog-detail-section" data-accordion-item id="diabetes-section">
+								<!-- Accordion tab title -->
+								<a href="#" class="accordion-title">@Translate.Message("L3677")</a>
+
+								<div class="accordion-content" data-tab-content>
+									<p>@Translate.Message("L2866")</p>
+									<p>@Translate.Message("L2867")</p>
+									<p>@Translate.Message("L3609")</p>
+								</div>
+							</li>
+
+							<li class="accordion-item white-container prog-detail-section" data-accordion-item id="tobacco-section">
+								<!-- Accordion tab title -->
+								<a href="#" class="accordion-title">@Translate.Message("L1917")</a>
+
+								<div class="accordion-content" data-tab-content>
+									<p>@Translate.Message("L3610")</p>
+									<div class="small-12 cell">
+										<a class=" class=" read-more-link"" href="#" onclick="$('#morestories').foundation('open'); return false;">
+											@Translate.Message("L1363")
+											<span class="read-more-content"></span>
+										</a>
+									</div>
+								</div>
+
+							</li>
+
+							<li class="accordion-item white-container prog-detail-section" data-accordion-item id="self-help-section">
+								<!-- Accordion tab title -->
+								<a href="#" class="accordion-title">@Translate.Message("L1913")</a>
+
+								<div class="accordion-content" data-tab-content>
+									<p>@Translate.Message("L3611")</p>
+									<p>@Translate.Message("L3612")</p>
+									<p>@string.Format(Translate.Message("L1916"), TempData.Peek("OrgContactNumber").ToString()).</p>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<!--Programs accordion section ends-->
+
+				<section class="prog-detail-section lmc-wellness-sec" id="wellness-section">
+					<div class="title-section">
+						<div class="title-content">
+							<h3><span>@Translate.Message("L1348")</span>@Translate.Message("L3600")</h3>
+							<p>
+								@Translate.Message("L3613")
+							</p>
+						</div>
+						<div class="title-image"><img src="~/Images/lmc/lmc-wellness.png" alt="" /></div>
+					</div>
+
+					<div class="content-section">
+						<div class="white-container">
+							<ul>
+								<li>
+									<div class="white-prog-left">
+										<span class="step-number">@Translate.Message("L2915")</span>
+										<p>@Translate.Message("L3614")</p>
+									</div>
+									<div class="callout">
+										<p>
+											<span>@Translate.Message("L3615")</span>
+											<img src="~/Images/challenge/icon10.png" width="20" height="20" alt="" /> $1
+											<span>@Translate.Message("L3616")</span>
+										</p>
+									</div>
+								</li>
+								<li>
+									<div class="white-prog-left">
+										<span class="step-number">@Translate.Message("L2916")</span>
+										<p>@Translate.Message("L3617")</p>
+									</div>
+									<div class="callout">
+										<p>
+											<span>@Translate.Message("L3615")</span>
+											<img src="~/Images/challenge/icon10.png" width="20" height="20" alt="" /> $2
+											<span>@Translate.Message("L3616")</span>
+										</p>
+									</div>
+								</li>
+								<li>
+									<div class="white-prog-left">
+										<span class="step-number">@Translate.Message("L3618")</span>
+										<p>@Translate.Message("L3619")</p>
+									</div>
+									<div class="callout">
+										<p>
+											<span>@Translate.Message("L3615")</span>
+											<img src="~/Images/challenge/icon10.png" width="20" height="20" alt="" /> $3
+											<span>@Translate.Message("L3616")</span>
+										</p>
+									</div>
+								</li>
+							</ul>
+						</div>
+						<div class="conditional-text text-right"><p>@Translate.Message("L2645")</p></div>
+					</div>
+				</section>
+				<!--Prog Wellness section ends-->
+
+				<section class="prog-detail-section lmc-maternity-gift-sec" id="maternity-section">
+					<div class="title-section">
+						<div class="title-content">
+							<h3><span>@Translate.Message("L1348")</span>@Translate.Message("L1354")</h3>
+							<p>@Translate.Message("L3620")</p>
+						</div>
+						<div class="title-image"><img src="~/Images/lmc/lmc-maternity-gift.png" alt="" /></div>
+					</div>
+
+					<div class="content-section">
+						<div class="white-container">
+							<ul>
+								<li>
+									<div class="white-prog-left">
+										<span class="step-number">@Translate.Message("L3621")</span>
+										<p>@Translate.Message("L3622")</p>
+									</div>
+									<div class="callout">
+										<p>
+											<span>@Translate.Message("L3615")</span>
+											<img src="~/Images/challenge/icon2.png" width="19" height="13" alt="" /> $500
+											<span>@Translate.Message("L3623")</span>
+										</p>
+									</div>
+								</li>
+								<li>
+									<div class="white-prog-left">
+										<span class="step-number">@Translate.Message("L3625")</span>
+										<p>@Translate.Message("L3624")</p>
+									</div>
+									<div class="callout">
+										<p>
+											<span>@Translate.Message("L3615")</span>
+											<img src="~/Images/challenge/icon2.png" width="19" height="13" alt="" /> $250
+											<span>@Translate.Message("L3623")</span>
+										</p>
+									</div>
+								</li>
+								<li>
+									<div class="white-prog-left">
+										<span class="step-number">@Translate.Message("L3626")</span>
+										<p>@Translate.Message("L3627")</p>
+									</div>
+									<div class="callout">
+										<p>
+											<span>@Translate.Message("L3615")</span>
+											<img src="~/Images/challenge/icon2.png" width="19" height="13" alt="" /> $100
+											<span>@Translate.Message("L3623")</span>
+										</p>
+									</div>
+								</li>
+							</ul>
+						</div>
+
+						<p>@Translate.Message("L3628")</p>
+					</div>
+				</section>
+				<!--Maternity gift section ends-->
+
+				<section class="prog-detail-section lmc-reward-sec" id="reward-section">
+					<div class="title-section">
+						<div class="title-content">
+							<h3><span>@Translate.Message("L1919")</span>@Translate.Message("L3629")</h3>
+							<p>
+								@Translate.Message("L2858")
+								<a href="#" class="read-more-link">@Translate.Message("L3646")</a><br /><br />
+								<span class="read-more-content">@Translate.Message("L3630")</span><br /><br />
+								<span class="read-more-content">@Translate.Message("L3119")</span>
+							</p>
+						</div>
+						<div class="title-image"><img src="~/Images/lmc/lmc-rewards-points.png" alt="" /></div>
+					</div>
+					<div class="content-section">
+						<div class="white-container">
+							<ul class="lmc-rewards-list">
+								<li>
+									<span class="challange-name">@Translate.Message("L3631")</span>
+									<span class="challange-point">@Translate.Message("L3615")</span>
+								</li>
+								<li>
+									<span class="challange-name">@Translate.Message("L3678")</span>
+									<span class="challange-point"><img src="~/Images/challenge/icon10.png" width="20" height="20" alt="Alternate Text" />@string.Format(Translate.Message("L3632"), "150")</span>
+								</li>
+								<li>
+									<span class="challange-name">@Translate.Message("L2508")</span>
+									<span class="challange-point"><img src="~/Images/challenge/icon10.png" width="20" height="20" alt="Alternate Text" />@string.Format(Translate.Message("L3632"), "200")</span>
+								</li>
+								<li>
+									<span class="challange-name">@Translate.Message("L1367")</span>
+									<span class="challange-point"><img src="~/Images/challenge/icon10.png" width="20" height="20" alt="Alternate Text" />@string.Format(Translate.Message("L3632"), "100")</span>
+								</li>
+								<li>
+									<span class="challange-name">@Translate.Message("L1368")</span>
+									<span class="challange-point"><img src="~/Images/challenge/icon10.png" width="20" height="20" alt="Alternate Text" />@string.Format(Translate.Message("L3632"), "250")</span>
+								</li>
+								<li>
+									<span class="challange-name">@Translate.Message("L1369")</span>
+									<span class="challange-point"><img src="~/Images/challenge/icon10.png" width="20" height="20" alt="Alternate Text" />@string.Format(Translate.Message("L3632"), "50")</span>
+								</li>
+								<li>
+									<span class="challange-name">@Translate.Message("L1370")</span>
+									<span class="challange-point"><img src="~/Images/challenge/icon10.png" width="20" height="20" alt="Alternate Text" />@string.Format(Translate.Message("L3632"), "50")</span>
+								</li>
+								<li>
+									<span class="challange-name">@Translate.Message("L3679")</span>
+									<span class="challange-point"><img src="~/Images/challenge/icon10.png" width="20" height="20" alt="Alternate Text" />@string.Format(Translate.Message("L3632"), "200")</span>
+								</li>
+								<li>
+									<span class="challange-name">@Translate.Message("L2573")</span>
+									<span class="challange-point"><img src="~/Images/challenge/icon10.png" width="20" height="20" alt="Alternate Text" />@string.Format(Translate.Message("L3632"), "50+")</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<!--Rewards point section ends-->
+
+				<section class="prog-detail-section lmc-reward-sec lmc-activity-reward">
+					<div class="title-section">
+						<div class="title-content">
+							<h3>@Translate.Message("L3633")</h3>
+						</div>
+						<div class="title-image"><img src="~/Images/lmc/lmc-rewards-activity.png" alt="" /></div>
+					</div>
+					<div class="content-section">
+						<div class="white-container">
+							<div class="reward-table-fixed track-detail">
+								<table>
+									<thead>
+										<tr class="level-row">
+											<td></td>
+										</tr>
+										<tr class="heading-row">
+											<td>@Translate.Message("L1371")</td>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+												<p>
+													@Translate.Message("L3634")
+													<span>@string.Format(Translate.Message("L3635"), "$100")</span>
+													<span>@Translate.Message("L3636") 01/22/2020</span>
+												</p>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<p>
+													@Translate.Message("L3637")
+													<span>@string.Format(Translate.Message("L3635"), "$250")</span>
+													<span>@Translate.Message("L3636") 04/15/2020</span>
+												</p>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<p>
+													@Translate.Message("L3638")
+													<span>@string.Format(Translate.Message("L3635"), "$500")</span>
+													<span>@Translate.Message("L3636") 05/10/2020</span>
+												</p>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<p>
+													@Translate.Message("L3639")
+													<span>@string.Format(Translate.Message("L3635"), "$1000")</span>
+													<span>@Translate.Message("L3636") 12/29/2020</span>
+												</p>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<p>
+													@Translate.Message("L3640")*
+												</p>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="reward-table-scroll track-detail">
+								<table>
+									<thead>
+										<tr class="level-row">
+											<td><img src="../Images/challenge/icon11.png" width="17" /> <span>@Translate.Message("L2903")</span></td>
+											<td><img src="../Images/challenge/icon6.png" width="22" /> <span>@Translate.Message("L3641")</span></td>
+											<td><img src="../Images/challenge/icon5.png" width="22" /> <span>@Translate.Message("L3642")</span></td>
+											<td><img src="../Images/challenge/icon1.png" width="40" /> <span>@Translate.Message("L3643")</span></td>
+										</tr>
+										<tr class="heading-row">
+											<td><div class="headingicon"><img src="../Images/challenge/icon10.png" width="15" /> 1-249</div></td>
+											<td><div class="headingicon"><img src="../Images/challenge/icon10.png" width="15" /> 250-499</div></td>
+											<td><div class="headingicon"><img src="../Images/challenge/icon10.png" width="15" /> 500-999</div></td>
+											<td>
+												<div class="headingicon">
+													<img src="../Images/challenge/icon10.png" width="15" />@Translate.Message("L1377")
+												</div>
+											</td>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td><img src="~/Images/lmc/lmc-table-tick-icon.png" alt="" /></td>
+											<td><img src="~/Images/lmc/lmc-table-tick-icon.png" alt="" /></td>
+											<td><img src="~/Images/lmc/lmc-table-tick-icon.png" alt="" /></td>
+											<td><img src="~/Images/lmc/lmc-table-tick-icon.png" alt="" /></td>
+										</tr>
+										<tr>
+											<td></td>
+											<td><img src="~/Images/lmc/lmc-table-tick-icon.png" alt="" /></td>
+											<td><img src="~/Images/lmc/lmc-table-tick-icon.png" alt="" /></td>
+											<td><img src="~/Images/lmc/lmc-table-tick-icon.png" alt="" /></td>
+										</tr>
+										<tr>
+											<td></td>
+											<td></td>
+											<td><img src="~/Images/lmc/lmc-table-tick-icon.png" alt="" /></td>
+											<td><img src="~/Images/lmc/lmc-table-tick-icon.png" alt="" /></td>
+										</tr>
+										<tr>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td><img src="~/Images/lmc/lmc-table-tick-icon.png" alt="" /></td>
+										</tr>
+										<tr>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td><img src="~/Images/lmc/lmc-table-tick-icon.png" alt="" /></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="conditional-text"><p>@Translate.Message("L3644")</p></div>
+					</div>
+				</section>
+				<!--Rewards point section ends-->
+
+				<section class="prog-detail-section lmc-health-asses-sec" id="health-section">
+					<div class="title-section">
+						<div class="title-content">
+							<h3><span>@Translate.Message("L3602")</span>@Translate.Message("L3603")</h3>
+							<p>
+								@Translate.Message("L3645")
+								<a href="#" class="read-more-link">@Translate.Message("L3646")</a><br /><br />
+								<span class="read-more-content">@Translate.Message("L3647")</span><br /><br />
+								<span class="read-more-content">@Translate.Message("L3648")</span><br /><br />
+								<span class="read-more-content">@Translate.Message("L3649")</span>
+							</p>
+						</div>
+						<div class="title-image"><img src="~/Images/lmc/lmc-health-assess.png" alt="" /></div>
+					</div>
+				</section>
+				<!--Health Assessment section ends-->
+
+				<section class="prog-detail-section lmc-success-stories" id="success-stories">
+					<div class="grid-container">
+						<div class="grid-x grid-margin-x align-middle">
+							<div class="cell medium-5">
+								<h2>@Translate.Message("L3676")</h2>
+							</div>
+
+							<div class="cell medium-6 medium-offset-1">
+								<div class="orbit" role="region" aria-label="Success stories" data-orbit data-use-m-u-i="false">
+									<div class="orbit-wrapper">
+										<ul class="orbit-container">
+											<li class="is-active orbit-slide">
+												<div class="slider-content">
+													"@Translate.Message("L1360")"
+												</div>
+											</li>
+										</ul>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!--Success Stories section ends-->
+
+
+			</div>
+		</div>
+	</div>
+
+	<div id="morestories" class="reveal small" data-reveal data-close-on-click="true">
+		<video class="margin-top-1" width="100%" height="100%" controls>
+			<source src="~/Videos/Compass.Tobacco.Presentation-2019.mp4" type="video/mp4" />
+			@Translate.Message("L3650")
+		</video>
+		<button class="close-button" data-close aria-label="Close modal" type="button">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<section class="take-step-section text-center">
+		<h2>@Translate.Message("L3651")</h2>
+		<div class="button-group align-center">
+			<button onclick="window.location.href = '../Home/Compass?signup='+ true;" class="button hide-for-small-only">@Translate.Message("L3652")</button>
+			<button data-open="lmc-mobile-signup" class="button show-for-small-only">@Translate.Message("L3652")</button>
+			<button onclick="window.location.href = '../Home/Compass';" class="button hollow hide-for-small-only">@Translate.Message("L2084")</button>
+			<button data-open="login-modal" class="button hollow show-for-small-only">@Translate.Message("L2084")</button>
+		</div>
+	</section>
+</section>
+<div id="lmc-mobile-signup" class="reveal lmc-form" data-reveal data-close-on-click="false" data-close-on-esc="false">
+	@Html.Partial("_CompassSignUp")
+	<a class="close-button" data-close id="close">&#215;</a>
+</div>
+
+<script>
+	$(document).ready(function () {
+		$(".prog-sidebar-links li a").on('click', function (e) {
+			e.preventDefault();
+
+			//Scroll to respective section
+			var hash = $(this).attr("href");
+			var topMargin = parseInt($(this).attr("data-offset"));
+
+			$('html, body').animate({
+				scrollTop: $(hash).position().top - topMargin
+			}, 800);
+
+			//Highlighting the active menu item
+			if (!$(this).parent("li").hasClass("is-active")) {
+				$(".prog-sidebar-links li").removeClass("is-active");
+				$(this).parent("li").addClass("is-active");
+			}
+
+			if ($(window).width() < 641) {
+				$("p.mobile-dropdown").toggleClass("is-active");
+				$(this).parents("article.lmc-sidebar").toggleClass("is-active");
+			}
+		});
+
+		$(window).on('scroll', function () {
+			$('.prog-detail-section').each(function () {
+				if ($(window).scrollTop() >= $(this).offset().top - 180) {
+					var id = $(this).attr('id');
+					$('.prog-sidebar-links ul li').removeClass('is-active');
+					$('.prog-sidebar-links ul li a[href="#' + id + '"]').parent('li').addClass('is-active');
+				}
+			});
+		});
+
+		$(".prog-sidebar-links p").on('click', function () {
+			if ($(window).width() < 641) {
+				$(this).toggleClass("is-active");
+				$(this).parents("article.lmc-sidebar").toggleClass("is-active");
+			}
+		});
+
+		$("a.read-more-link").on('click', function (e) {
+			e.preventDefault();
+			$(this).hide();
+			$(this).siblings("span.read-more-content").show();
+		});
+
+		$("ul.accordion li a.accordion-title").on("click", function () {
+			$("[data-accordion]").on("down.zf.accordion", function () {
+				var titleId = $("ul.accordion li.is-active").attr("id");
+				$('html, body').animate({
+					scrollTop: $("#" + titleId).position().top - 70
+				}, 800);
+			});
+
+		});
+	});
+</script>

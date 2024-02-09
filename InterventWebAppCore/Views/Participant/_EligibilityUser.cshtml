@@ -1,0 +1,1324 @@
+﻿@using InterventWebApp;
+@model InterventWebApp.EligibilityUserModel
+@{
+    var dateFormat = Model.dateFormat;
+}
+<div class="eligibility-tabs-container">
+    <div id="loader-wrapper"><div id="loader"></div></div>
+    <div class="notification-card text-center" hidden><span id="notificationCard">Success/Error message notification</span></div>
+    <div class="grid-container">
+        <div class="grid-x">
+            <div class="cell medium-3">
+                <div class="crm-sidenav">
+                    <div>
+                        <span class="show-for-small-only">Eligibility Details</span>
+                        <ul class="tabs" data-tabs id="eligibility-tabs">
+                            <li class="tabs-title is-active"><a href="#panel1">Eligibility Details</a></li>
+                            <li class="tabs-title"><a href="#panel2">Notes</a></li>
+                            @*<li class="tabs-title"><a href="#panel3" onclick="GetCanriskQuestionnaire();">Canrisk</a></li>*@
+                            @if (Model.IntegrationWith == (byte)Integrations.LMC)
+                            {
+                                <li class="tabs-title" onclick="GetCanriskQuestionnaire();"><a href="#panel3">Canrisk</a></li>
+                            }
+                            else
+                            {
+                                <li class="tabs-title" onclick="GetEligibilityClaims();"><a href="#panel3">Claims</a></li>
+                            }
+                            @if (Model.IntegrationWith == (byte)Integrations.Intuity)
+                            {
+                                <li class="tabs-title" onclick="GetIntuityDetails();"><a href="#panel4">Diabetes Management</a></li>
+                            }
+                            @if (Model.CRMId.HasValue)
+                            {
+                                <li class="tabs-title" onclick="ListNotes(@Model.CRMId);"><a href="#panel5">CRM Notes</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell medium-9">
+
+                <div class="tabs-content" data-tabs-content="eligibility-tabs">
+                    <div class="content tabs-panel is-active elegibility" id="panel1">
+                        <form id="form-eligibility" class="new-search-form form-component" data-abide novalidate>
+                            <!--PERSONAL INFORMATION-->
+                            <fieldset class="form-section">
+                                <legend>Personal Information</legend>
+                                <div class="grid-x grid-margin-x collapse">
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            First Name :
+                                            <span>@Model.FirstName</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Last Name :
+                                            <span>@Model.LastName</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Middle Name :
+                                            <span>@Model.MiddleName</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Unique Id:
+                                            <span>@Model.UniqueId</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Gender :
+                                            <span>@Model.Gender</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            DOB :
+                                            @if (Model.DOB.HasValue)
+                                            {
+                                                <span>@Model.DOB.Value.ToString(dateFormat)</span>
+                                            }
+                                        </label>
+                                    </div>
+                                    <div class="large-8 cell">
+                                        <label>
+                                            Email Address :
+                                            <span>@Model.Email</span>
+                                        </label>
+                                    </div>
+                                    @if (Model.PortalUserId != null)
+                                    {
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                Go to participant info : <span class='content'><a onclick="ViewParticipantProfile(@Model.PortalUserId)" style='color:deepskyblue'><i class='fa fa-user-plus'></i></a></span>
+                                            </label>
+                                        </div>
+                                    }
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Home Phone :
+                                            <span>@Model.HomeNumber</span>
+                                        </label>
+                                    </div>
+                                    @if (!String.IsNullOrEmpty(Model.CellNumber))
+                                    {
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                Cell Phone :
+                                                <span>@Model.CellNumber</span>
+                                            </label>
+                                        </div>
+                                    }
+                                    @if (!String.IsNullOrEmpty(Model.UserEnrollmentType))
+                                    {
+                                        <div class="large-4 cell">
+                                            <label>
+                                                Enrollment Type :
+                                                <span>@Model.UserEnrollmentType</span>
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </fieldset>
+                            @if (Model.CanAddSpouseEligibility)
+                            {
+                                <fieldset class="form-section">
+                                    <legend>Spouse Eligibility</legend>
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="cell">
+                                            <a href='#' data-open='add-spouse-eligibility' data-modal-path='@Html.Raw(Url.Action("AddSpouseEligibilityDetails", "Participant", new { id = Model.Id }))'>Add Spouse Eligibility</a>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            else if (!String.IsNullOrEmpty(Model.SpouseFirstName))
+                            {
+                                <!--SPOUSE INFORMATION-->
+                                <fieldset class="form-section">
+                                    <legend>Spouse Information</legend>
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                First Name :
+                                                <span>@Model.SpouseFirstName</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                Last Name :
+                                                <span>@Model.SpouseLastName</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                Gender :
+                                                <span>@Model.SpouseGender</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                DOB :
+                                                @if (Model.SpouseDOB.HasValue)
+                                                {
+                                                    <span>@Model.SpouseDOB.Value.ToString(dateFormat)</span>
+                                                }
+                                            </label>
+                                        </div>
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                Go to Spouse Profile :
+                                                <span><a href='#' data-open='spouse-eligibility-profile' data-modal-path='@Html.Raw(Url.Action("GetEligibilityDetails", "Participant", new { eligibilityId = Model.SpouseId }))'><i class='fa fa-user-plus'></i></a></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            @if (!String.IsNullOrEmpty(Model.PrimaryUserFirstName))
+                            {
+                                <!--PRIMARY USER PERSONAL INFORMATION-->
+                                <fieldset class="form-section">
+                                    <legend>Primary User Personal Information</legend>
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                First Name :
+                                                <span>@Model.PrimaryUserFirstName</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                Last Name :
+                                                <span>@Model.PrimaryUserLastName</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                Gender :
+                                                <span>@Model.PrimaryUserGender</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                DOB :
+                                                @if (Model.PrimaryUserDOB.HasValue)
+                                                {
+                                                    <span>@Model.PrimaryUserDOB.Value.ToString(dateFormat)</span>
+                                                }
+                                            </label>
+                                        </div>
+                                        <div class="medium-4 cell">
+                                            <label>
+                                                Email Address :
+                                                <span>@Model.PrimaryUserEmail</span>
+                                            </label>
+                                        </div>
+                                        @if (Model.fromElgPage)
+                                        {
+                                            <div class="medium-4 cell">
+                                                <label>
+                                                    Go to Associate Profile :
+                                                    <span><a href='#' data-open='associate-eligibility-profile' data-modal-path='@Html.Raw(Url.Action("GetEligibilityDetails", "Participant", new { eligibilityId = Model.PrimaryUserId }))'><i class='fa fa-user-plus'></i></a></span>
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+
+                                </fieldset>
+                            }
+
+                            <!--ADDRESS-->
+                            <fieldset class="form-section">
+                                <legend>Address</legend>
+                                <div class="grid-x grid-margin-x">
+                                    <div class="medium-4 cell">
+                                        <!--street-->
+                                        <label>
+                                            Street Address:
+                                            <span>@Model.Address</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <!--Address2-->
+                                        <label>
+                                            Address 2:
+                                            <span>@Model.Address2</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <!--city-->
+                                        <label>
+                                            City
+                                            <span>@Model.City</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <!--state-->
+                                        <label>
+                                            State/Province:
+                                            <span>@Model.State</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <!--zip code-->
+                                        <label>
+                                            Zip Code:
+                                            <span>@Model.Zip</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <!--country-->
+                                        <label>
+                                            Country:
+                                            <span>@Model.Country</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="form-section">
+                                @{ string primayName; }
+                                @if (!string.IsNullOrEmpty(Model.PrimaryUserFirstName))
+                                {
+                                    primayName = Model.PrimaryUserFirstName;
+                                }
+                                else
+                                {
+                                    primayName = Model.FirstName;
+                                }
+                                <legend>Employment Information for @primayName</legend>
+                                <div class="grid-x grid-margin-x">
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Status:
+                                            <span>@Model.EligibilityStatus</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            HireDate:
+                                            @if (Model.HireDate.HasValue)
+                                            {
+                                                <span>@Model.HireDate.Value.ToString(dateFormat)</span>
+                                            }
+                                        </label>
+                                    </div>
+
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Terminated Date:
+                                            @if (Model.TerminatedDate.HasValue)
+                                            {
+                                                <span>@Model.TerminatedDate.Value.ToString(dateFormat)</span>
+                                            }
+                                        </label>
+                                    </div>
+
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Terminated Reason:
+                                            <span>@Model.TerminationReason</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Death Date:
+                                            @if (Model.DeathDate.HasValue)
+                                            {
+                                                <span>@Model.DeathDate.Value.ToString(dateFormat)</span>
+                                            }
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Pay Type:
+                                            <span>@Model.PayType</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Union Flag:
+                                            <span>@Model.UnionFlag</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Payroll Area:
+                                            <span>@Model.PayrollArea</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Educational Associates:
+                                            <span>@Model.EducationalAssociates</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-4 cell">
+                                        <label>
+                                            Business Unit:
+                                            <span>@Model.BusinessUnit</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="form-section">
+                                <legend>Medical Information</legend>
+                                <div class="grid-x grid-margin-x">
+                                    <div class="medium-6 cell">
+                                        <label>
+                                            Medical Plan Code:
+                                            <span>@Model.medicalCodeComment</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-6 cell">
+                                        <label>
+                                            Medical Plan Start Date:
+                                            @if (Model.MedicalPlanStartDate.HasValue)
+                                            {
+                                                <span>@Model.MedicalPlanStartDate.Value.ToString(dateFormat)</span>
+                                            }
+                                        </label>
+                                    </div>
+                                    <div class="medium-6 cell">
+                                        <label>
+                                            Medical Plan End Date:
+                                            @if (Model.MedicalPlanEndDate.HasValue)
+                                            {
+                                                <span>@Model.MedicalPlanEndDate.Value.ToString(dateFormat)</span>
+
+                                            }
+                                        </label>
+                                    </div>
+                                    <div class="medium-6 cell">
+                                        <label>
+                                            Vision Plan Code:
+                                            <span>@Model.VisionPlanCode</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-6 cell">
+                                        <label>
+                                            Vision Plan Start Date:
+                                            @if (Model.VisionPlanStartDate.HasValue)
+                                            {
+                                                <span>@Model.VisionPlanStartDate.Value.ToString(dateFormat)</span>
+                                            }
+                                        </label>
+                                    </div>
+                                    <div class="medium-6 cell">
+                                        <label>
+                                            Vision Plan End Date:
+                                            @if (Model.VisionPlanEndDate.HasValue)
+                                            {
+                                                <span>@Model.VisionPlanEndDate.Value.ToString(dateFormat)</span>
+
+                                            }
+                                        </label>
+                                    </div>
+                                    <div class="medium-6 cell">
+                                        <label>
+                                            Dental Plan Code:
+                                            <span>@Model.DentalPlanCode</span>
+                                        </label>
+                                    </div>
+                                    <div class="medium-6 cell">
+                                        <label>
+                                            Dental Plan Start Date:
+                                            @if (Model.DentalPlanStartDate.HasValue)
+                                            {
+                                                <span>@Model.DentalPlanStartDate.Value.ToString(dateFormat)</span>
+                                            }
+                                        </label>
+                                    </div>
+                                    <div class="medium-6 cell">
+                                        <label>
+                                            Dental Plan End Date:
+                                            @if (Model.DentalPlanEndDate.HasValue)
+                                            {
+                                                <span>@Model.DentalPlanEndDate.Value.ToString(dateFormat)</span>
+
+                                            }
+                                        </label>
+                                    </div>
+                                    <div class="medium-6 cell">
+                                        <label>
+                                            Tobacco Flag:
+                                            <span>@Model.TobaccoFlag</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="form-section">
+                                <legend>Additional Information</legend>
+                                <div class="grid-x grid-margin-x">
+                                    @if (Model.EligibilityFormat == (byte)EligibilityFormats.IntuityFormat)
+                                    {
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Coaching Enabled:
+                                                <span>@Model.CoachingEnabled</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Coaching Expiration Date:
+                                                @if (Model.CoachingExpirationDate.HasValue)
+                                                {
+                                                    <span>@Model.CoachingExpirationDate.Value.ToString(dateFormat)</span>
+
+                                                }
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Diabetes Type:
+                                                <span>@Model.DiabetesType</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Patterns Phone:
+                                                <span>@Model.HomeNumber</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Patterns Email:
+                                                <span>@Model.Email2</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                First Eligible Date:
+                                                @if (Model.FirstEligibleDate.HasValue)
+                                                {
+                                                    <span>@Model.FirstEligibleDate.Value.ToString(dateFormat)</span>
+
+                                                }
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Region Code:
+                                                <span>@Model.RegionCode</span>
+                                            </label>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Hire/Enrollment Date:
+                                                @if (Model.HireDate.HasValue)
+                                                {
+                                                    <span>@Model.HireDate.Value.ToString(dateFormat)</span>
+
+                                                }
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Race:
+                                                <span>@Model.Race</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Location:
+                                                <span>@Model.Location</span>
+                                            </label>
+                                        </div>
+
+
+                                    }
+                                </div>
+                            </fieldset>
+                            @if (!string.IsNullOrEmpty(Model.Ref_FirstName) || !string.IsNullOrEmpty(Model.Ref_PractNum))
+                            {
+                                <fieldset class="form-section">
+                                    <legend>Doctor Information</legend>
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Name:
+                                                <span>@Model.Ref_FirstName @Model.Ref_LastName</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Address:
+                                                @if (!string.IsNullOrEmpty(Model.Ref_OfficeName))
+                                                {
+                                                    <span>@Model.Ref_OfficeName</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@Model.Ref_Address1 @Model.Ref_Address2</span>
+                                                }
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                City:
+                                                <span>@Model.Ref_City</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                State Or Province:
+                                                <span>@Model.Ref_StateOrProvince</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Country:
+                                                <span>@Model.Ref_Country</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Country:
+                                                <span>@Model.Ref_Country</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Zip code:
+                                                <span>@Model.Ref_Zip</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Phone1:
+                                                <span>@Model.Ref_Phone</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Phone2:
+                                                <span>@Model.Ref_Phone2</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Email:
+                                                <span>@Model.Ref_Email</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Fax:
+                                                <span>@Model.Ref_Fax</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            @if (Model.Lab_Date.HasValue)
+                            {
+                                <fieldset class="form-section">
+                                    <legend>Labs</legend>
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Lab Date:
+                                                <span>@Model.Lab_Date.Value.ToString(dateFormat)</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Fasting:
+                                                <span>@Model.Lab_DidYouFast</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                Glucose:
+                                                <span>@Model.Lab_Glucose</span>
+                                            </label>
+                                        </div>
+                                        <div class="medium-6 cell">
+                                            <label>
+                                                A1C:
+                                                <span>@Model.Lab_A1C</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            @if (!Model.PortalUserId.HasValue && (Model.IntegrationWith != (byte)Integrations.LMC))
+                            {
+                                <fieldset class="form-section eligibility-register-section">
+                                    <legend>Registration Information</legend>
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="medium-12 cell">
+                                            <div class="panel">
+                                                <label>
+                                                    Email Address?
+                                                </label>
+                                                @Html.RadioButton("UserEmail", true, new Dictionary<string, object> { { "class", "useremail" } }) Yes
+                                                @Html.RadioButton("UserEmail", false, new Dictionary<string, object> { { "class", "nouseremail" } }) No
+                                            </div>
+                                        </div>
+                                        <div class="medium-12 cell">
+                                            <div class="panel">
+                                                <label for="Email">
+                                                    Registration Email Address
+                                                </label>
+                                                @Html.TextBox("newEmail", @Model.Email, new Dictionary<string, object> { { "disabled", "disabled" } })
+                                            </div>
+                                        </div>
+                                        <div class="medium-12 cell">
+                                            <div class="panel">
+                                                <p>@Translate.Message("L1990")<a href='~/Home/ServiceAgreement?modal=false' target="_blank" style='color:deepskyblue'> www.myintervent.com/serviceagreement </a></p>
+                                                <label for="Terms">
+                                                    @Html.CheckBox("Terms", new Dictionary<string, object> { { "class", "immune" }, { "data-validator", "validateTerms" } })
+                                                    @Translate.Message("L1991")
+                                                    <small class="form-error">Required</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            else if (Model.Hracompletion.HasValue || !string.IsNullOrEmpty(Model.ProgramStatus))
+                            {
+                                <fieldset class="form-section">
+                                    <legend>HRA/Program Status</legend>
+                                    @if (Model.Hracompletion.HasValue)
+                                    {
+                                        <div class="grid-x grid-margin-x">
+                                            <div class="medium-12 cell">
+                                                HRA Status: @Model.Hracompletion % complete
+                                            </div>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.ProgramStatus))
+                                    {
+                                        <div class="grid-x grid-margin-x">
+                                            <div class="medium-12 cell">
+                                                Current Program: @Model.ProgramStatus
+                                            </div>
+                                        </div>
+                                    }
+                                </fieldset>
+                            }
+
+                            <div class="grid-x grid-margin-x align-justify button-set">
+                                @if (Model.PortalUserId.HasValue)
+                                {
+                                    <div class="cell medium-6 medium-order-2 medium-text-right">@Url.ActionLink("Go to Profile", "Stream", new { ForceParticipant = true } /* new { @class = "button" } */)</div>
+                                }
+                                else if (Model.IntegrationWith != (byte)Integrations.LMC)
+                                {
+                                    <div class="cell medium-6 medium-order-2 medium-text-right"><button class="button" type="submit" id="registerUser">Register User</button></div>
+                                }
+                                <div class="cell medium-6 medium-order-1 medium-text-left"><button class="button hollow" type="button" id="closeModal" onclick="$('#eligibilityUserClose').trigger('click');">Cancel</button></div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="content tabs-panel new-search-form" id="panel2">
+                        <div class="panel">
+                                <form id="eligibility-note-form" data-abide novalidate class="form-component">
+                                    <div class="form-section">
+                                        <div class="grid-x grid-margin-x">
+                                            @if (Model.PortalUserId == null)
+                                            {
+                                                <div class="cell medium-6">
+													<label>
+														Type
+														@Html.DropDownList("ModuleType", ViewData["moduleTypeList"] as SelectList, "--Select--", new Dictionary<string, object> { { "required", "required" } })
+														<small class="form-error">@Translate.Message("L480")</small>
+													</label>
+													<label>
+														Note Type
+														@Html.DropDownList("NoteType", ViewData["notesTypeList"] as SelectList, "--Select--", new Dictionary<string, object> { { "required", "required" } })
+														<small class="form-error">@Translate.Message("L480")</small>
+													</label>
+													<label>
+														Notes
+														@Html.TextArea("Notes", new Dictionary<string, object> { { "grid-x grid-margin-xs", "2" }, { "placeholder", "Notes." }, { "required", "required" } })
+														<small class="form-error">@Translate.Message("L480")</small>
+													</label>
+                                                    <button class="button" type="submit" id="AddEligibilityNote">Save</button>
+                                                </div>
+                                            }
+                                            <div class="cell medium-6">
+												<label>
+													Tracking Mode/Enrollment Status
+													@Html.DropDownList("EnrollmentStatus", ViewData["EnrollmentStatusList"] as IEnumerable<SelectListItem>, "--Select--")
+													<small class="form-error">@Translate.Message("L480")</small>
+												</label>                            
+                                                <div id="EnrollmentReason">
+													<label>
+														Declining Enrollment Reason
+														@Html.DropDownList("DeclinedEnrollmentReason", ViewData["DeclinedEnrollmentReasons"] as IEnumerable<SelectListItem>, "--Select--")
+														<small id="DeclinedEnrollmentReasonError" class="form-error">@Translate.Message("L480")</small>
+													</label>
+                                                </div>
+												<label>
+													Language
+													@Html.DropDownList("Language", ViewData["languageList"] as IEnumerable<SelectListItem>, "--Select--")
+													<small class="form-error">@Translate.Message("L480")</small>
+												</label>
+												<div>
+													<div class="tick-buttons">
+														<input type='checkbox' id='IsFalseReferral' />
+														<label for="IsFalseReferral">
+															False Referral
+															<span class="checkmark"></span>
+														</label>
+													</div>
+												</div>
+                                                <button class="button" type="button" id="UpdateEligibility">Update</button>
+                                            </div>
+                                            <div id="saveAlert" data-alert class="small-10 cell callout success" hidden>
+                                                <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            <fieldset class="form-section form-component">
+                                <legend>Notes History</legend>
+                                <div class="grid-x grid-margin-x">
+                                    <div class="cell medium-4">
+										<label>
+											@Html.DropDownList("ModuleTypeFilter", ViewData["moduleTypeList"] as SelectList, "--Select--")
+										</label>
+                                    </div>
+                                    <div class="cell medium-4">
+										<label>
+											@Html.DropDownList("NoteTypeFilter", ViewData["notesTypeList"] as SelectList, "--Select--")
+										</label>
+                                    </div>
+                                </div>
+                                <div id="eligibility-notes-list" class="participant-log">
+                                </div>
+                            </fieldset>
+                            @Html.Hidden("NoteId")
+                        </div>
+                    </div>
+
+                    <div class="content tabs-panel new-search-form" id="panel3">
+                        <div id="eligibility-claim-details">
+
+                        </div>
+                    </div>
+
+                    <div class="content tabs-panel new-search-form" id="panel4">
+                        <div class="panel">
+                            <div id="all-intuity-details">
+                                @if (Model.IntegrationWith == (byte)Integrations.Intuity)
+                                {
+                                    if (Model.IsIntuityDTC)
+                                    {
+                                        <div class="form-section form-component">
+                                            <div class="grid-x grid-margin-x">
+                                                <div class="cell">
+                                                    <div class="grid-x grid-margin-x align-bottom">
+                                                        <div class="cell small-6">
+															<label>
+																Patterns Email Address
+																@Html.TextBoxFor(m => m.Email2, new { @type = "email", @id = "secondEmail" })
+																<small class="form-error">@Translate.Message("L480")</small>
+															</label>
+                                                        </div>
+                                                        <div class="cell small-6 new-button">
+                                                            <button class="button" type="submit" id="AddEditEmail">Save</button>
+                                                        </div>
+                                                        <div id="saveEmailAlert" data-alert class="small-10 cell callout success" hidden>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="cell">
+                                                    @if (!String.IsNullOrEmpty(Model.Email))
+                                                    {
+
+                                                        var showCount = "hide";
+                                                        if (Model.MissedYouEmail > 0)
+                                                        {
+                                                            showCount = "";
+                                                        }
+                                                        <p>
+                                                            Click <a style='color:deepskyblue;' href="#" onclick="SendMissedOutreachEmail(@Model.PortalUserId);">here</a> to send "Sorry I Missed You" email.
+                                                            <span id="emailCount" class='@showCount'>(Sent <span id="missedYouEmail">@Model.MissedYouEmail</span> email(s))</span>
+                                                        </p>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="intuity-details"></div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content tabs-panel new-search-form" id="panel5">
+                        <div class="crm-form-title align-justify align-middle flex-container crm-details-container">
+                            <h2>CRM Notes</h2>
+                        </div>
+                        <div id="crm-notes-details" class="create-profile-form"></div>
+                    </div>
+
+                </div>
+                <input type="hidden" value="@Model.UniqueId" id="EligibilityUniqueId" name="EligibilityUniqueId" />
+            </div>
+        </div>
+    </div>
+
+</div>
+<a id="eligibilityUserClose" class="close-button" data-close>&#215;</a>
+<div class="alert-box success hide" id="resend-email-message" data-closable>
+    <div id="email-alert"></div>
+</div>
+<script>
+    var totalCRMNotes = 10;
+    var formsubmit = true;
+    var tempMail;
+	var uniqueId = $("#EligibilityUniqueId").val();
+    $('.nouseremail').on('click', function () {
+        tempMail = $("#newEmail").val();
+        var defaultMail = createmail('@Model.FirstName', '@Model.LastName', uniqueId);
+        $("#newEmail").val(defaultMail);
+        $("#newEmail").prop("disabled", true);
+    });
+    $('.useremail').on('click', function () {
+        $("#newEmail").val(tempMail);
+        $("#newEmail").prop("disabled", false);
+    });
+    Foundation.Abide.defaults.validators['validateTerms'] = function ($el, required, parent) {
+        if ($("input[name='Terms']:checked").length == 0)
+            return false;
+        else
+            return true;
+    };
+    $(document).ready(function () {
+        $(document).foundation();
+        $("[data-open]").on('click', function (e) {
+            showmodal($(this), e)
+        });
+
+        if ($('#IsFalseReferral').length) {
+            document.getElementById('IsFalseReferral').checked = '@Model.IsFalseReferral' == 'True' ? true : false;
+        }
+        if ('@Model.Email' != '') {
+            $(".useremail").prop("checked", "true");
+            $("#newEmail").prop("disabled", false);
+        }
+        $("#form-eligibility").foundation();
+            formsubmit = true;
+            $('#form-eligibility')
+                .on('forminvalid.zf.abide', function () {
+                    var invalid_fields = $(this).find('[data-invalid]');
+                    console.log(invalid_fields);
+                })
+                .on('formvalid.zf.abide', function () {
+                    //validate email address
+                    if (formsubmit == true) {
+                        var email = $("#newEmail").val();
+                        //do an ajax post
+                        $.ajax({
+                            type: 'POST',
+                            url: "@Url.Action("TelephonicRegistration", "Account")",
+                            data: {
+                                eligibilityId: @Model.Id,
+                                emailAddress: email,
+                            },
+                            dataType: 'json',
+                            success: function (data) {
+                                //redirect
+                                if (data.Success)
+                                    window.location.href = 'Stream?ForceParticipant=true';
+                                else
+                                    alert(data.ErrorMessage);
+                            }
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                                RedirectToErrorPage(jqXHR.status);
+                            });
+                        formsubmit = false;
+                    }
+                }).on("submit", function (ev) {
+                    ev.preventDefault();
+                });
+
+        GetEligibilityNotes();
+        $('#ModuleTypeFilter').on('change', function(){
+            GetEligibilityNotes();
+        });
+        $('#NoteTypeFilter').on('change', function(){
+            GetEligibilityNotes();
+		});
+        $('#EnrollmentStatus').on('change', function () {
+            if ($(this).val() == 1) {
+                $("#EnrollmentReason").show();
+            }
+            else {
+                $("#DeclinedEnrollmentReason").val("");
+                $("#EnrollmentReason").hide();
+            }
+        });
+
+        $("#loader-wrapper").fadeOut(); 
+    });
+
+    $('#UpdateEligibility').on('click', function () {
+        if ($('#EnrollmentStatus').val() == 1 && $('#DeclinedEnrollmentReason').val() == '') {
+			$('#DeclinedEnrollmentReasonError').addClass('is-visible');
+			$('#DeclinedEnrollmentReason').addClass('is-invalid-input');
+        }
+        else {
+			$('#DeclinedEnrollmentReasonError').removeClass('is-visible');
+			$('#DeclinedEnrollmentReason').removeClass('is-invalid-input');
+            UpdateEligibility('@Model.Id');
+        }
+    });
+
+    $("#eligibility-note-form").foundation();
+    $("#eligibility-note-form")
+    .on('submit', function (e) {
+        e.preventDefault();
+        if(!isValidForm())
+            return;
+        $("#loader-wrapper").fadeIn();
+        var moduleType = $("#ModuleType").val();
+        var noteType = $("#NoteType").val();
+        var notes = $("#Notes").val();
+        var noteId = $("#NoteId").val();
+        var uniqueId = $("#EligibilityUniqueId").val();
+        var model = {};
+        var data = {
+            'UniqueId': uniqueId,
+            'ModuleType': moduleType,
+            'NoteType': noteType,
+            'Notes': notes,
+            'OrganizationId': '@Model.OrganizationId',
+            'Id': noteId
+        };
+        model.eligibilityNotes = (data);
+        var strModelData = JSON.stringify(model);
+        $.ajax({
+            url: "@Url.Action("AddEditEligibilityNotes", "Participant")",
+            data: strModelData,
+            type: 'POST',
+            contentType: 'application/json, charset=utf-8',
+            dataType: "json",
+            success: function (data) {
+               $("#ModuleType").val("");
+               $("#NoteType").val("");
+               $("#Notes").val("");
+               $("#NoteId").val("");
+               $('#AddEligibilityNote').text('Save');
+               GetEligibilityNotes();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    });
+
+    function isValidForm()
+    {
+        var moduleType = $("#ModuleType").val();
+        var noteType = $("#NoteType").val();
+        var notes = $("#Notes").val();
+
+        if(moduleType == undefined || moduleType == "" || moduleType.length == 0)
+            return false;
+
+        if(noteType == undefined || noteType == "")
+            return false;
+
+        if(notes == undefined || notes == "" || notes.length == 0)
+            return false;
+
+        return true;
+    }
+
+    function UpdateEligibility(Id)
+    {
+        var isFalseReferral = document.getElementById('IsFalseReferral').checked;
+        var data = {
+            'Id':Id,
+            'falseReferral': isFalseReferral,
+            'language': $('#Language').val(),
+            'enrollmentStatus': $('#EnrollmentStatus').val(),
+            'declinedEnrollmentReason': $('#DeclinedEnrollmentReason').val(),
+            'isSecEmail': false
+        };
+        UpdateEligiblity(data, false);
+    }
+
+    $('#AddEditEmail').on('click', function () {
+        var data = {
+            'Id': '@Model.Id',
+            'email2': $("#secondEmail").val(),
+            'isSecEmail': true
+        };
+        UpdateEligiblity(data, true);
+    });
+
+	function UpdateEligiblity(data, isSecEmail) {
+        $("#loader-wrapper").fadeIn();
+        $.ajax({
+            url: "@Url.Action("UpdateEligiblity", "Participant")",
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                if (isSecEmail) {
+                    $('#saveEmailAlert').text("Saved Successfully");
+                    $("#saveEmailAlert").show();
+                    setTimeout(function () {
+                        $('#saveEmailAlert').hide();
+                    }, 1000);
+                }
+                else {
+                    $('#saveAlert').text("Saved Successfully");
+                    $("#saveAlert").show();
+                    setTimeout(function () {
+                        $('#saveAlert').hide();
+                    }, 1000);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+		});
+        $("#loader-wrapper").fadeOut();
+    }
+
+    function GetEligibilityNotes() {
+        var moduleType = $('#ModuleTypeFilter').val();
+        var noteType = $('#NoteTypeFilter').val();
+        var uniqueId = $("#EligibilityUniqueId").val();
+        $.ajax({
+            url: "@Url.Action("GetEligibilityNotes", "Participant")",
+            type: 'POST',
+            dataType: "json",
+            data: { UniqueId: uniqueId, EligibilityId : @Model.Id, ModuleType : moduleType, NoteType : noteType},
+            success: function (data) {
+                var Type = $("#Note_Type").val();
+                if (data != false || data != null) {
+                    if(data.TrackMode != null)
+                    {
+                        $('#EnrollmentStatus').val(data.TrackMode);
+                    }
+                    if (data.TrackMode != null || data.DeclinedEnrollmentReason != null) {
+                        $('#DeclinedEnrollmentReason').val(data.DeclinedEnrollmentReason);
+                    }
+                    if(data.Language != null)
+                    {
+                        $('#Language').val(data.Language);
+                    }
+                    if (data.Records != null) {
+                        $("#eligibility-notes-list").html("");
+                        var html = "";
+                        html += "<div class='text-center'>Total notes : " + data.Records.length + "</div>";
+                        for (var i = 0; i < data.Records.length; i++) {
+                            var typeClass = "";
+                            if (data.Records[i].ModuleTypeId == 1)
+                                typeClass = "fa fa-hospital-o";
+                            else
+                                typeClass = "fa fa-headphones";
+                            html = html + "<div class='grid-x grid-margin-x log-entry' data-kind='user'><div class='small-6 cell log-title'>" + "<span data-tooltip>" + "<i class='" + typeClass + "'></i>" + "</span>" + "<span class='log-from'>" +
+                                data.Records[i].Coach + "</span></div><div class='small-6 cell log-date'><span>" + toLocalDateFormat(data.Records[i].CreatedOn, "12hour") + "</span></div><div class='small-12 cell log-content'>" +
+                                data.Records[i].Notes
+                            html = html + "</div>"
+                            if (data.Records[i].Edit)
+                                html = html + "<div class='small-6 cell log-content'><a style='color:deepskyblue' onclick=\"EditNote('" + data.Records[i].Id + "');\">Edit</a>&nbsp;&nbsp;<a style='color:deepskyblue' onclick=\"RemoveNote('" + data.Records[i].Id + "');\">Delete</a></div>"
+                            html = html + "</div>";
+                        }
+                        $("#eligibility-notes-list").append(html);
+                    }
+                }
+                $('#EnrollmentStatus').trigger('change');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+	function GetEligibilityClaims() {
+		var uniqueId = $("#EligibilityUniqueId").val();
+        $("#loader-wrapper").fadeIn();
+        $.ajax({
+            url: "@Url.Action("GetEligibilityClaims", "Participant")",
+            type: 'GET',
+            // dataType: "json",
+            data:{ uniqueId: uniqueId, organizationid : '@Model.OrganizationId'},
+            success: function (data) {
+                $("#eligibility-claim-details").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+		});
+        $("#loader-wrapper").fadeOut();
+    }
+
+	function GetIntuityDetails() {
+        if ('@Model.IsIntuityDTC' != 'True') {
+			var uniqueId = $("#EligibilityUniqueId").val();
+            $("#loader-wrapper").fadeIn();
+			$.ajax({
+				url: "@Url.Action("GetIntuityDetails", "IntuityEligibility")",
+				type: 'GET',
+				// dataType: "json",
+                data: { uniqueId: uniqueId, organizationid: '@Model.OrganizationId', portalId: @Model.PortalId, eligibilityStatus: '@Model.EligibilityStatus' },
+				success: function (data) {
+					$("#intuity-details").html(data);
+				}
+			}).fail(function (jqXHR, textStatus, errorThrown) {
+				RedirectToErrorPage(jqXHR.status);
+			});
+            $("#loader-wrapper").fadeOut();
+		}
+    }
+
+	function GetCanriskQuestionnaire() {
+        $("#loader-wrapper").fadeIn();
+        $.ajax({
+            url: "@Url.Action("CanRiskQuestionnaire", "Home")",
+            type: 'GET',
+            // dataType: "json",
+            data: { EligibilityId : '@Model.Id', UserId : '@Model.PortalUserId' },
+            success: function (data) {
+                $("#eligibility-claim-details").html(data);
+                $("#EligibilityId").val('@Model.Id');
+                $("#intuity-eligibility-form").foundation();
+            }
+		});
+        $("#loader-wrapper").fadeOut();
+    }
+
+	function EditNote(noteId) {
+        $.ajax({
+            url: "@Url.Action("ReadEligibilityNote", "Participant")",
+            data: { noteId: noteId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+				document.getElementById("ModuleType").value = data.ModuleType;
+                document.getElementById("NoteType").value = data.NoteType;
+                document.getElementById("Notes").value = data.Notes;
+                document.getElementById("NoteId").value = data.NoteId;
+                document.getElementById("ModuleType").focus();
+                $('#AddEligibilityNote').text('Update');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function RemoveNote(id) {
+        message = "Do you want to remove this Note?";
+        if (confirm(message)) {
+            $.ajax({
+            url: "@Url.Action("RemoveEligibilityNote", "Participant")",
+            data: { id: id},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+               $("#ModuleType").val("");
+               $("#NoteType").val("");
+               $("#Notes").val("");
+               $("#NoteId").val("");
+               $('#AddEligibilityNote').text('Save');
+               GetEligibilityNotes();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+        }
+    }
+
+    function SendMissedOutreachEmail(id) {
+        var uniqueId = $("#EligibilityUniqueId").val();
+        $.ajax({
+            url: "@Url.Action("SendMissedOutreachEmail", "Participant")",
+            data: { uniqueId: uniqueId, portalId : @Model.PortalId, email : '@Model.Email' },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data.Result == "OK") {
+                    var emailCount = parseInt($("#missedYouEmail").html()) + 1;
+                    $("#missedYouEmail").html(emailCount);
+                    $("#emailCount").removeClass('hide');
+                    $('#resend-email-message').removeClass('hide');
+                    $('#email-alert').html("The Email has been sent successfully");
+                    setTimeout(function () {
+                        $('#resend-email-message').addClass('hide');
+                    }, 1000);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function createmail(firstname, lastname, uniqueid) {
+        var attherate = '@@';
+        var primaryno = uniqueid.replace('EH9', '');
+        primaryno = primaryno.replace('EH8', '');
+        return firstname.substr(0, 3) + lastname.substr(0, 3) + primaryno.substr(primaryno.length - 4) + attherate.substr(0, 1) + 'noemail.myintervent.com';
+    }
+
+</script>
+
+<script>
+	function calWinWidth() {
+		var windowWt = $(window).width();
+		return windowWt;
+	}
+
+	var winWt;
+
+	$(window).resize(function () {
+		winWt = calWinWidth();
+	});
+
+	$(document).ready(function () {
+		winWt = calWinWidth();
+
+		if (winWt < 640) {
+			$(".crm-sidenav span.show-for-small-only").on("click", function () {
+				$(this).toggleClass("is-active");
+				$(this).siblings("ul").slideToggle();
+			});
+		}
+
+		//Main tabs
+		//All scripts to manage the show/hide of page sections
+		$(".crm-sidenav li").on("click", function () {
+			if (winWt < 640) {
+				var tabText = $(this).find("a").text();
+				$(this).parents(".crm-sidenav").find("span.show-for-small-only").text(tabText).removeClass("is-active");
+				$(this).parents("ul").slideUp();
+			}
+		});
+	});
+
+    function showAlertMessage(msg) {
+        $('#notificationCard').text(msg);
+        $(".notification-card").show('slow');
+        setTimeout(function () {
+            $('.notification-card').hide('slow');
+        }, 3500);
+    }
+
+    function ViewParticipantProfile(Id) {
+        var link = '@Url.Action("ParticipantProfile", "Participant", new { Id = "PId" })';
+        window.location.href = link.replace("PId", Id)
+    }
+
+</script>

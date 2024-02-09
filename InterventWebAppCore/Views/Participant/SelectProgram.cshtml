@@ -1,0 +1,116 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+@model SelectProgramModel
+
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<section class="main">
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x" data-equalizer data-equalizer-mq="medium-up">
+			<div class="small-12 cell bg-wrapper">
+				<div class="small-12 cell">
+					<h1>@Translate.Message("L6"), @Model.participantName!</h1>
+					<p>
+                        @String.Format(Translate.Message("L596"), Translate.Message(Model.assessmentName).ToLower())!
+						@if (!string.IsNullOrEmpty(Model.conditions))
+						{
+							@: @Translate.Message("L597") <strong>@Model.conditions</strong>.
+						}
+						@if (Model.CACScore.HasValue)
+						{
+							@: @Translate.Message("L2024")
+						}
+						else
+						{
+							@: @Model.ReportText
+						}
+						@Model.ContactText
+						@if ((!Model.userinProgramId.HasValue && string.IsNullOrEmpty(Model.nextApptDate) && ((Model.coachingProgram && Model.hasCoachingConditions) || Model.selfHelpProgram)
+                             && Model.showProgramOption) || Convert.ToString(Model.participantId) == "89")
+                        {
+							@: @Model.ProgramText
+						}
+					</p>
+					@if (Model.FutureAppointmentDate != null)
+					{
+						<p>
+							@string.Format(Translate.Message("L2537"), Model.FutureAppointmentDate)
+						</p>
+					}
+				</div>
+				@{bool UserStatus = (!string.IsNullOrEmpty(Model.userStatus)) ? true : false;}
+				@if (UserStatus)
+				{
+					UserStatus = Model.userStatus.ToString().Equals("T") ? true : false;
+				}
+				@if ((((Model.coachingProgram && Model.hasCoachingConditions) || Model.selfHelpProgram)
+					&& ((!Model.programType.HasValue || Model.programType.Value != 2) && string.IsNullOrEmpty(Model.nextApptDate)) 
+					&& Model.showProgramOption && !UserStatus) || Convert.ToString(Model.participantId) == "89")
+				{
+					if (Model.coachingProgram)
+					{
+						@Url.Action("ProgramOptions", "Participant", new { Coaching = true, hasCoachingConditions = Model.hasCoachingConditions});
+						if ((!Model.userinProgramId.HasValue && Model.selfHelpProgram) || Convert.ToString(Model.participantId) == "89")
+						{
+							<p class="text-center underline">
+								<a onclick="NextStep('../Participant/NextProgramOption')">@Translate.Message("L1934")</a>
+							</p>
+						}
+						else
+						{
+							<p class="text-center underline">
+								<a onclick="NextStep('../Reports/ReportsDashboard')">@Translate.Message("L660")</a>
+							</p>
+						}
+					}
+					else if (!Model.userinProgramId.HasValue)
+					{
+						@Url.Action("ProgramOptions", "Participant", new { Coaching = false, hasCoachingConditions = Model.hasCoachingConditions });
+						<p class="text-center underline">
+							<a href="../Reports/ReportsDashboard">@Translate.Message("L660")</a>
+						</p>
+					}
+					else
+					{
+						<p class="text-center underline">
+							<a href="../Reports/ReportsDashboard">@Translate.Message("L661")</a>
+						</p>
+					}
+				}
+				else
+				{
+					<p class="text-center underline">
+						<a href="../Reports/ReportsDashboard">@Translate.Message("L661")</a>
+					</p>
+				}
+			</div>
+		</div>
+	</div>
+</section>
+<div id="next-step" class="reveal large" data-reveal data-options="close_on_background_click: false; close_on_esc: false">
+    <span hidden id="reference"></span>
+    <div class="grid-x grid-margin-x">
+        <p>@Translate.Message("L2930")</p>
+        <p>@string.Format(Translate.Message("L2931"), Model.orgContactEmail)</p>
+        <p>@Translate.Message("L2932")</p>
+    </div>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-text-right"><button class="small" type="button" id="continue">@Translate.Message("L537")</button></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var orgId = '@Model.organizationId';
+    function NextStep(ref) {
+        if (orgId == '47') {
+            $("#reference").text(ref);
+            $('#next-step').foundation('open');
+        }
+        else
+            window.location.href = ref
+    }
+    $('#continue').on('click', function () {
+        window.location.href = $('#reference').text()
+    });
+</script>

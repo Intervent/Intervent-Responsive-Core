@@ -1,0 +1,109 @@
+﻿@using System.Globalization
+@model InterventWebApp.AppointmenstModel
+@using InterventWebApp
+<!--ADMIN PAGE-->
+<div class="dashboard-content appointments cell">
+    <div class="control-bar">
+        <h2 class="title">@Translate.Message("L284") </h2>
+    </div>
+    <div class="appointment-container">
+        <div class="actions">
+            <div class="indicator"></div>
+            @if (Model.hasActivePortal)
+            {
+                <button data-open="appointment-options" class="button">@Translate.Message("L700") </button>
+                if (Model.userinProgramId.HasValue && 1 == 1)
+                {
+                    //need to uncomment once prabakar verifies the logic and fixes the modal issue
+                    <button class="secondary small" data-open="suggested-coaching-dates" data-modal-path="@Html.Raw(Url.Action("SuggestedCoachingDates", "Program"))">@Translate.Message("L724")</button>
+                }
+            }
+        </div>
+        @if (Model.appointments != null && Model.appointments.Count > 0)
+        {
+            int year = 0;
+            for (int i = 0; i < Model.appointments.Count; i++)
+            {
+                var appDate = @Convert.ToDateTime(Model.appointments[i].Date);
+                if (year != appDate.Year)
+                    year = appDate.Year;
+                <div class="year-separator">
+                    <div class="indicator"></div>
+                    @year
+                </div>
+                <div class="grid-x">
+                    <div class="cell appointment">
+                        <div class="indicator"></div>
+                        <div class="grid-x grid-padding-x">
+                            <div class="small-4 medium-2 large-1 cell collapse app-date">
+                                <div class="day">@appDate.Day</div>
+                                <div class="month">@appDate.ToString("MMM", CultureInfo.InvariantCulture)</div>
+                            </div>
+                            <div class="small-8 medium-6 large-7 cell app-content">
+                                <div class="app-title">@Translate.Message("L975")</div>
+                                <div class="app-desc">
+                                    @Model.appointments[i].Comments
+                                </div>
+                                @if (Model.appointments[i].VideoRequired)
+                                {
+                                    <div>
+                                        <span class="app-title">Video:</span> Yes 
+                                    </div>
+                                }
+                            </div>
+                            <div class="small-12 medium-4 large-4 cell app-info">
+                                <div><span class="info-title">@Translate.Message("L969"):</span>@Model.appointments[i].CoachName</div>
+                                <div>
+                                    <span class="info-title">@Translate.Message("L725"):</span> @Model.appointments[i].StartTime - @Model.appointments[i].EndTime
+                                    @if (!string.IsNullOrEmpty(Model.appointments[i].UserTimeZone))
+                                    {
+                                        var custTZone = TimeZoneInfo.FindSystemTimeZoneById(Model.appointments[i].UserTimeZone);
+                                        <span data-tooltip title='Appointment Time in Participant TimeZone: @TimeZoneInfo.ConvertTimeFromUtc(Model.appointments[i].UTCDate, custTZone) @Model.appointments[i].UserTimeZone'><i class='fa fa-user'></i></span>
+                                    }
+                                </div>
+                                <div><span class="info-title">Scheduled by: </span>@Model.appointments[i].ScheduledBy</div>
+                                <div>
+                                    @if (Model.appointments[i].Active == false)
+                                    {
+                                        if (Model.appointments[i].InActiveReason == 5)
+                                        {
+                                            <span class="info-title">@Translate.Message("L726"):</span> @: No Show
+                                            <a style="color:deepskyblue" onclick="RevertNoShow(@Model.appointments[i].Id, true)">Revert</a>
+                                        }
+                                        else
+                                        {
+                                            <span class="info-title">@Translate.Message("L726"):</span> @: Cancelled
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (Model.appointments[i].UTCDate.AddDays(1) > DateTime.UtcNow)
+                                        {
+                                            @: <a style='color:deepskyblue' data-open="cancel-appointment" data-modal-path="@Html.Raw(Url.Action("cancelappointment", "Scheduler", new { appid = Model.appointments[i].Id, getappt = true }))">Cancel</a>
+                                        }
+                                        if (Model.appointments[i].UTCDate > DateTime.UtcNow)
+                                        {
+                                            @: | <a style='color:deepskyblue' data-open="cancel-appointment" data-modal-path="@Html.Raw(Url.Action("editappointmentcomments", "Scheduler", new { appid = Model.appointments[i].Id, comments = Model.appointments[i].Comments, Length = Model.appointments[i].Minutes, meetingId = Model.appointments[i].CoachMeetingId, videoRequired = Model.appointments[i].VideoRequired }))">Edit</a>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+@Html.Partial("_RevertNoShow")
+<script>
+    $(document).foundation();
+    $(document).ready(function () {
+        $("[data-open]").on('click', function (e) {
+            showmodal($(this), e);
+        });
+    });
+    function UpdateAppointmentUI() {
+        addRemoveActiveClass("calendar-link");
+    }
+</script>

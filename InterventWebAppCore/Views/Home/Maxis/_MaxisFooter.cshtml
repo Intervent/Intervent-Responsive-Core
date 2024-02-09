@@ -1,0 +1,88 @@
+﻿@using InterventWebApp
+
+<section class="parallax-wrapper">
+    <section class="feature flipped">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img class="smaller" src="~/Images/wellness_report.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L446")</h2>
+                    <p>@Translate.Message("L1378")</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img class="smaller" src="~/Images/goals.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L3141")</h2>
+                    <p>
+                        @Translate.Message("L3111")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature flipped">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img class="smaller" src="~/Images/live-coaching.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L453")</h2>
+                    <p>
+                        @Translate.Message("L1343").
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img class="smaller" src="~/Images/gift-box.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L3112")</h2>
+                    <p>
+                        @Translate.Message("L1344").
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img class="smaller" src="~/Images/on-the-go.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L459")</h2>
+                    <p>@Translate.Message("L1345").</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="feature final">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="cell text-center">
+                    <img src="~/images/start-now.svg" alt="" />
+                    <h2>@Translate.Message("L1346")</h2>
+                    <button class="pink" onclick="$('#sign-up-modal').foundation('open'); return false;">
+                        @Translate.Message("L443")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>

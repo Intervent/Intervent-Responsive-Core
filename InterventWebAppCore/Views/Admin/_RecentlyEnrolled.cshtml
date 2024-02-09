@@ -1,0 +1,83 @@
+﻿@model InterventWebApp.RecentlyEnrolledModel
+
+<div class="grid-x grid-margin-x">
+    @if (Model.Users != null)
+    {
+        foreach (var program in Model.Users.OrderBy(x => x.EnrolledOn).ToList())
+        {
+            <div class="cell large-6">
+                <div class="admin-cards meet-notification-card">
+                    <!-- <div class="card-main-info"> -->
+                    @*<span class="meet-notification">In 20 mins</span>*@
+                    <div class="card-header">
+                        <div class="profile-detail" data-equalizer-watch>
+                            <div class="profile-img">
+                                <img src="@program.User.Picture" alt="" />
+                            </div>
+                            <div class="profile-content">
+                                <p><strong>@program.User.FirstName @program.User.LastName</strong></p>
+                               @* <p>@program.</p>*@
+                            </div>
+                        </div>
+                        @*<div class="card-option">
+                            <div class="admin-profile-circle">
+                                <div class="kit-progress-circle">
+                                    <div class="circle-graph" data-circle-graph data-percent="75">
+                                        <div class="circle-graph-progress">
+                                            <div class="circle-graph-progress-fill"></div>
+                                        </div>
+                                        <div class="circle-graph-percents">75%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>*@
+                    </div>
+                    <!-- card header ends -->
+                    @*<div class="card-body">
+                        <div class="details-section-wrapper">
+                            <div class="detail-section">
+                                <p class="section-title">Scheduled from</p>
+                                <p>@apt.StartTime</p>
+                            </div>
+                            <div class="detail-section">
+                                <p class="section-title">Duration</p>
+                                <p>@apt.Minutes Minutes</p>
+                            </div>
+                        </div>
+                        <div class="status-tags">
+                            <span class="status-tag">Last Appointment on </span>
+                        </div>
+                    </div>*@
+                    <!-- card body ends -->
+                    @*<div class="card-additional-info">
+                        <p>Mark Appointment Status</p>
+                        <div class="button-group">
+                            <button class="button">Completed</button>
+                            <button class="button hollow">Missed</button>
+                        </div>
+                        <div class="info-footer">
+                            <a href="#" class="anchor-blue">Reschedule</a>
+                        </div>
+                    </div>*@
+
+                    <div class="card-footer">
+                        @*<a onclick="ViewParticipant(@user.Id)" class="anchor-blue">Schedule</a>*@
+                        <a onclick="ViewParticipant(@program.User.Id)" class="anchor-blue">View Profile</a>
+                    </div>
+                    <!-- card footer ends -->
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="cell">
+			<div class="flex-container align-center-middle empty-appointment-container">
+				<div class="text-center">
+					<img src="~/Images/admin/empty-appointments.png" alt="" />
+					<p>No Recently Enrolled Users</p>
+				</div>
+			</div>
+        </div>
+    }
+</div>

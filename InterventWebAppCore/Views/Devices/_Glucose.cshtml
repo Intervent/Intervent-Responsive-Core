@@ -1,0 +1,853 @@
+﻿@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <div class="grid-x main-chart-header">
+            <div class="cell medium-6">
+                <h6>@Translate.Message("L3955"): </h6>
+                <div class="graph-selector-container" id="graph-selector-container">
+                    <span data-toggle="graph-date-filter" data-value="wt-week-data">@Translate.Message("L2741")</span>
+                    <div class="graph-selector dropdown-pane" id="graph-date-filter" data-dropdown data-close-on-click="true">
+                        <ul>
+                            <li data-value="wt-week-data">@Translate.Message("L2741")</li>
+                            <li data-value="wt-month-data">@Translate.Message("L2740")</li>
+                            <li data-value="wt-90days-data">@Translate.Message("L2739")</li>
+                            <li data-value="wt-yesterday-data">@Translate.Message("L2742")</li>
+                            <li data-value="wt-date-range">@Translate.Message("L2744")</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="graph-date-range hide">
+                    <form id="date-search">
+                        <div class="input-container">
+                            <label for="graph-start-date">
+                                <input type="text" name="graph-start-date" placeholder="@Translate.Message("L1445")" id="graph-start-date" autocomplete="off" />
+                                <input id="HStartDate" type="hidden" />
+                            </label>
+                            <label for="graph-end-date">
+                                <input type="text" name="graph-end-date" placeholder="@Translate.Message("L4001")" id="graph-end-date" autocomplete="off" />
+                                <input id="HEndDate" type="hidden" />
+                            </label>
+                        </div>
+                        <div class="button-group align-center">
+                            <button type="reset" class="button hollow" id="reset-date">@Translate.Message("L3967")</button>
+                            <button type="submit" class="button" id="submit-date">@Translate.Message("L963")</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @*<div class="chart-update-date cell medium-6 text-right">Last Update <strong><span id="recentDate"></span></strong></div>*@
+        </div>
+    </div>
+    <div id="no-graph" class="cell main-graph-container hide">
+        <div class="cell main-chart ">
+            <div class="no-graph-info text-center">
+                <img src="~/Images/device/no-data.png" alt="Alternate Text">
+                <span>@Translate.Message("L4000")</span>
+            </div>
+        </div>
+    </div>
+    <div id="has-data" class="cell">
+        <div class="main-graph-container glucose-graph-container">
+            <div class="units-list">
+                <ul>
+                    <li>
+                        <p>@Translate.Message("L4019")</p>
+                        <span class="unit-count" id="avgGlucoseVal">@Translate.Message("L1149")</span>
+                        <i class="fa fa-info" data-toggle="avg-glucose1"></i>
+                        <div class="dropdown-pane device-tooltip" data-position="top" data-alignment="center" id="avg-glucose1" data-dropdown data-v-offset="12" data-auto-focus="true" data-hover="true" data-hover-pane="true">
+                            <p class="avg-glucose-tooltip"></p>
+                        </div>
+                    </li>
+                    <li>
+                        <p>@Translate.Message("L4020")</p>
+                        <span class="unit-count" id="avgPremealValue">@Translate.Message("L1149")</span>
+                        <span class="units-tag hide" id="avgPremealrangeText">@Translate.Message("L4010")</span>
+                        <i class="fa fa-info" data-toggle="pre-meal-glucose1"></i>
+                        <div class="dropdown-pane device-tooltip" data-position="top" data-alignment="center" id="pre-meal-glucose1" data-dropdown data-v-offset="12" data-auto-focus="true" data-hover="true" data-hover-pane="true">
+                            <p class="pre-meal-tooltip"></p>
+                        </div>
+                    </li>
+                    <li>
+                        <p>@Translate.Message("L4021")</p>
+                        <span class="unit-count" id="avgPostmealValue">@Translate.Message("L1149")</span>
+                        <span class="units-tag hide" id="avgPostmealrangeText">@Translate.Message("L4010")</span>
+                        <i class="fa fa-info" data-toggle="post-meal-glucose1"></i>
+                        <div class="dropdown-pane device-tooltip" data-position="top" data-alignment="center" id="post-meal-glucose1" data-dropdown data-v-offset="12" data-auto-focus="true" data-hover="true" data-hover-pane="true">
+                            <p class="post-meal-tooltip"></p>
+                        </div>
+                    </li>
+                </ul>
+                @*<p style="text-align:center">Last update <strong><span class="unit-count" id="lastUpdate"></span></strong></p>*@
+            </div>
+
+            <div id="graph-data" class="cell main-chart"></div>
+
+            <div class="main-graph-summary grid-x grid-padding-x">
+                <div class="cell medium-3">
+                    <div class="callout" onclick="changeGlucoseGraph('average', 0)">
+                        @Html.Raw(String.Format(Translate.Message("L4005"), "<p><span name='avgCount' id='avgCount'></span>", "</p>"))
+                    </div>
+                </div>
+                <div class="cell medium-9">
+                    <div class="grid-x grid-margin-y grid-padding-x" data-equalizer data-equalize-on="medium">
+                        <div class="cell medium-4">
+                            <div class="grid-x grid-padding-x">
+                                <div class="cell">
+                                    <div class="glucose-goals" data-equalizer-watch>
+                                        <p><span>@Translate.Message("L4022")</span></p>
+                                        @Translate.Message("L4023")
+                                        <div class="activity-count"><span id="premealGoals"></span>/<span name="premealCount"></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('premeal', 1)">
+                                        @Translate.Message("L1528")
+                                        <p><span id="premealRange1"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="premealCount1"></span>/<span name="premealCount"></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('premeal', 2)">
+                                        @Translate.Message("L1528")
+                                        <p><span id="premealRange2"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="premealCount2"></span>/<span name="premealCount"></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('premeal', 3)">
+                                        @Translate.Message("L4024")
+                                        <p><span id="premealRange3"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="premealCount3"></span>/<span name="premealCount"></span></div>
+                                    </div>
+                                </div>
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('premeal', 4)">
+                                        @Translate.Message("L4024")
+                                        <p><span id="premealRange4"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="premealCount4"></span>/<span name="premealCount"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cell medium-4">
+                            <div class="grid-x grid-padding-x">
+                                <div class="cell">
+                                    <div class="glucose-goals" data-equalizer-watch>
+                                        <p><span>@Translate.Message("L4026")</span></p>
+                                        @Translate.Message("L4023")
+                                        <div class="activity-count"><span id="postmealGoals"></span>/<span name="postmealCount"></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('postmeal', 1)">
+                                        @Translate.Message("L1528")
+                                        <p><span id="postmealRange1"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="postmealCount1"></span>/<span name="postmealCount"></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('postmeal', 2)">
+                                        @Translate.Message("L1528")
+                                        <p><span id="postmealRange2"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="postmealCount2"></span>/<span name="postmealCount"></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('postmeal', 3)">
+                                        @Translate.Message("L4024")
+                                        <p><span id="postmealRange3"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="postmealCount3"></span>/<span name="postmealCount"></span></div>
+                                    </div>
+                                </div>
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('postmeal', 4)">
+                                        @Translate.Message("L4024")
+                                        <p><span id="postmealRange4"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="postmealCount4"></span>/<span name="postmealCount"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cell medium-4">
+                            <div class="grid-x grid-padding-x">
+                                <div class="cell">
+                                    <div class="glucose-goals" data-equalizer-watch>
+                                        <p><span>@Translate.Message("L4004")</span></p>
+                                        <div class="activity-count"><span></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('average', 1)">
+                                        @Translate.Message("L1528")
+                                        <p><span id="avgRange1"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="avgCount1"></span>/<span name="avgCount"></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('average', 2)">
+                                        @Translate.Message("L1528")
+                                        <p><span id="avgRange2"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="avgCount2"></span>/<span name="avgCount"></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('average', 3)">
+                                        @Translate.Message("L4024")
+                                        <p><span id="avgRange3"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="avgCount3"></span>/<span name="avgCount"></span></div>
+                                    </div>
+                                </div>
+                                <div class="cell">
+                                    <div class="callout" onclick="changeGlucoseGraph('average', 4)">
+                                        @Translate.Message("L4024")
+                                        <p><span id="avgRange4"></span> @Translate.Message("L4025")</p>
+                                        <div class="activity-count"><span id="avgCount4"></span>/<span name="avgCount"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-graph-details glucose-graph-details">
+            <h5>@Translate.Message("L4027")</h5>
+
+            <div class="grid-x grid-margin-x grid-margin-y align-center">
+                <div class="cell large-4 medium-6">
+                    <div class="callout">
+                        <div class="callout-header blue">
+                            <h6>@Translate.Message("L4019")</h6>
+                            <div class="units-list">
+                                <ul>
+                                    <li>
+                                        <span class="unit-count" id="avgGlucoseValue">@Translate.Message("L1149")</span>
+                                        <i class="fa fa-info" data-toggle="avg-glucose"></i>
+                                    </li>
+                                </ul>
+
+                                <div class="dropdown-pane device-tooltip" data-position="top" data-alignment="center" id="avg-glucose" data-dropdown data-v-offset="12" data-auto-focus="true" data-hover="true" data-hover-pane="true">
+                                    <p class="avg-glucose-tooltip">@Translate.Message("L2768")</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="callout-body">
+                            <ul>
+                                <li>@Translate.Message("L2747") <p><span id="avgMin"></span> @Translate.Message("L4034") <span id="avgMax"></span> @Translate.Message("L4025")</p></li>
+                                <li>@Translate.Message("L4028") <p><span name="avgCount"></span></p></li>
+                                <li>@Translate.Message("L4029")  <p><span id="avgChecks"></span></p></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cell large-4 medium-6">
+                    <div class="callout">
+                        <div class="callout-header orange">
+                            <h6>@Translate.Message("L4030")</h6>
+                            <div class="units-list">
+                                <ul>
+                                    <li>
+                                        <span class="unit-count" id="premealAvg">@Translate.Message("L1149")</span>
+                                        <span class="units-tag hide" id="preMealRangeText">@Translate.Message("L4010")</span>
+                                        <i class="fa fa-info" data-toggle="pre-meal-glucose"></i>
+                                    </li>
+                                </ul>
+
+                                <div class="dropdown-pane device-tooltip" data-position="top" data-alignment="center" id="pre-meal-glucose" data-dropdown data-v-offset="12" data-auto-focus="true" data-hover="true" data-hover-pane="true">
+                                    <p class="pre-meal-tooltip">@Translate.Message("L2770")</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="callout-body">
+                            <ul id="preMealDetails" class="hide">
+                                <li>@Translate.Message("L2747") <p><span id="premealMin"></span> @Translate.Message("L4034") <span id="premealMax"></span> @Translate.Message("L4025")</p></li>
+                                <li>@Translate.Message("L4028") <p><span name="premealCount"></span></p></li>
+                                <li>@Translate.Message("L4029")  <p><span id="premealChecks"></span></p></li>
+                            </ul>
+                            <div class="empty-meal-details" id="preMealEmpty">
+                                <img src="~/Images/device/glucose-data-empty-bg.png" alt="" />
+                                <span>@Translate.Message("L4031")</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="cell large-4 medium-6">
+                    <div class="callout">
+                        <div class="callout-header green">
+                            <h6>@Translate.Message("L4021")</h6>
+                            <div class="units-list">
+                                <ul>
+                                    <li>
+                                        <span class="unit-count" id="postmealAvg">@Translate.Message("L1149")</span>
+                                        <span class="units-tag green hide" id="postmealRangeText">@Translate.Message("L4010")</span>
+                                        <i class="fa fa-info" data-toggle="post-meal-glucose"></i>
+                                    </li>
+                                </ul>
+
+                                <div class="dropdown-pane device-tooltip" data-position="top" data-alignment="center" id="post-meal-glucose" data-dropdown data-v-offset="12" data-auto-focus="true" data-hover="true" data-hover-pane="true">
+                                    <p class="post-meal-tooltip">@Translate.Message("L2772")</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="callout-body">
+                            <ul id="postMealDetails" class="hide">
+                                <li>@Translate.Message("L2747") <p><span id="postmealMin"></span> @Translate.Message("L4034") <span id="postmealMax"></span> @Translate.Message("L4025")</p></li>
+                                <li>@Translate.Message("L4028") <p><span name="postmealCount"></span></p></li>
+                                <li>@Translate.Message("L4029")  <p><span id="postmealChecks"></span></p></li>
+                            </ul>
+
+                            <div class="empty-meal-details" id="postMealEmpty">
+                                <img src="~/Images/device/glucose-data-empty-bg.png" alt="" />
+                                <span>@Translate.Message("L4031")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var notApplicable = "@Translate.Message("L1149")";
+    $("#graph-start-date").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#graph-start-date').val()));
+    });
+    $("#graph-end-date").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#graph-end-date').val()));
+    });
+    $(document).ready(function () {
+        Foundation.reInit('equalizer');
+        var glucosegraphData;
+        var avgrange1 = 0, avgrange2 = 0, avgrange3 = 0, avgrange4 = 0, prerange1 = 0, prerange2 = 0, prerange3 = 0, prerange4 = 0, postrange1 = 0, postrange2 = 0, postrange3 = 0, postrange4 = 0;
+        var preMealGoalTo = 0, preMealGoalFrom = 0, postMealGoalTo = 0, postMealGoalFrom = 0;
+        var glucChart1;
+        var glucChart2;
+        var glucChart3;
+        LoadGlucoseData(7);
+
+        $(".graph-selector ul li").on("click", function () {
+            var showData = $(this).data("value");
+            var showText = $(this).text();
+            $(".graph-selector-container span").text(showText);
+            $(".graph-selector-container span").data('value', showData);
+            $("#graph-date-filter").foundation("close");
+            changeGraph();
+        });
+
+        $("#graph-start-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()}).on('change', function (selected) {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#graph-end-date').fdatepicker('setDate', minDate);
+            }
+            $('#graph-end-date').fdatepicker('setStartDate', minDate);
+            $("#graph-end-date").trigger("change");
+        });
+        $("#graph-end-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()
+        });
+
+        $("#date-search").on('submit', function (ev) {
+            LoadGlucoseData(0);
+            ev.preventDefault();
+            $(".graph-date-range").addClass("hide");
+        });
+
+		$(document).on('click', function(){
+			$('.graph-date-range').addClass("hide");
+		});
+		$('.graph-date-range, .datepicker, .graph-selector').on('click', function(e){
+			e.stopPropagation();
+		});
+    });
+
+    $('.main-graph-summary .callout').on('click', function () {
+        $('.main-graph-summary .callout').removeClass('callout-select');
+        $(this).addClass('callout-select');
+    });
+
+    function changeGraph() {
+        if ($(".graph-selector-container span").data('value').includes("week-data")) {
+            $(".graph-date-range").addClass("hide");
+            LoadGlucoseData(7);
+        }
+        else if ($(".graph-selector-container span").data('value').includes("month-data")) {
+            $(".graph-date-range").addClass("hide");
+            LoadGlucoseData(30);
+        }
+        else if ($(".graph-selector-container span").data('value').includes("90days-data")) {
+            $(".graph-date-range").addClass("hide");
+            LoadGlucoseData(90);
+        }
+		else if ($(".graph-selector-container span").data('value').includes("date-range")) {
+			$(".graph-date-range").removeClass("hide");
+            $("#graph-start-date").val("");
+            $("#graph-end-date").val("");
+		}
+        else {
+            $(".graph-date-range").addClass("hide");
+            LoadGlucoseData(1);
+        }
+    }
+
+    function LoadGlucoseData(days) {
+        var startDate, endDate;
+        if ($(".graph-selector-container span").data('value').includes("date-range")) {
+            startDate = $("#HStartDate").val();
+            endDate = $("#HEndDate").val();
+        }
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            data: {days: days, startDate : startDate, endDate : endDate},
+            url: "@Url.Action("ListGlucoseData", "Devices")",
+            success: function (data) {
+                if (data.graphData == null) {
+                    $("#no-graph").removeClass("hide");
+                    $("#has-data").addClass("hide");
+                }
+                else {
+                    if (data.diabetes) {
+                        $(".avg-glucose-tooltip").html("@Translate.Message("L2767")");
+                        $(".pre-meal-tooltip").html("@Translate.Message("L2769")");
+                        $(".post-meal-tooltip").html("@Translate.Message("L2771")");;
+                    }
+                    else {
+                        $(".avg-glucose-tooltip").html("@Translate.Message("L2768")");
+                        $(".pre-meal-tooltip").html("@Translate.Message("L2770")");
+                        $(".post-meal-tooltip").html("@Translate.Message("L2772")")
+                    }
+                    $("#no-graph").addClass("hide");
+                    $("#has-data").removeClass("hide");
+                    $("#avgGlucoseVal").text(data.average.Value + " @Translate.Message("L4025")");
+
+                    $("#avgPremealValue").text(notApplicable);
+                    $("#avgPremealrangeText").addClass("hide");
+                    $("#avgPostmealValue").text(notApplicable);
+                    $("#avgPostmealrangeText").addClass("hide");
+                    $("#premealAvg").text(notApplicable);
+                    $("#preMealRangeText").addClass("hide");
+                    $("#preMealDetails").addClass("hide");
+                    $("#preMealEmpty").removeClass("hide");
+                    $("#postmealAvg").text(notApplicable);
+                    $("#postmealRangeText").addClass("hide");
+                    $("#postMealDetails").addClass("hide");
+                    $("#postMealEmpty").removeClass("hide");
+
+                    if (data.premeal.Value != 0) {
+                        $("#avgPremealValue").text(data.premeal.Value + " @Translate.Message("L4025")");
+                        $("#avgPremealrangeText").removeClass("hide");
+                        $("#preMealRangeText").removeClass("hide");
+                        $("#premealAvg").text(data.premeal.Value + " @Translate.Message("L4025")");
+                        $("#preMealDetails").removeClass("hide");
+                        $("#preMealEmpty").addClass("hide");
+                    }
+                    if (data.postmeal.Value != 0) {
+                        $("#avgPostmealValue").text(data.postmeal.Value + " @Translate.Message("L4025")");
+                        $("#avgPostmealrangeText").removeClass("hide");
+                        $("#postmealRangeText").removeClass("hide");
+                        $("#postmealAvg").text(data.postmeal.Value + " @Translate.Message("L4025")");
+                        $("#postMealDetails").removeClass("hide");
+                        $("#postMealEmpty").addClass("hide");
+                    }
+                    $("#avgGlucoseValue").text(data.average.Value + " @Translate.Message("L4025")");
+                    if (data.average.Range1Count == 0)
+                        $("#avgCount1").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#avgCount1").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#avgCount1").text(data.average.Range1Count);
+                    if (data.average.Range2Count == 0)
+                        $("#avgCount2").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#avgCount2").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#avgCount2").text(data.average.Range2Count);
+                    if (data.average.Range3Count == 0)
+                        $("#avgCount3").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#avgCount3").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#avgCount3").text(data.average.Range3Count);
+                    if (data.average.Range4Count == 0)
+                        $("#avgCount4").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#avgCount4").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#avgCount4").text(data.average.Range4Count);
+                    if (data.premeal.Range1Count == 0)
+                        $("#premealCount1").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#premealCount1").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#premealCount1").text(data.premeal.Range1Count);
+                    if (data.premeal.Range2Count == 0)
+                        $("#premealCount2").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#premealCount2").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#premealCount2").text(data.premeal.Range2Count);
+                    if (data.premeal.Range3Count == 0)
+                        $("#premealCount3").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#premealCount3").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#premealCount3").text(data.premeal.Range3Count);
+                    if (data.premeal.Range4Count == 0)
+                        $("#premealCount4").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#premealCount4").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#premealCount4").text(data.premeal.Range4Count);
+                    $("#premealRange1").text(data.premeal.Range1Value);
+                    $("#premealRange2").text(data.premeal.Range2Value);
+                    $("#premealRange3").text(data.premeal.Range3Value);
+                    $("#premealRange4").text(data.premeal.Range4Value);
+                    var premealCountels = document.getElementsByName("premealCount");
+                    for (var i = 0; i < premealCountels.length; i++) {
+                        premealCountels[i].innerHTML = data.premeal.Count;
+                    }
+                    $("#premealMin").text(data.premeal.Min);
+                    $("#premealMax").text(data.premeal.Max);
+
+                    if (data.postmeal.Range1Count == 0)
+                        $("#postmealCount1").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#postmealCount1").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#postmealCount1").text(data.postmeal.Range1Count);
+                    if (data.postmeal.Range2Count == 0)
+                        $("#postmealCount2").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#postmealCount2").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#postmealCount2").text(data.postmeal.Range2Count);
+                    if (data.postmeal.Range3Count == 0)
+                        $("#postmealCount3").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#postmealCount3").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#postmealCount3").text(data.postmeal.Range3Count);
+                    if (data.postmeal.Range4Count == 0)
+                        $("#postmealCount4").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#postmealCount4").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#postmealCount4").text(data.postmeal.Range4Count);
+                    $("#avgRange1").text(data.average.Range1Value);
+                    $("#avgRange2").text(data.average.Range2Value);
+                    $("#avgRange3").text(data.average.Range3Value);
+                    $("#avgRange4").text(data.average.Range4Value);
+                    $("#postmealRange1").text(data.postmeal.Range1Value);
+                    $("#postmealRange2").text(data.postmeal.Range2Value);
+                    $("#postmealRange3").text(data.postmeal.Range3Value);
+                    $("#postmealRange4").text(data.postmeal.Range4Value);
+                    var avgCountels = document.getElementsByName("avgCount");
+                    for (var i = 0; i < avgCountels.length; i++) {
+                        avgCountels[i].innerHTML = data.average.Count;
+                    }
+                    var postmealCountels = document.getElementsByName("postmealCount");
+                    for (var i = 0; i < postmealCountels.length; i++) {
+                        postmealCountels[i].innerHTML = data.postmeal.Count;
+                    }
+
+                    $("#postmealMin").text(data.postmeal.Min);
+                    $("#avgMin").text(data.average.Min);
+                    $("#postmealMax").text(data.postmeal.Max);
+                    $("#avgMax").text(data.average.Max);
+                    $("#postmealChecks").text(data.postmeal.ChecksperDay);
+                    $("#premealChecks").text(data.premeal.ChecksperDay);
+                    $("#avgChecks").text(data.average.ChecksperDay);
+                    $("#premealGoals").text(data.premeal.GoalsCount);
+                    $("#postmealGoals").text(data.postmeal.GoalsCount);
+                    glucosegraphData = data.graphData;
+                    var chart1 = [];
+                    var chart2 = [];
+                    var chart3 = [];
+                    for (var d in glucosegraphData) {
+                        if (glucosegraphData[d].ay != undefined) {
+                            chart1.push({ "date": new Date(glucosegraphData[d].x).toLocaleDateString(), "value": glucosegraphData[d].ay, "time": new Date(glucosegraphData[d].x).toLocaleTimeString() });
+                        }
+                        if (glucosegraphData[d].by != undefined) {
+                            chart2.push({ "date": new Date(glucosegraphData[d].x).toLocaleDateString(), "value": glucosegraphData[d].by, "time": new Date(glucosegraphData[d].x).toLocaleTimeString() });
+                        }
+                        if (glucosegraphData[d].cy != undefined) {
+                            chart3.push({ "date": new Date(glucosegraphData[d].x).toLocaleDateString(), "value": glucosegraphData[d].cy, "time": new Date(glucosegraphData[d].x).toLocaleTimeString() });
+                        }
+                    }
+                    glucChart1 = chart1;
+                    glucChart2 = chart2;
+                    glucChart3 = chart3;
+                    avgrange1 = data.average.Range1Value;
+                    avgrange2 = data.average.Range2Value;
+                    avgrange3 = data.average.Range3Value;
+                    avgrange4 = data.average.Range4Value;
+                    prerange1 = data.premeal.Range1Value;
+                    prerange2 = data.premeal.Range2Value;
+                    prerange3 = data.premeal.Range3Value;
+                    prerange4 = data.premeal.Range4Value;
+                    postrange1 = data.postmeal.Range1Value;
+                    postrange2 = data.postmeal.Range2Value;
+                    postrange3 = data.postmeal.Range3Value;
+                    postrange4 = data.postmeal.Range4Value;
+                    preMealGoalTo = data.premeal.preMealGoalTo;
+                    preMealGoalFrom = data.premeal.preMealGoalFrom;
+                    postMealGoalTo = data.postmeal.postMealGoalTo;
+                    postMealGoalFrom = data.postmeal.postMealGoalFrom;
+                    createGlucoseGraph(glucChart1, glucChart2, glucChart3);
+                    if (data.premeal.Value > data.premeal.preMealGoalTo || data.premeal.Value < data.premeal.preMealGoalFrom) {
+                        $("#preMealRangeText").html("@Translate.Message("L4011")");
+                        $("#preMealRangeText").addClass("red");
+                        $("#preMealRangeText").removeClass("green");
+                        $("#avgPremealrangeText").html("@Translate.Message("L4011")");
+                        $("#avgPremealrangeText").addClass("red");
+                        $("#avgPremealrangeText").removeClass("green");
+                    } else {
+                        $("#preMealRangeText").html("@Translate.Message("L4010")");
+                        $("#preMealRangeText").addClass("green");
+                        $("#preMealRangeText").removeClass("red");
+                        $("#avgPremealrangeText").html("@Translate.Message("L4010")");
+                        $("#avgPremealrangeText").addClass("green");
+                        $("#avgPremealrangeText").removeClass("red");
+                    }
+                    if (data.postmeal.Value >= data.postmeal.postMealGoalTo || data.postmeal.Value < data.postmeal.postMealGoalFrom) {
+                        $("#postmealRangeText").html("Out of Range");
+                        $("#postmealRangeText").addClass("red");
+                        $("#postmealRangeText").removeClass("green");
+                        $("#avgPostmealrangeText").html("Out of Range");
+                        $("#avgPostmealrangeText").addClass("red");
+                        $("#avgPostmealrangeText").removeClass("green");
+                    } else {
+                        $("#postmealRangeText").html("@Translate.Message("L4010")");
+                        $("#postmealRangeText").addClass("green");
+                        $("#postmealRangeText").removeClass("red");
+                        $("#avgPostmealrangeText").html("@Translate.Message("L4010")");
+                        $("#avgPostmealrangeText").addClass("green");
+                        $("#avgPostmealrangeText").removeClass("red");
+                    }
+                }
+                $("#avgCount").parents('div').trigger("click");
+            }
+        });
+
+    }
+
+    function changeGlucoseGraph(type, range) {
+        var data1 = [];
+        var data2 = [];
+        var data3 = []
+        if (range == 0) {
+            data3 = glucChart3;
+        }
+        if (type == 'average') {
+            if (range == 1) {
+                data1 = glucChart1.filter((x) => { return x.value <= avgrange1 });
+                data2 = glucChart2.filter((x) => { return x.value <= avgrange1 });
+                date3 = glucChart3.filter((x) => { return x.value <= avgrange1 });
+            }
+            else if (range == 2) {
+                data1 = glucChart1.filter((x) => { return x.value <= avgrange2 });
+                data2 = glucChart2.filter((x) => { return x.value <= avgrange2 });
+                data3 = glucChart3.filter((x) => { return x.value <= avgrange2 });
+            }
+            else if (range == 3) {
+                data1 = glucChart1.filter((x) => { return x.value >= avgrange3 });
+                data2 = glucChart2.filter((x) => { return x.value >= avgrange3 });
+                data3 = glucChart3.filter((x) => { return x.value >= avgrange3 });
+            }
+            else if (range == 4) {
+                data1 = glucChart1.filter((x) => { return x.value >= avgrange4 });
+                data2 = glucChart2.filter((x) => { return x.value >= avgrange4 });
+                data3 = glucChart3.filter((x) => { return x.value >= avgrange4 });
+            }
+            else {
+                data1 = glucChart1.filter((x) => { return x.value >= 0 });
+                data2 = glucChart2.filter((x) => { return x.value >= 0 });
+                data3 = glucChart3.filter((x) => { return x.value >= 0 });
+            }
+        }
+        if (type == 'premeal') {
+            if (range == 1)
+                data1 = glucChart1.filter((x) => { return x.value <= prerange1 });
+            if (range == 2)
+                data1 = glucChart1.filter((x) => { return x.value <= prerange2; });
+            if (range == 3)
+                data1 = glucChart1.filter((x) => { return x.value >= prerange3; });
+            if (range == 4)
+                data1 = glucChart1.filter((x) => { return x.value >= prerange4; });
+        }
+        if (type == 'postmeal') {
+            if (range == 1)
+                data2 = glucChart2.filter((x) => { return x.value <= postrange1; });
+            if (range == 2)
+                data2 = glucChart2.filter((x) => { return x.value <= postrange2; });
+            if (range == 3)
+                data2 = glucChart2.filter((x) => { return x.value >= postrange3; });
+            if (range == 4)
+                data2 = glucChart2.filter((x) => { return x.value >= postrange4; });
+        }
+        createGlucoseGraph(data1, data2, data3);
+
+        var $listParent = $(".main-graph-container");
+        if ($(window).width() < 640) {
+            windowScrollClass($listParent, 45, 500);
+        }
+        else {
+            windowScrollClass($listParent, 65, 500);
+        }
+    }
+
+    function windowScrollClass(element, offset, speed) {
+        var $element = element;
+        var speed = speed ? speed : 500;
+        var offset = offset ? offset : 70;
+        var scrollPos = $element.offset().top
+
+        $("html, body").animate({
+            scrollTop: scrollPos - offset
+        }, speed);
+    }
+
+    function createGlucoseGraph(data1, data2, data3) {
+        if (data1.length == 0 && data2.length == 0 && data3.length == 0) {
+            var imageURL = "/Images/device/no-data.png";
+            var emptyStateHTML = "<div class='graph-card'><div class='no-data-msg-box' id='pa-no-data'><div><img src='../Images/device-no-data.svg' alt='' /><p>@Translate.Message("L4032")</p></div></div></div>";
+            $("#graph-data").html("");
+            $("#graph-data").append(emptyStateHTML);
+        }
+        else {
+            var chart = am4core.create("graph-data", am4charts.XYChart);
+            //chart.dateFormatter.inputDateFormat = "dd-MM-yyyy";
+            chart.responsive.enabled = true;
+
+            var xAxis = chart.xAxes.push(new am4charts.DateAxis());
+            xAxis.renderer.minGridDistance = 80;
+            xAxis.renderer.grid.template.disabled = true;
+            xAxis.cursorTooltipEnabled = false;
+            // Create value axis
+            var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            yAxis.cursorTooltipEnabled = false;
+            yAxis.title.text = "@Translate.Message("L4025")";
+
+            if (data1.length > 0) {
+                var series = chart.series.push(new am4charts.LineSeries());
+                series.dataFields.valueY = "value";
+                series.dataFields.dateX = "date";
+                series.strokeWidth = 0;
+                series.tensionX = 0.8;
+                series.fill = am4core.color("#a367dc");
+                var circleBullet = series.bullets.push(new am4charts.CircleBullet());
+                circleBullet.circle.radius = 8;
+                circleBullet.circle.stroke = am4core.color("#a367dc");
+                circleBullet.tooltipHTML = `
+                <ul>
+                <li style="color: #a367dc; font-size: 20px;">
+                <p style="font-size: 12px; margin-bottom: 10px; color: #bcbcbc;">@Translate.Message("L4020") <br><strong style="font-size: 16px; color: #fff;">{valueY}</strong> @Translate.Message("L4025")
+                @Translate.Message("L4035") {dateX} {time}</p>
+                </li>
+                </ul>`;
+                // circleBullet.tooltipText = "{dateX}: {time}:";
+                series.data = data1;
+				series.tooltip.getFillFromObject = false;
+				series.tooltip.background.fill = am4core.color("#484848");
+				// circleBullet.tooltip.pointerOrientation = "vertical";
+                series.legendSettings.labelText = "@Translate.Message("L4020")";
+            }
+			if (data2.length > 0) {
+                var series = chart.series.push(new am4charts.LineSeries());
+                series.dataFields.valueY = "value";
+                series.dataFields.dateX = "date";
+                series.strokeWidth = 0;
+                series.tensionX = 0.8;
+                series.fill = am4core.color("#67b7dc");
+                // Add a bullet
+                var bullet1 = series.bullets.push(new am4charts.Bullet());
+                var arrow = bullet1.createChild(am4core.Rectangle);
+                arrow.verticalCenter = "middle";
+                arrow.horizontalCenter = "middle";
+                arrow.width = 12;
+                arrow.height = 12;
+                arrow.rotation = 45;
+                arrow.strokeWidth = 1;
+                arrow.nonScalingStroke = true;
+                arrow.stroke = am4core.color("#67b7dc");
+                bullet1.tooltipHTML = `<ul>
+                <li style="color: #67b7dc; font-size: 20px;">
+                <p style="font-size: 12px; margin-bottom: 10px; color: #bcbcbc;">@Translate.Message("L4021") <br><strong style="font-size: 16px; color: #fff;">{valueY}</strong> @Translate.Message("L4025")
+                @Translate.Message("L4035") {dateX} {time}</p>
+                </li>
+                </ul>`;
+                series.data = data2;
+                series.tooltip.getFillFromObject = false;
+                series.tooltip.background.fill = am4core.color("#484848");
+                series.legendSettings.labelText = "@Translate.Message("L4021")";
+            }
+			if (data3.length > 0) {
+                var series = chart.series.push(new am4charts.LineSeries());
+                series.dataFields.valueY = "value";
+                series.dataFields.dateX = "date";
+                series.strokeWidth = 0;
+                series.tensionX = 0.8;
+                series.fill = am4core.color("#d2f241");
+                // Add a bullet
+                var bullet = series.bullets.push(new am4charts.Bullet());
+                var arrow = bullet.createChild(am4core.Triangle);
+                arrow.verticalCenter = "middle";
+                arrow.horizontalCenter = "middle";
+                arrow.width = 12;
+                arrow.height = 12;
+                arrow.align = "right";
+                arrow.valign = "bottom";
+                arrow.strokeWidth = 4;
+                arrow.nonScalingStroke = true;
+                arrow.rotation = 1;
+                arrow.stroke = am4core.color("#d2f241");
+                bullet.tooltipHTML = `<ul><li style="color: #d2f241; font-size: 20px;"><p style="font-size: 12px; margin-bottom: 10px; color: #bcbcbc;">@Translate.Message("L4033")<br><strong style="font-size: 16px; color: #fff;">{valueY}</strong> @Translate.Message("L4025") @Translate.Message("L4035") {dateX} {time}</p></li></ul>`;
+                series.data = data3;
+                series.tooltip.getFillFromObject = false;
+                series.tooltip.background.fill = am4core.color("#484848");
+                series.legendSettings.labelText = "@Translate.Message("L4033")";
+            }
+            let range = yAxis.axisRanges.create();
+            range.value = 70;
+            range.grid.stroke = am4core.color("red");
+            range.grid.strokeWidth = 1;
+            range.grid.strokeOpacity = 1;
+            range.label.inside = true;
+            range.label.text = "70";
+            range.grid.strokeDasharray = "3,3";
+            range.label.fill = range.grid.stroke;
+            range.label.verticalCenter = "bottom";
+
+            let range2 = yAxis.axisRanges.create();
+            range2.value = 180;
+            range2.grid.stroke = am4core.color("#FFAA1D");
+            range2.grid.strokeWidth = 1;
+            range2.grid.strokeOpacity = 1;
+            range2.label.inside = true;
+            range2.label.text = "180";
+            range2.grid.strokeDasharray = "3,3";
+            range2.label.fill = range2.grid.stroke;
+            range2.label.verticalCenter = "bottom";
+
+            chart.legend = new am4charts.Legend();
+            chart.legend.useDefaultMarker = true;
+            chart.legend.position = "bottom";
+            chart.legend.contentAlign = "right";
+            var marker = chart.legend.markers.template.children.getIndex(0);
+
+            chart.cursor = new am4charts.XYCursor();
+            chart.cursor.lineY.disabled = true;
+            chart.cursor.lineX.disabled = true;
+        }
+    }
+</script>

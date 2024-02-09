@@ -1,0 +1,764 @@
+﻿@using InterventWebApp
+@model InterventWebApp.FoodDiaryModel
+
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+
+}
+
+<section class="main report-multi-line diaries-main">
+    <div class="grid-container">
+        <div class="grid-x food-diary-main-wrapper">
+            <div class="cell">
+                <div class="take-a-tour-container">
+                    <div class="content">
+                        <div class="content-text">
+                            <p>@Html.Raw(Translate.Message("L4298"))</p>
+                        </div>
+                    </div>
+                    <div class="button-area">
+                        <span data-tooltip tabindex="2" title="@Translate.Message("L4479")" data-template-classes="prog-tooltip tour-tooltip" data-position="bottom" data-alignment="left">
+                            <button class="button hollow" onclick="startIntro();">@Translate.Message("L3905")</button>
+                        </span>
+                        @*<button class="button next-btn">Next</button>*@
+                    </div>
+                </div>
+                <!-- Take a tour section Ends -->
+                <div class="diary-top-section">
+                    <div class="diary-top-left">
+                        <h2>@Translate.Message("L4290")</h2>
+                        <input type="text" class="input-date" id="date-diary" onchange="LoadFoodDetails()">
+                        <input type="hidden" id="hdate-diary">
+                    </div>
+                    @if (Model.HasActivePortal)
+                    {
+                        <div class="diary-top-right new-button">
+                            <button id="add-food-model" class="button plus-btn" onclick="ListFoodDetails(event, 'food-entry', true)" data-open="food-entry">@Translate.Message("L291")</button>
+                        </div>
+                    }
+                </div>
+                <div id="loader-wrapper">
+                    <div id="loader"></div>
+                </div>
+                <div class="diary-body-section">
+                    <div class="diary-cards-section">
+                        <div class="grid-x grid-margin-x">
+                            <div class="cell">
+                                <!-- Commented for future use
+                                <div class="mobile-noti-wrapper">
+                                    <img src="~/Images/food-diary/mobile-notification-icon.svg" alt="">
+                                    <p>Text me Meal Plan Reminders</p>
+                                    <i class="fa fa-info fa-info-circle"></i>
+                                    <div class="notification-switch">
+                                        <div class="flex-container align-items-center switch-tags">
+                                            <div class="switch switch-primary">
+                                                <input class="switch-input" id="mobile-noti-switch" type="checkbox" name="mobile-noti-switch">
+                                                <label class="switch-paddle" for="mobile-noti-switch">
+                                                    <span class="show-for-sr">Required Escalation</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="diary-meals-section">
+                        <div class="grid-x grid-margin-x hide" id="goalsandGraph">
+                            <div class="cell medium-3">
+                                <div class="daily-target-cards" id="weekly-goals-summary">
+                                    <div class="diary-cards meal-target-cards">
+                                        <img src="~/Images/food-diary/red-bg.svg" alt="">
+                                        <div class="cards-content">
+                                            <p id="poorly"></p>
+                                            <span>@Translate.Message("L4282")</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="diary-cards meal-target-cards">
+                                        <img src="~/Images/food-diary/green-bg.svg" alt="">
+                                        <div class="cards-content">
+                                            <p id="success"></p>
+                                            <span>@Translate.Message("L4283")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cell medium-9">
+                                <div class="diary-cards meal-plan-cards">
+                                    <h2>@Translate.Message("L4285")</h2>
+                                    <div id="trend-graph"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-x grid-margin-x hide" id="noDataforaWeek">
+                            <div class="cell">
+                                <div class="diary-cards no-food-data">
+                                    <img src="~/Images/Device/no-data.png" alt="No Data Image" />
+                                    <span>@Translate.Message("L4000"). 
+                                        @if (Model.HasActivePortal)
+                                        {
+                                            <a href="#" class="anchor-blue" onclick="ListFoodDetails(event, 'food-entry', false)" data-open="food-entry"> @Translate.Message("L291")</a>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+					<div class="food-calendar-wrapper">
+						<div class="food-calender-section">
+							<div class="grid-x">
+								<div class="cell">
+									<div class="diary-cards calender-main-card">
+										<div class="grid-x">
+											<div class="cell small-4">
+												<div class="food-calendar-title">
+													<ul>
+														<li class="cal-heading">
+															<span>@Translate.Message("L1728")</span>
+															<span>@Translate.Message("L4286")</span>
+														</li>
+
+														<li>
+															<div class="flex-container align-middle">
+																<img src="~/Images/program/icon-meat.png" alt="">
+																<span>@Translate.Message("L3560")</span>
+															</div>
+															<div><span class="cal-count count-green" id="meatGoal"></span></div>
+														</li>
+
+														<li>
+															<div class="flex-container align-middle">
+																<img src="~/Images/program/icon-grains.png" alt="">
+																<span>@Translate.Message("L3791")</span>
+															</div>
+															<div><span class="cal-count count-green" id="grainsGoal"></span></div>
+														</li>
+
+														<li>
+															<div class="flex-container align-middle">
+																<img src="~/Images/program/icon-fruit.png" alt="">
+																<span>@Translate.Message("L1644")</span>
+															</div>
+															<div><span class="cal-count count-green" id="fruitGoal"></span></div>
+														</li>
+
+														<li>
+															<div class="flex-container align-middle">
+																<img src="~/Images/program/icon-non-starch-veg.png" alt="">
+																<span>@Translate.Message("L1645")</span>
+															</div>
+															<div><span class="cal-count count-green" id="starchyGoal"></span></div>
+														</li>
+
+														<li>
+															<div class="flex-container align-middle">
+																<img src="~/Images/program/icon-milk.png" alt="">
+																<span>@Translate.Message("L3564")</span>
+															</div>
+															<div><span class="cal-count count-green" id="milkGoal"></span></div>
+														</li>
+
+														<li>
+															<div class="flex-container align-middle">
+																<img src="~/Images/program/icon-others.png" alt="">
+																<span>@Translate.Message("L3565")</span>
+															</div>
+															<div><span class="cal-count count-blue">-</span></div>
+														</li>
+
+														<li class="food-count-total">
+															<div>@Translate.Message("L517")</div>
+															<div><strong><span id="nutFatNum"></span>-<span id="newNutFatNum"></span> g</strong></div>
+														</li>
+
+														<li class="food-count-total">
+															<div>@Translate.Message("L1638")</div>
+															<div><strong><span id="nutCarbFrom"></span>-<span id="nutCarbTo"></span> g</strong></div>
+														</li>
+													</ul>
+												</div>
+											</div>
+											<div class="cell small-8">
+												<div class="food-calendar-list">
+													<ul class="cal-list" id="food-list" data-position="bottom-left-aligned">
+													</ul>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class='reveal food-entry-modal @(Model.FoodDiaryAccess >= 3 ? "large" : "") @(Model.FoodDiaryAccess <= 2 ? "small" : "")' id="food-entry" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<!--dependency script for Amcharts graphs-->
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/ValidateNumbers.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/intro.js")"></script>
+<link type="text/css" href="@Url.Content("~/Content/css/introjs.css")" rel="stylesheet" />
+<script>
+    @*var Meat = @Model.NutritionGoal.FirstNutPlanArray.GetValue(0, 4);
+    var Milk = @Model.NutritionGoal.FirstNutPlanArray.GetValue(4, 4);
+    var Fruit = @Model.NutritionGoal.FirstNutPlanArray.GetValue(2, 4);
+    var Starchy = @Model.NutritionGoal.FirstNutPlanArray.GetValue(3, 4);
+    var Grains = @Model.NutritionGoal.FirstNutPlanArray.GetValue(1, 4);*@
+
+
+    var foodDiaryAccess = @Model.FoodDiaryAccess;
+    var startDate;
+    var endDate;
+    var success = 0;
+    var poorly = 0;
+    var reload = false;
+    var isVisible = "";
+    var tabTarget = "";
+
+    $(document).ready(function () {
+        $('#date-diary').fdatepicker({
+            weekStart: 1,
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        }).on('show', function () {
+			$(".datepicker").addClass("week-datepicker");
+		}).on('hide', function () {
+			$(".datepicker").removeClass("week-datepicker");
+		});
+        $('#date-diary').val(toLocalDateFormat(new Date));
+        $('#hdate-diary').val(toSystemDateFormat($('#date-diary').val()));
+
+        $("#date-diary").on("change", function () {
+            $('#hdate-diary').val(toSystemDateFormat($('#date-diary').val()));
+            var value = $('#hdate-diary').val();
+            var firstDate = moment(value, "YYYY-MM-DD").day(1).format("@Model.DateFormat.ToUpper()");
+            setTimeout(function () {
+                $("#date-diary").val(firstDate);
+            }, 200);
+        });
+
+        $("[data-toggle]").on("click", function(){
+            var toggelId = $(this).data("toggle");
+            $(this).toggleClass("is-active");
+            $("#"+toggelId).toggle();
+        });
+
+        $("[data-circle-graph]").each(function () {
+            var $graph = $(this),
+                percent = parseInt($graph.data('percent'), 10),
+                deg = 360 * percent / 100;
+            if (percent > 50) {
+                $graph.addClass('gt-50');
+            }
+            $graph.find('.circle-graph-progress-fill').css('transform', 'rotate(' + deg + 'deg)');
+            if ($graph.parents('div#past').length == 0) {
+                if (percent == 100) {
+                    $(this).parents("li").addClass("hide");
+                }
+                else {
+                    $(this).closest(".kit-category").find("h5").removeClass("hide");
+                }
+            }
+        });
+
+        $("input.input-date").fdatepicker();
+
+        Date.prototype.addDays = function (days) {
+            var date = new Date(this.valueOf());
+            date.setDate(date.getDate() + days);
+            return date;
+        }
+        LoadFoodDetails();
+
+        $('#food-entry').on('closed.zf.reveal', function () {
+            RemoveAddDetails();
+        });
+    }); // document ready ends
+
+    function LoadFoodDetails() {//_EditFoodDiary
+        $("#loader-wrapper").fadeIn();
+        $('#food-list').html("<li id='food-list-header' class='cal-heading'></li>");
+        success = 0;
+        poorly = 0;
+        reload = false;
+        $('#success').html(success);
+        $('#poorly').html(poorly);
+
+        var currentDate = new Date($('#hdate-diary').val());
+        currentDate.setHours(0, 0, 0, 0);
+        startDate = new Date(currentDate);
+        if (startDate.getDay() == 0) {
+            startDate.setDate(startDate.getDate() - 6);
+            endDate = new Date(currentDate);
+        } else {
+            startDate.setDate(startDate.getDate() - startDate.getDay() + 1);
+            endDate = new Date(currentDate);
+            endDate.setDate(endDate.getDate() - endDate.getDay() + 7);
+        }
+        var model = {};
+        var paginationdata = {
+            'startDate': startDate.toISOString(),
+            'endDate': endDate.toISOString(),
+            'FoodDiaryAccess': foodDiaryAccess
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+        $.ajax({
+            url: "@Url.Action("LoadFoodDetails", "Journal")",
+            data: strData,
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#food-list-header').html(data);
+            },
+			complete: function () {
+                var colHeight, newIndex;
+
+                setTimeout(function(){
+                    $(".food-calendar-title li").each(function(index){
+                        colHeight = $(this).height();
+                        newIndex = index + 1;
+                        $(".food-calendar-list li:nth-child("+newIndex+")").height(colHeight);
+                    });
+                }, 200);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+            $("#loader-wrapper").fadeOut();
+        });
+        LoadFood();
+    }
+
+    function LoadFood() {
+        var model = {};
+        var paginationdata = {
+            'startDate': startDate.toISOString(),
+            'endDate': endDate.toISOString(),
+            'FoodDiaryAccess': foodDiaryAccess
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+        $.ajax({
+            url: "@Url.Action("ListFood", "Journal")",
+            data: strData,
+            type: 'POST',
+            contentType: 'application/json, charset=utf-8',
+            dataType: "json",
+            success: function (data) {
+                if (data != null && data.Meat != null && data.Meat.length > 0) {
+                    $("#meatGoal").html(data.meatGoal);
+                    $("#milkGoal").html(data.milkGoal);
+                    $("#fruitGoal").html(data.fruitGoal);
+                    $("#starchyGoal").html(data.starchyGoal);
+                    $("#grainsGoal").html(data.grainsGoal);
+                    $("#nutFatNum").html(data.nutFatNum);
+                    $("#newNutFatNum").html(data.newNutFatNum);
+                    $("#nutCarbFrom").html(data.nutCarbFrom);
+                    $("#nutCarbTo").html(data.nutCarbTo);
+                    if (data.haveDataforaWeek) {
+                        $("#goalsandGraph").removeClass("hide");
+                        $("#noDataforaWeek").addClass("hide");
+                        isVisible = "";
+                    }
+                    else {
+                        $("#goalsandGraph").addClass("hide");
+                        $("#noDataforaWeek").removeClass("hide");
+                        isVisible = ":visible";
+                    }
+                    LoadChart(data.Goals);
+                    var foodHtml = "<li>";
+                    for (var i = 0; i < 7; i++) {
+                        if (data.FoodDiaryAccess[i] >= 2)
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Meat[i], data.meatGoal, data.Goals[i], 'meat') + "'>" + (data.Meat[i] != 0 ? data.Meat[i] : '-') + "</span>";
+                        else
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Meat[i], 1, data.Goals[i], 'meat') + "'>" + (data.Meat[i] != 0 ? '&#10004;' : '-') + "</span>";
+                    }
+                    foodHtml += "</li><li>";
+                    for (var i = 0; i < 7; i++) {
+                        if (data.FoodDiaryAccess[i] >= 2)
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Grains[i], data.grainsGoal, data.Goals[i], 'grains') + "'>" + (data.Grains[i] != 0 ? data.Grains[i] : '-') + "</span>";
+                        else
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Grains[i], 1, data.Goals[i], 'grains') + "'>" + (data.Grains[i] != 0 ? '&#10004;' : '-') + "</span>";
+                    }
+                    foodHtml += "</li><li>";
+                    for (var i = 0; i < 7; i++) {
+                        if (data.FoodDiaryAccess[i] >= 2)
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Fruit[i], data.fruitGoal, data.Goals[i], 'fruit') + "'>" + (data.Fruit[i] != 0 ? data.Fruit[i] : '-') + "</span>";
+                        else
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Fruit[i], 1, data.Goals[i], 'fruit') + "'>" + (data.Fruit[i] != 0 ? '&#10004;' : '-') + "</span>";
+                    }
+                    foodHtml += "</li><li>";
+                    for (var i = 0; i < 7; i++) {
+                        if (data.FoodDiaryAccess[i] >= 2)
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Starchy[i], data.starchyGoal, data.Goals[i], 'starchy') + "'>" + (data.Starchy[i] != 0 ? data.Starchy[i] : '-') + "</span>";
+                        else
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Starchy[i], 1, data.Goals[i], 'starchy') + "'>" + (data.Starchy[i] != 0 ? '&#10004;' : '-') + "</span>";
+                    }
+                    foodHtml += "</li><li>";
+                    for (var i = 0; i < 7; i++) {
+                        if (data.FoodDiaryAccess[i] >= 2)
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Milk[i], data.milkGoal, data.Goals[i], 'milk') + "'>" + (data.Milk[i] != 0 ? data.Milk[i] : '-') + "</span>";
+                        else
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Milk[i], 1, data.Goals[i], 'milk') + "'>" + (data.Milk[i] != 0 ? '&#10004;' : '-') + "</span>";
+                    }
+                    foodHtml += "</li><li>";
+                    for (var i = 0; i < 7; i++) {
+                        if (data.FoodDiaryAccess[i] >= 2)
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Others[i], data.Others[i] + 1, 'none', 'others') + "'>" + (data.Others[i] != 0 ? data.Others[i] : '-') + "</span>";
+                        else
+                            foodHtml += "<span class='cal-count count-" + GetColorCode(data.Others[i], data.Others[i] + 1, 'none', 'others') + "'>" + (data.Others[i] != 0 ? '&#10004;' : '-') + "</span>";
+                    }
+
+                    foodHtml += "</li><li class='food-count-total'>";
+                    for (var i = 0; i < 7; i++) {
+                        if (foodDiaryAccess >= 3) {
+                            var fatColor = "";
+                            if (data.FatGrams[i]) {
+                                if (data.FatGrams[i] >= data.nutFatNum && data.FatGrams[i] <= data.newNutFatNum)
+                                    fatColor = "count-green";
+                                else
+                                    fatColor = "count-red";
+                            }
+                            foodHtml += "<span class=" + fatColor +">" + (data.FatGrams[i] ? data.FatGrams[i] + ' g' : '-') + "</span>";
+                        }
+                        else
+                            foodHtml += "<span>-</span>";
+                    }
+                    foodHtml += "</li><li class='food-count-total'>";
+                    for (var i = 0; i < 7; i++) {
+                        if (foodDiaryAccess >= 4) {
+                            var carbColor = "";
+                            if (data.CarbGrams[i]) {
+                                if (data.CarbGrams[i] >= data.nutCarbFrom && data.CarbGrams[i] <= data.nutCarbTo)
+                                    carbColor = "count-green";
+                                else
+                                    carbColor = "count-red";
+                            }
+                            foodHtml += "<span class=" + carbColor + ">" + (data.CarbGrams[i] ? data.CarbGrams[i] + ' g' : '-') + "</span>";
+                        }
+                        else
+                            foodHtml += "<span>-</span>";
+                    }
+                    foodHtml += "</li><li class='food-count-summary'>";
+                    //foodHtml += "<li class='food-count-summary'>";
+                    //for (var i = 0; i < 7; i++) {
+                    //    if (data.Goals[i] != 'none')
+                    //        foodHtml += "<span><img src='../Images/food-diary/" + data.Goals[i] + "-bg.svg' alt=''></span>";
+                    //    else
+                    //        foodHtml += "<span>&nbsp;</span>";
+                    //}
+                    //foodHtml += "</li>";
+                }
+                $('#food-list').append(foodHtml);
+            },
+            complete: function () {
+                var colHeight, newIndex;
+
+                setTimeout(function () {
+                    $(".food-calendar-title li").each(function (index) {
+                        colHeight = $(this).height();
+                        newIndex = index + 1;
+                        $(".food-calendar-list li:nth-child(" + newIndex + ")").height(colHeight);
+                    });
+                }, 200);
+                $("#loader-wrapper").fadeOut();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+            $("#loader-wrapper").fadeOut();
+        });
+
+    }
+
+    function GetColorCode(value, serving, goal, foodGroup) {
+        if (goal == 'none' || value == 0)
+            return 'blue';
+        else if (value == serving)
+            return 'green';
+        else
+            return 'red';
+    }
+
+    function ListFoodDetails(ev, id, refresh) {
+        //_AddFoodDiary
+		var hover = id == 'food-entry' ? false : true;
+        if (!hover) {
+            $("#loader-wrapper").fadeIn();
+        }
+		$('#food-entry, .edit-cal-entry:not(.modal-empty)').html("");
+        var model = {};
+        var paginationdata = {
+            'startDate': new Date($("#hdate-diary").val()).toISOString(),
+            'FoodDiaryAccess': foodDiaryAccess,
+            'mousehover': hover
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+        $.ajax({
+            url: "@Url.Action("ListFoodDetails", "Journal")",
+            data: strData,
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+			success: function (data) {
+                $('#'+id).html(data);
+                if (refresh)
+                    tabTarget = "";
+                TabChange(ev, tabTarget);
+            },
+            complete: function () {
+                $("#loader-wrapper").fadeOut();
+                $(document).foundation();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function LoadChart(goal) {
+        var chartDate = new Date(startDate);
+
+        am4core.ready(function () {
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            am4core.addLicense("CH39169069");
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create("trend-graph", am4charts.XYChart);
+
+            chart.data = [
+                { "date": new Date(chartDate), "name": GetGoalStatus(goal[0]), "color": goal[0] },
+                { "date": new Date(chartDate.addDays(1)), "name": GetGoalStatus(goal[1]), "color": goal[1] },
+                { "date": new Date(chartDate.addDays(2)), "name": GetGoalStatus(goal[2]), "color": goal[2] },
+                { "date": new Date(chartDate.addDays(3)), "name": GetGoalStatus(goal[3]), "color": goal[3] },
+                { "date": new Date(chartDate.addDays(4)), "name": GetGoalStatus(goal[4]), "color": goal[4]},
+                { "date": new Date(chartDate.addDays(5)), "name": GetGoalStatus(goal[5]), "color": goal[5] },
+                { "date": new Date(chartDate.addDays(6)), "name": GetGoalStatus(goal[6]), "color": goal[6] },
+            ];
+
+            // Create axes
+            var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+            dateAxis.dateFormats.setKey("day", "dd\nMMM");
+            dateAxis.periodChangeDateFormats.setKey("day", "dd\nMMM");
+            dateAxis.renderer.grid.template.disabled = true;
+            dateAxis.renderer.labels.template.wrap = true;
+            dateAxis.renderer.labels.template.textAlign = "middle";
+            dateAxis.renderer.labels.template.fontSize = 14;
+            dateAxis.renderer.minGridDistance = 50;
+            dateAxis.renderer.grid.template.location = 0.5;
+
+            //var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "name";
+            categoryAxis.renderer.labels.template.fontSize = 12;
+            categoryAxis.renderer.labels.template.wrap = true;
+            categoryAxis.renderer.labels.template.maxWidth = 95;
+            categoryAxis.renderer.labels.template.textAlign = "end";
+            categoryAxis.renderer.labels.template.rotation = 30;
+            categoryAxis.renderer.labels.template.horizontalCenter = "middle";
+            categoryAxis.renderer.labels.template.verticalCenter = "middle";
+
+            // Do not crop bullets
+            chart.maskBullets = false;
+
+            // Remove padding
+            chart.paddingBottom = 0;
+            chart.paddingLeft = 0;
+
+            // Create series
+            var series = chart.series.push(new am4charts.LineSeries());
+            series.dataFields.categoryY = "name";
+            series.dataFields.dateX = "date";
+            series.tooltipText = "{value}"
+            series.strokeWidth = 2;
+            series.minBulletDistance = 15;
+            series.tensionX = 0.8;
+            series.fillOpacity = 1;
+
+            // Add bullets
+            var bullet = series.bullets.push(new am4charts.CircleBullet());
+            bullet.circle.strokeWidth = 2;
+            bullet.circle.radius = 4;
+            bullet.propertyFields.fill = "color";
+
+            var fillModifier = new am4core.LinearGradientModifier();
+            fillModifier.opacities = [0.9, 0];
+            fillModifier.offsets = [0, 0.5];
+            fillModifier.gradient.rotation = 90;
+            series.segments.template.fillModifier = fillModifier;
+
+        }); // end am4core.ready()
+    }
+
+    function GetGoalStatus(goal) {
+        if (goal == 'green') {
+            success++;
+            $('#success').html(success);
+            return ("@Html.Raw(Translate.Message("L4284"))");
+        }
+        else if (goal == 'red') {
+            poorly++;
+            $('#poorly').html(poorly);
+            return ("@Html.Raw(Translate.Message("L4297"))");
+        }
+    }
+
+    function AddFoodModal(date) {
+        $('#date-diary').val(toLocalDateFormat(new Date(date)));
+        $('#hdate-diary').val(toSystemDateFormat($('#date-diary').val()));
+        $("#add-food-model").trigger('click');
+    }
+
+    function EditFoodDetails(id, extension) {
+        reload = true;
+        var name = $('#' + id + '-'+ extension +'Name').val();
+        var serving;
+        var fat;
+        var carb;
+        var carbc;
+        if (foodDiaryAccess >= 2)
+            serving = $('#' + id + '-' + extension +'ServingSize').val();
+        if (foodDiaryAccess >= 3)
+            fat = $('#' + id + '-' + extension +'FatGrams').val();
+        if (foodDiaryAccess >= 4) {
+            carb = $('#' + id + '-' + extension +'CarbGrams').val();
+            carbc = $('#' + id + '-' + extension + 'CarbChoices').val();
+        }
+        if (name == '') {
+            $('#' + id + '-' + extension + 'Name').focus();
+            reload = false;
+            return false;
+        }
+        if (serving == '') {
+            $('#' + id + '-' + extension + 'ServingSize').focus();
+            reload = false;
+            return false;
+        }
+        var FoodDiary = {};
+        FoodDiary.Id = id,
+        FoodDiary.Name = name;
+        FoodDiary.ServingSize = serving;
+        FoodDiary.FatGrams = fat;
+        FoodDiary.CarbGrams = carb;
+        FoodDiary.CarbChoices = carbc;
+
+        $.ajax({
+            url: "@Url.Action("AddtoFoodDiary", "Journal")",
+            data: { 'FoodDiary' : FoodDiary},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#label-Name-' + id).html(name);
+                if (foodDiaryAccess >= 2)
+                    $('#label-ServingSize-' + id).html(serving);
+                if (foodDiaryAccess >= 3)
+                    fat = fat + ' g';
+                    if (fat != ' g')
+                        $('#label-FatGrams-' + id).html(fat);
+                    else
+                        $('#label-FatGrams-' + id).html('');
+                if (foodDiaryAccess >= 4) {
+                    carb = carb + ' g';
+                    if (carb != ' g')
+                        $('#label-CarbGrams-' + id).html(carb);
+                    else
+                        $('#label-CarbGrams-' + id).html('');
+                    $('#label-CarbChoices-' + id).html(carbc);
+                }
+            },
+            complete: function() {
+                $(".food-dropdown-pane").hide();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function DeleteFood(foodId) {
+        $.ajax({
+            url: "@Url.Action("DeleteFood", "Journal")",
+            data: { 'foodId': foodId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data) {
+                    LoadFoodDetails();
+                    $('.food-' + foodId + '').remove();
+                }
+            }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function RemoveAddDetails() {
+		$('#add-food-details').remove();
+    }
+</script>
+
+<script>
+    function startIntro() {
+        if($(window).width() < 640) {
+            $(".food-calender-section").scrollLeft( 300 );
+        }
+
+        var intro = introJs();
+        intro.setOptions({
+            steps: [
+                {
+                    element: '#add-food-model',
+                    intro: '<div>@Translate.Message("L4291")</div>',
+                    position: 'bottom'
+                },
+                {
+                    element: '#date-diary',
+                    intro: '<div>@Translate.Message("L4292")</div>',
+                    position: 'bottom'
+                },
+                {
+                    element: '#weekly-goals-summary' + isVisible +'',
+                    intro: '<div>@Translate.Message("L4293")</div>',
+                    position: 'bottom'
+                },
+                {
+                    element: '#food-list',
+                    intro: '<div>@Translate.Message("L4295")</div>',
+                    position: 'bottom'
+                },
+                {
+                    element: '#food-list-header',
+                    intro: '<div>@Translate.Message("L4296")</div>',
+                    position: 'bottom'
+                }
+            ].filter(function (obj) {
+                return $(obj.element).length;
+            }),
+            showStepNumbers: false,
+            hideNext: true,
+            hidePrev: true,
+            autoPosition: false,
+            nextLabel: "@Translate.Message("L3398") →",
+            prevLabel: "← @Translate.Message("L3169")",
+            skipLabel: "@Translate.Message("L3912")",
+            doneLabel: "@Translate.Message("L2995")"
+        });
+
+        intro.start();
+    }
+
+
+</script>

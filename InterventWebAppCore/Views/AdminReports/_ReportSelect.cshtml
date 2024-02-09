@@ -1,0 +1,77 @@
+﻿@using InterventWebApp
+@model InterventWebApp.ReportSelectModel
+
+<select id="scheduler-select" class="primary-select">
+    <optgroup label="Report">
+        <option value="LabReport" @(ViewData["Kind"] == "LabReport" ? "selected='selected'" : "")>Lab Report</option>
+        <option value="NoShowReport" @(ViewData["Kind"] == "NoShowReport" ? "selected='selected'" : "")>No Show Report</option>
+        <option value="CoachTrackingReport" @(ViewData["Kind"] == "CoachTrackingReport" ? "selected='selected'" : "")>Coach Tracking Report</option>
+        @if (Model != null && Model.IsSuperAdmin)
+    {
+        <option value="PaymentTransactionReport" @(ViewData["Kind"] == "PaymentTransactionReport" ? "selected='selected'" : "")>Payment Transactions Report</option>
+}
+        <option value="KitUserReport" @(ViewData["Kind"] == "KitUserReport" ? "selected='selected'" : "")>Kit User Report</option>
+        <option value="UnapprovedCarePlans" @(ViewData["Kind"] == "UnapprovedCarePlans" ? "selected='selected'" : "")>Unapproved Care Plans</option>
+    </optgroup>
+    <optgroup label="Log">
+        @if (Model != null && Model.IsSuperAdmin)  
+        {
+            <option value="EligibilityErrorReport" @(ViewData["Kind"] == "EligibilityErrorReport" ? "selected='selected'" : "")>Eligibility Error Log</option>
+            <option value="LogReport" @(ViewData["Kind"] == "LogReport" ? "selected='selected'" : "")>System Log</option>
+        }
+        <option value="LabErrorLogReport" @(ViewData["Kind"] == "LabErrorLogReport" ? "selected='selected'" : "")>Lab Error Log</option>
+        <option value="ScreeningDataErrorLog" @(ViewData["Kind"] == "ScreeningDataErrorLog" ? "selected='selected'" : "")>Screening Data Error Log</option>
+    </optgroup>
+    @if (Model != null && Model.IsSuperAdmin)
+    {
+        <optgroup label="Incentive">
+            <option value="IncentiveReport" @(ViewData["Kind"] == "IncentiveReport" ? "selected='selected'" : "")>Client Incentive Report</option>
+            <option value="SmokingCessationIncentive" @(ViewData["Kind"] == "SmokingCessationIncentive" ? "selected='selected'" : "")>Smoking Cessation Incentive</option>
+        </optgroup>
+    }
+</select>
+
+<script>
+    $('#scheduler-select').on('change', function() {
+        if($(this).val() !== '@ViewData["Kind"]') {
+            switch ($(this).val()) {
+                case 'LabReport':
+                    location.href = '../AdminReports/LabAlertReport';
+                    break;
+                case 'LogReport':
+                    location.href = '../AdminReports/LogReport';
+                    break;
+                case 'EligibilityErrorReport':
+                    location.href = '../AdminReports/EligibilityErrorReport';
+                    break;
+                case 'LabErrorLogReport':
+                    location.href = '../AdminReports/LabErrorLogReport';
+                    break;
+                case 'ScreeningDataErrorLog':
+                    location.href = '../AdminReports/ScreeningDataErrorLog';
+                    break;
+                case 'IncentiveReport':
+                    location.href = '../AdminReports/IncentiveReport';
+                    break;
+                case 'NoShowReport':
+                    location.href = '../AdminReports/NoShowReport';
+                    break;
+                case 'SmokingCessationIncentive':
+                    location.href = '../AdminReports/SmokingCessationIncentive';
+                    break;
+                case 'PaymentTransactionReport':
+                    location.href = '../AdminReports/PaymentTransactionReport';
+                    break;
+                case 'CoachTrackingReport':
+                    location.href = '../AdminReports/CoachTrackingReport';
+                    break;
+                case 'KitUserReport':
+                    location.href = '../AdminReports/KitUserReport';
+                    break;
+                case 'UnapprovedCarePlans':
+                    location.href = '../AdminReports/UnapprovedCarePlans';
+                    break;
+            }
+        }
+    });
+</script>

@@ -1,0 +1,583 @@
+﻿@model InterventWebApp.ParticipantInfoModel
+@using InterventWebApp
+<!--ADMIN PAGE-->
+<div class="dashboard-content participant-info cell">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+				<div class="small-12 medium-6 cell flex-container align-middle">
+					<h2>Participant Info</h2>
+				</div>
+                @if (Model.HasActivePortal.HasValue && Model.HasActivePortal.Value && Model.ShowTimeTracker)
+                {
+                    <div class="small-12 medium-6 cell text-right">
+                        <div class='timer-wrapper start-timer hide'>
+                            <button class='timer-btn'>
+                                <span>Start Timer</span>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+		</div>
+    </div>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x collapse participant-content">
+            <!--personal data and log-->
+            <div class="small-12 medium-6 cell">
+                <div class="data-container">
+                    <div class="container-title green">Personal Data</div>
+                    <div class="content">
+                        <div class="data-item">
+                            @{String status = !Model.User.IsActive ? " (Inactive)" : "";}
+							<div class="grid-x grid-margin-x grid-margin-y">
+                                <div class="cell medium-6">
+                                    <div class="data-title">ID @status:</div>
+                                    @{String UniqueId = !String.IsNullOrEmpty(Model.User.UniqueId) ? Model.User.UniqueId : "";}
+                                    @{String UserStatus = (String.IsNullOrEmpty(Model.participant.UserStatus) || Model.participant.UserStatus.Equals("T")) ? "(T)" : ""; }
+                                        <div class="data-content">
+									    	<div>
+									    		<p>
+									    			<a data-tooltip aria-haspopup="true" class="has-tip tip-top anchor-blue" title="change history" href="~/Admin/ParticipantHistorySearch/@Model.ParticipantId"> @Model.ParticipantId</a>
+                                                @if (Model.HasActivePortal.HasValue && Model.HasActivePortal.Value && !Model.IsProfileCompleted)
+                                                    {
+									    		        <span class="complete-profile"><a data-modal-path="@Html.Raw(Url.Action("userprofile", "Account", new { module = "Admin" }))" class="anchor-blue" data-open="user-profile">Complete the profile</a></span>
+                                                    }
+									    		</p>
+									    	</div>
+                                        </div>
+                                    @if (!string.IsNullOrEmpty(UniqueId))
+                                    {
+                                        <div class="data-title">Unique ID:</div>
+                                        if (Model.participant.EligibilityId.HasValue)
+                                        {
+                                            <div class="data-content">
+                                                <p>
+                                                    <a data-tooltip aria-haspopup="true" class="has-tip tip-top anchor-blue" title="Eligibility" onClick="GetEligibility('@Model.participant.EligibilityId.Value')"> @UniqueId</a>@UserStatus
+                                                </p>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="data-content">@UniqueId @UserStatus</div>
+                                        }
+                                    }
+                                </div>
+                                @if (Model.participant.CRMId.HasValue)
+                                {
+							    <div class="cell medium-6">
+								    <div class="data-title">CRM Id:</div>
+									<div class="data-content">
+										<a class="anchor-blue" onclick="ListNotes(@Model.participant.CRMId);">@Model.participant.CRMId</a>
+									</div>
+							    </div>
+                                }
+                            </div>
+                        </div>
+                        @if (Model.User.DOB.HasValue)
+                        {
+                            <div class="data-item">
+                                <div class="data-title">Date of Birth</div>
+                                <div class="data-content">
+                                    @CommonUtility.dateFormater(Model.User.DOB.Value, false, Model.DateFormat)
+                                </div>
+                            </div>
+                        }
+                        @if (Model.User.Complete.HasValue && Model.User.Complete.Value)
+                        {
+                            //var state = @Model.User.State.HasValue ? @Model.User.State1.Code : "";
+                            <div class="data-item">
+                                <div class="data-title">Address</div>
+                                <div class="data-content"> @Model.User.Address</div>
+                                <div class="data-content"> @Model.User.Address2</div>
+                                <div class="data-content"> @Model.User.City, @Model.participant.StateName @Model.User.Zip</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-title">Contact Info</div>
+                                @if (!string.IsNullOrEmpty(Model.User.HomeNumber))
+                                {
+                                    <div class="data-content">
+                                        H: @Model.User.HomeNumber
+                                        @if (Model.User.ContactMode == 1)
+                                        {
+                                            <span>*</span>
+                                        }
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.User.WorkNumber))
+                                {
+                                    <div class="data-content">
+                                        W: @Model.User.WorkNumber
+                                        @if (Model.User.ContactMode == 2)
+                                        {
+                                            <span>*</span>
+                                        }
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.User.CellNumber))
+                                {
+                                    <div class="data-content">
+                                        C: @Model.User.CellNumber
+                                        @if (Model.User.ContactMode == 3)
+                                        {
+                                            <span>*</span>
+                                        }
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.User.Email))
+                                {
+                                    <div class="data-content">E-Mail: @Model.User.Email</div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.participant.TimeZoneId))
+                                {
+                                    <div class="data-content">
+                                        Time Zone : @Model.participant.TimeZoneId
+                                    </div>
+                                }
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.CoachName))
+                        {
+                            <div class="data-item">
+                                <div class="data-title">Coach</div>
+                                <div class="data-content">
+                                    @Model.CoachName
+                                </div>
+                            </div>
+                        }
+                        <div class="data-item">
+                            <div class="data-title">Organization</div>
+                            <div class="data-content">
+                                @Model.User.Organization.Name
+                                @if (!string.IsNullOrEmpty(Model.BusinessUnit))
+                                {
+                                    <span> /Business Unit: @Model.BusinessUnit</span>
+                                }
+                            </div>
+                            <div class="data-content">@Model.URL</div>
+                            @if (Model.participant.StudyEnrollmentDate.HasValue)
+                            {
+                                <span>Hire/Study Enrollment Date: @Model.participant.StudyEnrollmentDate.Value.ToString(Model.DateFormat)</span>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.LastAccessedOn))
+                        {
+                            <div class="data-item">
+                                <div class="data-title">Last Accessed On</div>
+                                <div class="data-content" id="LastAccessedOn"></div>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.MedicalEligibility))
+                        {
+                            <div class="data-item">
+                                <div class="data-title">Medical Plan</div>
+                                <div class="log-text">@Model.MedicalEligibility</div>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.SubscriptionPlan))
+                        {
+                            <div class="data-item">
+                                <div class="data-title">Subscription Plan</div>
+                                <div class="log-text">@Html.Raw(Model.SubscriptionPlan)</div>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.TobaccoFlag))
+                        {
+                            <div class="data-item">
+                                <div class="data">
+                                    Tobacco Flag: @(Model.TobaccoFlag == "Y" ? "Yes" : "No")
+                                </div>
+                            </div>
+                        }
+                        @if (Model.User.Organization.TermsForSSO.HasValue && Model.User.Organization.TermsForSSO.Value && ((Model.User.TermsAccepted.HasValue && !Model.User.TermsAccepted.Value) || !Model.User.TermsAccepted.HasValue))
+                        {
+                            <div class="data-item">
+                                <div class="data-title">Terms & conditions</div>
+                                <div class="data-content">
+                                    <div class="tick-buttons check-btn">
+                                        <input type="checkbox" id="acceptAgreement" />
+                                        <label for="acceptAgreement">
+                                            I agree to <a class="anchor-blue" href="~/Home/ServiceAgreement?modal=false" target="_blank">Terms of Service</a>
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.dueForRenewal)
+                        {
+                                <div class="data-item">
+                                    <div class="data-title">Program subscription due for Renewal</div>
+                                    <div class="data-content">
+                                        <div class="tick-buttons check-btn">
+                                            <input type="checkbox" id="subscriptionRenewed" />
+                                            <label for="subscriptionRenewed">
+                                                Confirm the User Renewal
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                        }
+                        <div class="data-item">
+                            <div class="data-title"><a class="anchor-blue" href="@Url.Action("Stream", "Participant", new { ForceParticipant = true })">Go To Participant View</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="data-container">
+                    <div class="container-title cyan">
+                        Log
+                    </div>
+                    <div class="content log">
+                        @if (Model.UserinProgramId.HasValue && Model.ProgramType.HasValue && Model.ProgramType.Value == 2 && Model.participant.DoNotTrack == true)
+                        {
+                            <span>Status: Do Not Track</span>
+                            <hr />
+                        }
+                        else if (string.IsNullOrEmpty(Model.enrolledinCoaching) && Model.participant.DeclinedEnrollment == true)
+                        {
+                            <span>Status: Declined Enrollment</span>
+                            <hr />
+                        }
+                        @if (Model.participant.NotesId != null)
+                        {
+                            TimeZoneInfo custTZone = TimeZoneInfo.FindSystemTimeZoneById(User.TimeZone());
+                            <div class="grid-x">
+                                <div class="small-6 cell log-sender">@Model.participant.NoteFirstName @Model.participant.NoteLastName</div>
+                                <div class="small-6 cell">
+                                    <div class="log-date">
+                                        <i class="fa fa-pencil-square-o"></i>
+                                        @if (Model.participant.NotesDate.HasValue)
+                                        {
+                                            <span class="date">@CommonUtility.dateFormater(TimeZoneInfo.ConvertTimeFromUtc(@Model.participant.NotesDate.Value, custTZone), false, Model.DateFormat)</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="log-text">
+                                @Model.participant.Note
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="grid-x">
+                                <div class="small-6 cell">
+                                    No Log
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <!--risks-->
+            <div class="small-12 medium-6 cell">
+                @if (Model.risks != null)
+                {
+                    <div class="data-container">
+                        <div class="container-title pink">Risks (Overall Risk : @Model.hraRisk)</div>
+                        <div class="content risk">
+                            @if (Model.ASCVDRisk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">ASCVD</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.DiabetesRisk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">@Model.DiabetesRiskText</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.hdsRisk.risk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Heart disease & stroke</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.bpRisk.risk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Blood pressure @Model.risks.bpRisk.riskInfoText</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.ctRisk.risk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Cholesterol & triglycerides @Model.risks.ctRisk.riskInfoText</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.overweightRisk.risk > 0)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Weight @Model.risks.overweightRisk.riskInfoText</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.diabetesRisk.risk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Glucose and A1C</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.paRisk.risk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Physical Activity (@Model.risks.paRisk.riskInfoText)</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.nutRisk.risk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Nutrition (@Model.risks.nutRisk.riskInfoText)</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.stressRisk.risk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Stress (@Model.risks.stressRisk.riskInfoText)</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.tobaccoRisk.risk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Tobacco @Model.risks.tobaccoRisk.riskInfoText</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.cancerRisk.risk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Cancer</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.metRisk.risk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Metabolic Syndrome</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                            @if (Model.risks.safetyRisk.risk == 1)
+                            {
+                                <div class="risk-item">
+                                    <div class="risk-title">Safety</div>
+                                    <span class="status-risk high"></span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.participant.WellnessVision))
+                {
+                    <div class="data-container">
+                        <div class="container-title blue">Wellness Vision</div>
+                        <div class="content log">
+                            <div class="log-text">
+                                @Model.participant.WellnessVision
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.PregnancyStatus))
+                {
+                    <div class="data-container">
+                        <div class="container-title green">Stage of Pregnancy</div>
+                        <div class="content log">
+                            <div class="log-text">
+                                @Model.PregnancyStatus
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.claimsReason) && !string.IsNullOrEmpty(Model.claimsDate))
+                {
+                    <div class="data-container">
+                        <div class="container-title orange">Claims</div>
+                        <div class="content log">
+
+                            <div class="log-text">
+                                @Model.claimsReason (@Model.claimsDate)
+                                <a href="#" data-open='eligibility-claim-details' data-modal-path="@Html.Raw(Url.Action("GetEligibilityClaims", "Participant",new { uniqueId = Model.User.UniqueId, organizationid = Model.User.OrganizationId }))"><i class="fa fa-folder-open"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.ProgramName))
+                {
+                    <div class="data-container">
+                        <div class="container-title pink">Program type</div>
+                        <div class="content log">
+                            <div class="log-text">
+                                @Model.ProgramName
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (CommonUtility.IsIntegratedWithLMC(Model.integrationWith))
+                {
+                    var eligibilityResponse = LabUtility.CheckProgramEligibility(Model.User.Id, Model.participantPortalId, Model.User.UniqueId, Model.User.DOB.ToString());
+                    var eligibility = eligibilityResponse.pending ? "(Pending)" : eligibilityResponse.eligibility == true ? "(Eligible)" : "(Ineligible)";
+                    <div class="data-container">
+                        <div class="container-title blue">Canrisk Score @eligibility</div>
+                        <div class="content log">
+                            <div class="log-text">
+                                @if (Model.CanriskScore != null)
+                                {
+                                    <text> Canrisk Score : @Model.CanriskScore @Model.CanriskText <br /> </text>
+                                }
+                                else
+                                {
+                                    <text> Canrisk Score : N/A <br /> </text>
+                                }
+                                @if (Model.CanriskA1c != null)
+                                {
+
+                                    <text> A1C (%) : @Model.CanriskA1c @Model.CanriskLabType<br /> </text>
+                                }
+                                else
+                                {
+                                    <text> A1C (%) : N/A <br /> </text>
+                                }
+                                @if (Model.CanriskGlucose != null)
+                                {
+
+                                    <text> @Translate.Message("L165") <span>(@Model.GlucoseMeasurement)</span>: @Model.CanriskGlucose @Model.CanriskLabType<br /> </text>
+                                }
+                                else
+                                {
+                                    <text> @Translate.Message("L165") <span>(@Model.GlucoseMeasurement)</span>: N/A <br /> </text>
+                                }
+                                @if (Model.CanriskCompletedOn.HasValue)
+                                {
+                                    <text>IE required by : @CommonUtility.dateFormater(Model.CanriskCompletedOn.Value.AddDays(60), false, Model.DateFormat) <br /> </text>
+                                }
+                                @if (eligibilityResponse.canriskSource || eligibilityResponse.labSource)
+                                {
+                                    <text>Qualified based on BMI and Age only (@(eligibilityResponse.canriskSource ? "CANRISK" : "Lab"))</text>
+                                }
+                                @if (Model.CompIntroKitsOnTime.HasValue && !Model.CompIntroKitsOnTime.Value)
+                                {
+                                    <span>Failed to complete run in period</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="eligibility-profile" class="eligibility participant-eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+<div id="crm-notes" class="eligibility reveal large participant-crm-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+	<div class="crm-form-title align-justify align-middle flex-container crm-details-container">
+		<h2>CRM Notes</h2>
+	</div>
+	<div id="crm-notes-details" class="create-profile-form"></div>
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+<div id="spouse-eligibility-profile" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+<div id="associate-eligibility-profile" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+<div id="add-spouse-eligibility" class="eligibility reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+<script>
+    var totalCRMNotes = 10;
+    $(document).ready(function () {
+        $("[data-open]").on('click', function (e) {
+            showmodal($(this), e)
+        });
+
+        $("#acceptAgreement").on('click', function () {
+            var checked = $('#acceptAgreement').is(':checked');
+            if (checked) {
+                $.ajax({
+                    type: "POST",
+                    dataType: 'json',
+                    url: "@Url.Action("AcceptTerms", "Participant")",
+                    success: function (data) {
+                        if (data.Result) {
+                            window.location.reload();
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            }
+        });
+
+        $("#subscriptionRenewed").on('click', function () {
+            var checked = $('#subscriptionRenewed').is(':checked');
+            if (checked) {
+                $.ajax({
+                    url: "@Url.Action("UpdateUserinProgram", "Program")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: { AssignedFollowUp: false, UpdateSubscriptionRenewal: true },
+                    success: function (data) {
+                        if (data.Result) {
+                            window.location.reload();
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            }
+        });
+	});
+
+    function GetEligibility(eligibilityId) {
+        $.ajax({
+            url: '@Url.Action("GetEligibilityDetails", "Participant")',
+            type: 'GET',
+            data: { eligibilityId: eligibilityId },
+            success: function (data) {
+                $("#eligibility-profile").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+        $('#eligibility-profile').foundation('open');
+    }
+
+    @if (!string.IsNullOrEmpty(Model.LastAccessedOn))
+    {
+        @: $('#LastAccessedOn').html(toLocalDateFormat('@Model.LastAccessedOn', "12hour"));
+    }
+    function RefreshListNotes(contactId, loadMorePage) {
+        totalCRMNotes = totalCRMNotes + loadMorePage;
+        ListNotes(contactId);
+    }
+    function ListNotes(contactId) {
+        $("#loader-wrapper").fadeIn();
+        $.ajax({
+            data: { contactId: contactId, totalNotes: totalCRMNotes, isComplaint: false, isRequiresRMA: false, noteSearch: "", fromInfoPage: true },
+            url: '@Url.Action("ListNotesDetails", "CRM")',
+            success: function (data) {
+                $("#crm-notes-details").html(data);
+
+                window.scrollTo(0, 0);
+                $('#crm-notes').foundation('open');
+            },
+            complete: function () {
+				$('#records-list').foundation();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+        $("#loader-wrapper").fadeOut();
+		if($(window).width() < 640) {
+			$(".crm-sidenav, .crm-device-back-btn").toggleClass("hide");
+		}
+    }
+</script>

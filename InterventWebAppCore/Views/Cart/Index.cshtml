@@ -1,0 +1,152 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+
+@{
+    ViewBag.Title = "AdminUsers";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants">
+    <div class="control-bar">
+        <div class="row">
+            <div class="small-8 left columns">
+                <h2>Programs</h2>
+            </div>
+       
+            
+            
+            
+            <div class="small-4 left columns">
+                <form target="paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                    <input type="hidden" name="cmd" value="_cart">
+                    <input type="hidden" name="business" value="BAZRMMCHCMXX8">
+                    <input type="hidden" name="display" value="1">
+                    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_viewcart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Add to Cart</th>
+                </tr>
+                <tr>
+                    <td>
+                        <label>High Risk Coaching Program</label>
+                    </td>
+                    <td>
+                        <form target="paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                            <input type="hidden" name="cmd" value="_cart">
+                            <input type="hidden" name="business" value="BAZRMMCHCMXX8">
+                            <input type="hidden" name="lc" value="US">
+                            <input type="hidden" name="item_name" value="High Risk Coaching Program">
+                            <input type="hidden" name="amount" value="230.00">
+                            <input type="hidden" name="currency_code" value="USD">
+                            <input type="hidden" name="button_subtype" value="products">
+                            <input type="hidden" name="add" value="1">
+                            <input type="hidden" name="bn" value="PP-ShopCartBF:btn_cart_LG.gif:NonHosted">
+                            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Medium Risk Coaching Program</label>
+                    </td>
+                    <td>
+                        <form target="paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                            <input type="hidden" name="cmd" value="_cart">
+                            <input type="hidden" name="business" value="BAZRMMCHCMXX8">
+                            <input type="hidden" name="lc" value="US">
+                            <input type="hidden" name="item_name" value="Medium Risk Coaching Program">
+                            <input type="hidden" name="amount" value="230.00">
+                            <input type="hidden" name="currency_code" value="USD">
+                            <input type="hidden" name="button_subtype" value="products">
+                            <input type="hidden" name="add" value="1">
+                            <input type="hidden" name="bn" value="PP-ShopCartBF:btn_cart_LG.gif:NonHosted">
+                            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                        </form>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="columns">
+            <div id="search-results"></div>
+        </div>
+    </div>
+</section>
+<input type="hidden" id="hdProgId" />
+<div id="cart-modal" class="reveal xlarge device-chart-container" data-reveal>
+    @*<h2>@Translate.Message("L504")</h2>
+    <a class="close-reveal-modal">&#215;</a>
+    <div id="cart" class="device-chart"></div>*@
+</div>
+<script>
+    $('.alert-box').hide();
+    $(document).ready(function () {
+        //ListPrograms();
+    });
+
+    function ListPrograms() {
+        $('#search-results').html("");
+        $.ajax({
+            url: "@Url.Action("ListProgram", "Cart")",
+            data: { allUserswithRole: true, page: null, pageSize:null, totalRecords:null },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    var chartData = [];
+                    if (data.Records != null) {
+                        var programsHtml = [];
+                        var programsHtml = "<table class='table'>";
+                        programsHtml += "<tr><th class='green'>Name</th><th class='green'></th></tr>"
+                        for (var i = 0; i < data.Records.length; i++) {
+                            var program = data.Records[i];
+                            programsHtml += "<tr><td>" + program.Name + "</td><td>";
+                            programsHtml += "<form action='https://www.paypal.com/cgi-bin/webscr' method='post'>"
+                            programsHtml += "<input type='hidden' name='cmd' value='_cart'>"
+                            programsHtml += "<input type='hidden' name='business' value='BAZRMMCHCMXX8'>"
+                            programsHtml += "<input type='hidden' name='lc' value='US'>"
+                            programsHtml += "<input type='hidden' name='item_name' value='"+program.Name+"'>"
+                            programsHtml += "<input type='hidden' name='amount' value='10.00'>"
+                            programsHtml += "<input type='hidden' name='currency_code' value='USD'>"
+                            programsHtml += "<input type='hidden' name='button_subtype' value='services'>"
+                            programsHtml += "<input type='hidden' name='bn' value='PP-ShopCartBF:btn_cart_LG.gif:NonHosted'>"
+                            programsHtml += "<input type='image' src='https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif' border='0' name='submit' alt='PayPal - The safer, easier way to pay online!'>"
+                            programsHtml += "<img alt='' border='0' src='https://www.paypalobjects.com/en_US/i/scr/pixel.gif' width='1' height='1'>"
+                            programsHtml += "</form>"
+                            programsHtml += "</td></tr>";
+                        }
+                        programsHtml += "</table>";
+                        $('#search-results').append(programsHtml);
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function AddToCart(id) {
+        $.ajax({
+            url: "@Url.Action("AddToCart", "Cart")",
+            data: { id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    alert("Added");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+</script>

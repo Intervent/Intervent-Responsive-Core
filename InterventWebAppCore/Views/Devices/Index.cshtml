@@ -1,0 +1,255 @@
+﻿@model InterventWebApp.DeviceModel
+@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<section class="main devices dashboard-content new-button">
+    <div class="grid-container">
+        @if (Model.isEmpty)
+        {
+            <div class="grid-x grid-margin-x no-device">
+                <div class="cell">
+                    <div class="callout">
+                        <div class="grid-x grid-margin-x">
+                            <div class="cell medium-6">
+                                @Html.Raw(string.Format(Translate.Message("L3978"), HttpContextAccessor.HttpContext.Session.GetString(SessionContext.ParticipantName)))
+                            </div>
+
+                            @*<div class="cell medium-6">
+                                <div class="grid-x grid-margin-x no-device-button">
+                                    <div class="cell medium-6">
+                                        <span></span>
+                                        @if (Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)) && !string.IsNullOrEmpty(@Model.DeviceURL))
+                                        {
+                                            <a href="@Model.DeviceURL" target="_blank" class="button">@Translate.Message("L3979")</a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>*@
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cell text-center no-device-message">
+                    <h2>@Translate.Message("L3980")</h2>
+                    <p>@Translate.Message("L3981")</p>
+                    <img src="~/Images/Device/undraw_empty.svg" alt="Connect your device" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="grid-x grid-margin-x" id="validState">
+                <div class="small-12 cell">
+                    <div class="device-main-menu">
+                        <div class="device-main-tabs main-tabs">
+                            <ul class="tabs" data-tabs id="device-tabs">
+                                <!--<li class="tabs-title is-active"><a href="#panel1" aria-selected="true" onclick="clearAll()">Overview</a></li>-->
+                                <li class="tabs-title"><a data-tabs-target="physical-activity-content" id="physical-activity">@Translate.Message("L271")</a></li>
+                                <li class="tabs-title"><a data-tabs-target="weight-content" id="weight">@Translate.Message("L3982")</a></li>
+                                <li class="tabs-title"><a data-tabs-target="blood-pressure-content" id="blood-pressure">@Translate.Message("L503")</a></li>
+                                <li class="tabs-title"><a data-tabs-target="glucose-content" id="glucose">@Translate.Message("L165")</a></li>
+                                <li class="tabs-title"><a data-tabs-target="nutrition-content" id="nutrition">@Translate.Message("L272")</a></li>
+                                <li class="tabs-title"><a data-tabs-target="sleep-content" id="sleep">@Translate.Message("L2832")</a></li>
+                            </ul>
+                        </div>
+                        @if (Model.HasActivePortal) {
+                            <a href="~/Wearable/Wearable" class="button">
+                                @{string connectText = ""; }
+                                @if (Model.connectedDevicesCount > 0)
+                                {
+                                    connectText = Model.connectedDevicesCount + " " + Translate.Message("L3983") + "";
+                                }
+                                else
+                                {
+                                    connectText = Translate.Message("L1890");
+                                }
+                                @connectText
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="cell device-box">
+                <div class="tabs-content" data-tabs-content="device-tabs">
+                    <!--Overview Tab Ends-->
+                    <div class="tabs-panel" id="physical-activity-content"></div>
+                    <div class="tabs-panel" id="weight-content"></div>
+                    <div class="tabs-panel" id="glucose-content"></div>
+                    <div class="tabs-panel" id="nutrition-content"></div>
+                    <div class="tabs-panel" id="sleep-content"></div>
+                    <div class="tabs-panel" id="blood-pressure-content"></div>
+                </div>
+            </div>
+                                }
+        <!--Device data ends-->
+    </div>
+</section>
+
+<!--dependency script for Amcharts graphs-->
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")"></script>
+
+<!--seperate script file for particular graphs-->
+<script src="@Url.Content("~/Scripts/pagraph.js")"></script>
+<script src="@Url.Content("~/Scripts/wtbmigraph.js")"></script>
+<script src="@Url.Content("~/Scripts/bpgraph.js")"></script>
+<script src="@Url.Content("~/Scripts/glucosegraph.js")"></script>
+<script src="@Url.Content("~/Scripts/nutritiongraph.js")"></script>
+<script src="@Url.Content("~/Scripts/sleepgraph.js")"></script>
+
+<div id="routine-chart" class="reveal large" data-reveal data-close-on-esc="false"></div>
+<script src="@Url.Content("~/Scripts/moment.min.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+
+<script>
+    $(document).ready(function () {
+        am4core.addLicense("CH39169069");
+        @if (Model.showGraphFor.HasValue) {
+            switch (Model.showGraphFor.Value)
+            {
+                case 1:
+                    @: $("#physical-activity").trigger("click");
+                    break;
+                case 2:
+                    @: $("#blood-pressure").trigger("click");
+                    break;
+                case 3:
+                    @: $("#glucose").trigger("click");
+                    break;
+                default:
+                    @: $("#physical-activity").trigger("click");
+                    break;
+            }
+        } else {
+            if (Model.weightCount > 0)
+            {
+                @: $("#weight").trigger("click");
+            }
+            else if (Model.glucCount > 0)
+            {
+                @: $("#glucose").trigger("click");
+            }
+            else if (Model.bpCount > 0)
+            {
+                @: $("#blood-pressure").trigger("click");
+            }
+            else if (Model.nutritionCount > 0)
+            {
+                @: $("#nutrition").trigger("click");
+            }
+            else if (Model.sleepCount > 0)
+            {
+                @: $("#sleep").trigger("click");
+            }
+            else
+            {
+                @: $("#physical-activity").trigger("click");
+            }
+        }
+        $(".tabs-title").on('click', function () {
+                var wt = $(window).width();
+                if (wt <= 1023) {
+                    var horizontal_width = $('.device-main-tabs').scrollLeft();
+                    var current_tab_width = $(this).width();
+                    var current_tab_left_offset = $(this).offset().left;
+                    var extra_left_off = $(window).width() - current_tab_width;
+                    var scoll_width = horizontal_width + current_tab_left_offset - extra_left_off / 2;
+                $('.device-main-tabs').animate({ scrollLeft: scoll_width }, 1000);
+                }
+            });
+            //getSummaries();
+        });
+
+    $("#physical-activity").on("click", function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("PhysicalActivity","Devices")',
+            success: function (data) {
+                clearAll();
+                $("#physical-activity-content").html(data);
+            },
+            complete: function () {
+                $(document).foundation();
+            }
+        });
+    });
+    $("#weight").on("click", function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Weight", "Devices")',
+            success: function (data) {
+                clearAll();
+                $("#weight-content").html(data);
+            },
+            complete: function () {
+                $(document).foundation();
+            }
+        });
+    });
+    $("#blood-pressure").on("click", function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("BloodPressure", "Devices")',
+            success: function (data) {
+                clearAll();
+                $("#blood-pressure-content").html(data);
+            },
+            complete: function () {
+                $(document).foundation();
+            }
+        });
+    });
+    $("#glucose").on("click", function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Glucose", "Devices")',
+            success: function (data) {
+                clearAll();
+                $("#glucose-content").html(data);
+            },
+            complete: function () {
+                $(document).foundation();
+            }
+        });
+    });
+    $("#nutrition").on("click", function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Nutrition", "Devices")',
+            success: function (data) {
+                clearAll();
+                $("#nutrition-content").html(data);
+            },
+            complete: function () {
+                $(document).foundation();
+            }
+        });
+    });
+    $("#sleep").on("click", function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Sleep", "Devices")',
+            success: function (data) {
+                clearAll();
+                $("#sleep-content").html(data);
+            },
+            complete: function () {
+                $(document).foundation();
+            }
+        });
+    });
+    function clearAll() {
+        $("#physical-activity-content").html("");
+        $("#weight-content").html("");
+        $("#nutrition-content").html("");
+        $("#glucose-content").html("");
+        $("#nutrition-content").html("");
+        $("#sleep-content").html("");
+    }
+</script>

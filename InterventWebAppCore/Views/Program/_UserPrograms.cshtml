@@ -1,0 +1,264 @@
+﻿@using InterventWebApp
+@model InterventWebApp.UserProgramModel
+
+<div class="dashboard-content programs cell">
+    <div class="grid-x grid-margin-x show-for-small-only">
+        <div class="small-12 cell">
+            <h2>Programs</h2>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x add-program">
+        @if (Model.IsEligibileToEnroll == true)
+        {
+            <div class="small-12 small-centered cell">
+                <button id="add-program-button" style="display:none;" data-open="add-program" class="button" data-modal-path="@Html.Raw(Url.Action("EnrollUserinProgram", "Program"))">
+                    <i class="fa fa-plus"></i>
+                    Add Program
+                </button>
+            </div>
+        }
+        <div data-alert class="alert-box alert radius hide" id="ProgramAlert">
+            User has an active program
+        </div>
+    </div>
+
+    <!--2015, current program-->
+    <div id="program-history">
+    </div>
+</div>
+@Html.Hidden("DeleteKitId")
+<!--Deactivate kit in the program-->
+<div id="delete-kit" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-x grid-margin-x">
+        <h2>Are you sure you want to remove <span id="delKitName"></span></h2>
+    </div>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="DeleteKit">Yes</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeDeleteKit">Cancel</button></div>
+    </div>
+</div>
+<div id="followup" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-x grid-margin-x">
+        <h2>Are you sure you want to assign Follow-Up?<span id="assignFollowUp"></span></h2>
+    </div>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="addfollowup">Yes</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closefollowup">Cancel</button></div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        GetUserProgramHistory();
+    });
+
+    $('#closeDeleteKit').on('click', function () {
+        $('#delete-kit').foundation('close');
+    });
+
+    $("#DeleteKit").on('click', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("DeleteKitinUserProgram", "Program")',
+            data: { id: $("#DeleteKitId").val() },
+            success: function (data) {
+                $('#delete-kit').foundation('close');
+                GetUserProgramHistory();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    })
+    $('#closefollowup').on('click', function () {
+        document.getElementById('chkassignfwup').checked = false;
+        $('#followup').foundation('close');
+    });
+
+    $("#addfollowup").on('click', function () {
+        var InactiveReasonId = $("#InactiveReasonId").val();
+        var PrograminPortalId = $("#PrograminPortalId").val();
+        var language = $("#LanguagePreference").val();
+        var CoachId = $("#CoachId").val();
+        $.ajax({
+            url: "@Url.Action("UpdateUserinProgram", "Program")",
+            type: 'POST',
+            dataType: "json",
+            data: { AssignedFollowUp: true, UpdateSubscriptionRenewal: false },
+            success: function (data) {
+                $('#followup').foundation('close');
+                //$(document).on('closed.zf.reveal', '[data-reveal]', function () {
+                    GetUserProgramHistory();
+               //});
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    function ReviewKit(KitsinUserProgramId, readOnly) {
+             $.ajax({
+            url: '@Url.Action("ReviewKit", "Kit")',
+                 data: { kitsInUserProgramId: KitsinUserProgramId, readOnly: readOnly },
+            cache: false,
+            type: "POST",
+            dataType: "html",
+                 success: function (data, textStatus, XMLHttpRequest) {
+                     $("#review-kit").html(data);
+                     $('#review-kit').foundation('open');
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+    }
+
+    function GetUserProgramHistory() {
+        $.ajax({
+            url: "@Url.Action("GetUserProgramHistory", "Program")",
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    $("#program-history").html("");
+                    var html = "";
+                    var IsEligibileToEnroll = '@Model.IsEligibileToEnroll';
+                    if (data.HasActiveProgram == true) {
+                        $("#add-program-button").hide();
+                    }
+                    else if (IsEligibileToEnroll == "True") {
+                        $("#add-program-button").show();
+                    }
+                    var hasActivateLink = false;
+                    for (var i = 0; i < data.UserinProgram.length; i++) {
+                        var currentRecord = data.UserinProgram[i];
+                        var active = currentRecord.IsActive;
+                        var disabledClass = "";
+                        if (active == false) {
+                            disabledClass = "disabled";
+                        }
+                        else {
+                            $("#add-program-button").hide();
+                        }
+                        html = html + "<div id='current-program' class='grid-x grid-margin-x collapse program-content'><div class='small-12 medium-12 cell'>" +
+                        "<div class='program-container coaching-program " + disabledClass + "'><div class='container-title'><div class='tiny'>";
+                        html = html + "<span> " + currentRecord.Name + "</span></div>";
+                        if (active != true) {
+                            if (!data.HasActiveProgram && currentRecord.Reactivate && !hasActivateLink) {
+                                html = html + "<div class='cell small-4 container-text'><input type='checkbox' id='reactivate-button' onclick='ActivateProgram(" + currentRecord.Id + ")' />  Reactivate Program</div>";
+                                hasActivateLink = true;
+                            }
+                            html = html + "<div class='disabled-indicator'>" + "<span data-tooltip title='Inactive Date: " + toLocalDateFormat(currentRecord.InactiveDate) + "; Inactive Reason: " + currentRecord.InactiveReason.Reason + "'>" + "<i class='fa fa-info-circle'></i>" + "</span>" + "</div>";
+                        }
+                        else {
+                            if ('@Model.hasActivePortal' == "True") {
+                                var updateUrl = '@Html.Raw(Url.Action("UpdateUserProgram", "Program"))';
+                                html = html + "<div class='update-program-container'><div class='small-12 small-centered cell'><button id='update-program-button' class='button small' data-open='add-program' data-modal-path=' " + updateUrl + "'>";
+                                html = html + "<i class='fa fa-plus'></i>Update Program</button></div></div>";
+                            }
+                        }
+                        html = html + "</div><div class='grid-x grid-margin-x'><div class='cell small-4 container-text'>Portal : " + currentRecord.Portal + "</div>";
+                        html = html + "<div class='cell small-4 container-text'>Start Date : " + currentRecord.StartDate + "</div>";
+                        if (currentRecord.Coach != null)
+                            html = html + "<div class='cell small-4 container-text'>Coach : " + currentRecord.Coach + "</div>";
+                        html = html + "</div>";
+                        if (currentRecord.PregnancyStatus != null)
+                            html = html + "<div class='grid-x grid-margin-x'><div class='cell small-4 container-text'>Enrolled Stage : " + currentRecord.PregnancyStatus + "</span></div></div>";
+                        if (active == true) {
+                            var url = '@Html.Raw(Url.Action("AddKittoUserProgram", "Program"))';
+                            if ('@Model.hasActivePortal' == "True")
+                                html = html + "<div class='container-text'><button id='add-kit-button' data-open='add-kit' class='button' data-modal-path='" + url + "?userinProgramId=" + currentRecord.Id + "'><i class='fa fa-plus'></i>Add New Kit</button>";
+                            html = html + "<div class='follow-up'>";
+                            if (currentRecord.AllowFollowUp && currentRecord.PortalFollowUps > 0) {
+                                html = html + "<div class='follow-up'>";
+                                if (currentRecord.Assignedfollowup > 0) {
+                                    var followupStatus;
+                                    if (currentRecord.Assignedfollowup != currentRecord.PortalFollowUps && currentRecord.FollowUpCount == currentRecord.Assignedfollowup) {
+                                        followupStatus = "Follow-Up (" + currentRecord.FollowupType + ") completed. Assign Follow-Up " + (currentRecord.NextFollowupType) + currentRecord.FollowupDueDate + "?";
+                                        html = html + "&nbsp;&nbsp;<input type='checkbox' id='chkassignfwup' /> <label for='chkassignfwup'> " + followupStatus + " </label></div>";
+                                    }
+                                    else if (currentRecord.FollowUpCount == currentRecord.PortalFollowUps) {
+                                        followupStatus = "Follow-Up (" + currentRecord.FollowupType + ") completed.";
+                                        html = html + "&nbsp;&nbsp;<input type='checkbox' id='chkassignfwup' disabled checked/> <label for='chkassignfwup'> " + followupStatus + " </label></div>";
+                                    }
+                                    else {
+                                        followupStatus = "Follow-Up (" + currentRecord.FollowupType + ") Assigned";
+                                        html = html + "&nbsp;&nbsp;<input type='checkbox' id='chkassignfwup' disabled checked/> <label for='chkassignfwup'> " + followupStatus + " </label></div>";
+                                    }
+                                }
+                                else {
+                                    html = html + "&nbsp;&nbsp;<input type='checkbox' id='chkassignfwup'/> <label for='chkassignfwup'>Assign (" + currentRecord.FollowupType + ") Followup" + currentRecord.FollowupDueDate + "</label></div>";
+                                }
+                            }
+                            html = html + "</div>";
+                        }
+                        if (currentRecord.KitsinUserPrograms != null) {
+                            var readOnly = !active ? "true" : "";
+                            html = html + "<div class='content'>";
+                            for (var j = 0; j < currentRecord.KitsinUserPrograms.length; j++) {
+                                if (currentRecord.KitsinUserPrograms[j].IsActive == true) {
+                                    var kitStartDateDate = new Date(parseInt(currentRecord.KitsinUserPrograms[j].StartDate.substr(6)));
+                                    html = html + "<div class='program-item'>";
+                                    if ('@Model.hasActivePortal' == 'True') {
+                                        html = html + "<div class='program-download' onclick=\"DeleteKitinUserProgram(" + currentRecord.KitsinUserPrograms[j].Id + ",'" + currentRecord.KitsinUserPrograms[j].Kit.Name + "');\"><i class='fa fa-times'></i></div>";
+                                    } else {
+                                        html = html + "<div class='program-download'></div>";
+                                    }
+                                    html = html + "<div class='program-title'>" + currentRecord.KitsinUserPrograms[j].Kit.Name + "</div>";
+                                    html = html + "<div class='program-comp'>" + currentRecord.KitsinUserPrograms[j].PercentCompleted + "%</div>";
+                                    html = html + "<div class='cell small-2 program-text'>" + (kitStartDateDate.getMonth() + 1) + "-" + kitStartDateDate.getDate() + "</div>";
+                                    html = html + "<div class='program-comp'>";
+                                    if (currentRecord.KitsinUserPrograms[j].ListenedAudio == true) {
+                                        html = html + "<span data-tooltip title='User clicked audio'> <i class='fa fa-volume-up'></i></span>";
+                                    }
+                                    html = html + "</div>";
+                                    html = html + "<div class='program-actions'><a><i class='fa fa-newspaper-o' onclick='ReviewKit(" + currentRecord.KitsinUserPrograms[j].Id + ", " + readOnly + ")'></i></a></div>";
+                                    html = html + "</div>";
+                                }
+                            }
+                            html = html + "</div>"
+                        }
+						html = html + "</div></div></div></div>";
+                    }
+                    $("#program-history").append(html);
+                    $(document).foundation();
+                }
+                $("[data-open]").on('click', function (e) {
+                    showmodal($(this), e)
+                });
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    //activate program
+    function ActivateProgram(UsersinProgramId) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("ActivateUserProgram", "Program")',
+            data: { UsersinProgramId: UsersinProgramId },
+            success: function (data) {
+                $("#add-program").html(data);
+                $('#add-program').foundation('open');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    //Switch program
+    $(document).on('click', '.pill', function () {
+        $('.program-list > .pill').removeClass('active');
+        $(this).addClass('active');
+    });
+
+    function DeleteKitinUserProgram(KitsinUsersinProgramId, kitName) {
+        $('#delete-kit').foundation('open');
+        $("#delKitName").text("the kit '" + kitName + "'");
+        $("#DeleteKitId").val(KitsinUsersinProgramId);
+    }
+    //follow up
+    $(document).on('change', '#chkassignfwup', function () {
+        var isFollow = document.getElementById('chkassignfwup').checked;
+        if (isFollow)
+            $('#followup').foundation('open');
+    });
+</script>

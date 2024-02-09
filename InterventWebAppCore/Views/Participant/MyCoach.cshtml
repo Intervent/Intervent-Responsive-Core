@@ -1,0 +1,953 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+@model InterventWebApp.MyCoachModel
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main my-coach main-white">
+    <div class="appt-footer">
+        <div class="grid-container">
+            <div class="grid-x">
+                <div class="cell appt-welcome">
+                    <div class="grid-x">
+                        <div class="cell">
+                            <h1>@Html.Raw(Translate.Message("L3653"))</h1>
+                        </div>
+
+                        <div class="cell medium-6 large-4 small-10">
+                            <h3>@Translate.Message("L3654")</h3>
+                            <p>
+                                @Translate.Message("L3655")
+                            </p>
+                            <img src="~/Images/appointment-booking/running-woman.svg" alt="" />
+                        </div>
+                    </div>
+                </div>
+                <!--Welcome section ends-->
+
+                <div class="cell appt-confirmation-message text-center hide">
+                    <h2 id="confirmMessage"></h2>
+                    <img src="~/Images/appointment-booking/appt-confirm-tick.svg" alt="" />
+                </div>
+                <!--Confirmation title section ends-->
+
+                <div class="cell appt-scheduler-container">
+                    <div class="appt-type-toggle">
+                        <div class="switch slider-switch">
+                            <input type="checkbox" name="schedule-type-selector" id="schedule-type-selector" class="switch-input" value="" />
+                            <label class="switch-paddle" for="schedule-type-selector">
+                                <span class="switch-inactive" aria-hidden="true">@Translate.Message("L3657")</span>
+                                <span class="switch-active" aria-hidden="true">@Translate.Message("L3658")</span>
+                            </label>
+                        </div>
+                    </div>
+                    <!--Scheduler toggle button ends-->
+
+                    <div class="appt-accordion">
+                        <ul class="accordion" data-accordion data-slide-speed="750" disabled>
+                            <li class="accordion-item is-active order-1 appt-cal-item" data-accordion-item>
+                                <!-- Accordion tab title -->
+                                <a href="#" class="accordion-title">
+                                    <div class="appt-title-left"><span id="selectDate">1</span> @Translate.Message("L3659")</div>
+
+                                    <div class="appt-title-right">
+                                        <div class="appt-booking-detail hide">
+                                            <span id="selectedDate"></span>
+                                            <span id="selectedTime"></span>
+                                        </div>
+                                        <div class="appt-timezone hide">
+                                            <img src="~/Images/appointment-booking/global-time-icon.svg" alt="" /> @Model.participantTimeZone
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <!-- Accordion tab content -->
+                                <div class="accordion-content" data-tab-content>
+                                    <div class="appt-timezone-container">
+                                        <div class="appt-timezone-select">
+                                            <label for="timezone"><img src="~/Images/appointment-booking/global-time-icon.svg" alt="" /></label>
+                                            @Html.DropDownList("timezone", Model.Timezones, Translate.Message("L3749"))
+                                            <div class="timezone-list-box">
+                                                <div class="timezone-list" id="timezone-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="appt-calendar grid-x grid-margin-y" id="calendar">
+                                        <div class="cell">
+                                            <button id="prevMonth" type="button" class="secondary small nav lnav"></button>
+                                            <span class="month-picker-label" id="selectedMonth"></span>
+                                            <button id="nextMonth" type="button" class="secondary small nav rnav"></button>
+                                        </div>
+
+                                        <div class="cell">
+                                            <div class="cal-legends">
+                                                <ul>
+                                                    <li><span></span> @Translate.Message("L3660")</li>
+                                                    <li><span></span> @Translate.Message("L3661")</li>
+                                                </ul>
+                                            </div>
+
+                                            <ul id="calendar-month" class="grid-x grid-padding-x small-up-7"></ul>
+
+                                            <p class="slot-selected" id="slots" hidden>@Translate.Message("L3662") <span id="dateSelected"></span></p>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="appt-time-slot" id="availabilities" hidden>
+                                        <div class="slot-left">
+                                            <h4>@Translate.Message("L3663")</h4>
+                                            <div class="no-apt">@Translate.Message("L3682")</div>
+                                            <div class="slot-timings" id="beforeNoonSlots">
+                                            </div>
+                                        </div>
+
+                                        <div class="slot-right">
+                                            <h4>@Translate.Message("L3664")</h4>
+                                            <div class="no-apt">@Translate.Message("L3682")</div>
+                                            <div class="slot-timings" id="afterNoonSlots">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="appt-no-coach" id="notimeslots" hidden>
+                                        <div class="callout red"><span id="avl-alert">@Translate.Message("L3665")</span></div>
+                                    </div>
+                                    <div class="appt-proceed-btn" id="datetime-proceed" hidden>
+                                        <p id="coachCount"></p>
+                                        <a class="button" id="acc-toggle-btn" disabled="disabled">@Translate.Message("L3666")</a>
+                                    </div>
+                                    <div class="appt-confirm-btn" id="confirm-appt-datetime" hidden>
+                                        <button class="button" id="appt-confirm-btn-datetime">@Translate.Message("L873")</button>
+                                    </div>
+                                </div>
+                            </li>
+                            <!-- ... -->
+
+                            <li class="accordion-item order-2 appt-coach-item" data-accordion-item>
+                                <!-- Accordion tab title -->
+                                <a href="#" class="accordion-title">
+                                    <div class="appt-title-left"><span id="selectCoach">2</span> @Translate.Message("L1011")</div>
+
+                                    <div class="appt-title-right"></div>
+                                </a>
+
+                                <!-- Accordion tab content -->
+                                <div class="accordion-content" data-tab-content>
+                                    <div class="grid-x grid-margin-x grid-margin-y appt-coach-filter">
+                                        <div class="cell large-3 medium-6">
+                                            <label>@Translate.Message("L963")</label>
+                                            <input type="text" name="coach-name" placeholder="@Translate.Message("L3750")" id="filterName" />
+                                        </div>
+                                        <div class="cell large-3 medium-6">
+                                            <label>@Translate.Message("L3667")</label>
+                                            @Html.DropDownList("Speciality", Model.Specializations, Translate.Message("L3751"))
+                                        </div>
+                                        <div class="cell large-3 medium-6">
+                                            <label>@Translate.Message("L3752")</label>
+                                            @Html.DropDownList("Language", Model.Languages, Translate.Message("L3753"))
+                                        </div>
+                                        <div class="cell large-3 medium-6">
+                                            <label>&nbsp;</label>
+                                            <button class="button" id="coachFilter">@Translate.Message("L3668")</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="appt-coach-slider" id="coachList" data-equalizer data-equalize-on="small"></div>
+                                    <div class="appt-no-coach hide" id="noCoaches">
+                                        <div class="callout red"><p>@Translate.Message("L3669")</p></div>
+                                    </div>
+
+                                    <div class="slick-controls hide">
+                                        <button type="button" class="slick-prev">@Translate.Message("L4472")</button>
+                                        <div class="slick-m-dots hide-for-small-only"></div>
+                                        <div class="slick-pagination show-for-small-only"></div>
+                                        <button type="button" class="slick-next">@Translate.Message("L4473")</button>
+                                    </div>
+
+                                    <div class="appt-confirm-btn" id="confirm-appt-coach" hidden>
+                                        <button class="button" id="appt-confirm-btn">@Translate.Message("L873")</button>
+                                    </div>
+                                    <div class="appt-proceed-btn" id="coach-proceed" hidden>
+                                        <a class="button" id="coach-selected" disabled>@Translate.Message("L3666")</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <!-- ... -->
+                        </ul>
+                    </div>
+                    <!--Scheduler accordion form ends-->
+
+                    <div class="appt-scheduled-detail hide">
+                        <h4>@Translate.Message("L3670")</h4>
+
+                        <div class="grid-x grid-margin-x align-center">
+
+                            <div class="cell medium-7 small-11">
+                                <div class="coach-card">
+                                    <div class="coach-card-head">
+                                        <div class="coach-profile-img"><img id="coachImage" alt="" /></div>
+                                        <div class="coach-profile-detail">
+                                            <p id="coachName"></p>
+                                            <p><a href="#" data-open="coach-bio">@Translate.Message("L3754")</a></p>
+                                        </div>
+                                    </div>
+                                    <div class="coach-card-body">
+                                        <div class="schedule-detail-left">
+                                            <div class="coach-lang">
+                                                <p><span>@Translate.Message("L3671")</span></p>
+                                                <p id="coachLanguages"></p>
+                                            </div>
+                                            <div class="coach-expertise">
+                                                <p><span>@Translate.Message("L3672")</span></p>
+                                                <div id="coachSpecialities"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="schedule-detail-right">
+                                            <div id="apptDate"></div>
+                                            <div id="apptTime"></div>
+                                            <div class="button-set">
+                                                <a href="@Url.Action("Stream", "Participant", new { ForceParticipant = true, byClick = true })" class="button small">@Translate.Message("L2995")</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @*<div class="modify-appt"><a href="#" id="appt-modify">Modify Appointment</a></div>*@
+                            </div>
+                        </div>
+                    </div>
+                    <!--Appointment confirmation details ends-->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="coach-bio" class="reveal large report-modal appt-bio-modal" data-reveal>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-4 medium-2">
+                <div class="coach-profile-img"><img id="profileImage" src="" alt="Profile Image" /></div>
+            </div>
+            <div class="cell small-8 medium-10">
+                <span id="bioText"></span>
+            </div>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div data-reveal class="reveal confirmation-conflict" id="confirmation-conflict">
+    <div class="text-center">
+        <img src="~/Images/appointment-booking/error_exclamation.svg" alt="Error Exclamation" />
+        <p id="schedule-appointment-alert"></p>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/slick.min.js")"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="@Url.Content("~/Scripts/jquery.jscrollpane.min.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    //Jquery for timezone selector dropdown
+    $("#timezone").selectmenu({
+        appendTo: "#timezone-list",
+        select: function (event, ui) {
+            $(".timezone-list-box").hide();
+            changeTimezone();
+        },
+        open: function (event, ui) {
+            $(".timezone-list-box").show();
+
+            var pane1 = $('.timezone-list');
+            pane1.jScrollPane({
+                showArrows: false,
+                resizeSensor: true
+            });
+            var api1 = pane1.data().jsp;
+        }
+    });
+
+    $(".appt-timezone-select").on('focusout', function (event) {
+        $(".timezone-list-box").hide();
+    });
+</script>
+
+<script>
+	//Calendar jQuery
+    var url = '@Model.BaseUrl';
+    $("#loader-wrapper").fadeOut();
+    var weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var adDay, adMonth, adYear, dDay, dMonth, dYear;
+    var timeZone = '@Model.participantTimeZone';
+    var element = document.getElementById("timezone");
+    element.value = timeZone;
+    if (timeZone != '') {
+        $('.ui-selectmenu-text').text(timeZone);
+    }
+    //var nextMonth = false;
+    function pickDate(scroll) {
+        adDay = new Date().getDate();
+        adMonth = new Date().getMonth();
+        adYear = new Date().getFullYear();
+        dDay = adDay;
+        @if (CommonUtility.IsIntegratedWithLMC(Model.integrationWith))
+        {
+            @: if (adMonth < new Date(adYear, adMonth, adDay + 7).getMonth()) {
+            @: dMonth = adMonth + 1; }
+            @: else { dMonth = adMonth;}
+        }
+        else
+        {
+            @: dMonth = adMonth;
+        }
+        dYear = adYear;
+        //displayScheduler();
+        return printCalendar(true, scroll);
+    }
+
+    function printCalendar(showError, scroll) {
+        printCalendars(showError, scroll);
+    }
+
+    function changeTimezone() {
+        selectedTime = null;
+        selectedDate = null;
+        $("#selectedDate").html("");
+		$("#selectedTime").html("");
+		$(".appt-booking-detail, .appt-timezone").addClass("hide");
+        $("#dateSelected").html("");
+        $(".slot-timings span").removeClass('is-active');
+        $("#availabilities").hide();
+        $("#coachCount").hide();
+        $("#slots").hide();
+        $("#datetime-proceed").hide();
+        $("#appt-confirm-btn-datetime").hide();
+        printCalendars(true);
+    }
+
+    function printCalendars(showError, scroll) {
+        $("#calendar-month").html("").removeClass("hide-loader");
+        if (scroll) {
+			windowScrollClass("appt-type-toggle", 50, 750);
+        }
+        var dWeekDayOfMonthStart = new Date(dYear, dMonth, 1).getDay();
+        var dLastDayOfMonth = new Date(dYear, dMonth + 1, 0).getDate();
+        var dLastDayOfPreviousMonth = new Date(dYear, dMonth + 1, 0).getDate() - dWeekDayOfMonthStart + 1;
+        $('.month-picker-label').html(months[dMonth] + ' ' + dYear);
+        for (var i = 0; i < weekDays.length; i++) {
+            $("#calendar-month").append("<li class='cell day-label'>" + weekDays[i] + "</li>");
+        }
+        var availCount = {};
+        var coach = selectedCoach;
+        var time = selectedTime;
+        var selectedTimezone = $("#timezone").val();
+        if (selectedTimezone == undefined)
+            selectedTimezone = timezone;
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../Scheduler/CheckFreeSlot",
+			//async: false,
+            data: { year: dYear, month: (dMonth + 1), coachId: coach, time: time, timeZone: selectedTimezone},
+            success: function (data) {
+                if (data != null) {
+                    if (data.Records != null) {
+                        $("#calendar").show();
+                        $("#notimeslots").hide();
+                        var eventList = data.Records;
+                        for (var i = 0; i < eventList.length; i++) {
+                            var parsedDate = new Date(eventList[i].DateString);
+                            var day = parsedDate.getDate();
+                            var month = parsedDate.getMonth() + 1;
+                            availCount[day + '-' + month] = eventList[i].NoOfRecords;
+                        }
+                    }
+                    else {
+                        if(showError)
+                            $("#notimeslots").show();
+                        else
+                            $("#notimeslots").hide();
+                    }
+                }
+                var day = 1;
+                var dayOfNextMonth = 1;
+                var html = "";
+                if (document.getElementById('calendar-month').getElementsByClassName("select-day").length == 0) {
+                    var totalDays = getWeeksInMonth(dMonth, dYear) * 7;
+                    for (var i = 0; i < totalDays; i++) {
+                        var newClass = "available";
+                        if (availCount[(day) + '-' + (dMonth + 1)] == undefined) {
+                            newClass = 'grayed-out';
+                        }
+                        if (i < dWeekDayOfMonthStart) {
+                            html = html + "<li class='cell grayed-out'><a><span class='date'></span></a></li>";
+                        }
+                        else if (day <= dLastDayOfMonth) {
+                            if (day == dDay && adMonth == dMonth && adYear == dYear) {
+                                if (newClass == "available") {
+                                    html = html + "<li id=" + day + "-" + (dMonth + 1) + "-" + dYear + " class='cell today " + newClass + "'><a id=" + day + "," + (dMonth + 1) + "," + dYear + " class='select-day' data-day='" + day + "' data-month='" + (dMonth + 1) + "' data-year='" + dYear + "' onclick='GetTimeSlots(" + day + "," + (dMonth + 1) + "," + dYear + ");' ><span class='date'>" + day++ + "</span></a></li>";
+                                }
+                                else {
+                                    html = html + "<li class='cell today " + newClass + "'><a class='select-day' data-day='" + day + "' data-month='" + dMonth + "' data-year='" + dYear + "'><span class='date'>" + day++ + "</span></a></li>";
+                                }
+                            }
+                            else {
+                                if (newClass == "available") {
+                                    html = html + "<li id=" + day + "-" + (dMonth + 1) + "-" + dYear + " class='cell " + newClass + "'><div class='time-slot'><a  href='#' class='select-time-slot' data-day='" + day + "' data-month='" + (dMonth + 1) + "' data-year='" + dYear + "' onclick='GetTimeSlots(" + day + "," + (dMonth + 1) + "," + dYear + ");'>@Translate.Message("L421")</a></div><a id='dat' class='select-day' data-day='" + day + "' data-month='" + (dMonth + 1) + "' data-year='" + dYear + "' onclick='GetTimeSlots(" + day + "," + (dMonth + 1) + "," + dYear + ");' id=" + day + "," + (dMonth + 1) + "," + dYear + "><span class='day-info'>" + weekDays[new Date(dYear, dMonth, day).getDay()] + ", " + months[dMonth] + "</span><span class='date'>" + day++ + "</span></span><div class='close-times hide'><span>@Translate.Message("L3410")</span></div><div class='add-calendar-show'><ul></ul></div></a></li>";
+                                }
+                                else {
+                                    html = html + "<li class='cell " + newClass + "'><div class='time-slot'><a href='#' class='select-time-slot' data-day='" + day + "' data-month='" + dMonth + "' data-year='" + dYear + "'>@Translate.Message("L421")</a></div><a id='dat' class='select-day' data-day='" + day + "' data-month='" + dMonth + "' data-year='" + dYear + "'><span class='day-info'>" + weekDays[new Date(dYear, dMonth, day).getDay()] + ", " + months[dMonth] + "</span><span class='date'>" + day++ + "</span></span><div class='close-times hide'><span>@Translate.Message("L3410")</span></div><div class='add-calendar-show'><ul></ul></div></a></li>";
+                                }
+                            }
+                        }
+                        else {
+                            html = html + "<li class='cell grayed-out'><a><span class='date'></a></li>";
+                        }
+                    }
+                }
+                $("#calendar-month").append(html).addClass("hide-loader");
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+
+
+            $("#calendar-month li.available").on('click', function (e) {
+                if (!$(this).hasClass('is-active')) {
+                    $("#calendar-month li.available").removeClass('is-active');
+                    $(this).addClass('is-active');
+                }
+        });
+        //$("#loader-wrapper").fadeOut();
+
+    }
+
+	$("#nextMonth").on('click', function () {
+        $("#availabilities, #slots" ).hide();
+        if (dMonth < 11) {
+            dMonth++;
+        } else {
+            dMonth = 0;
+            dYear++;
+        }
+        printCalendars(true, true);
+    });
+
+	$("#prevMonth").on('click', function () {
+        $("#availabilities, #slots").hide();
+        if (dMonth > 0) {
+            dMonth--;
+        } else {
+            dMonth = 11;
+            dYear--;
+        }
+        printCalendars(true, true);
+	});
+
+	//function to initialize slick
+    function startSlick() {
+        setTimeout(function () {
+            $('.appt-coach-slider').on('init reInit afterChange', function (event, slick, currentSlide, nextSlide) {
+				//currentSlide is undefined on init -- set it to 0 in this case (currentSlide is 0 based)
+                var i = (currentSlide ? currentSlide : 0) + 1;
+                $(".slick-pagination").text('@Translate.Message("L4474") '+ i + ' @Translate.Message("L4475") ' + slick.slideCount);
+			});
+
+			$('.appt-coach-slider').slick({
+				dots: true,
+				infinite: true,
+				slidesToShow: 3,
+				slidesToScroll: 3,
+				appendDots: $(".slick-m-dots"),
+				prevArrow: $(".slick-prev"),
+				nextArrow: $(".slick-next"),
+				responsive: [{
+					breakpoint: 640,
+					settings: {
+						slidesToShow: 1,
+						slidesToScroll: 1
+					}
+				}]
+			});
+		}, 100);
+	}
+
+$(document).ready(function() {
+    $('[data-accordion]').foundation();
+
+    $("input#schedule-type-selector").on('click', function () {
+		$(this).toggleClass("is-active", function(){
+		if ($(this).hasClass("is-active")) {
+                selectedCoach = null;
+                selectedTime = null;
+                selectedDate = null;
+                $("#selectedDate").html("");
+				$("#selectedTime").html("");
+				$(".appt-booking-detail, .appt-timezone").addClass("hide");
+                $("#dateSelected").html("");
+                $(".slot-timings span").removeClass('is-active');
+                $("#availabilities").hide();
+                $("#coachCount").hide();
+                $("#slots").hide();
+                $("#datetime-proceed").hide();
+				GetFilteredCoachList('', '', '', null, null, true);
+                $("#coach-proceed").show();
+                $("#coach-selected").attr("disabled", "disabled");
+			$("#confirm-appt-coach").hide();
+			windowScrollClass("appt-type-toggle", 50, 750);
+            }
+            else {
+                selectedCoach = null;
+                selectedTime = null;
+                selectedDate = null;
+                $("#coach-proceed").hide();
+            }
+		});
+
+		if($('ul.accordion').is('[disabled]')) {
+			$('ul.accordion').removeAttr('disabled');
+		}
+
+        $(".appt-accordion li.accordion-item").toggleClass("order-1 order-2").promise().done(function() {
+            $targetClose = $(".order-2 div.accordion-content");
+			$targetOpen = $(".order-1 div.accordion-content");
+
+			$('[data-accordion]').foundation('down', $targetOpen);
+            $('[data-accordion]').foundation('up', $targetClose);
+
+			setTimeout(function(){
+				$('ul.accordion').attr('disabled', 'disabled');
+			}, 100);
+		});
+	});
+
+    $('[data-accordion]').on('down.zf.accordion', function () {
+        if ($(".appt-cal-item").hasClass("is-active")) {
+            if (selectedCoach == null) {
+                $("#selectCoach").html("2");
+                $("#selectDate").html("1");
+            }
+            if (selectedDate == null || selectedCoach != null) {
+                if (selectedCoach == null) {
+                    $("#selectedDate").html("");
+					$("#selectedTime").html("");
+					$(".appt-booking-detail, .appt-timezone").addClass("hide");
+                    $("#dateSelected").html("");
+                    $(".slot-timings span").removeClass('is-active');
+                    $("#availabilities").hide();
+                    $("#coachCount").hide();
+                    $("#slots").hide();
+                    $("#coach-proceed").hide();
+                    $("#confirm-appt-datetime").hide();
+                    $("#datetime-proceed").hide();
+                    pickDate(true);
+                }
+                else if (selectedDate != null) {
+					$(".coach-card").removeClass('is-active');
+					$("#confirm-appt-coach").hide();
+					selectedCoach = null;
+				}
+			}
+		}
+        else if ($(".appt-coach-item").hasClass("is-active")) {
+            if (selectedDate == null) {
+                $("#selectCoach").html("1");
+                $("#selectDate").html("2");
+            }
+			//closing lower accordion body
+
+			$targetClose = $(".appt-coach-item div.accordion-content");
+			$element = $(".appt-coach-item");
+
+            if (selectedDate != null && selectedCoach != null) {
+                selectedTime = null;
+                selectedDate = null;
+                $("#selectedDate").html("");
+				$("#selectedTime").html("");
+				$(".appt-booking-detail, .appt-timezone").addClass("hide");
+                $("#dateSelected").html("");
+                $(".slot-timings span").removeClass('is-active');
+                $("#availabilities").hide();
+                $("#coachCount").hide();
+                $("#slots").hide();
+                $("#datetime-proceed").hide();
+				GetFilteredCoachList('', '', '', null, null, true);
+                $("#coach-proceed").show();
+                $("#coach-selected").attr("disabled", "disabled");
+                $("#confirm-appt-coach").hide();
+				$("#confirm-appt-datetime").hide();
+			}
+		}
+        else {
+			return
+		}
+    });
+
+    $("#acc-toggle-btn").on('click', function (e) {
+        e.preventDefault();
+        if(!$(this).is('[disabled=disabled]')) {
+		    $('ul.accordion').removeAttr('disabled');
+            $targetOpen = $(".appt-coach-item div.accordion-content");
+		    $targetClose = $(".appt-cal-item div.accordion-content");
+		    $('[data-accordion]').foundation('down', $targetOpen);
+            $('[data-accordion]').foundation('up', $targetClose);
+            var dates = selectedDate.split('/');
+            $("#selectedDate").html(months[dates[1] - 1] + " " + dates[2] + " " + dates[0]);
+			$("#selectedTime").html(selectedTime);
+			$(".appt-booking-detail, .appt-timezone").removeClass("hide");
+			GetFilteredCoachList('', '', '', selectedDate, selectedTime, false);
+			windowScrollClass("appt-cal-item", 45, 750);
+        }
+	});
+
+	$("#appt-confirm-btn, #appt-confirm-btn-datetime").on('click', function (e) {
+        e.preventDefault();
+        $("#appt-confirm-btn").attr("disabled", "disabled");
+        $("#appt-confirm-btn-datetime").attr("disabled", "disabled");
+        var formatDate = new Date(selectedDate);
+        selectedTime = selectedTime.replace('a.m.', 'AM');
+        selectedTime = selectedTime.replace('p.m.', 'PM');
+        var selectedTimeVal = selectedTime.split(':');
+        var appDate = new Date(formatDate.getFullYear() + '/' + (formatDate.getMonth() + 1) + '/' + formatDate.getDate() + ' ' + selectedTimeVal[0] + ':' + selectedTimeVal[1]);
+        var selectedTimezone = $("#timezone").val();
+        if (selectedTimezone == undefined)
+            selectedTimezone = timezone;
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../Scheduler/ScheduleAppointment",
+            data: { Date: appDate.toLocaleString(), coachId: selectedCoach, minutes: 30, comments: null, timeZone: selectedTimezone },
+            success: function (data) {
+                $("#appt-confirm-btn").removeAttr("disabled", "disabled");
+                $("#appt-confirm-btn-datetime").removeAttr("disabled", "disabled");
+                var html = "";
+                if (data != null) {
+                    if (data.ErrorMessage == null) {
+                        $("#confirmMessage").html(data.ConfirmationMessage);
+                        $(".appt-welcome, .appt-confirmation-message, .appt-type-toggle, .appt-accordion, .appt-scheduled-detail").toggleClass("hide");
+		                $('.my-coach').toggleClass('confirm-appt');
+
+						windowScrollClass("appt-confirmation-message");
+
+                    }
+                    else {
+                        $('#schedule-appointment-alert').html(data.ErrorMessage);
+                        $('#confirmation-conflict').foundation('open');
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+	});
+
+	$("#coachList .coach-card").on('click', function () {
+        if (!$(this).hasClass('is-active')) {
+            $("#coachList .coach-card").removeClass('is-active');
+            $(this).addClass('is-active');
+        }
+    });
+});
+
+    var selectedDate, selectedTime, selectedCoach;
+    var timezone = '@Model.participantTimeZone';
+
+    function SetActiveItems(e) {
+        if (!$(e).hasClass('is-active')) {
+			$(".slot-timings span").removeClass('is-active');
+            $(e).addClass('is-active');
+            selectedTime = e.id;
+            $("#apptTime").html("<span>@Translate.Message("L3780")</span>" + selectedTime + "<span class='appt-zone-details'><img src='~/Images/appointment-booking/global-time-icon.svg' alt='' />@Model.participantTimeZone</span>");
+            if (selectedCoach == null) {
+                $('#acc-toggle-btn').removeAttr('disabled');
+                $("#datetime-proceed").show();
+				windowScroll('datetime-proceed', true);
+            }
+            else {
+				$('#confirm-appt-datetime').show();
+				windowScroll('confirm-appt-datetime', true);
+            }
+        }
+    }
+
+    function GetFilteredCoachList(coachName, speciality, language, date, time, byCoach) {
+		if ($("#coachList").hasClass("slick-initialized")) {
+			$("#coachList").slick("unslick");
+			$("#coachList").html('');
+		}
+        var formatDate, selectedDateVal, selectedTimeVal;
+        if (date != null) {
+            formatDate = new Date(date);
+            selectedDateVal = (formatDate.getMonth() + 1) + '/' + formatDate.getDate() + '/' + formatDate.getFullYear();
+        }
+        if (time != null) {
+            selectedTimeVal = time;
+            selectedTimeVal = selectedTimeVal.replace('a.m.', 'AM');
+            selectedTimeVal = selectedTimeVal.replace('p.m.', 'PM');
+            selectedTimeVal = " " + selectedTimeVal.replace(/[^ -~]/g, '');
+        }
+        var selectedTimezone = $("#timezone").val();
+        if (selectedTimezone == undefined)
+            selectedTimezone = timezone;
+		$.ajax({
+			url: "@Url.Action("GetFilteredCoachList", "Participant")",
+			type: 'POST',
+			dataType: "json",
+			data: { coachName: coachName, speciality: speciality, language: language, date: selectedDateVal, time: selectedTimeVal, byCoach: byCoach, timezone: selectedTimezone },
+			success: function (data) {
+				var html = '';
+				$("#coachList").html("");
+                if (data.coaches != null && data.coaches.coachList.length > 0) {
+                    $("#coach-selected").removeClass("hide");
+					$("#noCoaches").addClass("hide");
+					$("#coachList").removeClass("no-coach");
+					for (var i = 0; i < data.coaches.coachList.length; i++) {
+						var coach = data.coaches.coachList[i];
+                        html += "<div class='coach-slide'>";
+                        html += "<div class='coach-card' data-equalizer-watch onclick='SelectCoach(" + coach.CoachId + ",\"" + coach.CoachName + "\",\"" + coach.Languages + "\",\"" + coach.Speciality + "\",\"" + coach.Picture + "\"," + byCoach + ",\"" + coach.Profile + "\");' id='" + coach.CoachId + "'>";
+						html += "<div class='coach-card-head'>";
+						html += "<div class='coach-profile-img'>";
+						if (coach.Picture != null) {
+							html += "<img src='" + url + "/ProfilePictures/" + coach.Picture + "' alt='' />";
+						}
+						html += "</div>";
+						html += "<div class='coach-profile-detail'>";
+                        html += "<p>" + coach.CoachName + "</p>";
+                        if (coach.Profile != null) {
+                            html += "<p><a href='#' data-open='coach-bio' onclick='UpdateBioText(\"" + coach.Profile + "\",\"" + coach.Picture + "\");'>@Translate.Message("L3754")</a></p>";
+                        }
+						html += "</div>";
+						html += "</div>";
+						html += "<div class='coach-card-body'>";
+						html += "<div class='coach-lang'>";
+						html += "<p><span>@Translate.Message("L3755")</span></p>";
+                        html += "<p>" + coach.Languages+"</p>";
+						html += "</div>";
+						html += "<div class='coach-expertise'>";
+                        html += "<p><span>@Translate.Message("L3756")</span></p>";
+                        html += "<p>" + coach.Speciality + "</p>";
+						html += "</div>";
+						html += "</div>";
+						html += "</div>";
+						html += "</div>";
+					}
+
+					$("#coachList").html(html);
+					Foundation.reInit('equalizer');
+					var slideCount = $('#coachList').children().length;
+				}
+                else {
+                    $("#coach-selected").addClass("hide");
+					$("#noCoaches").removeClass("hide");
+					$("#coachList").html('').addClass("no-coach");
+				}
+			},
+            complete: function (data) {
+				if ($('#coachList').children().length > 0) {
+					startSlick();
+					$(".slick-controls").removeClass("hide");
+				}
+				else {
+					$(".slick-controls").addClass("hide");
+				}
+			}
+        });
+    }
+
+    function SelectCoach(coachId, coachName, coachLang, coachSpeciality, coachPicture, byCoach, bio) {
+        if (!$("#" + coachId).hasClass('is-active')) {
+            $(".coach-card").removeClass('is-active');
+            $("#" + coachId).addClass('is-active');
+            selectedCoach = coachId;
+            $("#coachName").html(coachName);
+            $("#bioText").html(bio);
+            $("#profileImage").attr("src", url + "/ProfilePictures/" + coachPicture);
+            $("#coachSpecialities").html(coachSpeciality);
+            $("#coachLanguages").html(coachLang);
+            $("#coachImage").attr("src", url + "/ProfilePictures/" + coachPicture);
+            if (selectedDate == null) {
+				$("#coach-selected").removeAttr("disabled");
+				windowScroll('coach-proceed', true);
+            }
+            else if(!byCoach){
+				$("#confirm-appt-coach").show();
+				windowScroll('confirm-appt-coach', true);
+            }
+        }
+        else {
+            $("#" + coachId).removeClass('is-active');
+            $("#coach-selected").attr("disabled", "disabled")
+            $("#confirm-appt-coach").hide();
+            selectedCoach = null;
+        }
+	}
+
+    $("#coach-selected").on('click', function (e) {
+        e.preventDefault();
+		if(!$(this).is('[disabled=disabled]')) {
+			$('ul.accordion').removeAttr('disabled');
+			windowScrollClass("appt-type-toggle", 45, 750);
+            pickDate(false);
+			$targetClose = $(".appt-coach-item div.accordion-content");
+			$targetOpen = $(".appt-cal-item div.accordion-content");
+			$('[data-accordion]').foundation('down', $targetOpen);
+            $('[data-accordion]').foundation('up', $targetClose);
+		}
+    });
+
+    $("#coachFilter").on('click', function () {
+        $("#confirm-appt-coach").hide();
+		if (selectedDate == null) {
+			GetFilteredCoachList($("#filterName").val(), $("#Speciality").val(), $("#Language").val(), selectedDate, selectedTime, true);
+		}
+		else {
+			GetFilteredCoachList($("#filterName").val(), $("#Speciality").val(), $("#Language").val(), selectedDate, selectedTime, false);
+		}
+    });
+
+    function GetTimeSlots(day, month, year) {
+        $(".select-day").closest("li").removeClass('is-active');
+        $("#" + day + "-" + (dMonth + 1) + "-" + dYear + "").addClass('is-active');
+        $('#acc-toggle-btn').attr('disabled', 'disabled');
+        $("#datetime-proceed").hide();
+        $("#beforeNoonSlots").html("");
+        $("#afterNoonSlots").html("");
+        $("#dateSelected").text(months[month - 1] + " " + day + " " + year);
+        var date = year + "/" + month + "/" + day;
+        selectedDate = date;
+        $("#apptDate").html("<span>@Translate.Message("L3779")</span>" + months[month - 1] + " " + day + " " + year);
+        var beforeSlots = "";
+        var afterSlots = "";
+         var selectedTimezone = $("#timezone").val();
+        if (selectedTimezone == undefined)
+            selectedTimezone = timezone;
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../Scheduler/GetFreeSlotforDay",
+            //async: false,
+            data: { startDate: date, coachId: selectedCoach, time: null, timeZone: selectedTimezone, thirtyMinutes: true },
+            success: function (data) {
+                if (data != null) {
+                    var hasSlots = false;
+                    if (data.Records.length > 0) {
+                        var eventList = data.Records;
+                        var currentDate = new Date();
+                        for (var i = 0; i < eventList.length; i++) {
+                            var parsedDate = new Date(eventList[i]);
+                            var time = parsedDate.toLocaleTimeString(navigator.language, { hour12: true, hour: '2-digit', minute: '2-digit' });
+                            if (currentDate < parsedDate) {
+                                hasSlots = true;
+                                if (time.indexOf("AM") > -1) {
+                                    var html = "";
+                                    html += "<span id='" + time + "' onclick='SetActiveItems(this);'>" + time + "</span>";
+                                    beforeSlots += html;
+                                }
+                                else {
+                                    var html = "";
+                                    html += "<span id='" + time + "' onclick='SetActiveItems(this);'>" + time + "</span>";
+                                    afterSlots += html;
+                                }
+                            }
+                        }
+                        if (selectedCoach == null) {
+                            $("#datetime-proceed").show();
+							$("#appt-confirm-btn-datetime").hide();
+                        }
+                        else {
+                            $("#appt-confirm-btn-datetime").show();
+							$("#datetime-proceed").hide();
+                        }
+                    }
+                    if (!hasSlots) {
+                        $("#beforeNoonSlots").html("");
+                        $("#afterNoonSlots").html("");
+                        $("#datetime-proceed").hide();
+                        $("#notimeslots").show();
+                        $("#availabilities").hide();
+                        $("#slots").hide();
+                        $("#coachCount").hide();
+                    }
+                    else {
+                        $("#confirm-appt-datetime").hide();
+                        $("#beforeNoonSlots").html(beforeSlots);
+                        $("#afterNoonSlots").html(afterSlots);
+                        $("#notimeslots").hide();
+                        $("#availabilities").show();
+                        $("#slots").show();
+                        windowScroll('availabilities');
+                        $(".slot-left .no-apt").hide();
+                        $(".slot-right .no-apt").hide();
+                        if (beforeSlots == "") {
+                            $(".slot-left .no-apt").show();
+                        }
+                        if (afterSlots == "") {
+                            $(".slot-right .no-apt").show();
+                        }
+                    }
+                }
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+	}
+
+	function windowScroll(element, isNot) {
+		var $element = $("#"+element);
+		var windowCenter = $(window).height() / 2;
+		if ($(window).width() > 540 || isNot) {
+			var scrollPos = $element.offset().top - windowCenter
+		}
+		else {
+			var scrollPos = $element.offset().top
+		}
+		$('html, body').animate({
+			scrollTop: scrollPos
+		}, 500);
+	}
+
+	function windowScrollClass(element, offset, speed) {
+		var $element = $("."+element);
+		var speed = speed ? speed : 500;
+		var offset = offset ? offset : 70;
+		var scrollPos = $element.offset().top
+
+		$("html, body").animate({
+			scrollTop: scrollPos - offset
+		}, speed);
+	}
+
+    function UpdateBioText(text, picture) {
+        $('#bioText').html(text);
+        $("#profileImage").attr("src", url + "/ProfilePictures/" + picture);
+    }
+
+    function getWeeksInMonth(month, year) {
+        var weeks = 0,
+            firstDate = new Date(year, month, 1),
+            lastDate = new Date(year, month + 1, 0),
+            numDays = lastDate.getDate();
+
+        var start = 1;
+        var end = 7 - firstDate.getDay();
+        while (start <= numDays) {
+            weeks++;
+            start = end + 1;
+            end = end + 7;
+            if (end > numDays)
+                end = numDays;
+        }
+        return weeks;
+    }
+</script>

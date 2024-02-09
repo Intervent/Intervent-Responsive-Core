@@ -1,0 +1,1069 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+@model InterventWebApp.UserinProgramModel
+@using Intervent.Web.DTO
+@{
+	ViewBag.Title = "Course";
+	Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main courses main-program-page">
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x" data-intro="fixed position">
+			<div class="left-content cell medium-8 device-section-loader">
+                <div class="prog-tab">
+                    <div class="content-box health-program">
+                        <div class="top-content">
+                            <div class="media"><img src="~/Images/program/health-program.svg" alt="" /></div>
+                            <div class="content">
+                                @if (Model.userinProgram != null && Model.userinProgram.ProgramsinPortal.program.ProgramType == 2)
+                                {
+                                    <p>@Html.Raw(Translate.Message("L3897"))</p>
+                                }
+                                else if (Model.userinProgram != null && Model.userinProgram.ProgramsinPortal.program.ProgramType == 1)
+                                {
+                                    var upgradeText = "";
+                                    if (Model.IsCoachingProgramAvailable && Model.showSelfScheduling)
+                                    {
+                                        upgradeText = "<span data-open='upgrade-pointers'>" + Translate.Message("L3896") + "</span>";
+                                    }
+                                    <p>@Translate.Message("L3898") <b>@Model.userinProgram.ProgramsinPortal.program.Name @Html.Raw(@upgradeText)</b></p>
+                                }
+                                <ul class="links">
+                                    <li><a href="#" id="about" data-open="about-popup">@Translate.Message("L3899")</a></li>
+                                    @if (Model.pastPrograms.Count() > 0)
+                                    {
+                                        <li><a href="#" id="prev-prog">@Translate.Message("L3693")</a></li>
+                                    }
+                                </ul>
+                            </div>
+                            <div id="about-popup" class="reveal large about-popup" data-reveal data-close-on-click="true" data-close-on-esc="false">
+                                <button class="close-button" data-close aria-label="Close modal" type="button">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+
+                                <div class="pointers-header">
+                                    <h2>@Translate.Message("L3597")</h2>
+                                    @if (Model.userinProgram != null && Model.userinProgram.ProgramsinPortal.program.ProgramType == 2)
+                                    {
+                                        <p>@Translate.Message("L3900")</p>
+                                        <p>@Translate.Message("L3901")</p>
+                                    }
+                                    else
+                                    {
+                                        <p>
+                                            @Translate.Message("L3902")
+                                        </p>
+                                        <p>
+                                            @Translate.Message("L3903")
+                                        </p>
+                                    }
+                                    @if (CommonUtility.GetAge(Convert.ToDateTime(Model.dob)) < 18)
+                                    {
+                                        <p>
+                                            @Translate.Message("L3688")
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.userinProgram != null && Model.userinProgram.ProgramsinPortal.program.ProgramType == 2 && !Model.userinProgram.KitsinUserPrograms.Where(x => x.PercentCompleted == 100).Any())
+                        {
+                            <div class="bottom-contnet">
+                                <div class="content">
+                                    <div class="content-text">
+                                        <p>@Html.Raw(Translate.Message("L3904"))</p>
+                                    </div>
+                                </div>
+                                <div class="button-area">
+                                    <span data-tooltip tabindex="2" title="We recommend you take a tour before starting" data-template-classes="prog-tooltip tour-tooltip" data-position="bottom" data-alignment="left">
+                                        <button class="button hollow" onclick="startIntro();">@Translate.Message("L3905")</button>
+                                    </span>
+                                    @*<button class="button next-btn">Next</button>*@
+                                </div>
+                            </div>
+                        }
+                        @if (Model.hasActivePortal && Model.userinProgram != null && Model.assignedFollowUp.HasValue && Model.assignedFollowUp > 0 && Model.FollowupCompletedDate == null)
+                        {
+                            <div class="bottom-contnet">
+                                <div class="content">
+                                    <div class="content-text">
+                                        <p><span>@Translate.Message("L3906")</span>@Translate.Message("L2663") </p>
+                                    </div>
+                                </div>
+                                <div class="button-area"><button class="button" onclick="location.href='@Url.Action("FollowupDashboard", "Followup")'">@Translate.Message("L2450")</button></div>
+                            </div>
+                        }
+                        else if (Model.FollowupCompletedDate != null)
+                        {
+                            <div class="bottom-contnet">
+                                <div class="content">
+                                    <div class="content-icon"><img src="~/Images/program/great-going-icon.png" alt="" /></div>
+                                    <div class="content-text">
+                                        <p>@Html.Raw(Translate.Message("L3907")) </p>
+                                        @*<p><a href="#">Dismiss</a></p>*@
+                                    </div>
+                                </div>
+                                <div class="button-area"><button class="button" onclick="location.href='@Url.Action("FollowupReportDashboard", "Reports")'">@Translate.Message("L3908")</button></div>
+                            </div>
+                        }
+                        @if (Model.hasActivePortal && Model.FollowupCompletedDate != null && !Model.IsSurveyCompleted)
+                        {
+                            <div class="bottom-contnet">
+                                <div class="content">
+                                    <div class="content-icon"><img src="~/Images/program/feedback-icon.png" alt="" /></div>
+                                    <div class="content-text">
+                                        <p>@Html.Raw(Translate.Message("L3909")) @*<span data-tooltip class="top" tabindex="2" title="It's been 12 weeks since you started this program. Please complete this Follow up assessment to review your progress and stay on the right track." data-template-classes="prog-tooltip"><img src="~/Images/program/information-icon.png" alt="i" /></span>*@</p>
+                                        @*<p>Complete now to earn <strong><img src="~/Images/program/icon-circle.svg" alt="" /> 500 Points</strong></p>*@
+                                    </div>
+                                </div>
+                                <div class="button-area"><button href="#" data-open="satisfaction-survey" data-modal-path='../../Participant/SatisfactionSurvey' class="button hollow">@Translate.Message("L3698")</button></div>
+                            </div>
+
+                        }
+
+                    </div>
+
+                    <div name="View-MyKit-Page" id="View-MyKit-Page"></div>
+
+                    @if (Model.hasActivePortal&& Model.dailyVitals == null || Model.hasPendingVitals)
+                    {
+                        <input type="hidden" id="VitalsId" value="0" />
+                        <div class="progress-question-container">
+                            <div class="title-content">
+                                <h3>@Translate.Message("L3910") </h3>
+                                @if (Model.IsVitalsCompletionIncentive == true)
+                                {
+                                    <span>@Translate.Message("L3911") <img src="~/Images/program/icon-circle.svg" alt=""> <strong>@Model.VitalsCompletionPoints @Translate.Message("L1716")</strong></span>
+                                }
+                            </div>
+
+
+                            <div class="question-content" id="step1">
+                                <div class="content-box">
+                                    <div class="page-number-info"><span id="pageNumber">1</span>/10</div>
+                                    <div class="question-slide" id="weightQuestion">
+                                        <div class="ques-support-content">@Translate.Message("L2831")</div>
+                                        <div class="main-ques-title">@Html.Raw(Translate.Message("L3369")) <span>@Html.Raw(Translate.Message("L4428"))</span></div>
+                                        <div class="ques-input-field" id="weightInput">
+                                            <div class="input-group">
+                                                <input type="text" name="name" id="Weight" placeholder="@Translate.Message("L3937")" onchange="weightChange();" onkeypress="ValidateDecimal(this, event);" class="text-field" autocomplete="off" />
+                                                <span class="input-group-label">@Translate.Message(@Model.Measurements[BioLookup.Weight].MeasurementUnit)</span>
+                                            </div>
+                                            <small data-abide-error id="WeightError" class="form-error">@Translate.Message("L2021") @Model.Measurements[BioLookup.Weight].Min-@Model.Measurements[BioLookup.Weight].Max.</small>
+
+                                        </div>
+                                        <div class="action-content">
+
+                                            <button class="button next-btn vitals-ques" value="1">@Translate.Message("L871")</button>
+                                            <div class="skip-ques" id="1">@Translate.Message("L3912") <i class="fa fa-angle-right"></i></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="question-slide hide" id="exerciseQuestion">
+                                        <div class="ques-support-content">@Translate.Message("L2831") </div>
+                                        <div class="main-ques-title">@Translate.Message("L2820")</div>
+                                        <div class="action-content">
+                                            <div class="button-group">
+                                                <button class="button hollow next-btn vitals-ques Exercise-No" value="2">@Translate.Message("L3")</button>
+                                                <button class="button hollow next-btn vitals-ques Exercise-Yes" value="1">@Translate.Message("L2")</button>
+                                            </div>
+                                            <div class="skip-ques">@Translate.Message("L3912") <i class="fa fa-angle-right"></i></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="question-slide hide" id="eatingQuestion">
+                                        <div class="ques-support-content">@Translate.Message("L2831") </div>
+                                        <div class="main-ques-title">@Translate.Message("L2821")</div>
+
+                                        <div class="action-content">
+                                            <div class="button-group">
+                                                <button class="button hollow next-btn vitals-ques Healthy-Food-No" value="2">@Translate.Message("L3")</button>
+                                                <button class="button hollow next-btn vitals-ques Healthy-Food-Yes" value="1">@Translate.Message("L2")</button>
+                                            </div>
+                                            <div class="skip-ques">@Translate.Message("L3912") <i class="fa fa-angle-right"></i></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="question-slide hide" id="hydrationQuestion">
+                                        <div class="ques-support-content">@Translate.Message("L2831") </div>
+                                        <div class="main-ques-title">@Translate.Message("L2822")</div>
+
+                                        <div class="action-content">
+                                            <div class="button-group">
+                                                <button class="button hollow next-btn vitals-ques Water-No" value="2">@Translate.Message("L3")</button>
+                                                <button class="button hollow next-btn vitals-ques Water-Yes" value="1">@Translate.Message("L2")</button>
+                                            </div>
+                                            <div class="skip-ques">@Translate.Message("L3912") <i class="fa fa-angle-right"></i></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="question-slide hide" id="alcoholQuestion">
+                                        <div class="ques-support-content">@Translate.Message("L2831") </div>
+                                        <div class="main-ques-title">
+                                            @if (Convert.ToInt32(Model.gender) == 1)
+                                            {
+                                                @String.Format(Translate.Message("L2823"), 2)
+                                            }
+                                            else
+                                            {
+                                                @String.Format(Translate.Message("L2823"), 1)
+                                            }
+                                        </div>
+
+                                        <div class="action-content">
+                                            <div class="button-group">
+                                                <button class="button hollow next-btn vitals-ques Alcohol-No" value="2">@Translate.Message("L3")</button>
+                                                <button class="button hollow next-btn vitals-ques Alcohol-Yes" value="1">@Translate.Message("L2")</button>
+                                            </div>
+                                            <div class="skip-ques">@Translate.Message("L3912") <i class="fa fa-angle-right"></i></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="question-slide hide" id="tobaccoQuestion">
+                                        <div class="ques-support-content">@Translate.Message("L2831") </div>
+                                        <div class="main-ques-title">@Translate.Message("L2824")</div>
+
+                                        <div class="action-content">
+                                            <div class="button-group">
+                                                <button class="button hollow next-btn vitals-ques Tobacco-No" value="2">@Translate.Message("L3")</button>
+                                                <button class="button hollow next-btn vitals-ques Tobacco-Yes" value="1">@Translate.Message("L2")</button>
+                                            </div>
+                                            <div class="skip-ques">@Translate.Message("L3912") <i class="fa fa-angle-right"></i></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="question-slide hide" id="medicationQuestion">
+                                        <div class="ques-support-content">@Translate.Message("L2831") </div>
+                                        <div class="main-ques-title">@Translate.Message("L2825")</div>
+
+                                        <div class="action-content">
+                                            <div class="button-group">
+                                                <button class="button hollow next-btn vitals-ques Medication-No" value="2">@Translate.Message("L3")</button>
+                                                <button class="button hollow next-btn vitals-ques Medication-Yes" value="1">@Translate.Message("L2")</button>
+                                                <button class="button hollow next-btn vitals-ques Medication-NA" value="3">@Translate.Message("L100")</button>
+                                            </div>
+                                            <div class="skip-ques">@Translate.Message("L3912") <i class="fa fa-angle-right"></i></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="question-slide hide" id="sleepQuestion">
+                                        <div class="ques-support-content">@Translate.Message("L2831") </div>
+                                        <div class="main-ques-title">@Translate.Message("L2827")</div>
+
+                                        <div class="action-content">
+                                            <div class="button-group">
+                                                <button class="button hollow next-btn vitals-ques Sleep-No" value="2">@Translate.Message("L3")</button>
+                                                <button class="button hollow next-btn vitals-ques Sleep-Yes" value="1">@Translate.Message("L2")</button>
+                                            </div>
+                                            <div class="skip-ques">@Translate.Message("L3912") <i class="fa fa-angle-right"></i></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="question-slide hide" id="stressQuestion">
+                                        <div class="ques-support-content">@Translate.Message("L2831") </div>
+                                        <div class="main-ques-title">@Translate.Message("L2828")</div>
+
+                                        <div class="action-content">
+                                            <div class="button-group">
+                                                <button class="button hollow next-btn vitals-ques Stress-No" value="2">@Translate.Message("L3")</button>
+                                                <button class="button hollow next-btn vitals-ques Stress-Yes" value="1">@Translate.Message("L2")</button>
+                                            </div>
+                                            <div class="skip-ques">@Translate.Message("L3912") <i class="fa fa-angle-right"></i></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="question-slide hide" id="happyQuestion">
+                                        <div class="ques-support-content">@Translate.Message("L2831") </div>
+                                        <div class="main-ques-title">@Translate.Message("L2829")</div>
+
+                                        <div class="action-content">
+                                            <div class="button-group">
+                                                <button class="button hollow next-btn vitals-ques Happy-No" value="2">@Translate.Message("L3")</button>
+                                                <button class="button hollow next-btn vitals-ques Happy-Yes" value="1">@Translate.Message("L2")</button>
+                                            </div>
+                                            @if (Model.IsVitalsCompletionIncentive == false)
+                                            {
+                                                <div class="skip-ques">@Translate.Message("L3912") <i class="fa fa-angle-right"></i></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="action-content">
+                                                    <div id="doneBtn" class="skip-ques done-btn">@Translate.Message("L2995")</div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    @if (Model.IsVitalsCompletionIncentive == true)
+                                    {
+                                        <div class="completion-slide hide">
+                                            <div class="completion-image"><img src="~/Images/program/ques-complete-icon.png" alt="" /></div>
+                                            <div class="completion-msg">
+                                                <div class="main-ques-title">@Translate.Message("L3913")</div>
+                                                <div class="ques-support-content">
+                                                    <p>@Model.VitalsCompletionPoints @Translate.Message("L3914") </p>
+                                                    <p><img src="~/Images/program/icon-circle.svg" alt="" /> <strong>@Model.VitalsCompletionPoints @Translate.Message("L1716")</strong></p>
+                                                </div>
+                                                <div class="action-content">
+                                                    <div class="skip-ques done-btn">@Translate.Message("L2995")</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="health-tab-container">
+                        <div class="tab-scroll-wrapper">
+                            <ul class="tabs health-tabs" data-tabs id="health-tabs" data-step="1" data-intro="Get it, use it.">
+                                @if (Model.hasActivePortal && Model.userinProgram != null && Model.userinProgram.KitsinUserPrograms.Count > 0)
+                                {
+                                    <li class="tabs-title is-active"><a name="view-kits" href="#kits" aria-selected="true" id="kitsProgram">@Translate.Message("L1676")</a></li>
+                                }
+                                @if (Model.hraId.HasValue && !string.IsNullOrEmpty(Model.hraCompleteDate))
+                                {
+                                    <li class="tabs-title"><a id="mealPlan" href="#meal-plan">@Translate.Message("L1696")</a></li>
+                                    <li class="tabs-title"><a id="exercisePlan" href="#exercise-plan">@Translate.Message("L3915")</a></li>
+                                }
+                                @* <li class="tabs-title"><a href="#bookmarks">Bookmarks</a></li>*@
+                                @if (Model.ShowFormsTab == true)
+                                {
+                                    <li class="tabs-title"><a href="#forms" id="userFrom">@Translate.Message("L3702")</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="content-box tabs-content" data-tabs-content="health-tabs">
+                            <div class="tabs-panel is-active" id="kits">
+                            </div>
+                            <!-- Kits tabs ends -->
+                            @if (Model.hraId.HasValue && !string.IsNullOrEmpty(Model.hraCompleteDate))
+                            {
+                                <div class="tabs-panel" id="meal-plan"></div>
+                                <!-- Meal plan tab ends -->
+                                <div class="tabs-panel" id="exercise-plan">
+                                </div>
+                                <!-- Excercise plan tab ends -->
+                            }
+                            @*<div class="tabs-panel" id="bookmarks"></div>*@
+                            <!-- Bookmarks tabs ends -->
+                            <div class="tabs-panel" id="forms">
+                            </div>
+                            <!-- Forms tabs ends -->
+                        </div>
+                    </div>
+                </div>
+
+				<div class="prog-tab hide">
+					<div><a href="#" class="back-btn">@Translate.Message("L3169")</a></div>
+					@if (Model.pastPrograms.Count > 0)
+					{
+						<div class="prev-prog-container">
+							<h2>@Translate.Message("L3694")</h2>
+
+							<div class="prog-acc-container">
+								<ul class="accordion" data-accordion data-allow-all-closed="true">
+									@foreach (var program in Model.pastPrograms)
+									{
+										var portalIncentive = PortalUtility.GetPortalIncentives(program.ProgramsinPortal.PortalId).portalIncentives.Where(x => x.IncentiveTypeId == (int)IncentiveTypes.Kit_Completion).FirstOrDefault();
+
+										<li class="accordion-item is-active" data-accordion-item>
+											<!-- Accordion tab title -->
+											<a href="#" class="accordion-title">
+												<p>@Translate.Message("L3717") @Convert.ToDateTime(program.ProgramsinPortal.portal.StartDate).Year - @Convert.ToDateTime(program.ProgramsinPortal.portal.EndDate).Year </p>
+												<p><span>@Translate.Message("L3916") <strong>@program.KitsinUserPrograms.Where(x => x.IsActive == true).GroupBy(x => x.Kit).Count() @Translate.Message("L1676") </strong></span></p>
+											</a>
+
+											<!-- Accordion tab content: it would start in the open state due to using the `is-active` state class. -->
+											<div class="accordion-content" data-tab-content>
+												<div class="kit-list">
+													@{var kitGroups = program.KitsinUserPrograms.Where(x => x.IsActive == true).GroupBy(x => x.Kit.KitTopic.Name).ToList();}
+													@foreach (var group in kitGroups)
+													{
+														for (int i = 0; i < group.ToList().Count(); i++)
+														{
+															var kit = group.ToList()[i];
+															var days = kit.CompleteDate.HasValue ? (kit.CompleteDate.Value - kit.StartDate).Days : (DateTime.UtcNow - kit.StartDate).Days;
+
+															<div class="kit-list-item">
+																<div class="kit-image">
+																	<img src="~/Images/program/kit-icon-dummy.png" alt="">
+																</div>
+																<div class="kit-desc">
+																	<p>@Html.Raw(Translate.Message(group.Key)) <a href="#" onclick="ReviewKit(@kit.Id)"><strong>@Html.Raw(kit.Kit.Name)</strong></a></p>
+																	@if (kit.CompleteDate.HasValue)
+																	{
+																		<span class="kit-complete-date">@Translate.Message("L4077") @Convert.ToDateTime(kit.CompleteDate).ToString("MMM")  @Convert.ToDateTime(kit.CompleteDate).ToString("dd")</span>
+																	}
+																	@if (portalIncentive != null)
+																	{
+																		<span class="kit-points-earned"><img src="~/Images/challenge/icon10.png" alt=""> <strong>@portalIncentive.Points @Translate.Message("L1716")</strong> @Translate.Message("L3917")</span>
+																	}
+																</div>
+																<div class="kit-status">
+																	<img src="~/Images/program/kit-complete-icon.png" alt="">
+																</div>
+															</div>
+														}
+													}
+												</div>
+											</div>
+										</li>
+									}
+								</ul>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+			<div class="right-content cell medium-4">
+				@if (Model.hasHRA.HasValue && (Model.hasHRA == (int)HRAStatus.Optional) && string.IsNullOrEmpty(Model.hraCompleteDate))
+				{
+					<div class="content-box upgrade-section">
+						<h5>
+							@Translate.Message("L4427")
+						</h5>
+						<div class="upgrade-content">
+							<div class="coach-img">
+								<img src="~/Images/program/upgrade-coach-img.png" alt="" />
+							</div>
+							<div class="upgrade-text">
+								<p> </p>
+								<a href="~/HRA/HRADashboard">
+									@Translate.Message("L4426")
+								</a>
+							</div>
+						</div>
+					</div>
+				}
+
+				@if (Model.userinProgram != null && Model.userinProgram.ProgramsinPortal.program.ProgramType == 1 && Model.IsCoachingProgramAvailable && Model.showSelfScheduling)
+				{
+					<div class="content-box upgrade-section">
+						<h5>@Translate.Message("L3918") </h5>
+						<div class="upgrade-content">
+							<div class="coach-img">
+								<img src="~/Images/program/upgrade-coach-img.png" alt="" />
+							</div>
+							<div class="upgrade-text">
+								<p>@Translate.Message("L3919") </p>
+								<a href="#" data-open="upgrade-pointers">@Translate.Message("L3920")</a>
+							</div>
+						</div>
+					</div>
+				}
+				@if (Model.IsPortalIncentivePresent)
+				{
+					<div class="content-box points-section" id="step2">
+						<h5 class="heading">@Translate.Message("L3921")</h5>
+						<div class="points-content">
+							<div>
+								<div class="media">
+									<img src="~/Images/program/reward-icon.svg" alt="" />
+								</div>
+								<div class="heading">
+									<h4>@Model.incentivePoints @Translate.Message("L1716")</h4>
+								</div>
+							</div>
+							<div class="points"><a href="~/Challenge/Activities">@Translate.Message("L3922")</a></div>
+						</div>
+					</div>
+				}
+
+				@if (Model.kitsinUserProgramGoals.Count > 0)
+				{
+					<div class="content-box goal-section" id="step3">
+						<div class="heading-content">
+							<h5 class="heading">@Translate.Message("L3923")</h5>
+							<div class="paging-info"></div>
+						</div>
+						<div class="goal-slider">
+							@foreach (var kitGoals in Model.kitsinUserProgramGoals)
+							{
+								<div class="goal-thumb">
+									<p class="heading">@kitGoals.Goals</p>
+									@if (Model.IsKitGoalCompletionIncentive && !kitGoals.GoalsAchieved)
+									{
+										<p class="other" id="goal-Incentive-@kitGoals.Id">Earn <img src="~/Images/program/icon-circle.svg" alt="" /> <b>@Model.KitGoalCompletionPoints </b>@Translate.Message("L1716")</p>
+									}
+									<div class="goal-bottom-contnet">
+                                        <div class="checkboxs">
+                                            @Translate.Message("L3924")
+                                            @if (kitGoals.GoalsAchieved)
+                                            {
+                                                <input type="checkbox" checked="checked" readonly disabled>
+                                            }
+                                            else if (Model.hasActivePortal)
+                                            {
+                                                <input type="checkbox" class="achieveGoal" value="@kitGoals.Id" id="goal-@kitGoals.Id">
+                                            }
+                                            else
+                                            {
+                                                <input type="checkbox" readonly disabled>
+                                            }
+                                            <span class="checkmark"></span>
+                                        </div>
+										@*<a href="#">Edit</a>*@
+									</div>
+								</div>
+							}
+						</div>
+					</div>
+				}
+				<div id="wellness-data">
+					@Html.Partial("_ProgramWellnessData", Model.ProgramWellnessData)
+				</div>
+				@if (Model.userinProgram != null && Model.userinProgram.ProgramsinPortal.program.ProgramType == 2)
+                {
+					<div class="content-box coaching-section">
+						<div class="coaching-slider">
+							<div class="coaching-heading">
+								<div class="media">
+									<img src="~/ProfilePictures/@Model.CoachImage" alt="" />
+								</div>
+								<div class="desc">
+									@if (@Model.userinProgram.User1 != null)
+                                    {
+										<h3>@Model.userinProgram.User1.FirstName @Model.userinProgram.User1.LastName</h3>
+
+										<h5><a class="coach-bio text-blue" data-open="coach-data">@Translate.Message("L3701")</a></h5>
+                                    }
+								</div>
+							</div>
+                            @if (Model.hasActivePortal) {
+							    if (!string.IsNullOrEmpty(Model.FutureAppointmentDate))
+                                {
+								    <h6>@Translate.Message("L871") @Translate.Message("L580")</h6>
+								    <div class="date-content">
+									    @Html.Raw(Model.FutureAppointmentDate)
+								    </div>
+                                }
+                                else
+                                {
+								    <div class="no-appt-msg">
+									    <p>@Translate.Message("L3") @Translate.Message("L3925")</p>
+									    <a href="~/Scheduler/Reschedule"><img src="~/Images/program/icon-calendar-blue.png" /> @Translate.Message("L3920")</a>
+								    </div>
+                                }
+                            }
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+</section>
+
+<div id="coach-data" class="reveal large coach-data" data-reveal>
+	@if (Model.userinProgram != null && Model.userinProgram.User1 != null && Model.userinProgram.User1.AdminProperty != null)
+	{
+		@Model.userinProgram.User1.AdminProperty.Profile
+	}
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+
+
+<div class="reveal upgrade-pointers large" data-reveal id="upgrade-pointers">
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+		<span aria-hidden="true">&times;</span>
+	</button>
+
+	<div class="pointers-header">
+		<h2>@Translate.Message("L3926")</h2>
+	</div>
+
+	<div class="pointer-body">
+		<div class="pointer-list">
+			<ul>
+				<li>
+					<div class="pointer-img"><img src="~/Images/program/pointer-upgrade-img1.png" alt="" /></div>
+					<div class="pointer-text">
+						<h5>@Translate.Message("L3927")</h5>
+						<p>@Translate.Message("L3928")</p>
+					</div>
+				</li>
+				<li>
+					<div class="pointer-img"><img src="~/Images/program/pointer-upgrade-img2.png" alt="" /></div>
+					<div class="pointer-text">
+						<h5>@Translate.Message("L3929")</h5>
+						<p>@Translate.Message("L3930")</p>
+					</div>
+				</li>
+				<li>
+					<div class="pointer-img"><img src="~/Images/program/pointer-upgrade-img3.png" alt="" /></div>
+					<div class="pointer-text">
+						<h5>@Translate.Message("L3931")</h5>
+						<p>@Translate.Message("L3932")</p>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		<div class="pointer-list">
+			<ul>
+				<li>
+					<div class="pointer-img"><img src="~/Images/program/pointer-upgrade-img4.png" alt="" /></div>
+					<div class="pointer-text">
+						<h5>@Translate.Message("L3933")</h5>
+						<p>@Translate.Message("L3934") </p>
+					</div>
+				</li>
+				<li>
+					<div class="pointer-img"><img src="~/Images/program/pointer-upgrade-img5.png" alt="" /></div>
+					<div class="pointer-text">
+						<h5>@Translate.Message("L3935")</h5>
+						<p>@Translate.Message("L3936")</p>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="pointer-footer">
+		<p><a href="~/Participant/MyCoach" class="button">@Translate.Message("L3920")</a></p>
+	</div>
+</div>
+<div id="review-kit" class="review-kit reveal large" data-reveal data-close-on-click="false"></div>
+
+<div id="satisfaction-survey" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+
+<div id="goal-achieve" class="reveal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+	<div class="grid-x grid-margin-y">
+		<div class="cell">
+			<h2>@Translate.Message("L4281")</h2>
+		</div>
+	</div>
+	<div class="grid-x grid-margin-x button-set new-button">
+		<div class="cell medium-6 medium-order-2 medium-text-right"><button class="button" type="button" id="confirmAchiveGoal">@Translate.Message("L2")</button></div>
+		<div class="cell medium-6 medium-order-1 medium-text-left"><button class="button hollow" type="reset" id="closeAchiveGoal">@Translate.Message("L3")</button></div>
+	</div>
+</div>
+<script type="text/javascript" src="@Url.Content("~/Scripts/ValidateNumbers.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/MyProgram.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/slick.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/intro.js")"></script>
+<link type="text/css" href="@Url.Content("~/Content/css/introjs.css")" rel="stylesheet" />
+<script type="text/javascript">
+    var currentGoalId;
+	$(document).ready(function () {
+		function slider_num(num, element) {
+			var $status = $(num);
+			var $slickElement = $(element);
+			$slickElement.on('init reInit afterChange', function (event, slick, currentSlide, nextSlide) {
+				var i = (currentSlide ? currentSlide : 0) + 1;
+				$status.text(i + '/' + slick.slideCount);
+			});
+
+			$slickElement.slick({
+				dots: false,
+				infinite: false,
+				speed: 300,
+				slidesToShow: 1,
+				slidesToScroll: 1,
+			});
+		}
+
+		slider_num('.pagingInfo', '.goal-slider');
+
+        //$("#kitCheckBox").prop("checked", true);
+        $(".rating-selector li").on('click', function(){
+             $(".rating-selector li").removeClass("is-active");
+            $(this).addClass("is-active");
+        });
+        var activeSlide;
+
+        $(".skip-ques").on('click', function () {
+            var quesDiv = $(this).closest(".question-slide");
+            var str = $(quesDiv).attr('id');
+            if (str == "weightQuestion") {
+                activeSlide = $(this);
+            }
+            if (activeSlide == null) {
+                activeSlide = $(this).closest(".question-slide");
+            }
+            $(this).closest(".question-slide").addClass("hide");
+            if ($(this).closest(".question-slide").index() == 10) {
+                activeSlide.removeClass("hide");
+                $(".page-number-info span").html(activeSlide.index());
+                if (activeSlide.index() == 1) {
+                    $("#weightQuestion").removeClass('hide');
+                }
+            }
+            else {
+                $(".page-number-info span").html($(this).closest(".question-slide").next().index());
+                $(this).closest(".question-slide").next().removeClass("hide");
+                if ($(this).closest(".question-slide").index() == 9) {
+                    $("#doneBtn").html("@Translate.Message("L3912")");
+                }
+            }
+        });
+        $(".next-btn").on('click', function () {
+            var quesDiv = $(this).closest(".question-slide");
+            var str = $(quesDiv).attr('id');
+            if (str == "weightQuestion") {
+                if (!weightChange()) {
+                    return false;
+                }
+            }
+            if ((str == "happyQuestion") && !$(this).closest(".question-slide").next().hasClass("completion-slide")) {
+                $(".progress-question-container").hide();
+                return;
+            }
+            if ((str == "happyQuestion") && $(this).closest(".question-slide").next().hasClass("completion-slide") && activeSlide != null && activeSlide.index() != 10) {
+            $(this).closest(".question-slide").addClass("hide");
+                activeSlide.removeClass("hide");
+                $(".page-number-info span").html(activeSlide.index());
+                if (activeSlide.index() == 1) {
+                    $("#weightQuestion").removeClass('hide');
+                }
+                return;
+            }
+            $(this).closest(".question-slide").addClass("hide");
+            $(this).closest(".question-slide").next().removeClass("hide");
+            if ($(this).closest(".question-slide").next().hasClass("completion-slide") && activeSlide == null) {
+				$(".page-number-info").addClass("hide");
+            }
+			$(".question-slide").each(function (index) {
+                if (!$(this).hasClass("hide")) {
+                    activeSlide = $(this);
+				}
+			});
+            $(".page-number-info span").html(activeSlide.index());
+        });
+        $(".done-btn").on('click', function () {
+            if (activeSlide.index() == 10)
+                $(".progress-question-container").hide();
+		});
+		$(".date-field").fdatepicker();
+
+
+        $(".achieveGoal").on('click', function () {
+            $('#goal-achieve').foundation('open');
+            currentGoalId = $(this).val();
+        });
+
+        $("#confirmAchiveGoal").on('click', function () {
+            $('#goal-' + currentGoalId + '').prop('disabled', true);
+            $.ajax({
+                data: { goalsId: currentGoalId, achieveGoal: true },
+                url: "@Url.Action("AddEditActionGoals", "Kit")",
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    $('#goal-achieve').foundation('close');
+                    $('#goal-Incentive-' + currentGoalId + '').hide();
+                    $("#kitsProgram").trigger('click');
+                }
+            });
+        });
+
+        $("#closeAchiveGoal").on('click', function () {
+            $('#goal-achieve').foundation('close');
+            document.getElementById("goal-" + currentGoalId + "").checked = false;
+            currentGoalId = null;
+        });
+        if ($("#kitsProgram").val() != undefined)
+            $("#kitsProgram").trigger('click');
+        else
+            $("#mealPlan").trigger('click');
+
+        $(".tips-slider").slick({
+            dots: false,
+            infinite: false,
+            variableWidth: true
+        });
+
+        $(document).on("click", ".exercise-plan-table .tick-buttons label", function () {
+            if ($(this).find("input").is(":checked")) {
+                $(this).parents("tr").addClass("is-complete");
+            } else {
+                $(this).parents("tr").removeClass("is-complete");
+            }
+        });
+
+        $(".prog-tab a.back-btn, a#prev-prog").on("click", function (e) {
+            e.preventDefault();
+            $(".prog-tab").toggleClass("hide");
+        });
+        @if (Model.hasPendingVitals){
+            @: $("#VitalsId").val('@Model.dailyVitals.Id');
+            @: $("#weightQuestion").addClass('hide');
+            @: if ('@Model.dailyVitals.Weight.HasValue' == 'False'){
+            @:    $("#weightQuestion").removeClass('hide');
+            @:     }
+            @: else
+            @:      $("#Weight").val('@Model.dailyVitals.Weight');
+            @: if ('@Model.dailyVitals.AerobicExercise.HasValue' == 'False' && $("#weightQuestion").hasClass('hide')) {
+            @:     $("#pageNumber").html("2");
+            @:     $("#exerciseQuestion").removeClass('hide');}
+            @: else if('@Model.dailyVitals.AerobicExercise' == '1')
+            @:      $(".Exercise-Yes").addClass("active");
+            @: else if('@Model.dailyVitals.AerobicExercise' == '2')
+            @:      $(".Exercise-No").addClass("active");
+            @: if ('@Model.dailyVitals.HealthyEating.HasValue' == 'False' && $("#weightQuestion").hasClass('hide') && $("#exerciseQuestion").hasClass('hide')) {
+            @:     $("#pageNumber").html("3");
+            @:     $("#eatingQuestion").removeClass('hide');}
+            @: else if('@Model.dailyVitals.HealthyEating' == '1')
+            @:      $(".Healthy-Food-Yes").addClass("active");
+            @: else if('@Model.dailyVitals.HealthyEating' == '2')
+            @:      $(".Healthy-Food-No").addClass("active");
+            @: if ('@Model.dailyVitals.Hydration.HasValue' == 'False' && $("#weightQuestion").hasClass('hide') && $("#exerciseQuestion").hasClass('hide') && $("#eatingQuestion").hasClass('hide')) {
+            @:     $("#pageNumber").html("4");
+            @:     $("#hydrationQuestion").removeClass('hide');}
+            @: else if('@Model.dailyVitals.Hydration' == '1')
+            @:      $(".Water-Yes").addClass("active");
+            @: else if('@Model.dailyVitals.Hydration' == '2')
+            @:      $(".Water-No").addClass("active");
+            @: if ('@Model.dailyVitals.Alcohol.HasValue' == 'False' && $("#weightQuestion").hasClass('hide') && $("#exerciseQuestion").hasClass('hide') && $("#eatingQuestion").hasClass('hide') && $("#hydrationQuestion").hasClass('hide')) {
+            @:     $("#pageNumber").html("5");
+            @:     $("#alcoholQuestion").removeClass('hide');}
+            @: else if('@Model.dailyVitals.Alcohol' == '1')
+            @:      $(".Alcohol-Yes").addClass("active");
+            @: else if('@Model.dailyVitals.Alcohol' == '2'){
+            @:      $(".Alcohol-No").addClass("active");}
+            @: if ('@Model.dailyVitals.Tobacco.HasValue' == 'False' && $("#weightQuestion").hasClass('hide') && $("#exerciseQuestion").hasClass('hide') && $("#eatingQuestion").hasClass('hide') && $("#hydrationQuestion").hasClass('hide') && $("#alcoholQuestion").hasClass('hide')) {
+            @:     $("#pageNumber").html("6");
+            @:     $("#tobaccoQuestion").removeClass('hide');}
+            @: else if('@Model.dailyVitals.Tobacco' == '1')
+            @:      $(".Tobacco-Yes").addClass("active");
+            @: else if('@Model.dailyVitals.Tobacco' == '2')
+            @:      $(".Tobacco-No").addClass("active");
+             @: if ('@Model.dailyVitals.Medications.HasValue' == 'False' && $("#weightQuestion").hasClass('hide') && $("#exerciseQuestion").hasClass('hide') && $("#eatingQuestion").hasClass('hide') && $("#hydrationQuestion").hasClass('hide') && $("#alcoholQuestion").hasClass('hide') && $("#tobaccoQuestion").hasClass('hide')){
+            @:     $("#pageNumber").html("7");
+            @:     $("#medicationQuestion").removeClass('hide');}
+            @: else if('@Model.dailyVitals.Medications' == '1')
+            @:      $(".Medication-Yes").addClass("active");
+            @: else if('@Model.dailyVitals.Medications' == '2')
+            @:      $(".Medication-No").addClass("active");
+            @: if ('@Model.dailyVitals.Sleep.HasValue' == 'False' && $("#weightQuestion").hasClass('hide') && $("#exerciseQuestion").hasClass('hide') && $("#eatingQuestion").hasClass('hide') && $("#hydrationQuestion").hasClass('hide') && $("#alcoholQuestion").hasClass('hide') && $("#tobaccoQuestion").hasClass('hide') && $("#medicationQuestion").hasClass('hide')){
+            @:     $("#pageNumber").html("8");
+            @:     $("#sleepQuestion").removeClass('hide');}
+            @: else if('@Model.dailyVitals.Sleep' == '1')
+            @:      $(".Sleep-Yes").addClass("active");
+            @: else if('@Model.dailyVitals.Sleep' == '2')
+            @:      $(".Sleep-No").addClass("active");
+            @: if ('@Model.dailyVitals.Stress.HasValue' == 'False' && $("#weightQuestion").hasClass('hide') && $("#exerciseQuestion").hasClass('hide') && $("#eatingQuestion").hasClass('hide') && $("#hydrationQuestion").hasClass('hide') && $("#alcoholQuestion").hasClass('hide') && $("#tobaccoQuestion").hasClass('hide') && $("#medicationQuestion").hasClass('hide') && $("#sleepQuestion").hasClass('hide')){
+            @:     $("#pageNumber").html("9");
+            @:     $("#stressQuestion").removeClass('hide');}
+            @: else if('@Model.dailyVitals.Stress' == '1')
+            @:      $(".Stress-Yes").addClass("active");
+            @: else if('@Model.dailyVitals.Stress' == '2')
+            @:      $(".Stress-No").addClass("active");
+            @: if ('@Model.dailyVitals.Happy.HasValue' == 'False' && $("#weightQuestion").hasClass('hide') && $("#exerciseQuestion").hasClass('hide') && $("#eatingQuestion").hasClass('hide') && $("#hydrationQuestion").hasClass('hide') && $("#alcoholQuestion").hasClass('hide') && $("#tobaccoQuestion").hasClass('hide') && $("#medicationQuestion").hasClass('hide')  && $("#sleepQuestion").hasClass('hide')){
+            @:     $("#pageNumber").html("10");
+            @:     $("#happyQuestion").removeClass('hide');}
+            @: else if('@Model.dailyVitals.Happy' == '1')
+            @:      $(".Happy-Yes").addClass("active");
+            @: else if('@Model.dailyVitals.Happy' == '2')
+            @:      $(".Happy-No").addClass("active");
+
+        }
+
+    });
+
+
+    $("#userFrom").on('click', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UserForms", "Program")',
+            success: function (data) {
+                $("#form-upload").remove();
+                $("#forms").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    $("#mealPlan").on('click', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("NutritionRecommendation", "Program")',
+            success: function (data) {
+                $("#meal-plan").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    $("#exercisePlan").on('click', function () {
+        $.ajax({
+            type: 'POST',
+            data: { fromKit: false },
+            url: '@Url.Action("ExerciseRecommendation", "Program")',
+            success: function (data) {
+                $("#exercise-plan").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    $("#kitsProgram").on('click', function () {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("KitProgram", "Program")',
+            success: function (data) {
+                $("#kits").html(data);
+
+				$(".device-section-loader").removeClass("device-section-loader");
+            },
+            complete: function () {
+                $("#kits #status-tabs").foundation();
+
+                $(".mlink").on('click', function () {
+                    $(this).toggleClass('active');
+                    $(this).text($(this).text() == '@Html.Raw(@Translate.Message("L3944"))' ? '@Html.Raw(Translate.Message("L3951"))' : '@Html.Raw(Translate.Message("L3944"))');
+                    $('.more-content').slideToggle("fast");
+                    resource_slider();
+                });
+
+                $("a.link").on('click', function (ev) {
+                    ev.preventDefault();
+                    $(".kits-acc").slideToggle("fast");
+                    $(this).text($(this).text() == '@Translate.Message("L3945")' ? '@Translate.Message("L3950")' : '@Translate.Message("L3945")');
+                });
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    $(".vitals-ques").on('click', function () {
+        var str = $(this).val();
+        var quesDiv = $(this).closest(".question-slide");
+        var ques = $(quesDiv).attr('id');
+        var vitalsId = $("#VitalsId").val();
+        var weight = $("#Weight").val();
+            $.ajax({
+                url: "@Url.Action("AddEditDailyVitalsLog", "Journal")",
+                type: 'POST',
+                data: { vitalsId: vitalsId, ques: ques, Ans: str, weight: weight },
+                dataType: "json",
+                success: function (data) {
+                    if (data.Record.success) {
+                        $("#VitalsId").val(data.Record.DailyVitalsId);
+                    }
+                    if (data.IncentivePoints != null) {
+                        $(".points-content .heading h4").html(@Model.incentivePoints + " @Translate.Message("L1716")");
+                    }
+                }
+            });
+    });
+
+    function ReviewKit(KitsinUserProgramId) {
+        $.ajax({
+            url: '@Url.Action("ReviewKit", "Kit")',
+            data: { kitsInUserProgramId: KitsinUserProgramId, readOnly: true, userView: true },
+            cache: false,
+            type: "POST",
+            dataType: "html",
+            success: function (data, textStatus, XMLHttpRequest) {
+                $("#review-kit").html(data);
+                $('#review-kit').foundation('open');
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function ProgramWellnessData() {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("ProgramWellnessData", "Program")',
+            success: function (data) {
+                $("#wellness-data").html(data);
+            },
+	        complete: function(){
+                $('#edit-wellness-data, #wellness-accordion').foundation();
+                slider_num('.pagingInfo', '.wellness-slider');
+	        }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+</script>
+
+<script type="text/javascript">
+    function startIntro() {
+        var intro = introJs();
+        intro.setOptions({
+            steps: [
+                {
+                    element: '#step1',
+                    intro: "<div><strong>@Html.Raw(Translate.Message("L3972"))</div>"
+                },
+                {
+                    element: '#step2',
+                    intro: "<div><strong>@Html.Raw(Translate.Message("L3973"))</div>",
+                    position: 'right'
+                },
+                {
+                    element: '#step3',
+                    intro: "<div><strong>@Html.Raw(Translate.Message("L3974"))</div>",
+                    position: 'right'
+                },
+                {
+                    element: '#health-tabs',
+                    intro: "<div><strong>@Html.Raw(Translate.Message("L3975"))</div>",
+                    position: 'left'
+                },
+                {
+                    element: '#wellness-data',
+                    intro: "<div><strong>@Html.Raw(Translate.Message("L3976"))</div>",
+                    position: 'left'
+                }
+            ].filter(function (obj) {
+                return $(obj.element).length;
+            }),
+            showStepNumbers: false,
+            hideNext: true,
+            hidePrev: true
+        });
+
+        intro.start();
+    }
+
+    function openSurveyPopup() {
+        $("#satisfaction-survey").removeClass("hide");
+        $("#satisfaction-survey").foundation("open");
+    }
+
+    function weightChange() {
+        if (validateWeight()) {
+            $("#WeightError").removeClass("is-visible");
+            return true;
+        } else {
+            $("#WeightError").addClass("is-visible");
+            return false;
+        }
+    }
+
+    function validateWeight() {
+	    var min = @Model.Measurements[BioLookup.Weight].Min;
+        var max = @Model.Measurements[BioLookup.Weight].Max;
+        var weight = $("#Weight").val();
+        if ((weight >= min && weight <= max) && (!(weight != weight.replace(/[^0-9\.]/g, ''))))
+		    return true;
+	    else
+            return false;
+    }
+</script>
+<script>
+	var scrollVal = 0;
+	$("#health-tabs").on('change.zf.tabs', function () {
+		var tabWrapper = $('#health-tabs').parent('.tab-scroll-wrapper');
+		if (tabWrapper.width() < tabWrapper[0].scrollWidth) {
+			var selectedItem = $('#health-tabs li.is-active');
+			scrollVal = selectedItem.position().left;
+
+			$('#health-tabs').parent(".tab-scroll-wrapper").animate({
+				scrollLeft: scrollVal
+			}, 400);
+		}
+    });
+</script>

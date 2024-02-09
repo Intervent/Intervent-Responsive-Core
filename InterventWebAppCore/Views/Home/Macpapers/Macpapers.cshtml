@@ -1,0 +1,282 @@
+﻿@using InterventWebApp
+@model InterventWebApp.LoginModel
+
+@{
+    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+<section class="feature reversed intro">
+     <div class="intro-header">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="logo cell small-6"><a href=""><h1>@Translate.Message("L424")</h1><span>@Translate.Message("L425")</span></a></div>
+            </div>
+        </div>
+    </div>
+    <div class="intro-body grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="intro-text medium-7 cell">
+                <h2>@Translate.Message("L1893")</h2>
+                <p>
+                    @Translate.Message("L428")
+                </p>
+            </div>
+            <div class="intro-box medium-5 cell">
+                <div class="medium-12 show-for-medium cell">
+                    <div class="login-form intro-box">
+                        <form id="inline-login-form" data-abide novalidate>
+                            <div id="inline-login-error" class="callout alert-box alert hide" data-closable>
+                              <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="small-12 cell">
+                                @Html.TextBoxFor(m => m.UserName, new Dictionary<string, object> { { "placeholder", @Translate.Message("L986") }, { "required", "required" }, { "id", "loginUserName" } })
+                                <small class="form-error">@Translate.Message("L463")</small>
+                            </div>
+                            <div class="small-12 cell">
+                                @Html.PasswordFor(m => m.Password, new Dictionary<string, object> { { "placeholder", @Translate.Message("L466") }, { "required", "required" } })
+                                <small class="form-error">@Translate.Message("L464")</small>
+                            </div>
+
+                            <input class="DeviceId" type="hidden" id="DeviceId" name="DeviceId" value="" />
+
+                            <div class="small-12 cell">
+                                <button type="submit" class="expand pink">
+                                    <div class="loading-spinner hide" show-if-submitting></div>
+                                    @Translate.Message("L426")
+                                </button>
+                            </div>
+                        </form>
+
+                        <div id="device-verification-inline-login-form"></div>
+
+                        <div class="small-12 cell forgot-password">
+                            <a href="#" onclick="$('#forgot-password-modal').foundation('open'); return false;">
+                                @Translate.Message("L465")?
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="small-12 cell show-for-small-only intro-buttons">
+                <button class="intro-button pink expand" onclick="$('#login-modal').foundation('open'); return false;">
+                    @Translate.Message("L426")
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="container feature">
+    <a name="welcome" class="compass mcallen anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="@Url.Content("~/Images/MacPapers.svg")" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L2798")</h2>
+                    <p>Mac Papers is offering a free telephonic lifestyle health coaching program provided by INTERVENT to all employees on a 2018/2019 medical plan.</p>
+                    <p>Whether your goal is to get in shape, lose weight and keep it off, manage stress, quit smoking or just live a healthier lifestyle, INTERVENT will help you on your journey to a better you!</p>
+                    <p class="more-link" onclick="$('#login-modal').foundation('open'); return false;">Take the Health Assessment now and you will be on your way! </p>
+                    <p>Or, if you prefer, you can call (855) 494-1093 and an INTERVENT customer care representative will help you get started.</p>
+                    <p>Don't delay. Do it today!</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="healthassessment" class="compass anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="@Url.Content("~/Images/assessment.svg")" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L535")</h2>
+                    <p>@Translate.Message("L2470")</p>
+                    <p>@Translate.Message("L2471")</p>
+                    <p>@Translate.Message("L2472")</p>
+                    <p>You must first complete an assessment before enrolling in a lifestyle management program. You may call us at 1-855-494-1093 if you have any questions or would like to enroll over the phone.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature">
+    <a name="coachedprogram" class="compass anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="@Url.Content("~/Images/coaching.svg")" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1912")</h2>
+                    <p>@Translate.Message("L2778").</p>
+                    <p>@Translate.Message("L1909").</p>
+                    <p>@string.Format(Translate.Message("L2797"), TempData.Peek("OrgContactNumber").ToString()).</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="selfhelpprograms" class="compass anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="@Url.Content("~/Images/self-help.svg")" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L1913")</h2>
+                    <p>@Translate.Message("L1914").</p>
+                    <p>@Translate.Message("L1915").</p>
+                    <p>@string.Format(Translate.Message("L1916"), TempData.Peek("OrgContactNumber").ToString()).</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="feature">
+    <a name="cardiosmart" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="@Url.Content("~/Images/Cardiosmart.svg")" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L2065")</h2>
+                    <p><span class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/') ">@Translate.Message("L2795")</span> @Translate.Message("L2796")</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="feature">
+     <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 text-center">
+                <img class="smaller" src="@Url.Content("~/Images/goals.svg")" alt="" />
+            </div>
+            <div class="feature-info cell medium-7">
+                <h2>@Translate.Message("L451")</h2>
+                <p>
+                    @Translate.Message("L452")
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="feature">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                <img class="smaller" src="@Url.Content("~/Images/on-the-go.svg")" alt="" />
+            </div>
+            <div class="feature-info cell medium-7 medium-order-1">
+                <h2>@Translate.Message("L459")</h2>
+                <p>@Translate.Message("L1345"). You’re never alone.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="feature">
+     <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 text-center">
+                <img src="@Url.Content("~/Images/self-phase.svg")" alt="" />
+            </div>
+            <div class="feature-info cell medium-7">
+                <h2>@Translate.Message("L455")</h2>
+                <p>
+                    @Translate.Message("L456")
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="container feature">
+    <a name="successstories" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="@Url.Content("~/Images/success.svg")" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1351")</h2>
+                    <p>@Translate.Message("L2729")</p>
+                    <ul class="checkmark green listinside">
+                        <li>“@Translate.Message("L2431")”</li>
+                        <li>“@Translate.Message("L2432")”</li>
+                        <li>“@Translate.Message("L2433")”</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<div class="nav-to-top">
+    <a href="#" class="button"><i class="fa fa-chevron-up"></i></a>
+</div>
+@Html.Partial("_Login", new ViewDataDictionary(ViewData) { { "ShowSignUp", "False" } })
+@Html.Partial("_ForgotPassword")
+@Html.Partial("_ResendConfirmEmail")
+@Html.Partial("_ResetPassword")
+@Html.Partial("_EmailConfirmation")
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(".intro-header").sticky({ topSpacing: 0 });
+        $('#inline-login-form').foundation();
+        $('#inline-login-form')
+            //When Not Valid
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                console.log(invalid_fields);
+            })
+            //When Valid
+            .on('formvalid.zf.abide', function () {
+                $("#loader-wrapper").removeClass("hide");
+                $("#loader-wrapper").fadeIn();
+                $("#inline-login-form").find('input[name="Password"]').val(window.btoa(Math.random().toString(36).substring(2, 8) + $("#inline-login-form").find('input[name="Password"]').val()));
+                $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+                $('[show-if-submitting]').removeClass('hide');
+                $.ajax({
+                    url: "@Url.Action("Login", "Account")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#inline-login-form").serialize(),
+                    success: function (data) {
+                        $("#inline-login-form").find('input[name="Password"]').val("");
+                        if (data == "success") {
+                            window.location.href = "@Url.Action("Stream", "Participant")";
+                        }
+                        else if (data == "confirmEmail") {
+                            var email = $("#loginUserName").val();
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                            $('#resend-email-modal').find("#email").text(email);
+                            $('#resend-email-modal').find("#emailId").val(email)
+                            $('#resend-email-modal').foundation('open');
+                            $("#loader-wrapper").addClass("hide");
+                        }
+                        else {
+                            $("#inline-login-error").html(data);
+                            $('#inline-login-error').removeClass('hide');
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                            $("#loader-wrapper").addClass("hide");
+                        }
+                    }
+                })
+                .on('submit',function(e){
+                   e.preventDefault();
+                });
+            })
+
+    </script>
+}

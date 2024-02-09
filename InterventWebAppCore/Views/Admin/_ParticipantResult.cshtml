@@ -1,0 +1,85 @@
+﻿@model InterventWebApp.AdvancedSearchModel
+
+@if (Model.TotalRecords > 0)
+{
+    foreach (var user in Model.Result)
+    {
+        <section class="participant-cards-section">
+            <div class="admin-cards">
+                <div class="card-header">
+                    <div class="profile-detail">
+                        <div class="profile-img">
+                            <img src="@(!string.IsNullOrEmpty(user.ProfilePicture) ? "../ProfilePictures/" + user.ProfilePicture : (user.Gender == 1 ? "../Images/avatar-male.svg" : "../Images/avatar-female.svg"))" alt="" />
+                        </div>
+                        <div class="profile-content">
+                            <p><strong>@user.FirstName @user.LastName</strong></p>
+                            <p>@user.ProgramName</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(user.RiskColor))
+					{
+                        <div class="status-tags">
+                            <span class="status-tag risk-@user.RiskColor">@user.RiskColor risk</span>
+                        </div>
+					}
+                    <div class="details-section-wrapper">
+                        @if (user.Systolic.HasValue && user.Diastolic.HasValue)
+						{
+                            <div class="detail-section">
+                                <p class="section-title">Blood Pressure</p>
+                                <p>@user.Systolic.Value/@user.Diastolic.Value</p>
+                            </div>
+						}
+                        @if (user.Glucose.HasValue)
+						{
+                            <div class="detail-section">
+                                <p class="section-title">Blood Glucose</p>
+                                <p>@user.Glucose.Value mg/dL</p>
+                            </div>
+						}
+                    </div>
+                    <div class="update-status">
+                        @if (user.LastUpdatedBP.HasValue && user.LastUpdatedGlucose.HasValue)
+						{
+							if (user.LastUpdatedBP.Value < user.LastUpdatedGlucose.Value)
+							{
+                                <p>Last Updated @user.LastUpdatedGlucose.Value.ToString("dd MMMM yyyy")</p>
+							}
+							else
+							{
+                                <p>Last Updated @user.LastUpdatedBP.Value.ToString("dd MMMM yyyy")</p>
+							}
+						}
+						else if (user.LastUpdatedBP.HasValue)
+						{
+                            <p>Last Updated @user.LastUpdatedBP.Value.ToString("dd MMMM yyyy")</p>
+						}
+						else if (user.LastUpdatedGlucose.HasValue)
+						{
+                            <p>Last Updated @user.LastUpdatedGlucose.Value.ToString("dd MMMM yyyy")</p>
+						}
+						else
+						{
+                            <p>N/A</p>
+						}
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a class="anchor-blue" onclick="ViewParticipant(@user.Id)">View Profile</a>
+                </div>
+            </div>
+        </section>
+	}
+    <div class="text-center"><a href="~/Participant/ParticipantAdvancedSearch" class="anchor-blue">See all</a></div>
+}
+else
+{
+    <div class="align-center-middle participant-empty flex-container">
+		<div class="text-center">
+			<img src="~/Images/admin/empty-participant.png" alt="" />
+			<p>There are no participants reported with <span id="filter-text"></span></p>
+        </div>
+    </div>
+}

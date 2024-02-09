@@ -1,0 +1,78 @@
+﻿@model InterventWebApp.EditAppointmentCommentsModel
+@using InterventWebApp
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <div id="appointment-error" class="callout alert hide" data-closable>
+            This time slot is not available.
+        </div>
+        <h2 class="title">Edit Appointment</h2>
+        <div>
+            <label for="comments">@Translate.Message("L975")</label>
+            @Html.TextAreaFor(x => x.comments)
+            @Html.HiddenFor(x => x.Id)
+            @Html.HiddenFor(x=>x.MeetingId)
+        </div>
+        <div>
+            <label for="Length">Length</label>
+            @Html.DropDownListFor(x => x.Length, Model.Lengths, new { @id = "Minutes" })
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.MeetingId))
+        {
+            <div>
+                <label>
+                    @Html.CheckBoxFor(m => m.VideoRequired, new Dictionary<string, object> { { "Name", "VideoRequired" } })
+                    <span class="checkmark"></span>
+                    Video Coaching
+                </label>
+            </div>
+        }
+    </div>
+</div>
+<div class="grid-x grid-margin-x button-set">
+    <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="editAppointmentComment">Update</button></div>
+    <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeModal">Cancel</button></div>
+</div>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#closeModal').on('click', function () {
+            $('#cancel-appointment').foundation('close');
+        });
+        $("#editAppointmentComment").on('click', function () {
+            var id = $("#Id").val();
+            var comments = $("#comments").val();
+            var Length = $("#Minutes").val();
+            var meetingId = $("#MeetingId").val();
+            var videoRequired = document.getElementById('VideoRequired').checked;
+            $.ajax({
+                url: "@Url.Action("EditAppointmentComment", "Scheduler")",
+                type: 'POST',
+                dataType: "json",
+                data: { id: id, comments: comments, Length: Length, VideoRequired: videoRequired, MeetingId: meetingId },
+                success: function (data) {
+                    if (data == true) {
+                        $('#cancel-appointment').foundation('close');
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Appointments", "Scheduler")',
+                        success: function (data) {
+                            $("#profile-content").html(data);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                    }
+                    else {
+                        $('#appointment-error').removeClass('hide');
+                    }
+                    UpdateAppointmentUI();
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        })
+    });
+</script>

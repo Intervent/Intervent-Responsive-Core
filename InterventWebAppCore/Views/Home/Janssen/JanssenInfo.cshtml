@@ -1,0 +1,125 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass chi-memorial info">
+    @Html.Partial("Janssen/_JanssenHeader")
+</section>
+
+<div id="sign-up-modal" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="cell medium-12">
+        <h2 class="text-center">@Translate.Message("L431")</h2>
+    </div>
+    <div class="cell">@Html.Partial("_SignUp")</div>
+    <div class="cell text-center">
+        <a href="#" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</a>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<section class="container feature janssenINTERVENT">
+    <a name="janssenINTERVENT" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="~/Images/janssen_logo.png" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>Janssen & INTERVENT</h2>
+                    <p>You may have been referred to this program by your specialist to get support in managing your overall health & wellness! Many chronic conditions are associated with an increased risk of other health problems, but there are many ways you can help to reduce your risk. This service being provided through the partnership of INTERVENT and Janssen offers educational material and personalized lifestyle-modification coaching to help you improve your health and to look and feel your very best.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature healthassessment">
+    <a name="healthassessment" class="compass anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="~/Images/assessment.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L535")</h2>
+                    <p>The foods you eat, the stress you feel and the activities you do all affect your health. Now you can find out how by completing our health assessment.</p>
+                    <p>The health assessment is a free, confidential online assessment that considers your lifestyle habits and health history to determine how healthy you are and whether you’re at risk for certain chronic diseases or illnesses. It only takes about 15 minutes to complete.</p>
+                    <p>Once you complete the assessment, you will immediately receive a great personal report, health roadmap and a wealth of useful information individually tailored for you. Plus, you’ll be able to take advantage of our lifestyle management programs where you can learn about how to eat more healthfully, manage your weight, reduce your stress level and much more.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature coachedprogram">
+    <a name="coachedprogram" class="compass anchor">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="~/Images/coaching.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1912")</h2>
+                    <p>@Translate.Message("L1908").</p>
+                    <p>@Translate.Message("L1909").</p>
+                    <p>Please call INTERVENT at 1-855-494-1093 to enroll in a program.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature cardiosmart">
+    <a name="cardiosmart" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="~/Images/CardioSmart.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L2065")</h2>
+                    <p>@Translate.Message("L2509")</p>
+                    <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/Healthy-Living/Know-your-Numbers/CardioSmart-On-Call') ">
+                        Access these valuable resources here
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature successstories">
+    <a name="successstories" class="compass mcallen anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="~/Images/success.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1351")</h2>
+                    <p>Read about people just like you. If others can take action and have success – so can you!</p>
+                    <ul class="checkmark green listinside">
+                        <li>“@Translate.Message("L2431")”</li>
+                        <li>“@Translate.Message("L2432")”</li>
+                        <li>“@Translate.Message("L2433")”</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<script type="text/javascript">
+    $(window).ready(function(){
+        $(".compass-menu").find("a").on('click', function(e) {
+            var url = $(this).attr("href");
+            var arr = url.split('#');
+            var showscroll = arr[1];
+            $("html, body").animate({                
+                scrollTop: $('.' + showscroll).offset().top - 80
+            });
+        });
+    })
+</script>

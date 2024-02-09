@@ -1,0 +1,785 @@
+﻿@model InterventWebApp.AWVReportModel
+
+@{
+    ViewBag.Title = "AWVReport";
+    Layout = "~/Views/Shared/_AWVLayout.cshtml";
+}
+
+<section class="main awv-report @(ViewData["isPdf"]  != null ? "pdf-print" : "")">
+    <div class="grid-container">
+        <header>
+            <div>INTERVENT</div>
+            <div class="header-right">Annual Wellness Visit Report<br />@Model.User.FirstName @Model.User.LastName</div>
+        </header>
+        <div class="nav-to-top hide">
+            <a href="#" class="button"><i class="fa fa-chevron-up"></i></a>
+        </div>
+        <div class="grid-x collapse-small">
+            <div class="cell small-12">
+                <div class="awv-title">
+                    <div>
+                        <h1 class="header-title">Annual Wellness Visit Report</h1>
+                    </div>
+                    <div class="subtitle-container">
+                        <h2 class="header-subtitle">Powered by <span class="logo">INTERVENT</span></h2>
+                    </div>
+                    <button class="small title-button hide-for-print" onclick="doPrint();"><i class="fa fa-print"></i>Print</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient -->
+        <div class="grid-x tile-item first-item">
+            <div class="cell small-12 tile-header">
+                <h3 class="left cyan">Patient</h3>
+            </div>
+            <div class="cell bg-wrapper tabular">
+                <div class="cell tabular-row hide-border">
+                    <div class="cell">
+                        <div class="grid-x awv-summary">
+                            <div class="cell medium-6">
+                                <div class="summary-label">Name</div>
+                                <div class="summary-value">@Model.User.FirstName @Model.User.LastName</div>
+
+                                <div class="summary-label">DOB</div>
+                                <div class="summary-value">@Model.User.DOB.Value.ToShortDateString()</div>
+
+                                <div class="summary-label">Gender</div>
+                                @if (Model.User.Gender.Value == 1)
+                                {
+                                    <div class="summary-value">Male</div>
+                                }
+                                else if (Model.User.Gender.Value == 2)
+                                {
+                                    <div class="summary-value">Female</div>
+                                }
+
+                                @if (Model.User.Race.HasValue)
+                                {
+                                    <div class="summary-label">Ethinicity</div>
+                                    if (Model.User.Race.Value == 1)
+                                    {
+                                        <div class="summary-value">Caucasian</div>
+                                    }
+                                    else if (Model.User.Race.Value == 2)
+                                    {
+                                        <div class="summary-value">African American</div>
+                                    }
+                                    else if (Model.User.Race.Value == 3)
+                                    {
+                                        <div class="summary-value">American Indian/Native American</div>
+                                    }
+                                    else if (Model.User.Race.Value == 4)
+                                    {
+                                        <div class="summary-value">Asian</div>
+                                    }
+                                    else if (Model.User.Race.Value == 5)
+                                    {
+                                        <div class="summary-value">Hispanic</div>
+                                    }
+                                    else if (Model.User.Race.Value == 6)
+                                    {
+                                        <div class="summary-value">Pacific Islander</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="summary-value">Other</div>
+                                    }
+                                }
+
+
+                                @if (!string.IsNullOrEmpty(Model.User.Address))
+                                {
+                                    string state = string.Empty;
+                                    if (Model.User.State1 != null)
+                                    {
+                                        state = Model.User.State1.Name;
+                                    }
+                                    <div class="summary-label">Address</div>
+                                    <div class="summary-value">@Model.User.Address @Model.User.City @state @Model.User.Zip</div>
+                                }
+                            </div>
+                            <div class="cell medium-6">
+                                <div class="summary-label">Date HRA Completed</div>
+                                <div class="summary-value">@Model.AWV.AssessmentDate.ToShortDateString()</div>
+
+                                <div class="summary-label">Reason for HRA</div>
+                                @if (Model.AWV.IsAWV.HasValue && Model.AWV.IsAWV.Value)
+                                {
+                                    <div class="summary-value">Initial Annual Wellness Visit</div>
+                                }
+                                else if (Model.AWV.IsIPPE.HasValue && Model.AWV.IsIPPE.Value)
+                                {
+                                    <div class="summary-value">Initial Preventive Physical Examination</div>
+                                }
+                                else if (Model.AWV.IsSubsequentAWV.HasValue && Model.AWV.IsSubsequentAWV.Value)
+                                {
+                                    <div class="summary-value">Subsequent Annual Wellness Visit</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- care Provider -->
+        <div class="grid-x tile-item">
+            <div class="cell small-12 tile-header">
+                <h3 class="left cyan">Healthcare Provider</h3>
+            </div>
+            <div class="cell bg-wrapper tabular">
+                <div class="cell tabular-row hide-border">
+                    <div class="cell">
+                        <div class="grid-x awv-summary">
+                            <div class="cell medium-6">
+                                @if (!string.IsNullOrEmpty(Model.AWV.StaffName))
+                                {
+                                    <div class="summary-label">Name</div>
+                                    <div class="summary-value">@Model.AWV.StaffName</div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.AWV.PracticeAddress))
+                                {
+                                    <div class="summary-label">Practice Address</div>
+                                    <div class="summary-value">@Model.AWV.PracticeAddress</div>
+                                }
+                            </div>
+                            <div class="cell medium-6">
+                                @if (!string.IsNullOrEmpty(Model.AWV.PracticeName))
+                                {
+                                    <div class="summary-label">Practice Name</div>
+                                    <div class="summary-value">@Model.AWV.PracticeName</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-x collapse-small tile-item subtext">
+            <div class="cell small-12">
+                <p>
+                    Note: This report was automatically generated using health assessment and other available patient data together with expert preventive guidelines.
+                    It is intended as a starting point for a patient-healthcare provider discussion and, where appropriate, should be revised based on patient and healthcare provider input.
+                </p>
+            </div>
+        </div>
+        <!-- Menu -->
+        <div class="grid-x collapse-small">
+            <div class="cell bg-wrapper tabular rounded-corner">
+                <ul class="awv-menu">
+                    <li><a class="link green" href="#summary">I. Summary of Key Health Risks and Action Steps/Treatment Options</a></li>
+                    <li><a class="link cyan" href="#wellness-goals">II. Listing of Wellness Goals</a></li>
+                    <li><a class="link blue" href="#preventive-screenings">III. Preventive Screenings and Immunizations: Personalized Prevention Plan Schedule</a></li>
+                    <li><a class="link purple" href="#treatment-options">IV. Treatment Options for Additional Consideration/Discussion</a></li>
+                    <li><a class="link orange" href="#risks-benefits">V. Risks and Benefits of Treatment Options</a></li>
+                    <li><a class="link pink" href="#health-advice">VI. Personalized Health Advice</a></li>
+                    <li><a class="link red" href="#comments">VII. Healthcare Provider Comments</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- I. Summary of Key Health Risks and Action Steps/Treatment Options -->
+        <a name="summary"></a>
+        <div class="grid-x awv-separator"><hr /></div>
+
+        <div class="grid-x tile-item">
+            <div class="cell small-12 tile-header">
+                <h2 class="left green">I. Summary of Key Health Risks and Action Steps/Treatment Options</h2>
+            </div>
+            <div class="cell bg-wrapper tabular">
+                <div class="cell tabular-row hide-border">
+                    <div class="cell">
+
+                        <!-- I. A. Health Risks Scorecard -->
+                        <div class="grid-x tile-item inner">
+                            <div class="cell small-12 tile-header">
+                                <h3 class="left green">A. Health Risks Scorecard</h3>
+                            </div>
+                            <div class="cell bg-wrapper tabular with-border">
+                                <div class="cell tabular-row">
+                                    <div class="tabular-content">On the basis of your health risk assessment (HRA) and other available information, your current levels of risk for various health and lifestyle factors are summarized below:</div>
+
+                                    <!-- I. A. 1. Personal History -->
+                                    <div class="grid-x tile-item inner-two">
+                                        <h4>1. Personal History</h4>
+                                        <div class="cell bg-wrapper tabular hide-border">
+                                            @for (int i = 0; i < Model.PHistoryItems.Count; i++)
+                                            {
+                                                <div class="grid-x tabular-row table-for-print @Model.PHistoryItems[i].riskClass" data-equalizer>
+                                                    <div class="cell small-6" data-equalizer-watch>@Model.PHistoryItems[i].Name</div>
+                                                    <div class="cell small-6 text-center risk-level hide-border" data-equalizer-watch>@Model.PHistoryItems[i].riskText</div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- I. A. 2. Family History -->
+                                    <div class="grid-x tile-item inner-two">
+                                        <h4>2. Family History</h4>
+                                        <div class="cell bg-wrapper tabular hide-border">
+                                            @for (int i = 0; i < Model.FHistoryItems.Count; i++)
+                                            {
+                                                <div class="grid-x tabular-row table-for-print @Model.FHistoryItems[i].riskClass" data-equalizer>
+                                                    <div class="cell small-6" data-equalizer-watch>@Model.FHistoryItems[i].Name</div>
+                                                    <div class="cell small-6 text-center risk-level hide-border" data-equalizer-watch>@Model.FHistoryItems[i].riskText</div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- I. A. 3. Psychosocial -->
+                                    <div class="grid-x tile-item inner-two">
+                                        <h4>3. Psychosocial</h4>
+                                        <div class="cell bg-wrapper tabular hide-border">
+                                            @for (int i = 0; i < Model.PsychoSocialItems.Count; i++)
+                                            {
+                                                <div class="grid-x tabular-row table-for-print @Model.PsychoSocialItems[i].riskClass" data-equalizer>
+                                                    <div class="cell small-6" data-equalizer-watch>@Model.PsychoSocialItems[i].Name</div>
+                                                    <div class="cell small-6 text-center risk-level hide-border" data-equalizer-watch>@Model.PsychoSocialItems[i].riskText</div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- I. A. 4. Lifestyle Factors -->
+                                    <div class="grid-x tile-item inner-two force-break">
+                                        <h4>4. Lifestyle/Behavioral Factors</h4>
+                                        <div class="cell bg-wrapper tabular hide-border">
+                                            @for (int i = 0; i < Model.LFactorsItems.Count; i++)
+                                            {
+                                                <div class="grid-x tabular-row table-for-print @Model.LFactorsItems[i].riskClass" data-equalizer>
+                                                    <div class="cell small-6" data-equalizer-watch>@Model.LFactorsItems[i].Name</div>
+                                                    <div class="cell small-6 text-center risk-level hide-border" data-equalizer-watch>@Model.LFactorsItems[i].riskText</div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- I. A. 5. Functional Ability -->
+                                    <div class="grid-x tile-item inner-two">
+                                        <h4>5. Functional Ability</h4>
+                                        <div class="cell bg-wrapper tabular hide-border">
+                                            @for (int i = 0; i < Model.FAbilityItems.Count; i++)
+                                            {
+                                                <div class="grid-x tabular-row table-for-print @Model.FAbilityItems[i].riskClass" data-equalizer>
+                                                    <div class="cell small-6" data-equalizer-watch>@Model.FAbilityItems[i].Name</div>
+                                                    <div class="cell small-6 text-center risk-level hide-border" data-equalizer-watch>@Model.FAbilityItems[i].riskText</div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- I. A. 6. Clinical Measurements -->
+                                    <div class="grid-x tile-item inner-two">
+                                        <h4>6. Clinical Measurements</h4>
+                                        <div class="cell bg-wrapper tabular hide-border">
+                                            @for (int i = 0; i < Model.CMItems.Count; i++)
+                                            {
+                                                <div class="grid-x tabular-row table-for-print @Model.CMItems[i].riskClass" data-equalizer>
+                                                    <div class="cell small-6" data-equalizer-watch>@Model.CMItems[i].Name</div>
+                                                    <div class="cell small-6 text-center risk-level hide-border" data-equalizer-watch>@Model.CMItems[i].riskText</div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- I. A. 7. Preventive Exams/Vaccinations -->
+                                    <div class="grid-x tile-item inner-two">
+                                        <h4>7. Preventive Exams/Vaccinations</h4>
+                                        <div class="cell bg-wrapper tabular hide-border">
+                                            @for (int i = 0; i < Model.PEItems.Count; i++)
+                                            {
+                                                <div class="grid-x tabular-row table-for-print @Model.PEItems[i].riskClass" data-equalizer>
+                                                    <div class="cell small-6" data-equalizer-watch>@Model.PEItems[i].Name</div>
+                                                    <div class="cell small-6 text-center risk-level hide-border" data-equalizer-watch>@Model.PEItems[i].riskText</div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- I. B. Key Action Steps/Treatment Options -->
+                        <div class="grid-x tile-item inner force-break">
+                            <div class="cell small-12 tile-header">
+                                <h3 class="left green">B. Key Action Steps/Treatment Options</h3>
+                            </div>
+                            <div class="cell bg-wrapper tabular with-border">
+                                <div class="cell tabular-row">
+                                    <div class="tabular-content">In addition to continuing all healthy behaviors and following the advice of your doctors/healthcare providers, consider these key preventive actions/treatment options:</div>
+
+                                    <!-- I. B. 1. Gaps in Preventive Care -->
+                                    <div class="grid-x">
+                                        <div class="cell small-12">
+                                            <h4>1. Gaps in Preventive Care</h4>
+                                            <ul class="decorated green">
+                                                @{
+                                                    var gapActionItems = Model.GapActionSteps.ToList();
+                                                }
+                                                @if (gapActionItems.Count > 0)
+                                                {
+                                                    for (int i = 0; i < gapActionItems.Count; i++)
+                                                    {
+                                                        <text>
+                                                            <li>
+                                                                <span>@gapActionItems[i].name</span>
+                                                            </li>
+                                                        </text>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <text>
+                                                        <li>
+                                                            <span>None noted.</span>
+                                                        </li>
+                                                    </text>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- I. B. 2. Lifestyle/Behavioral -->
+                                    <div class="grid-x">
+                                        <div class="cell small-12">
+                                            <h4>2. Lifestyle/Behavioral</h4>
+                                            <ul class="decorated green">
+                                                @{
+                                                    var lifetimeActionSteps = Model.LifetimeActionSteps.ToList();
+                                                }
+                                                @if (lifetimeActionSteps.Count > 0)
+                                                {
+                                                    for (int i = 0; i < lifetimeActionSteps.Count; i++)
+                                                    {
+                                                        <text>
+                                                            <li>
+                                                                <span>@lifetimeActionSteps[i].name</span>
+                                                            </li>
+                                                        </text>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <text>
+                                                        <li>
+                                                            <span>None noted.</span>
+                                                        </li>
+                                                    </text>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- I. B. 3. Other -->
+                                    <div class="grid-x">
+                                        <div class="cell small-12">
+                                            <h4>3. Other</h4>
+                                            <ul class="decorated green">
+                                                @{
+                                                    var otherSteps = Model.OtherActionSteps.ToList();
+                                                }
+                                                @if (otherSteps.Count > 0)
+                                                {
+                                                    for (int i = 0; i < otherSteps.Count; i++)
+                                                    {
+                                                        <text>
+                                                            <li>
+                                                                <span>@otherSteps[i].name</span>
+                                                            </li>
+                                                        </text>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <text>
+                                                        <li>
+                                                            <span>None noted.</span>
+                                                        </li>
+                                                    </text>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- II. Listing of Wellness Goals -->
+        <a name="wellness-goals"></a>
+        <div class="grid-x awv-separator"><hr /></div>
+
+        <div class="grid-x tile-item">
+            <div class="cell small-12 tile-header">
+                <h2 class="left cyan">II. Listing of Wellness Goals</h2>
+            </div>
+            <div class="cell bg-wrapper tabular">
+                <div class="cell tabular-row hide-border">
+                    <div class="cell">
+
+                        <!-- II. A. Preventive Screenings -->
+                        @if (Model.ClinicalMeasurement.Count > 0)
+                        {
+                            <div class="grid-x tile-item inner">
+                                <div class="cell small-12 tile-header">
+                                    <h3 class="left cyan">A. Health Measurements</h3>
+                                    <div class="grid-x collapse show-for-medium-up">
+                                        <div class="cell small-4 small-offset-8">
+                                            <h5 class="right print-recommendation flex-40">Recommended</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="cell bg-wrapper tabular">
+                                    @for (int i = 0; i < Model.ClinicalMeasurement.Count; i++)
+                                    {
+                                        <div class="grid-x tabular-row table-for-print" data-equalizer>
+                                            <div class="cell small-6 medium-5" data-equalizer-watch>
+                                                <span>@Model.ClinicalMeasurement[i].Name</span>
+                                                <span data-tooltip class="recommendation-handle has-tip show-for-small-only"
+                                                      aria-haspopup="true" title="Recommended: @Model.ClinicalMeasurement[i].Goal">?</span>
+                                            </div>
+                                            <div class="cell small-6 medium-2 text-center" data-equalizer-watch>
+                                                <div class="value">@Model.ClinicalMeasurement[i].Measurement</div>
+                                                <div class="unit">@Model.ClinicalMeasurement[i].Unit</div>
+                                            </div>
+                                            <div class="cell show-for-medium-up medium-5" data-equalizer-watch>@Model.ClinicalMeasurement[i].Goal</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="grid-x tile-item inner subtext">* Current guidelines do not use goal values. Cholesterol-related goals shown above are based on previous expert guidelines.</div>
+                            if (!string.IsNullOrEmpty(Model.FastingNotion))
+                            {
+                                <div class="grid-x tile-item inner subtext">@Model.FastingNotion When fasting versus non-fasting status could not be verified for LDL cholesterol and triglycerides, it has been assumed that these were fasting values.</div>
+                            }
+                        }
+
+                        <!-- II. B. Lifestyle/Behavioral -->
+                        <div class="grid-x tile-item inner force-break">
+                            <div class="cell small-12 tile-header">
+                                <h3 class="left cyan">B. Lifestyle/Behavioral</h3>
+                                <div class="grid-x collapse show-for-medium-up">
+                                    <div class="cell small-4 small-offset-8">
+                                        <h5 class="right print-recommendation flex-40">Recommended</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cell bg-wrapper tabular">
+                                @for (int i = 0; i < Model.LifeStyleGoals.Count; i++)
+                                {
+                                    <div class="grid-x tabular-row table-for-print" data-equalizer>
+                                        <div class="cell small-6 medium-5">
+                                            <span>@Model.LifeStyleGoals[i].Name</span>
+                                            <span data-tooltip class="recommendation-handle has-tip show-for-small-only"
+                                                  aria-haspopup="true" title="Recommended: @Model.LifeStyleGoals[i].Recommended">?</span>
+                                        </div>
+                                        <div class="cell small-6 medium-2 text-center">
+                                            <div class="@Model.LifeStyleGoals[i].ClassName">@Model.LifeStyleGoals[i].StatusMessage</div>
+                                        </div>
+                                        <div class="cell show-for-medium-up medium-5">@Model.LifeStyleGoals[i].Recommended</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- II. C. Other -->
+                        <div class="grid-x tile-item inner">
+                            <div class="cell small-12 tile-header">
+                                <h3 class="left cyan">C. Other</h3>
+                                <div class="grid-x collapse show-for-medium-up">
+                                    <div class="cell small-4 small-offset-8">
+                                        <h5 class="right print-recommendation flex-40">Recommended</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cell bg-wrapper tabular">
+                                @for (int i = 0; i < Model.OtherGoals.Count; i++)
+                                {
+                                    <div class="grid-x tabular-row table-for-print" data-equalizer>
+                                        <div class="cell small-6 medium-4" data-equalizer-watch>
+                                            <span>@Model.OtherGoals[i].Name</span>
+                                            <span data-tooltip class="recommendation-handle has-tip show-for-small-only"
+                                                  aria-haspopup="true" title="Recommended: @Model.OtherGoals[i].Recommended">?</span>
+                                        </div>
+                                        <div class="cell small-6 medium-4 text-center" data-equalizer-watch>
+                                            <div class="@Model.OtherGoals[i].ClassName">@Model.OtherGoals[i].StatusMessage</div>
+                                        </div>
+                                        <div class="cell show-for-medium-up medium-4" data-equalizer-watch>@Model.OtherGoals[i].Recommended</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- II. D. Personal Safety Risks/Goals -->
+                        <div class="grid-x tile-item inner force-break">
+                            <div class="cell small-12 tile-header">
+                                <h3 class="left cyan">D. Personal Safety Risks/Goals</h3>
+                            </div>
+                            <div class="cell bg-wrapper tabular">
+                                <div class="cell tabular-row">
+                                    @if (Model.PersonalSafetyGoals.Count == 0)
+                                    {
+                                        <h3 class="risk-status inner not-at-risk">You are not at risk</h3>
+                                    }
+                                    else
+                                    {
+                                        <div class="cell">
+                                            <h3 class="risk-status inner at-risk">You may be at risk</h3>
+                                            <p>
+                                                Your personal safety-related risks include those shown below. Goal is to eliminate all safety risks.
+                                            </p>
+                                            <ul class="styled-risk">
+                                                @for (int i = 0; i < Model.PersonalSafetyGoals.Count; i++)
+                                                {
+                                                    <li class="at-risk"><i class='fa fa-fgrid-xn-o'></i> @Html.Raw(Model.PersonalSafetyGoals[i])</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- III. Preventive Screenings and Immunizations: Personalized Prevention Plan Schedule -->
+        <a name="preventive-screenings"></a>
+        <div class="grid-x awv-separator"><hr /></div>
+
+        <div class="grid-x tile-item">
+            <div class="cell small-12 tile-header">
+                <h2 class="left blue">III. Preventive Screenings and Immunizations: Personalized Prevention Plan Schedule</h2>
+            </div>
+            <div class="cell bg-wrapper tabular">
+                <div class="cell tabular-row hide-border">
+                    <div class="cell">
+
+                        <!-- III. A. Preventive Screenings -->
+                        <div class="grid-x tile-item inner">
+                            <div class="cell small-12 tile-header">
+                                <h3 class="left blue">A. Preventive Screenings</h3>
+                                <div class="grid-x collapse show-for-medium-up">
+                                    <div class="cell small-4 small-offset-8">
+                                        <h5 class="right print-recommendation flex-60">Recommended</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cell bg-wrapper tabular force-break-7">
+                                @for (int i = 0; i < Model.PreventiveServices.Count; i++)
+                                {
+                                    <div class="grid-x tabular-row table-for-print" data-equalizer>
+                                        <div class="cell small-6 medium-3" data-equalizer-watch>
+                                            <span>@Model.PreventiveServices[i].Name</span>
+                                            <span data-tooltip class="recommendation-handle has-tip show-for-small-only"
+                                                  aria-haspopup="true" title="Recommended Schedule: @Model.PreventiveServices[i].Recommended">?</span>
+                                        </div>
+                                        <div class="cell small-6 medium-3 text-center" data-equalizer-watch>
+                                            <div class="@Model.PreventiveServices[i].ClassName">@Model.PreventiveServices[i].StatusMessage</div>
+                                            @if (!string.IsNullOrEmpty(Model.PreventiveServices[i].LastReceived))
+                                            {
+                                                <div>Last Received: @Model.PreventiveServices[i].LastReceived</div>
+                                            }
+                                        </div>
+                                        <div class="cell show-for-medium-up medium-6" data-equalizer-watch>
+                                            @Html.Raw(Model.PreventiveServices[i].Recommended)
+                                            @if (!string.IsNullOrEmpty(Model.PreventiveServices[i].NextDue))
+                                            {
+                                                <div><b>Next Due:</b> @Model.PreventiveServices[i].NextDue</div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- III. B. Vaccinations -->
+                        <div class="grid-x tile-item inner force-break">
+                            <div class="cell small-12 tile-header">
+                                <h3 class="left blue">B. Vaccinations</h3>
+                                <div class="grid-x collapse show-for-medium-up">
+                                    <div class="cell small-4 small-offset-8">
+                                        <h5 class="right print-recommendation flex-40">Recommended</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cell bg-wrapper tabular">
+                                @for (int i = 0; i < Model.Immunizations.Count; i++)
+                                {
+                                    <div class="grid-x tabular-row table-for-print" data-equalizer>
+                                        <div class="cell small-6 medium-5" data-equalizer-watch>
+                                            <span>@Model.Immunizations[i].Name</span>
+                                            <span data-tooltip class="recommendation-handle has-tip show-for-small-only"
+                                                  aria-haspopup="true" title="Recommended Schedule: @Model.Immunizations[i].Recommended">?</span>
+                                        </div>
+                                        <div class="cell small-6 medium-2 text-center" data-equalizer-watch>
+                                            <div class="@Model.Immunizations[i].ClassName">@Model.Immunizations[i].StatusMessage</div>
+                                            @if (!string.IsNullOrEmpty(Model.Immunizations[i].LastReceived))
+                                            {
+                                                <div>Last Received: @Model.Immunizations[i].LastReceived</div>
+                                            }
+                                        </div>
+                                        <div class="cell show-for-medium-up medium-5" data-equalizer-watch>
+                                            @Model.Immunizations[i].Recommended
+                                            @if (!string.IsNullOrEmpty(Model.Immunizations[i].NextDue))
+                                            {
+                                                <div><b>Next Due:</b> @Model.Immunizations[i].NextDue</div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IV. Treatment Options for Additional Consideration/Discussion -->
+        <a name="treatment-options"></a>
+        <div class="grid-x awv-separator"><hr /></div>
+
+        <div class="grid-x tile-item">
+            <div class="cell small-12 tile-header">
+                <h3 class="left purple">IV. Treatment Options for Additional Consideration/Discussion</h3>
+            </div>
+            @if (Model.DrReferrals.Count > 0)
+            {
+                <div class="cell bg-wrapper tabular">
+                    <div class="cell tabular-row hide-border">
+                        <div class="cell">
+                            <ul class="tabular-list purple">
+                                @for (int i = 0; i < Model.DrReferrals.Count; i++)
+                                {
+                                    <li>@Model.DrReferrals[i]</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div>None</div>
+            }
+        </div>
+
+        <!-- V. Risks and Benefits of Treatment Options -->
+        <a name="risks-benefits"></a>
+        <div class="grid-x awv-separator cancel-break"><hr /></div>
+
+        <div class="grid-x tile-item">
+            <div class="cell small-12 tile-header">
+                <h3 class="left orange">V. Risks and Benefits of Treatment Options</h3>
+            </div>
+            <div class="cell bg-wrapper tabular">
+                <div class="cell tabular-row hide-border">
+                    <div class="cell">
+                        <ul class="tabular-list orange">
+                            <li>Discuss risks and benefits of all treatment options with your doctor.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VI. Health Advice -->
+        <a name="health-advice"></a>
+        <div class="grid-x awv-separator cancel-break"><hr /></div>
+
+        <div class="grid-x tile-item">
+            <div class="cell small-12 tile-header">
+                <h3 class="left pink">VI. Personalized Health Advice/Referrals for Health Education and Lifestyle Intervention</h3>
+            </div>
+            <div class="cell bg-wrapper tabular">
+                <div class="cell tabular-row hide-border">
+                    <div class="cell">
+                        In addition to the advice provided in the Key Action Steps and other sections of this report, please seriously consider the following programs/referrals to reduce your health risks and promote self-management and wellness.
+                    </div>
+                </div>
+                <div class="cell tabular-row hide-border">
+                    <div>
+                        <ul class="tabular-list pink">
+                            @{
+                                var absolutePath = Url.Content("~/Pdf/");
+                                foreach (var item in Model.HealthReferrals)
+                                {
+                                    if (string.IsNullOrEmpty(item.Link))
+                                    {
+                                        <li>@Html.Raw(item.Text)</li>
+                                    }
+                                    else
+                                    {
+                                        var filename = absolutePath + item.Link;
+                                        <li><a href="@filename" class="link green" target="_blank">@Html.Raw(item.Text)</a></li>
+                                    }
+
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VII. Comments -->
+        <div class="grid-x awv-separator cancel-break"><hr /><a name="comments"></a></div>
+
+        <div class="grid-x tile-item">
+            <div class="cell small-12 tile-header">
+                <h3 class="left red">VII. Healthcare Provider Comments (Max 1000 char)</h3>
+            </div>
+            <div class="cell bg-wrapper tabular margin-fix">
+                <textarea id="providercomments" class="awv-comments" maxlength="1000">@Model.DrComments</textarea>
+                <button class="secondary small right" onclick="SaveComments(@Model.AWVId)">Save Provider Comments</button>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    $('.reveal-overlay').on('scroll', function () {
+        if ($(this).scrollTop() !== 0) {
+            $('.nav-to-top').removeClass('hide');
+        } else {
+            $('.nav-to-top').addClass('hide');
+        }
+    });
+
+	$('.nav-to-top a.button').on('click', function(ev){
+		ev.preventDefault();
+		$(".reveal-overlay").animate({
+            scrollTop: 0
+        }, "fast");
+	});
+
+    function SaveComments(id) {
+        if ($('#providercomments').val() != '') {
+            $.ajax({
+                url: "@Url.Action("SaveComments", "AWVReport")",
+                data: { AWVId: id, Comments: $('#providercomments').val() },
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    alert('Saved Successfully');
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+    }
+
+    function doPrint() {
+        window.open("@Url.Action("PrintableReports", "Reports")" + '?view=AWVReport&generatePDF=false&awvReportId='+ @Model.AWVId +'');
+    }
+</script>

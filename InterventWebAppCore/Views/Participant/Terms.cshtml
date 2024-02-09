@@ -1,0 +1,60 @@
+﻿@using InterventWebApp
+@{
+    ViewBag.Title = "Stream";
+    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+
+<div class="small-12 cell" id="service-agreement">
+</div>
+<div id="Terms" class="lmc-index lmc-wrapper terms-content">
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="small-12 cell">
+				@if (CommonUtility.HasAdminRole(User.RoleCode()))
+				{
+					<p>@Translate.Message("L1990")<a href='@Url.Action("ServiceAgreement", "Home")' target="_blank"> www.myintervent.com/serviceagreement. </a><br /></p>
+				}
+				else
+				{
+					<p>@Translate.Message("L4268").</p>
+				}
+				<input type="checkbox" id="serviceagreement" required> @Translate.Message("L441") @Translate.Message("L440")
+			</div>
+			<div class="cell new-button">
+				<br /><button id="submit" type="submit" class="button">@Translate.Message("L537")</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: 'POST',
+            data: { modal: false, closeModal : false },
+            url: '@Url.Action("ServiceAgreement", "Home")',
+            success: function (data) {
+                $("#service-agreement").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+    $("#submit").on('click', function () {
+            var checked = $('#serviceagreement').is(':checked');
+            if (checked) {
+                $.ajax({
+                    type: "POST",
+                    dataType: 'json',
+                    url: "@Url.Action("AcceptTerms", "Participant")",
+                    success: function (data) {
+                        if (data.Result) {
+                            window.location = '@Url.Action("Stream", "Participant", new { ForceParticipant = true})'
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+            }
+    });
+</script>
+

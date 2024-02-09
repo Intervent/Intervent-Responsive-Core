@@ -1,0 +1,347 @@
+﻿@using InterventWebApp
+@model InterventWebApp.StrengthTrainingLogModel
+
+@{
+    ViewBag.Title = "StrengthTrainingLog";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main report-multi-line">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="small-8 left cell">
+                    <h2>@Translate.Message("L2455")</h2>
+                </div>
+                @if (Model.HasActivePortal)
+                {
+                    <div class="small-4 text-right cell">
+                        <button id="add-training-button" data-open="add-training" class="button plus-btn right">@Translate.Message("L291")</button>
+                    </div>
+                }
+                @if (Model.LanguagePreference == LanguageCode.English)
+                {
+                    <div class="small-12 text-right cell">
+                        <a href="~/pdf/Strength Training Exercise Log.pdf" target="_blank">@Translate.Message("L4417") <span class="download-icon"><img src="~/Images/blue-download-arrow-icon.jpg" alt="Alternate Text" /></span></a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell report-table-container">
+                <table id="search-results" class="report-table green with-subheaders"></table>
+                <br />
+            </div>
+            <div class="cell">
+                <!-- pagination Start -->
+                <div class="pagination-area hide" id="pagination-centered">
+                    <ul>
+                        <li id="numeric"></li>
+                    </ul>
+                    <!-- page-link Start -->
+                    <div class="page-link">
+                        <label>@Translate.Message("L4041")</label>
+                        <div class="grid-x">
+                            <input type="text" id="jumptoPageNo">
+                            <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                        </div>
+                    </div>
+                    <!-- page-link End -->
+                </div>
+                <!-- pagination End -->
+            </div>
+        </div>
+    </div>
+</section>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+
+<div id="add-training" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form data-abide id="training-form" novalidate>
+        <h2 class="text-center">@Translate.Message("L2155")</h2>
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell" id="trainingLogHeader">
+                <div class="grid-x grid-margin-x">
+                    <div class="cell medium-6">
+                        <label>@Translate.Message("L561")</label>
+                        @Html.TextBoxFor(x => x.trainingLog.Date, new Dictionary<string, object> { { "class", "fdatepicker" }, { "required", "required" } })
+                        <small class="form-error">@Translate.Message("L2156")</small>
+                        <input id="trainingLogDate" type="hidden">
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <label>@Translate.Message("L2157")</label>
+                        @Html.TextBoxFor(x => x.trainingLog.MuscleGroup, new Dictionary<string, object> { { "required", "required" } })
+                        <small class="form-error">@Translate.Message("L480")</small>
+                    </div>
+                </div>
+                <div class="grid-x grid-margin-x">
+                    <div class="small-12 medium-6 cell">
+                        <label>@Translate.Message("L2158")</label>
+                        @Html.DropDownListFor(x => x.trainingLog.TrainingTypeId, Model.TrainingTypes, "--" + Translate.Message("L2159") + "--", new Dictionary<string, object> { { "required", "required" } })
+                        <small class="form-error">@Translate.Message("L480")</small>
+                    </div>
+                    <div class="cell medium-6">
+                        <label>@Translate.Message("L1717")</label>
+                        @Html.TextBoxFor(x => x.trainingLog.Notes)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <fieldset>
+            <legend>
+                @Translate.Message("L2160")
+            </legend>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-3 bottom">
+                    <label for="FirstSet">@Translate.Message("L2162")</label>
+                    @Html.HiddenFor(x => x.trainingLogSet[0].TrainingSet, 1)
+                </div>
+                <div class="cell medium-3">
+                    @Html.TextBoxFor(x => x.trainingLogSet[0].Repetitions, new { Placeholder = Translate.Message("L2161") })
+                </div>
+                <div class="cell medium-3">
+                    @Html.DropDownListFor(m => m.trainingLogSet[0].RPE, Model.RPE, "--" + Translate.Message("L2138") + "--")
+                </div>
+                <div class="cell medium-3">
+                    @Html.TextBoxFor(x => x.trainingLogSet[0].Weight, new { Placeholder = @Model.WeightText })
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-3 bottom">
+                    <label for="SecondSet">@Translate.Message("L2163")</label>
+                    @Html.HiddenFor(x => x.trainingLogSet[1].TrainingSet, 2)
+                </div>
+                <div class="cell medium-3">
+                    @Html.TextBoxFor(x => x.trainingLogSet[1].Repetitions, new { Placeholder = Translate.Message("L2161") })
+                </div>
+                <div class="cell medium-3">
+                    @Html.DropDownListFor(m => m.trainingLogSet[1].RPE, Model.RPE, "--" + Translate.Message("L2138") + "--")
+                </div>
+                <div class="cell medium-3">
+                    @Html.TextBoxFor(x => x.trainingLogSet[1].Weight, new { Placeholder = @Model.WeightText })
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-3 bottom">
+                    <label for="ThirdSet">@Translate.Message("L2164")</label>
+                    @Html.HiddenFor(x => x.trainingLogSet[2].TrainingSet, 3)
+                </div>
+                <div class="cell medium-3">
+                    @Html.TextBoxFor(x => x.trainingLogSet[2].Repetitions, new { Placeholder = Translate.Message("L2161") })
+                </div>
+                <div class="cell medium-3">
+                    @Html.DropDownListFor(m => m.trainingLogSet[2].RPE, Model.RPE, "--" + Translate.Message("L2138") + "--")
+                </div>
+                <div class="cell medium-3">
+                    @Html.TextBoxFor(x => x.trainingLogSet[2].Weight, new { Placeholder = @Model.WeightText })
+                </div>
+            </div>
+        </fieldset>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right">
+                <button class="small" type="submit" id="AddTraining">@Translate.Message("L968")</button>
+            </div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" id="closeTraining">@Translate.Message("L967")</button></div>
+        </div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        @Html.HiddenFor(x => x.trainingLog.Id)
+    </form>
+</div>
+
+<script>
+    var tempdata;
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    $("#trainingLog_Date").on("change", function () {
+        $('#trainingLogDate').val(toSystemDateFormat(this.value));
+    })
+
+    $(document).ready(function () {
+        $('.fdatepicker').fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        });
+        ListTraining();
+    });
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListTraining();
+    }
+
+    $("#closeTraining").on('click', function () {
+        $('#add-training').foundation('close');
+    })
+
+    $("#add-training-button").on('click', function () {
+        tempdata = null;
+        $('#trainingLog_Id').val('');
+        $("#training-form").find('input:text, input:password, input:file, select, textarea').val('');
+        $("#training-form").find('input:radio, input:checkbox').prop('checked', false).prop('selected', false);
+        $("#training-form")[0].reset();
+    })
+
+    function ListTraining() {
+        $('#trainingLog_Id').val('');
+        $('#search-results').html("");
+        var model = {};
+        var paginationdata = {
+            'page': currentPage,
+            'pageSize': pageSize,
+            'totalRecords':totalRecords
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+
+        $.ajax({
+            url: "@Url.Action("ListTraining", "Journal")",
+            data: strData,
+            type: 'POST',
+            contentType: 'application/json, charset=utf-8',
+            dataType: "json",
+            success: function (data) {
+                totalRecords = data.Records.totalRecords;
+                totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                if (data.Records != null && data.Records.listStrengthTrainingLogResponse.length > 0) {
+                    displayLogs(data.Records.listStrengthTrainingLogResponse);
+                }
+                else {
+                     $('#search-results').append('<center>@Translate.Message("L2774")</center>');
+                }
+                AddPager();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    function displayLogs(data) {
+        var trainingHtml = "", date, oldDate, i, j, training, trainingset;
+        $('#search-results').append(trainingHtml);
+        var listData = data;
+
+        for (i = 0; i < listData.length; i++) {
+            trainingHtml = "";
+            training = listData[i];
+            date = new Date(parseInt(training.Date.substr(6)));
+            if (oldDate == null || date.toLocaleDateString() != oldDate.toLocaleDateString()) {
+                trainingHtml += "<tr class='header'><th>" + toLocalDateFormat(date) + "</th><th>@Translate.Message("L1718")</th><th>@Translate.Message("L2165")</th><th>@Model.WeightText</th><th>@Translate.Message("L2161")</th><th>@Translate.Message("L1732")</th><th><div class='toggle-collapse'></div></th></tr>";
+            }
+            trainingHtml += "<tr><th>" + training.MuscleGroup + "</th><td>" + training.StrengthTrainingType.Type + "</td><td></td><td></td><td></td><td></td>";
+            if ('@Model.HasActivePortal' == "True") {
+                trainingHtml += "<td><a onclick='Update(" + training.Id + ")'><i class='fa fa-file-o'></i></a></td></tr>";
+            } else {
+                trainingHtml += "<td></td></tr>";
+            }
+            for (j = 0; j < training.StrengthTrainingLogSet.length ; j++) {
+                trainingset = training.StrengthTrainingLogSet[j];
+                trainingHtml += "<tr><td></td><td></td><td>" + trainingset.TrainingSet + "</td><td>" + trainingset.Weight + "</td><td>" + trainingset.Repetitions + "</td><td>" + trainingset.RPE + "</td><td></td></tr>";
+            }
+            $('#search-results').append(trainingHtml);
+            oldDate = date;
+        }
+    }
+
+    function Update(id) {
+        $("#training-form").find('input:text, input:password, input:file, select, textarea').val('');
+        $("#training-form").find('input:radio, input:checkbox').prop('checked', false).prop('selected', false);
+        $("#training-form")[0].reset();
+        $.ajax({
+            url: "@Url.Action("ReadTraining", "Journal")",
+            data: { id: id },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    tempdata = data.Record.StrengthTrainingLogSet;
+                    var TrainingLogSet = data.Record.StrengthTrainingLogSet;
+                    $('#trainingLog_Id').val(data.Record.Id);
+                    var trainingDate = toLocalDateFormat(data.Record.Date);
+                    $("#trainingLog_Date").val(trainingDate);
+                    $("#trainingLog_MuscleGroup").val(data.Record.MuscleGroup);
+                    $("#trainingLog_TrainingTypeId").val(data.Record.TrainingTypeId);
+                    $("#trainingLog_Notes").val(data.Record.Notes);
+
+                    if (TrainingLogSet != null && TrainingLogSet.length > 0) {
+                        for (var i = 0; i < TrainingLogSet.length; i++) {
+                            $("#trainingLogSet_" + i + "__Weight").val(TrainingLogSet[i].Weight > 0 ? TrainingLogSet[i].Weight : '');
+                            $("#trainingLogSet_" + i + "__Repetitions").val(TrainingLogSet[i].Repetitions != null ? TrainingLogSet[i].Repetitions : '');
+                            $("#trainingLogSet_" + i + "__RPE").val(TrainingLogSet[i].RPE != null ? TrainingLogSet[i].RPE : '');
+                        }
+                    }
+                    $('#add-training').foundation('open');
+                    $("#trainingLog_Date").trigger("change");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function isValidForm() {
+        var logDate = $("#trainingLog_Date").val();
+        var musclegroup = $("#trainingLog_MuscleGroup").val();
+        var trainingType = $("#trainingLog_TrainingTypeId").val();
+
+        if (logDate == undefined || logDate == "" || logDate.length == 0)
+            return false;
+
+        if (trainingType == undefined || trainingType == "")
+            return false;
+
+        if (musclegroup == undefined || musclegroup == "" || musclegroup.length == 0)
+            return false;
+
+        return true;
+    }
+
+    $("#AddTraining").on('click', function (ev) {
+        $('#trainingLog_Date').val($('#trainingLogDate').val());
+        var id = $("#trainingLog_Id").val();
+        if (!isValidForm())
+            return;
+        $.ajax({
+            url: "@Url.Action("AddEditTrainingLog", "Journal")",
+            type: 'POST',
+            dataType: "json",
+            data: $("#training-form").serialize(),
+            success: function () {
+                $('#add-training').foundation('close');
+                startIndex = 0;
+                pageSize = 15;
+                totalRecords = 0;
+                currentPage = 0;
+                totalPages = 0;
+                ListTraining();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        ev.preventDefault();
+    });
+
+
+
+    $(document).on('click', '.toggle-collapse', function () {
+        var currentItem = $(this).parent().parent();
+        $(this).toggleClass('collapsed');
+
+        while (currentItem !== null) {
+            if (currentItem.next().find('td').length > 0) {
+                currentItem = currentItem.next();
+                currentItem.toggleClass('collapsed');
+            } else {
+                currentItem = null;
+            }
+        }
+    });
+</script>

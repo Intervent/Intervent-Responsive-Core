@@ -1,0 +1,65 @@
+﻿@model InterventWebApp.AdminDashboardModel
+
+@if (Model.ShowStopTimer)
+{
+    <div id="stop-timer" class="stop-timer-modal small reveal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+        <p>Do you want to stop the timer for @Model.ParticipantName?</p>
+        <p class="time-spent"><span id="timeSpentText"></span></p>
+        <select name="disposition-list" id="disposition-list" class="primary-select">
+            <option value="0">Select activity type</option>
+            @foreach (var data in Model.TimeTrackingDispositionList)
+            {
+                <option value="@data.Value">@data.Text</option>
+            }
+        </select>
+        <div class="flex-container align-middle align-justify">
+            <button class="button hollow" id="goto-participantView">Go to ParticipantView</button>
+            <button class="button" id="saveTimeSpent">Save</button>
+        </div>
+    </div>
+}
+
+<script>
+    var timeSpentSeconds = @(Model.TrackerStartTime != DateTime.MinValue ? (DateTime.UtcNow - Model.TrackerStartTime).TotalSeconds : 0);
+    var participantId = @Model.ParticipantId;
+
+    $(document).ready(function () {
+        @if (Model.ShowStopTimer)
+        {
+            @:$('#timeSpentText').html(new Date(timeSpentSeconds * 1000).toISOString().substr(11, 8));
+            @:$("#stop-timer").foundation('open');
+        }
+
+        $("#saveTimeSpent").on('click', function () {
+            disposition = $("#disposition-list").val();
+            if (disposition == 0) {
+                $("#disposition-list").focus();
+                return;
+            }
+            StopParticipantTimer();
+        });
+
+        $("#goto-participantView").on('click', function () {
+            GotoParticipantView(participantId);
+        });
+    });
+
+    function GotoParticipantView(Id) {
+        var link = '@Url.Action("ParticipantProfile", "Participant", new { Id = "PId" })';
+        window.location.href = link.replace("PId", Id)
+    }
+
+    function StopParticipantTimer() {
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("TrackTime", "Participant")",
+            data: { timeSpent: parseInt(timeSpentSeconds), disposition: disposition, participantId: participantId },
+            success: function (data) {
+                $("#stop-timer").foundation('close');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+</script>

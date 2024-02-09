@@ -1,0 +1,195 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+
+@Html.Partial("ASPC/_ASPCHeader")
+
+<section class="lmc-faq-wrapper lmc-index">
+    <div class="faq-bg1">
+        <div class="faq-bg2">
+            <div class="faq-bg3">
+                <div class="grid-container">
+                    <div class="grid-x">
+                        <div class="cell large-12">
+                            <div class="faq-tabs-container">
+                                <ul class="tabs" data-tabs id="faq-tabs">
+                                    <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">@Translate.Message("L3237")</a></li>
+                                    <li class="tabs-title"><a data-tabs-target="panel2" href="#panel2">@Translate.Message("L3238")</a></li>
+                                </ul>
+
+                                <div class="tabs-content" data-tabs-content="faq-tabs">
+                                    <div class="tabs-panel is-active" id="panel1">
+                                        <ul class="accordion" data-accordion>
+                                            <li class="accordion-item is-active" data-accordion-item>
+                                                <a href="#" class="accordion-title">@Translate.Message("L3574")</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>Please email us at <a href="info@myintervent.com">info@myintervent.com</a> with questions.</p>
+                                                    <p>You may also call INTERVENT at 1-855-494-1093 if you have any questions.</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">WELCOME</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>Welcome to the INTERVENT website for the American Society for Preventive Cardiology (ASPC), its members and their patients. During the COVID-19 pandemic crisis, we are collaborating to provide ASPC’s members and their patients free access to some of INTERVENT's evidence-based, online/digital, educational resources and content. These resources focus on lifestyle management and are designed to help you reduce your risk for cardiovascular disease, especially heart attacks and strokes, and/or recover from a cardiac event.</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">MORE ABOUT ASPC</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>The ASPC represents a multidisciplinary group of healthcare providers (including physicians, nurses, nurse practitioners, dietitians and other healthcare specialists) along with researchers and industry representatives who share an interest in and passion for preventive cardiology. For more information about ASPC, please visit <a href="https://www.aspconline.org" target="_blank">www.aspconline.org </a> </p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">MORE ABOUT INTERVENT</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>Founded in 1997, INTERVENT is a physician-led, US-based, global health management company that provides its services using digital and telemedicine approaches. Its one-on-one, live, lifestyle management health coaching programs have been shown to be effective in numerous published studies. More than two million individuals have used INTERVENT’s services, including patients from over 150 medical centers as part of two recent large studies funded by the National Institutes of Health. For more information about INTERVENT, please visit <a href="https://www.INTERVENThealth.com" target="_blank"> www.INTERVENThealth.com </a> </p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">WHO IS ELIGIBLE TO PARTICIPATE?</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>You are eligible to participate if your doctor or healthcare provider has given you permission to participate by referring you to this ASPC/INTERVENT online portal. Before signing up for the services, you must review the FAQs. If you were not referred by your doctor or healthcare provider, you are not eligible to sign up or participate.</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">IS MY PERSONAL DOCTOR INVOLVED?</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>Your doctor or healthcare provider must refer you to the ASPC/INTERVENT online portal. Once you have signed up, you are encouraged to tell your doctor about your participation in INTERVENT’s services and share copies of the reports you receive as part of the program. He or she is likely to be very supportive of your participation and will be interested in following your progress. Your doctor remains in control of all aspects of your medical care. You should always follow your doctor’s advice.</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">IS THERE A COST TO PARTICIPATE?</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>No. The online educational resources and content available to you through the ASPC/INTERVENT collaboration are available at no cost to you. You will never be asked for credit card or payment information.</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">WHAT SERVICES ARE AVAILABLE?</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>INTERVENT is best known for its one-on-one, live, scientifically-proven health coaching programs. While these programs currently are not available as part of the collaboration between ASPC and INTERVENT, you can sign up free of charge to:</p>
+                                                    <ul>
+                                                        <li>Take INTERVENT’s online health assessment and receive personalized feedback/educational content.</li>
+                                                        <li>
+                                                            Enroll in INTERVENT’s evidence-based 12-week, self-help, online lifestyle management and cardiovascular disease risk reduction program.
+                                                        </li>
+                                                    </ul>
+                                                    <p>These free services can help you eat better, become more physically active, manage your weight, reduce your stress level, give up tobacco if necessary and much more.</p>
+                                                    <p>Please note: </p>
+                                                    <ul>
+                                                        <li>INTERVENT’s online/digital services that are being made available as part of the ASPC collaboration do not involve live/human interaction. However, you will receive access to the same high-quality educational materials and tools as participants in INTERVENT’s one-on-one, live, health coaching programs. Also, you will receive emails inviting you to join monthly live group webinars (also free-of-charge).</li>
+                                                        <li>Each person’s access to INTERVENT's online educational resources and content is governed by the INTERVENT Program Participation and Service Agreement.</li>
+                                                        <li>INTERVENT’s services are intended to be used as a supplement to, and not a replacement for, the advice of a physician or other healthcare provider.</li>
+                                                        <li>INTERVENT’s services do not constitute the practice of medicine.</li>
+                                                        <li>You must obtain approval from you doctor or healthcare provider before participating in an exercise program.</li>
+                                                        <li>Each participant’s use of INTERVENT’s online educational resources and content is entirely voluntary and by signing up for the service participants accept their own personal responsibilities in connection with their use of INTERVENT’s services.</li>
+                                                        <li>Although INTERVENT’s online educational resources and content are constructed using and compiled from credible, nationally/internationally accepted guidelines, the ASPC/INTERVENT collaboration should not be construed as an endorsement of INTERVENT by the ASPC.</li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">TELL ME MORE ABOUT THE FREE ONLINE HEALTH ASSESSMENT</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>The foods you eat, the stress you feel and the activities you do all affect your health. Now you can find out how by completing INTERVENT’s health assessment.</p>
+                                                    <p>The health assessment is a free, confidential online assessment that considers your lifestyle habits and health history to determine how healthy you are and whether you’re at risk for or could better manage heart disease and certain other chronic diseases or illnesses. It only takes about 15 minutes to complete.</p>
+                                                    <p>Once you complete the health assessment, you will immediately receive a personal wellness report and a wealth of useful information individually tailored for you. You must complete INTERVENT’s health assessment before enrolling in the self-help online lifestyle management and cardiovascular disease coaching program. Please email us at info@myintervent.com with questions.  You may also call us at 1-855-494-1093 if you have any questions.</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">TELL ME MORE ABOUT THE FREE SELF-HELP ONLINE PROGRAM</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>Think of the self-help online program like a self-help book that contains content and resources that have been personalized for you.</p>
+                                                    <p>This version of our program is designed especially for people who desire to manage their own program. The self-help program focuses on lifestyle management and cardiovascular disease risk reduction. Topics include understanding heart disease, preventing and managing risk factors for heart disease, nutrition, exercise/physical activity, weight management, stress management and, if needed, smoking cessation.</p>
+                                                    <p>You will participate at your own pace via the Internet, so you will have the convenience of completing assessments and accessing materials at times that work for you. While this program is not a quick solution, with your doctor’s or healthcare provider’s consent to participate, it’s a safe, proven way to help you get started toward achieving lasting results. And, you receive the same high-quality educational materials and tools as participants in INTERVENT’s one-on-one, live, scientifically-proven health coaching programs.</p>
+                                                    <p>You must first complete INTERVENT’s health assessment before enrolling. Please email us at info@myintervent.com with questions.  You may also call us at 1-855-494-1093 to speak to a customer care representative.</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">IS MY PERSONAL HEALTH INFORMATION SECURE AND CONFIDENTIAL?</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>Yes. In the United States and Canada, health information must be secured and held confidential by law. For specific information, please review INTERVENT’s Website and Program Privacy Policy.</p>
+                                                </div>
+                                            </li>
+                                            <li class="accordion-item" data-accordion-item>
+                                                <a href="#" class="accordion-title">HOW DO I GET STARTED?</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>It’s easy. To sign up for the service and complete the health assessment:</p>
+                                                    <ul>
+                                                        <li>Please click the “Sign Up” icon, provide the requested information and follow the instructions. As part of our security commitment, you will need to enter a valid email address that you have not previously used when accessing an INTERVENT service.</li>
+                                                        <li>Complete your user profile.</li>
+                                                        <li>Take the intake health assessment questionnaire.</li>
+                                                    </ul>
+                                                    <p>Once you have completed your health assessment you can either:</p>
+                                                    <ul>
+                                                        <li>Click the “I care about my health” icon.</li>
+                                                        <li>Then, click the “Start” icon to begin your online self-help program.</li>
+                                                        <li>Review the “Welcome” module and follow the instructions.</li>
+                                                    </ul>
+                                                    <p style="align-content:center"> or </p>
+                                                    <ul>
+                                                        <li>Click the “I'll decide later. Please show me my report” icon to review your personalized wellness report.</li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="tabs-panel" id="panel2">
+                                        <ul class="accordion" data-accordion>
+                                            <li class="accordion-item is-active" data-accordion-item>
+                                                <a href="#" class="accordion-title">Dear ASPC Member:</a>
+
+                                                <div class="accordion-content" data-tab-content>
+                                                    <p>As you know, COVID-19 is negatively impacting patients’ access to facility-based preventive cardiology and cardiac rehab services. We are pleased to inform you that, during the pandemic crisis, we are collaborating with INTERVENT International to provide our members and their patients free access to some of INTERVENT's evidence-based, online/digital, educational resources and content.</p>
+                                                    <p>INTERVENT’s lifestyle management and cardiovascular disease risk reduction programs have been shown to be effective in more than 100 published scientific abstracts and manuscripts. More than two million individuals have participated in INTERVENT’s programs, including patients from over 150 medical centers as part of two recent multi-center NIH-funded clinical trials. For more information about INTERVENT, please visit <a href="https://www.INTERVENThealth.com" target="_blank"> www.INTERVENThealth.com </a></p>
+                                                    <p>As part of the collaboration, your patients can sign up at <a href="https://www.myintervent.com/ASPC" target="_blank"> www.myintervent.com/ASPC</a>  to:</p>
+                                                    <ul>
+                                                        <li>Take a free online health assessment and receive personalized feedback/educational content.</li>
+                                                        <li>Enroll in a free 12-week, self-help/digital, online lifestyle management and cardiovascular disease risk reduction coaching program.* </li>
+                                                    </ul>
+                                                    <br/>
+                                                    <p>Your patients are only eligible to participate provided an ASPC member physician/healthcare professional consents to their participation by referring them to the ASPC/INTERVENT online portal. You can do this simply by telling your patients to log on to this portal (<a href="https://www.myintervent.com/ASPC" target="_blank"> www.myintervent.com/ASPC</a>), review the FAQs, review the INTERVENT Program Participation and Service Agreement and consider accessing the free services.</p>
+                                                    <p>For more information, please review the FAQs for participants or contact INTERVENT at info@myintervent.com or 1-855-494-1093.  </p>
+                                                    <p>Sincerely,</p>
+                                                    <p>The American Society for Preventive Cardiology</p>
+                                                    <p>* Please note:</a>
+                                                    <p>INTERVENT’s online/digital services that are being made available as part of the ASPC collaboration do not involve live/human interaction. However, participants will have the option of joining monthly live group webinars (also free-of-charge).</p>
+                                                    <p>Each patient’s access to INTERVENT's online educational resources and content is governed by INTERVENT’s Participation and Service Agreement.</p>
+                                                    <p>The services are intended to be used as a supplement to, and not a replacement for, the advice of a physician or other healthcare provider.</p>
+                                                    <p>INTERVENT’s services are educational and do not constitute the practice of medicine.</p>
+                                                    <p>Each patient’s use of INTERVENT’s online educational resources and content is entirely voluntary. By signing up for the service, participants accept their own personal responsibilities in connection with their use of the services.</p>
+                                                    <p>Although INTERVENT’s algorithms, online educational resources and content are constructed using and compiled from credible, nationally/internationally accepted guidelines, the collaboration should not be construed as an endorsement of INTERVENT by the ASPC.</p>
+                                                </div>
+                                            </li>
+                                          
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+	<div class="lmc-faq-custom-logo">
+		<div class="text-center"><a href="#"><img src="~/Images/aspc-logo.png" alt="" /></a></div>
+	</div>
+	
+	<div class="lmc-faq-bottom"></div>
+</section>

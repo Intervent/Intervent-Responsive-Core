@@ -1,0 +1,1772 @@
+﻿@using InterventWebApp
+@using Intervent.Web.DataLayer;
+@model InterventWebApp.PortalModel
+
+<div class="portal-details portal-details-section">
+    <div class="grid-x grid-margin-x portal-form">
+        <div class="cell medium-4 small-6">
+            <label>Name</label>
+            <p><span>@Model.portal.Name</span></p>
+        </div>
+        <div class="cell medium-4 small-6">
+            <label>Start Date</label>
+            <p><span id="portalStartDateDisplay"></span></p>
+        </div>
+        <div class="cell medium-4 small-6">
+            <label>End Date</label>
+            <p><span id="portalEndDateDisplay"></span></p>
+        </div>
+        <div class="cell medium-4 small-6">
+            <label>Languages</label>
+            <p><span>@(Model.portal.Languages.Count() > 0 ? string.Join("/", Model.portal.Languages.Select(x => x.LanguageCode)) : "-")</span></p>
+        </div>
+        <div class="cell medium-4 small-6">
+            <label>Specializations</label>
+            <p><span>@(Model.portal.Specializations.Count() > 0 ? string.Join("/", Model.portal.Specializations.Select(x => x.Name)) : "-")</span></p>
+        </div>
+        <div class="cell medium-4 small-6">
+            <label>Active</label>
+            <p>@(Model.portal.Active ? "Yes" : "No")</p>
+        </div>
+    </div>
+
+    <form class="create-profile-form portal-form hide" id="add-edit-portal" data-abide novalidate>
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="cell medium-4 small-6">
+                <label>Name</label>
+                @Html.TextBoxFor(m => m.portal.Name, new Dictionary<string, object> { { "id", "portalName" }, { "required", "required" }, { "maxlength", "256" } })
+                <small class="form-error">Name is required.</small>
+            </div>
+            <div class="cell medium-4 small-6">
+                <label>Start Date</label>
+                @Html.TextBoxFor(m => m.portal.StartDate, new Dictionary<string, object> { { "id", "portalStartDate" }, { "required", "required" }, { "class", "input-date" } })
+                <small class="form-error">Start Date is required.</small>
+                <input id="HportalStartDate" type="hidden" />
+            </div>
+            <div class="cell medium-4 small-6">
+                <label>End Date</label>
+                @Html.TextBoxFor(m => m.portal.EndDate, new Dictionary<string, object> { { "id", "portalEndDate" }, { "required", "required" }, { "class", "input-date" } })
+                <small class="form-error">End Date is required.</small>
+                <input id="HportalEndDate" type="hidden" />
+            </div>
+            <div class="cell medium-4 small-6">
+                <label>Languages</label>
+                @Html.DropDownListFor(m => m.portalLanguages, Model.languages, new Dictionary<string, object> { { "class", "override-select-portal" }, { "multiple", "multiple" }, { "data-prompt", "Select" }, { "required", true } })
+                <small class="form-error">Languages is required.</small>
+            </div>
+            <div class="cell medium-4 small-6">
+                <label>Coach Specializations</label>
+                @Html.DropDownListFor(m => m.portalSpecializations, Model.specializations, new Dictionary<string, object> { { "multiple", "multiple" }, { "class", "override-select-portal" }, { "data-prompt", "Select" }, { "required", true } })
+                <small class="form-error">Specializations is required.</small>
+            </div>
+
+            <div class="cell medium-4 small-6">
+                <label>Active</label>
+                @Html.DropDownListFor(m => m.portal.Active, Model.yesorNoQuestion, new Dictionary<string, object> { { "id", "active" }, { "data-prompt", "Select" } })
+            </div>
+        </div>
+
+        <div class="grid-x grid-margin-x button-set new-button hide">
+            <div class="cell medium-6 medium-order-2 medium-text-right"><button class="button" type="submit" id="add-edit-portal-submit">Save</button></div>
+        </div>
+    </form>
+</div>
+
+<div class="portal-details-cards">
+    <div class="grid-x grid-margin-x grid-margin-y small-up-8">
+        <div class="cell">
+            <div class="portal-cards programs-cards" data-tab-target="cards-programs">
+                <p>@Model.portal.ProgramsinPortal.Count<span>Programs</span></p>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="portal-cards incentives-cards" data-tab-target="cards-incentives">
+                <p>@Model.incentiveCount<span>Incentives</span></p>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="portal-cards kits-cards" data-tab-target="cards-kits">
+                <p>@Model.kitsCount<span>Kits</span></p>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="portal-cards email-cards" data-tab-target="cards-emails">
+                <p>@Model.emailCount<span>Emails</span></p>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="portal-cards raffles-cards" data-tab-target="cards-raffles">
+                <p>@Model.rafflesCount<span>Raffles</span></p>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="portal-cards forms-cards" data-tab-target="cards-forms">
+                <p>@Model.formsCount<span>Forms</span></p>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="portal-cards coupon-cards" data-tab-target="cards-coupons">
+                <p>@Model.couponsCount<span>Coupons</span></p>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="portal-cards kits-followups-cards" data-tab-target="cards-kits-followups">
+                <p>@Model.kitsinFollowUpCount<span>Kits in FollowUps</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="portal-other-details portal-details-section">
+    <div class="title-label flex-container align-middle align-justify">
+        <label>Other details</label>
+        <div class="new-button">
+            <a class="button hollow form-edit-btn" href="#" id="EditOtherdetails"><i class="fa fa-pencil fa-fw"></i> Edit</a>
+            <button class="button form-edit-btn hide" id="saveOtherdetails">Save</button>
+        </div>
+    </div>
+    <div class="rounded-tabs-list-container">
+        <ul class="tabs rounded-tabs status-tabs" data-tabs id="portal-details-tabs">
+            <li class="tabs-title is-active">
+                <a href="#portal-assessment" id="tabAssessment" aria-selected="true">Assessment</a>
+            </li>
+            <li class="tabs-title">
+                <a href="#portal-programs" id="tabPrograms" data-tabs-target="portal-programs">Programs</a>
+            </li>
+            <li class="tabs-title">
+                <a href="#portal-followups" id="tabFollow-Up" data-tabs-target="portal-followups">Follow-Up</a>
+            </li>
+            <li class="tabs-title">
+                <a href="#portal-coaching-text" id="tabCoaching" data-tabs-target="portal-coaching-text">Coaching Enrollment Text</a>
+            </li>
+            <li class="tabs-title">
+                <a href="#portal-eligibility-claims" id="tabEligibility" data-tabs-target="portal-eligibility-claims">Eligibility &amp; Claims</a>
+            </li>
+            <li class="tabs-title">
+                <a href="#portal-features" id="tabAdditionalFeatures" data-tabs-target="portal-features">Additional Features</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tabs-content rounded-tabs-content" data-tabs-content="portal-details-tabs">
+        <div class="tabs-panel is-active" id="portal-assessment">
+            <div class="grid-x grid-margin-x portal-form">
+                <div class="cell medium-4">
+                    <label>Health Assessment</label>
+                    <p><span id="healthAssessmentDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>HRA Version</label>
+                    <p><span id="hraVersionDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Assessment Name</label>
+                    <p><span id="assessmentNameDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>No. of days HRA can be updated</label>
+                    <p><span id="hraValidityDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Annual Wellness Visit</label>
+                    <p><span id="awvDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>CAC Scan Question</label>
+                    <p><span id="cacScanDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>GINA Question</label>
+                    <p><span id="ginaDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Client Name in Report</label>
+                    <p><span id="clientNameinReportdisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Auto Immune Question</label>
+                    <p><span id="autoImmuneDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Mail Score Card</label>
+                    <p><span id="mailScoreCardDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Care Plan</label>
+                    <p><span id="carePlanDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Care Plan Type</label>
+                    <p><span id="carePlanTypeDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Lab Integration</label>
+                    <p><span id="labIntegrationDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Lab Procedure</label>
+                    <p><span id="LabProcedureDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Use Previous Labs</label>
+                    <p><span id="usePreviousLabsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Use Previous Labs From</label>
+                    <p><span id="validLabsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Self Enter Labs</label>
+                    <p><span id="selfEnterLabsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Show Postmenopausal Question</label>
+                    <p><span id="showPostmenopausalDisplay"></span></p>
+                </div>
+                <div class="cell medium-4 welcome-text">
+                    <label>Welcome Text</label>
+                    <p><span class="anchor-blue pointer-cursor" id="dashboard-content-view">Switch into edit mode to view content</span></p>
+                </div>
+            </div>
+
+            <form class="create-profile-form portal-form hide" id="edit-Assessment" data-abide novalidate>
+                <div class="grid-x grid-margin-x grid-margin-y">
+                    <div class="cell medium-4">
+                        <label>Health Assessment</label>
+                        @Html.DropDownListFor(m => m.portal.HasHRA, Model.HRAStatus, "--Select--", new Dictionary<string, object> { { "id", "hraStatus" }, { "data-prompt", "Select" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>HRA Version</label>
+                        @Html.DropDownListFor(m => m.portal.HRAVer, Model.HRAVersions, "--Select--", new Dictionary<string, object> { { "id", "HRAVer" }, { "data-validator", "validateHRAVer" } })
+                        <small class="form-error">HRA Version is required.</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Assessment Name</label>
+                        @Html.DropDownListFor(m => m.portal.AssessmentName, Model.AssessmentNames, "--Select--", new Dictionary<string, object> { { "id", "AssessmentName" }, { "data-validator", "validateAssessmentName" } })
+                        <small class="form-error">Assessment Name is required.</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>No. of days HRA can be updated</label>
+                        @Html.TextBoxFor(m => m.portal.HRAValidity, new Dictionary<string, object> { { "id", "HRAValidity" }, { "data-validator", "validateHRAValidity" }, { "type", "number" } })
+                        <small class="form-error">Required.</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Annual Wellness Visit</label>
+                        @Html.DropDownListFor(m => m.portal.AWV, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "awv" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>CAC Scan Question</label>
+                        @Html.DropDownListFor(m => m.portal.CACScanQuestion, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "CACScanQuestion" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>GINA Question</label>
+                        @Html.DropDownListFor(m => m.portal.GINAQuestion, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "GINAQuestion" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Client Name in Report</label>
+                        @Html.DropDownListFor(m => m.portal.ClientNameInReport, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "ClientNameInReport" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Auto Immune Question</label>
+                        @Html.DropDownListFor(m => m.portal.AutoImmune, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "AutoImmune" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Mail Score Card</label>
+                        @Html.DropDownListFor(m => m.portal.MailScoreCard, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "MailScoreCard" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Care Plan</label>
+                        @Html.DropDownListFor(m => m.portal.CarePlan, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "CarePlan" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Care Plan Type</label>
+                        @Html.DropDownListFor(m => m.portal.CarePlanType, Model.CarePlanTypes, "--Select--", new Dictionary<string, object> { { "id", "CarePlanType" }, { "data-validator", "validateCarePlanType" } })
+                        <small class="form-error">Required.</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Lab Integration</label>
+                        @Html.DropDownListFor(m => m.portal.LabIntegration, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "lab" } })
+                    </div>
+                    <div class="cell medium-4" id="dropdownLabProcedure">
+                        <label>Lab Procedure</label>
+                        @Html.DropDownListFor(m => m.LabProcedure, Model.LabProcedures, new Dictionary<string, object> { { "multiple", "multiple" }, { "class", "override-select-portal" }, { "data-prompt", "Select" } })
+                        <small class="form-error">Lab Procedure is required.</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Use Previous Labs</label>
+                        @Html.DropDownListFor(m => m.portal.usePreviousLabs, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "usePreviousLabs" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Use previous labs forms</label>
+                        @Html.TextBoxFor(m => m.portal.ValidLabs, new Dictionary<string, object> { { "id", "portalValidLabs" } })
+                        <input id="HValidLabs" type="hidden" />
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Self Enter Labs</label>
+                        @Html.DropDownListFor(m => m.portal.SelfEnterLabs, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "selfEnterLabs" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Show Postmenopausal Question</label>
+                        @Html.DropDownListFor(m => m.portal.ShowPostmenopausal, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "ShowPostmenopausal" }, { "class", "showProgram" } })
+                    </div>
+                    <div class="cell medium-4 welcome-text">
+                        <label>Welcome Text</label>
+                        @Html.TextAreaFor(m => m.portal.WelcomeText, new Dictionary<string, object> { { "id", "welcomeText" } })
+                    </div>
+                    <div>
+                        <button type="submit" hidden id="edit-Assessment-Submit"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="tabs-panel" id="portal-programs">
+            <div class="grid-x grid-margin-x portal-form">
+                <div class="cell medium-4">
+                    <label>Coaching Program</label>
+                    <p><span id="hasCoachingProgramDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Self-Help Program</label>
+                    <p><span id="hasSelfHelpProgramDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>HRA Mandatory for Coaching Program</label>
+                    <p><span id="hraforCoachingProgramDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>HRA Mandatory for Self-Help Program</label>
+                    <p><span id="hraforSelfHelpProgramDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Coaching available for</label>
+                    <p><span id="coachingAvailableForDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>ShowPricing</label>
+                    <p><span id="showPricingDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Show Program Option</label>
+                    <p><span id="showProgramOptionDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Self Scheduling</label>
+                    <p><span id="selfSchedulingDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Assign Program</label>
+                    <p><span id="assignProgramsDisplay"></span></p>
+                </div>
+            </div>
+
+            <form class="create-profile-form portal-form hide" id="edit-Programs">
+                <div class="grid-x grid-margin-x grid-margin-y">
+                    <div class="cell medium-4">
+                        <label>Coaching Program</label>
+                        @Html.DropDownListFor(m => m.portal.HasCoachingProgram, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "lm" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Self-Help Program</label>
+                        @Html.DropDownListFor(m => m.portal.HasSelfHelpProgram, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "sh" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>HRA Mandatory for Coaching Program</label>
+                        @Html.DropDownListFor(m => m.portal.HRAforCoachingProgram, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "hraforlm" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>HRA Mandatory for Self-Help Program</label>
+                        @Html.DropDownListFor(m => m.portal.HRAforSelfHelpProgram, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "hraforsh" } })
+                    </div>
+                    <div class="cell medium-4" id="dropdownCoachingCondition">
+                        <label>Coaching available for</label>
+                        @Html.DropDownListFor(m => m.CoachingCondition, Model.CoachingConditions, new Dictionary<string, object> { { "multiple", "multiple" }, { "class", "override-select-portal" }, { "data-prompt", "Select" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>ShowPricing</label>
+                        @Html.DropDownListFor(m => m.portal.ShowPricing, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "ShowPricing" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Show Program Option</label>
+                        @Html.DropDownListFor(m => m.portal.ShowProgramOption, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "ShowProgramOption" }, { "class", "showProgram" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Self Scheduling</label>
+                        @Html.DropDownListFor(m => m.portal.SelfScheduling, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "ssched" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Assign Program</label>
+                        @Html.DropDownListFor(m => m.portal.AssignPrograms, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "AssignPrograms" } })
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="tabs-panel" id="portal-followups">
+            <div class="grid-x grid-margin-x portal-form">
+                <div class="cell medium-4">
+                    <label>Follow Up for Coaching Program</label>
+                    <p><span id="followUpforCoachingDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>
+                        Follow Up Types for Coaching
+                    </label>
+                    <p><span id="coachingfollowupsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Labs for Follow Up (Coaching)</label>
+                    <p><span id="followuplabsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>FollowUp for Self-Help Program</label>
+                    <p><span id="followUpforSelfHelpDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>
+                        Follow Up Types for Self-Help
+                    </label>
+                    <p><span id="selfhelpfollowupsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Labs for Follow Up (Self-Help)</label>
+                    <p><span id="selfhelpfollowuplabsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>
+                        No. of days FollowUp can be updated
+                    </label>
+                    <p><span id="followUpValidityDisplay"></span></p>
+                </div>
+            </div>
+
+            <form class="create-profile-form portal-form hide" id="edit-Follow-Up" data-abide novalidate>
+                <div class="grid-x grid-margin-x grid-margin-y">
+                    <div class="cell medium-4">
+                        <label>
+                            Follow Up for Coaching Program
+                        </label>
+                        @Html.DropDownListFor(m => m.portal.FollowUpforCoaching, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "fuforlm" } })
+                    </div>
+                    <div class="cell medium-4" id="dropdowncoachingfollowuptypes">
+                        <label>Coaching Follow Up Types</label>
+                        @Html.DropDownListFor(m => m.portalcoachingfollowups, Model.FollowUpTypes, new Dictionary<string, object> { { "id", "coachingfollowuptypes" }, { "class", "override-select-portal" }, { "multiple", "multiple" }, { "data-prompt", "Select" }, { "data-validator", "validateCoachingFollowupType" } })
+                        <small class="form-error">Follow Up types is required.</small>
+                    </div>
+                    <div class="cell medium-4" id="dropdowncoachingfollowuplabs">
+                        <label>Labs for Follow Up (Coaching)</label>
+                        @Html.DropDownListFor(m => m.followuplabs, Model.FollowUpTypes, new Dictionary<string, object> { { "multiple", "multiple" }, { "class", "override-select-portal" }, { "data-prompt", "Select" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>
+                            FollowUp for Self-Help Program
+                        </label>
+                        @Html.DropDownListFor(m => m.portal.FollowUpforSelfHelp, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "fuforsh" } })
+                    </div>
+                    <div class="cell medium-4" id="dropdownselfhelpfollowuptypes">
+                        <label>Self-Help Follow Up Types</label>
+                        @Html.DropDownListFor(m => m.portalselfhelpfollowups, Model.FollowUpTypes, new Dictionary<string, object> { { "id", "selfhelpfollowuptypes" }, { "class", "override-select-portal" }, { "multiple", "multiple" }, { "data-prompt", "Select" }, { "data-validator", "validateSelfHelpFollowupType" } })
+                        <small class="form-error">Self-Help Follow Up types is required.</small>
+                    </div>
+                    <div class="cell medium-4" id="dropdownselfhelpfollowuplabs">
+                        <label>Labs for Follow Up (Self-Help)</label>
+                        @Html.DropDownListFor(m => m.selfhelpfollowuplabs, Model.FollowUpTypes, new Dictionary<string, object> { { "multiple", "multiple" }, { "class", "override-select-portal" }, { "data-prompt", "Select" } })
+                    </div>
+                    <div class="cell medium-4" id="followupDays">
+                        <label>No. of days FollowUp can be updated</label>
+                        @Html.TextBoxFor(m => m.portal.FollowUpValidity, new Dictionary<string, object> { { "id", "FollowUpValidity" }, { "data-validator", "validateFollowUpValidity" }, { "type", "number" } })
+                        <small class="form-error">Required.</small>
+                    </div>
+                    <div>
+                        <button type="submit" hidden id="edit-Follow-Up-Submit"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="tabs-panel" id="portal-coaching-text">
+            <div class="grid-x grid-margin-x portal-form">
+                <div class="cell medium-4">
+                    <label>
+                        Incomplete HRA
+                    </label>
+                    <p><span id="incompleteHRADisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>HRA Only</label>
+                    <p><span id="hraOnlyDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>HRA and Biometrics</label>
+                    <p><span id="hraandBiometricsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>First Coaching</label>
+                    <p><span id="firstCoachingDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Completed Coaching</label>
+                    <p><span id="completedCoachingDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>First Time HRA</label>
+                    <p><span id="firstTimeHRADisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Report Text</label>
+                    <p><span id="reportTextDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Program Text</label>
+                    <p><span id="programTextDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Contact Text</label>
+                    <p><span id="contactTextDisplay"></span></p>
+                </div>
+            </div>
+
+            <form class="create-profile-form portal-form hide" id="edit-CoachingEnrollment">
+                <div class="grid-x grid-margin-x grid-margin-y">
+                    <div class="cell medium-4">
+                        <label>Incomplete HRA</label>
+                        @Html.TextAreaFor(m => m.portal.IncompleteHRA, new Dictionary<string, object> { { "id", "portalIncompleteHRA" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>HRA Only</label>
+                        @Html.TextAreaFor(m => m.portal.HRAOnly, new Dictionary<string, object> { { "id", "portalHRAOnly" } })
+
+                    </div>
+                    <div class="cell medium-4">
+                        <label>HRA and Biometrics</label>
+                        @Html.TextAreaFor(m => m.portal.HRAandBiometrics, new Dictionary<string, object> { { "id", "portalHRAandBiometrics" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>First Coaching</label>
+                        @Html.TextAreaFor(m => m.portal.FirstCoaching, new Dictionary<string, object> { { "id", "portalFirstCoaching" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Completed Coaching</label>
+                        @Html.TextAreaFor(m => m.portal.CompletedCoaching, new Dictionary<string, object> { { "id", "portalCompletedCoaching" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>First Time HRA</label>
+                        @Html.TextAreaFor(m => m.portal.FirstTimeHRA, new Dictionary<string, object> { { "id", "portalFirsttimeHRA" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Report Text</label>
+                        @Html.TextAreaFor(m => m.portal.ReportText, new Dictionary<string, object> { { "id", "portalReportText" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Program Text</label>
+                        @Html.TextAreaFor(m => m.portal.ProgramText, new Dictionary<string, object> { { "id", "portalProgramText" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Contact Text</label>
+                        @Html.TextAreaFor(m => m.portal.ContactText, new Dictionary<string, object> { { "id", "portalContactText" } })
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="tabs-panel" id="portal-eligibility-claims">
+            <div class="grid-x grid-margin-x portal-form">
+                <div class="cell medium-4">
+                    <label>Eligibility Import</label>
+                    <p><span id="eligibilityImportLoadFlagDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Process Intervent Codes</label>
+                    <p><span id="processInterventCodesDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Eligibility Terminated Flag</label>
+                    <p><span id="eligibilityTerminateFlagDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Process Livongo Codes</label>
+                    <p><span id="processLivongoCodesDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Eligibility Folder Path</label>
+                    <p><span id="eligibilityFolderPathDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Claims Folder Path</label>
+                    <p><span id="claimsDirectoryPathDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Eligibility Format</label>
+                    <p><span id="eligibilityFormatDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Eligibility to Intuity</label>
+                    <p><span id="eligibilitytoIntuityDisplay"></span></p>
+                </div>
+            </div>
+
+            <form class="create-profile-form portal-form hide" id="edit-Eligibility" data-abide novalidate>
+                <div class="grid-x grid-margin-x grid-margin-y">
+                    <div class="cell medium-4">
+                        <label>Eligibility Import</label>
+                        @Html.DropDownListFor(m => m.portal.EligibilityImportLoadFlag, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "eligibilityImportLoad" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Process Intervent Codes</label>
+                        @Html.DropDownListFor(m => m.portal.ProcessInterventCodes, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "ProcessInterventCodes" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Eligibility Terminated Flag</label>
+                        @Html.DropDownListFor(m => m.portal.EligibilityTerminateFlag, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "eligibilityTerminate" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Process Livongo Codes</label>
+                        @Html.DropDownListFor(m => m.portal.ProcessLivongoCodes, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "ProcessLivongoCodes" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Eligibility Folder Path</label>
+                        @Html.TextBoxFor(m => m.portal.EligibilityFolderPath, new Dictionary<string, object> { { "id", "eligibilityFolderPath" }, { "data-validator", "validateEligibility" }, { "maxlength", "400" } })
+                        <small class="form-error">Required</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Claims Folder Path</label>
+                        @Html.TextBoxFor(m => m.portal.ClaimsDirectoryPath, new Dictionary<string, object> { { "id", "claimsFolderPath" }, { "data-validator", "validateClaims" }, { "maxlength", "100" } })
+                        <small class="form-error">Required</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Eligibility FormatEligibility to Intuity</label>
+                        @Html.DropDownListFor(m => m.portal.EligibilityFormat, Model.EligibilityFormats, "--Select--", new Dictionary<string, object> { { "id", "eligibiityFormat" }, { "data-validator", "validateFormat" } })
+                        <small class="form-error">Eligibility Format is required.</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Eligibility to Intuity</label>
+                        @Html.DropDownListFor(m => m.portal.EligtoIntuity, Model.EligibilitytoIntuity, "--Select--", new Dictionary<string, object> { { "id", "eligibiitytoIntuitys" } })
+                        <small class="form-error">Eligibility to Intuity is required.</small>
+                    </div>
+                    <div>
+                        <button type="submit" hidden id="edit-Eligibility-Submit"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="tabs-panel" id="portal-features">
+            <div class="grid-x grid-margin-x portal-form">
+                <div class="cell medium-4">
+                    <label>Initial Enrollment Calls</label>
+                    <p><span id="CampaignCallsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Appointment Reminder Texts/Calls</label>
+                    <p><span id="AppointmentCallsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Tracking Calls</label>
+                    <p><span id="TrackingCallsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Cardiac questions in wellness data</label>
+                    <p><span id="AllowCardiacQuestionDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Number of Tracking Calls</label>
+                    <p><span id="NoOfTrackingCallsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Hide Scheduler for End of Program</label>
+                    <p><span id="NoProgDaysDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Lab Corp Attachment</label>
+                    <p><span id="LabCorpAttachmentDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Doctor Office Attachment</label>
+                    <p><span id="DoctorOfficeAttachmentDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Campaign Start Date</label>
+                    <p><span id="CampaignStartDateDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Campaign End Date</label>
+                    <p><span id="CampaignEndDateDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Careplan approval needed?</label>
+                    <p><span id="NeedCareplanApprovalDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Careplan Path</label>
+                    <p><span id="CareplanPathDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Show time tracker</label>
+                    <p><span id="ShowTimeTrackerDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Provider Details</label>
+                    <p><span id="ProviderDetailsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Fax reports</label>
+                    <p><span id="FaxReportsDisplay"></span></p>
+                </div>
+                <div class="cell medium-4">
+                    <label>Text when assigning kit</label>
+                    <p><span id="KitAlertDisplay"></span></p>
+                </div>
+                @if (Model.portal.PortalIncentives.Any(x => x.IsActive && x.IsCompanyIncentive))
+                {
+                    <div class="cell medium-4">
+                        <label>Employer Incentive Text</label>
+                        <p><span id="employerIncentiveTextDisplay"></span></p>
+                    </div>
+                }
+            </div>
+
+            <form class="create-profile-form portal-form hide" id="edit-Additional-Features" data-abide novalidate>
+                <div class="grid-x grid-margin-x grid-margin-y">
+                    <div class="cell medium-4">
+                        <label>Initial Enrollment Calls</label>
+                        @Html.DropDownListFor(m => m.portal.CampaignCalls, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "campaigncalls" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Appointment Reminder Texts/Calls</label>
+                        @Html.DropDownListFor(m => m.portal.AppointmentCalls, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "appointmentcalls" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Tracking Calls</label>
+                        @Html.DropDownListFor(m => m.portal.TrackingCalls, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "trackingCalls" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Cardiac questions in wellness data</label>
+                        @Html.DropDownListFor(m => m.portal.AllowCardiacQuestion, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "AllowCardiacQuestion" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Number of Tracking Calls</label>
+                        @Html.TextBoxFor(m => m.portal.NoOfTrackingCalls, new Dictionary<string, object> { { "id", "Nooftrackingcalls" }, { "type", "number" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Hide Scheduler for End of Program</label>
+                        @Html.TextBoxFor(m => m.portal.NoProgDays, new Dictionary<string, object> { { "id", "NoProgDays" }, { "type", "number" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Lab Corp Attachment</label>
+                        @Html.TextBoxFor(m => m.portal.LabCorpAttachment, new Dictionary<string, object> { { "id", "LabCorpAttachment" }, { "maxlength", "256" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Doctor Office Attachment</label>
+                        @Html.TextBoxFor(m => m.portal.DoctorOfficeAttachment, new Dictionary<string, object> { { "id", "DoctorOfficeAttachment" }, { "maxlength", "256" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Campaign Start Date</label>
+                        @Html.TextBoxFor(m => m.portal.CampaignStartDate, new Dictionary<string, object> { { "id", "campaignStartDate" } })
+                        <input id="HCampaignStartDate" type="hidden" />
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Campaign End Date</label>
+                        @Html.TextBoxFor(m => m.portal.CampaignEndDate, new Dictionary<string, object> { { "id", "campaignEndDate" } })
+                        <input id="HCampaignEndDate" type="hidden" />
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Careplan approval needed?</label>
+                        @Html.DropDownListFor(m => m.portal.NeedCareplanApproval, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "needCareplanApproval" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Careplan Path</label>
+                        @Html.TextBoxFor(m => m.portal.CareplanPath, new Dictionary<string, object> { { "id", "careplanPath" }, { "maxlength", "100" }, { "data-validator", "validateCareplanPath" } })
+                        <small class="form-error" id="careplanPathError">Required</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Show time tracker</label>
+                        @Html.DropDownListFor(m => m.portal.ShowTimeTracker, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "ShowTimeTracker" } })
+                        <small class="form-error" id="ShowTimeTrackerPath">Required</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Provider Details</label>
+                        @Html.DropDownListFor(m => m.portal.ProviderDetails, Model.ProviderDetails, "--Select--", new Dictionary<string, object> { { "id", "ProviderDetails" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Fax reports</label>
+                        @Html.DropDownListFor(m => m.portal.FaxReports, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "FaxReports" } })
+                        <small class="form-error" id="FaxReportsError">Required</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Text when assigning kit</label>
+                        @Html.DropDownListFor(m => m.portal.KitAlert, Model.yesorNoQuestion, "--Select--", new Dictionary<string, object> { { "id", "KitAlert" } })
+                        <small class="form-error" id="KitAlertError">Required</small>
+                    </div>
+                    @if (Model.portal.PortalIncentives.Any(x => x.IsActive && x.IsCompanyIncentive))
+                    {
+                        <div class="cell medium-4">
+                            <label>Employer Incentive Text</label>
+                            @Html.TextAreaFor(m => m.portal.EmployerIncentiveText, new Dictionary<string, object> { { "id", "employerIncentiveText" } })
+                        </div>
+                    }
+                </div>
+                <div>
+                    <button type="submit" hidden id="edit-Additional-Features-Submit"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="no-graph" class="cell main-graph-container hide">
+    <div class="cell main-chart ">
+        <div class="no-graph-info text-center">
+            <img src="~/Images/device/no-data.png" alt="Alternate Text">
+            <span>
+                Sorry, there is no portal for this organization.
+            </span>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#portalStartDate").on("change", function () {
+        $('#HportalStartDate').val(toSystemDateFormat($('#portalStartDate').val()));
+    });
+    $("#portalEndDate").on("change", function () {
+        $('#HportalEndDate').val(toSystemDateFormat($('#portalEndDate').val()));
+    });
+    $("#portalValidLabs").on("change", function () {
+        if ($('#portalValidLabs').val() == '')
+            $('#HValidLabs').val('')
+        else
+            $('#HValidLabs').val(toSystemDateFormat($('#portalValidLabs').val()));
+    });
+    $("#campaignStartDate").on("change", function () {
+        if ($('#campaignStartDate').val() == '')
+            $('#HCampaignStartDate').val('')
+        else
+            $('#HCampaignStartDate').val(toSystemDateFormat($('#campaignStartDate').val()));
+    });
+    $("#campaignEndDate").on("change", function () {
+        if ($('#campaignEndDate').val() == '')
+            $('#HCampaignEndDate').val('')
+        else
+            $('#HCampaignEndDate').val(toSystemDateFormat($('#campaignEndDate').val()));
+    });
+    $(document).ready(function () {
+        $("#portal-details-tabs").foundation();
+        $('.showProgram').on('change', function () {
+            if ($("#lm").val() != 'False') {
+                $("#ShowProgramOption").val() != 'True' ? ($("#ssched").prop("disabled", true), $('#ssched').val('')) : $("#ssched").prop("disabled", false);
+            }
+            if ($("#ShowProgramOption").val() != 'True') {
+                $("#dropdownShowSchedulingTool").addClass("hide");
+                $('#ShowSchedulingTool').val('');
+            }
+        });
+        $('#hraStatus').on('change', function () {
+            $("#hraStatus").val() == 2 ? ($("#HRAVer").prop("disabled", true), $('#HRAVer').val('')) : $("#HRAVer").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#AssessmentName").prop("disabled", true), $('#AssessmentName').val('')) : $("#AssessmentName").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#HRAValidity").prop("disabled", true), $('#HRAValidity').val('')) : $("#HRAValidity").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#awv").prop("disabled", true), $('#awv').val('')) : $("#awv").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#CACScanQuestion").prop("disabled", true), $('#CACScanQuestion').val('')) : $("#CACScanQuestion").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#GINAQuestion").prop("disabled", true), $('#GINAQuestion').val('')) : $("#GINAQuestion").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#ClientNameInReport").prop("disabled", true), $('#ClientNameInReport').val('')) : $("#ClientNameInReport").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#AutoImmune").prop("disabled", true), $('#AutoImmune').val('')) : $("#AutoImmune").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#MailScoreCard").prop("disabled", true), $('#MailScoreCard').val('')) : $("#MailScoreCard").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#CarePlan").prop("disabled", true), $('#CarePlan').val('')) : $("#CarePlan").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#lab").prop("disabled", true), $('#lab').val('')) : $("#lab").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#usePreviousLabs").prop("disabled", true), $('#usePreviousLabs').val('')) : $("#usePreviousLabs").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#portalValidLabs").prop("disabled", true), $('#portalValidLabs').val('')) : $("#portalValidLabs").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#ShowPostmenopausal").prop("disabled", true), $('#ShowPostmenopausal').val('')) : $("#ShowPostmenopausal").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#selfEnterLabs").prop("disabled", true), $('#selfEnterLabs').val('')) : $("#selfEnterLabs").prop("disabled", false);
+
+            $("#hraStatus").val() == 2 || $("#hraStatus").val() == 3 ? ($("#hraforlm").prop("disabled", true), $('#hraforlm').val('')) : $("#hraforlm").prop("disabled", false);
+            $("#hraStatus").val() == 2 || $("#hraStatus").val() == 3 ? ($("#hraforsh").prop("disabled", true), $('#hraforsh').val('')) : $("#hraforsh").prop("disabled", false);
+
+
+            $("#hraStatus").val() == 2 ? ($("#fuforlm").prop("disabled", true), $('#fuforlm').val('')) : $("#fuforlm").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#fuforsh").prop("disabled", true), $('#fuforsh').val('')) : $("#fuforsh").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#select-coachingfollowuptypes").prop("disabled", true), $('#select-coachingfollowuptypes').val('')) : $("#select-coachingfollowuptypes").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#select-coachingfollowuptypes").prop("disabled", true), $('#select-selfhelpfollowuptypes').val('')) : $("#select-selfhelpfollowuptypes").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#followuplabs").prop("disabled", true), $('#followuplabs').val('')) : $("#followuplabs").prop("disabled", false);
+            $("#hraStatus").val() == 2 ? ($("#selfhelpfollowuplabs").prop("disabled", true), $('#selfhelpfollowuplabs').val('')) : $("#selfhelpfollowuplabs").prop("disabled", false);
+            if ($("#hraStatus").val() == 2) {
+                $("#portalIncompleteHRA").prop("disabled", true);
+                $("#portalHRAOnly").prop("disabled", true);
+                $("#portalHRAandBiometrics").prop("disabled", true);
+                $("#portalFirstCoaching").prop("disabled", true);
+                $("#portalCompletedCoaching").prop("disabled", true);
+                $("#portalFirsttimeHRA").prop("disabled", true);
+                $("#portalReportText").prop("disabled", true);
+                $("#portalProgramText").prop("disabled", true);
+                $("#portalContactText").prop("disabled", true);
+                $("#portalIncompleteHRA").val("");
+                $("#portalHRAOnly").val("");
+                $("#portalHRAandBiometrics").val("");
+                $("#portalFirstCoaching").val("");
+                $("#portalCompletedCoaching").val("");
+                $("#portalFirsttimeHRA").val("");
+                $("#portalReportText").val("");
+                $("#portalProgramText").val("");
+                $("#portalContactText").val("");
+                $(".welcome-text").removeClass("hide");
+            }
+            else if ($("#hraStatus").val() == 3) {
+                $(".welcome-text").removeClass("hide");
+            }
+            else
+            {
+                $("#portalIncompleteHRA").prop("disabled", false);
+                $("#portalHRAOnly").prop("disabled", false);
+                $("#portalHRAandBiometrics").prop("disabled", false);
+                $("#portalFirstCoaching").prop("disabled", false);
+                $("#portalFirstCoaching").prop("disabled", false);
+                $("#portalCompletedCoaching").prop("disabled", false);
+                $("#portalFirsttimeHRA").prop("disabled", false);
+                $("#portalReportText").prop("disabled", false);
+                $("#portalProgramText").prop("disabled", false);
+                $("#portalContactText").prop("disabled", false);
+                $("#welcomeText").val("");
+                $(".welcome-text").addClass("hide");
+            }
+            $('#lm').trigger("change");
+            $('#sh').trigger("change");
+            $('#CarePlan').trigger("change");
+        });
+
+        $('#CarePlan').on('change', function () {
+            $("#CarePlan").val() != 'True' ? ($("#needCareplanApproval").prop("disabled", true), $('#needCareplanApproval').val('')) : $("#needCareplanApproval").prop("disabled", false);
+            $("#CarePlan").val() != 'True' ? ($("#careplanPath").prop("disabled", true), $('#careplanPath').val('')) : $("#careplanPath").prop("disabled", false);
+            $("#CarePlan").val() != 'True' ? ($("#CarePlanType").prop("disabled", true), $('#CarePlanType').val('')) : $("#CarePlanType").prop("disabled", false);
+        });
+
+        $('#lab').on('change', function () {
+            if ($("#lab").val() != 'True') {
+                $("#usePreviousLabs").prop("disabled", true);
+                $('#usePreviousLabs').val('');
+                $("#portalValidLabs").prop("disabled", true);
+                $('#portalValidLabs').val('');
+                $("#dropdownLabProcedure").addClass("hide");
+                $('#LabProcedure').val('');
+            }
+            else
+            {
+                $("#usePreviousLabs").prop("disabled", false);
+                $("#dropdownLabProcedure").removeClass("hide");
+            }
+        });
+        $('#usePreviousLabs').on('change', function () {
+            $("#usePreviousLabs").val() != 'True' ? ($("#portalValidLabs").prop("disabled", true), $('#portalValidLabs').val('')) : $("#portalValidLabs").prop("disabled", false);
+        });
+
+        $('#lm').on('change', function () {
+            $("#lm").val() != 'True' || $("#hraStatus").val() == 2 || $("#hraStatus").val() == 3 ? ($("#hraforlm").prop("disabled", true), $('#hraforlm').val('')) : $("#hraforlm").prop("disabled", false);
+            $("#lm").val() != 'True' || $("#hraStatus").val() == 2 ? ($("#fuforlm").prop("disabled", true), $('#fuforlm').val('')) : $("#fuforlm").prop("disabled", false);
+            $("#lm").val() == 'True' && $("#ShowProgramOption").val() == 'True' ? $("#ssched").prop("disabled", false) : ($("#ssched").prop("disabled", true), $('#ssched').val(''));
+            if ($("#sh").val() != 'True') {
+                $("#lm").val() != 'True' ? ($("#ShowProgramOption").prop("disabled", true), $('#ShowProgramOption').val('')) : $("#ShowProgramOption").prop("disabled", false);
+                $("#lm").val() != 'True' ? ($("#ShowPricing").prop("disabled", true), $('#ShowPricing').val('')) : $("#ShowPricing").prop("disabled", false);
+            }
+            if ($("#lm").val() != 'True') {
+                $("#dropdownCoachingCondition").addClass("hide");
+                $('#CoachingCondition').val('');
+                $("#AssignPrograms").prop("disabled", true);
+                $('#AssignPrograms').val('');
+            } else {
+                $("#dropdownCoachingCondition").removeClass("hide");
+                $("#AssignPrograms").prop("disabled", false);
+            }
+            checkFollowupType();
+        });
+
+        $('#sh').on('change', function () {
+            $("#sh").val() != 'True' || $("#hraStatus").val() == 2 || $("#hraStatus").val() == 3 ? ($("#hraforsh").prop("disabled", true), $('#hraforsh').val('')) : $("#hraforsh").prop("disabled", false);
+            $("#sh").val() != 'True' || $("#hraStatus").val() == 2 ? ($("#fuforsh").prop("disabled", true), $('#fuforsh').val('')) : $("#fuforsh").prop("disabled", false);
+            if ($("#lm").val() != 'True') {
+                $("#sh").val() != 'True' ? ($("#ShowProgramOption").prop("disabled", true), $('#ShowProgramOption').val('')) : $("#ShowProgramOption").prop("disabled", false);
+                $("#sh").val() != 'True' ? ($("#ShowPricing").prop("disabled", true), $('#ShowPricing').val('')) : $("#ShowPricing").prop("disabled", false);
+            }
+            checkFollowupType();
+        });
+
+        $('#eligibilityImportLoad').on('change', function () {
+            $('#eligibilityImportLoad').val() != 'True' ? ($("#eligibilityFolderPath").prop("disabled", true)) : ($("#eligibilityFolderPath").prop("disabled", false));
+            $('#eligibilityImportLoad').val() != 'True' ? ($("#eligibilityTerminate").prop("disabled", true), $('#eligibilityTerminate').val('')) : $("#eligibilityTerminate").prop("disabled", false);
+            $('#eligibilityImportLoad').val() != 'True' ? ($("#eligibiityFormat").prop("disabled", true), $('#eligibiityFormat').val('')) : $("#eligibiityFormat").prop("disabled", false);
+        });
+
+        $('#ProcessLivongoCodes').on('change', function () {
+            $('#ProcessLivongoCodes').val() != 'True' ? ($("#claimsFolderPath").prop("disabled", true)) : ($("#claimsFolderPath").prop("disabled", false));
+        });
+
+        $('#ProcessInterventCodes').on('change', function () {
+            $('#ProcessInterventCodes').val() != 'True' ? ($("#claimsFolderPath").prop("disabled", true)) : ($("#claimsFolderPath").prop("disabled", false));
+        });
+
+        $('#fuforlm').on('change', function () {
+            checkFollowupType();
+        });
+
+        $('#fuforsh').on('change', function () {
+            checkFollowupType();
+        });
+
+        $('#needCareplanApproval').on('change', function () {
+            $('#needCareplanApproval').val() != 'True' ? ($("#careplanPath").prop("disabled", true), $('#careplanPath').val(''), $("#careplanPath").trigger("change")) : ($("#careplanPath").prop("disabled", false));
+        });
+
+        function checkFollowupType() {
+            if ($("#fuforsh").val() != 'True' && $("#fuforlm").val() != 'True') {
+                $("#dropdowncoachingfollowuptypes").addClass("hide");
+                $("#dropdownselfhelpfollowuptypes").addClass("hide");
+                $("#dropdowncoachingfollowuplabs").addClass("hide");
+                $("#dropdownselfhelpfollowuplabs").addClass("hide");
+                $("#followupDays").addClass("hide");
+                $('#coachingfollowuptypes').val('');
+                $('#selfhelpfollowuptypes').val('');
+                $('#followuplabs').val('');
+                $('#selfhelpfollowuplabs').val('');
+                $('#FollowUpValidity').val('');
+            }
+            else {
+                if ($("#fuforlm").val() == 'True') {
+                    $("#dropdowncoachingfollowuptypes").removeClass("hide");
+                    $("#dropdowncoachingfollowuplabs").removeClass("hide");
+                }
+                else {
+                    $("#dropdowncoachingfollowuptypes").addClass("hide");
+                    $("#dropdowncoachingfollowuplabs").addClass("hide");
+                    $('#coachingfollowuptypes').val('');
+                    $('#followuplabs').val('');
+                }
+                if ($("#fuforsh").val() == 'True') {
+                    $("#dropdownselfhelpfollowuptypes").removeClass("hide");
+                    $("#dropdownselfhelpfollowuplabs").removeClass("hide");
+                }
+                else {
+                    $("#dropdownselfhelpfollowuptypes").addClass("hide");
+                    $("#dropdownselfhelpfollowuplabs").addClass("hide");
+                    $('#selfhelpfollowuptypes').val('');
+                    $('#selfhelpfollowuplabs').val('');
+                }
+                //$("#dropdowncoachingfollowuplabs").removeClass("hide");
+                //$("#dropdownselfhelpfollowuplabs").removeClass("hide");
+                $("#followupDays").removeClass("hide");
+            }
+        }
+
+        $('#hraStatus').trigger("change");
+        $('#lab').trigger("change");
+        $('#usePreviousLabs').trigger("change");
+        $('#LabProcedure').trigger("change");
+        $('#lm').trigger("change");
+        $('#sh').trigger("change");
+        $('#ssched').trigger("change");
+        $('.showProgram').trigger("change");
+        $('#eligibilityImportLoad').trigger("change");
+        $('#ProcessLivongoCodes').trigger("change");
+        $('#ProcessInterventCodes').trigger("change");
+        $('#fuforlm').trigger("change");
+        $('#hraStatus').trigger("change");
+        $('#fuforsh').trigger("change");
+        $('#CarePlan').trigger("change");
+
+        $('#patientReleaseForm').val('@Model.portal.PatientReleaseForm');
+        $("#medicalClearanceForm").val('@Model.portal.MedicalClearanceForm');
+        $("#knowYourNumbersForm").val('@Model.portal.KnowYourNumbersForm');
+        $("#testimonialForm").val('@Model.portal.TestimonialForm');
+        $('#tobaccoReleaseForm').val('@Model.portal.TobaccoReleaseForm');
+        $(".portal-cards").on("click", function () {
+                var tabTarget = $(this).data("tab-target");
+                var $target = $("#"+tabTarget);
+                var $target = $("#"+tabTarget);
+
+            $('#cards-info-tabs').foundation('_collapse'); // Collapse active tab
+            $('#cards-info-tabs').foundation('selectTab', $target); // open required tab
+            $("#portal-data-modal").foundation("open"); //open modal window
+        });
+
+        $(".form-edit-btn").unbind("click").on("click", function (e) {
+            if ($(this).attr("id") != 'orgEdit' && $(this).attr("id") != 'orgSave' && $(this).attr("id") != 'saveOtherdetails') {
+                e.preventDefault();
+                $(this).parents(".portal-details-section").find(".portal-form, .form-edit-btn").toggleClass("hide");
+                displayPortalValues();
+            }
+            if ($(this).attr("id") == 'detailsEdit' || $(this).attr("id") == 'detailsSave') {
+                $("#portal-details .portal-details").find(".portal-form").toggleClass("hide");
+            }
+        });
+
+        $("#orgEdit").unbind("click").on("click", function (e) {
+            validOrgDetails = false;
+            e.preventDefault();
+            $(this).parents(".portal-details-section").find(".portal-form, .form-edit-btn").toggleClass("hide");
+        });
+
+        $("#orgSave").unbind("click").on("click", function (e) {
+            $('#edit-org-submit').trigger('click');
+        });
+
+        $("#detailsEdit").on("click", function (e) {
+            $("#selectedPortal").prop("disabled", true)
+            @if (Model.portal.Specializations != null)
+            {
+                foreach (var specialization in Model.portal.Specializations)
+                {
+                    @:$('#select-portalSpecializations li[data-value="' + @specialization.Id + '"]').trigger("click");
+                }
+            }
+
+            @if (Model.portal.Languages != null)
+            {
+                foreach (var language in Model.portal.Languages)
+                {
+                    @:$('#select-portalLanguages li[data-value="' + @language.Id + '"]').trigger("click");
+                }
+            }
+        });
+
+        $('#portal-details-tabs .tabs-title').on('click', function (e) {
+            if ($(".rounded-tabs-content .form-error").hasClass("is-visible")) {
+                e.stopPropagation();
+                var target = $("small.is-visible").parents(".tabs-panel").attr("id");
+                console.log('#' + target);
+                $('#portal-details-tabs').foundation('selectTab', ('#' + target));
+            }
+        });
+
+        $('#EditOtherdetails').on('click', function () {
+            isEditEnabled = true;
+            //updateFor = 2;
+        });
+        $('#saveOtherdetails').on('click', function () {
+            if (isEditEnabled && updateFor == 2) {
+                $('#edit-Assessment-Submit').trigger("click");
+            }
+            else if (isEditEnabled && updateFor == 4) {
+                $('#edit-Follow-Up-Submit').trigger("click");
+            }
+            else if (isEditEnabled && updateFor == 6) {
+                $('#edit-Eligibility-Submit').trigger("click");
+            }
+            else if (isEditEnabled && updateFor == 7) {
+                $('#edit-Additional-Features-Submit').trigger("click");
+            }
+            else {
+                SerializeData();
+                isEditEnabled = false;
+                $(this).parents(".portal-details-section").find(".portal-form, .form-edit-btn").toggleClass("hide");
+            }
+            displayPortalValues();
+        });
+
+        $("#portalValidLabs").fdatepicker({
+            format: "@Model.dateFormat.ToLower()",
+            endDate: new Date($("#HportalStartDate").val()),
+            disableDblClickSelection: true,
+            pickTime: false,
+            onRender: function (date) {
+                return date.valueOf() > compDate.valueOf() ? 'disabled' : '';
+            }
+        });
+
+        $("#campaignStartDate").fdatepicker({
+            format: "@Model.dateFormat.ToLower()",
+        });
+        $("#campaignEndDate").fdatepicker({
+            format: "@Model.dateFormat.ToLower()",
+        });
+
+
+        $("#portalStartDate").fdatepicker({
+            format: "@Model.dateFormat.ToString().ToLower()",
+        }).on('change', function (selected) {
+            var endDate = new Date($("#HportalEndDate").val());
+            var minDate = new Date($("#HportalStartDate").val());
+            if (endDate < minDate) {
+                $('#portalEndDate').fdatepicker('setDate', minDate);
+            }
+            $('#portalEndDate').fdatepicker('setStartDate', minDate);
+            $("#portalEndDate").trigger("change");
+        });
+
+        $("#portalEndDate").fdatepicker({
+            format: "@Model.dateFormat.ToLower()",
+        });
+
+        $(".portal-prog-edit span a").on("click", function (e) {
+                e.preventDefault();
+            $(this).parents(".programs-list").find("li").removeClass("is-active");
+            $(this).parents("li").addClass("is-active");
+        });
+
+        $(".portal-prog-edit button.button").on("click", function (e) {
+                e.preventDefault();
+            $(this).parents("li").removeClass("is-active");
+        });
+
+        $(".programs-cards").on("click", function () {
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("GetProgramsinPortal", "Portal")',
+                data: { portalId: portalId },
+                dataType: 'json',
+                success: function (data) {
+                    $('#program-results').html('');
+                    if (data.Records != null && data.Records.length > 0) {
+                        var programsHtml = "<ul>";
+                        for (var i = 0; i < data.Records.length; i++) {
+                            var program = data.Records[i];
+                            var activeStatus = program.Active == 1 ? "<span class='portal-status active'>Active</span>" : "<span class='portal-status inactive'>Inactive</span>";
+                            programsHtml += "<li><div class='grid-x grid-margin-x align-middle'><div class='cell large-8'><p>" + program.Name + "</p>" + activeStatus + "</div><div class='cell large-4 align-spaced flex-container portal-prog-edit'><span><img src='" + url + "/Images/organization/icon-phone.svg' alt=''> " + program.NoOfCalls + "</span><span><a href='#' onClick='ReadProgram(" + program.Id + ")'><img src='" + url +"/Images/organization/icon-edit.svg' alt=''> Edit</a></span></div></div>";
+                            programsHtml += "<div class='portal-form-edit' id='editProgramDetails_" + program.Id + "' class='editProgramDetails'></div>";
+                            programsHtml += "</li>";
+
+                            //programsHtml += "<tr><td>" + program.Name + "</td>" + "<td>" + program.NoOfCalls + "</td>" +
+                            //    "<td>" + activeStatus + "</td>" +
+                            //    "<td><a onclick='ReadProgram(" + program.Id + ")'><i class='fa fa-pencil fa-fw'></i></a></td>" +
+                            //    "</tr>";
+                        }
+                        programsHtml += "</ul>";
+                        $('#program-results').append(programsHtml);
+                    }
+                    else
+                        $('#program-results').html("<div id='no-graph' class='cell main-graph-container'><div class='cell main-chart'><div class='no-graph-info text-center'><img src='" + url +"/Images/device/no-data.png' alt='Alternate Text'><span>No data found.</span></div></div></div>");
+                    }
+                });
+            });
+
+        $(".incentives-cards").on("click", function () {
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("ReadIncentive", "Portal")',
+                data: { portalId: portalId },
+                dataType: 'json',
+                success: function (data) {
+                        if (data.portalIncentives != null) {
+                        $('#incentive-results').html('');
+                            var portalIncentives = data.portalIncentives;
+                            var incentiveHtml = "";
+                            if (portalIncentives != null && portalIncentives.length > 0) {
+                                incentiveHtml = "<ul>";
+                                for (var i = 0; i < portalIncentives.length; i++) {
+                                    var incentive = portalIncentives[i];
+                                    if (incentive.IsCompanyIncentive == true)
+                                        isEmployer = "Yes"
+                                    else
+                                        isEmployer = "No"
+                                    incentiveHtml += "<ul><li><div class='grid-x grid-margin-x align-middle'><div class='cell large-8'><p>" + incentive.Name + "</p><span class='status status-inactive'>Employer Incentive - <strong>" + isEmployer + "</strong></span></div><div class='cell large-4 align-spaced flex-container portal-prog-edit'><span><img src='" + url + "/Images/organization/icon-incentive.svg' alt=''> " + incentive.Points + "</span><span><a href='#' onclick='ReadIncentive(" + incentive.Id + ")'> <img src='" + url +"/Images/organization/icon-edit.svg' alt=''> Edit</a></span></div></div>";
+                                    incentiveHtml += "<div class='portal-form-edit editIncentiveDetails' id='editIncentiveDetails_" + incentive.Id + "'></div>";
+                                    incentiveHtml += "</li>";
+                                }
+                                incentiveHtml += "</ul>";
+                            }
+                            else
+                                incentiveHtml += "<div id='no-graph' class='cell main-graph-container'><div class='cell main-chart'><div class='no-graph-info text-center'><img src='" + url +"/Images/device/no-data.png' alt='Alternate Text'><span>No data found.</span></div></div></div>";
+
+                            $('#incentive-results').html(incentiveHtml);
+                            }
+                        }
+                });
+        });
+
+        $(".raffles-cards").on("click", function () {
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("GetPortalRaffles", "Portal")',
+                data: { portalId: portalId },
+                dataType: 'json',
+                success: function (data) {
+                    $('#raffles-results').html('');
+                    if (data.Raffles != null && data.Raffles.length > 0) {
+                        var raffles = data.Raffles;
+                        var rafflesHtml = "<ul>";
+                        for (var i = 0; i < raffles.length; i++) {
+                            for (var i = 0; i < raffles.length; i++) {
+                                var raffle = raffles[i];
+                                var activeStatus = raffle.isActive == 1 ? "<span class='portal-status active'>Active</span>" : "<span class='portal-status inactive'>Inactive</span>";
+
+                                rafflesHtml += "<li><div class='grid-x grid-margin-x align-middle'><div class='cell large-7'><p>" + raffle.RaffleTypes.Name + "</p>" + activeStatus + "</div><div class='cell large-5 align-spaced flex-container portal-prog-edit'><span><img src='" + url +"/Images/organization/icon-incentive.svg' alt=''> " + raffle.Reward + "</span><span>Points " + raffle.Points + "</span><span><a href='#' onclick='ReadRaffles(" + raffle.Id + ")'><img src='/Images/organization/icon-edit.svg' alt=''> Edit</a></span></div></div>";
+                                rafflesHtml += "<div class='portal-form-edit editRafflesDetails' id='editRafflesDetails_" + raffle.Id + "'></div>";
+                                rafflesHtml += "</li>";
+                            }
+                            rafflesHtml += "</ul>";
+                            $('#raffles-results').html(rafflesHtml);
+                        }
+                    }
+                    else
+                        $('#raffles-results').html("<div id='no-graph' class='cell main-graph-container'><div class='cell main-chart'><div class='no-graph-info text-center'><img src='" + url +"/Images/device/no-data.png' alt='Alternate Text'><span>No data found.</span></div></div></div>");
+
+                }
+            });
+        });
+
+        $("#add-edit-portal").foundation();
+        if ('@Model.portal.Active' == 'True') {
+            $("#portalInactive").addClass("hide");
+            $("#portalActive").removeClass("hide");
+        }
+        else {
+            $("#portalActive").addClass("hide");
+            $("#portalInactive").removeClass("hide");
+        }
+
+		$("#dashboard-content-view").on("click", function () {
+			isEditEnabled = true;
+			$(this).parents(".portal-details-section").find(".portal-form, .form-edit-btn").toggleClass("hide");
+			displayPortalValues();
+        });
+
+        displayPortalValues();
+    });
+
+    $('.kits-cards').on('click', function () {
+        ReadKits(true);
+    });
+
+    $('.kits-followups-cards').on('click', function () {
+        ReadPortalFollowUps();
+    });
+
+    $('.email-cards').on('click', function () {
+        ReadEmails(true);
+    });
+
+    $('.coupon-cards').on('click', function () {
+        ReadCoupon();
+    });
+
+    function FoundationSelect() {
+        @if (Model.portal.PortalFollowUps != null)
+        {
+            foreach (var portalFollowUp in Model.portal.PortalFollowUps)
+            {
+                if (portalFollowUp.ProgramType == (int)ProgramTypes.Coaching)
+                {
+                    @:$('#select-coachingfollowuptypes li[data-value="' + @portalFollowUp.FollowupTypeId + '"]').trigger("click");
+                }
+                else if (portalFollowUp.ProgramType == (int)ProgramTypes.SelfHelp)
+                {
+                    @:$('#select-selfhelpfollowuptypes li[data-value="' + @portalFollowUp.FollowupTypeId + '"]').trigger("click");
+                }
+            }
+        }
+        @if (Model.portal.PortalFollowUps != null)
+        {
+            foreach (var portalFollowUp in Model.portal.PortalFollowUps)
+            {
+                if (portalFollowUp.ProgramType == (int)ProgramTypes.Coaching && portalFollowUp.LabIntegration == true)
+                {
+                    @:$('#select-followuplabs li[data-value="' + @portalFollowUp.FollowupTypeId + '"]').trigger("click");
+                }
+                else if (portalFollowUp.ProgramType == (int)ProgramTypes.SelfHelp && portalFollowUp.LabIntegration == true)
+                {
+                    @:$('#select-selfhelpfollowuplabs li[data-value="' + @portalFollowUp.FollowupTypeId + '"]').trigger("click");
+                }
+            }
+        }
+        @if (Model.portal.PortalCoachingConditions != null && Model.portal.PortalCoachingConditions.Count() > 0)
+        {
+            foreach (var portalSchedulingTool in Model.portal.PortalCoachingConditions)
+            {
+                @:$('#select-CoachingCondition li[data-value="' + @portalSchedulingTool.CoachCondId + '"]').trigger("click");
+            }
+        }
+        @if (Model.portal.PortalLabProcedures != null && Model.portal.PortalLabProcedures.Count() > 0)
+        {
+            foreach (var portalLabProcedure in Model.portal.PortalLabProcedures)
+            {
+                @:$('#select-LabProcedure li[data-value="' + @portalLabProcedure.LabProcedureId + '"]').trigger("click");
+            }
+        }
+        displayPortalValues();
+    }
+    function ReadPortalFollowUps() {
+        $("#kit-followup-details").addClass("hide");
+        $.ajax({
+            url: "@Url.Action("ReadPortalFollowUps", "Portal")",
+            data: { portalId: portalId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    populateFollowUpKits(data.Records);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+
+    function populateFollowUpKits(portalFollowUps) {
+        if (portalFollowUps != null && portalFollowUps.length > 0) {
+            //var followupKitsHtml = "<table class='table'>";
+            var followupKitsHtml = "<ul>";
+            for (var i = 0; i < portalFollowUps.length; i++) {
+                var portalFollowUp = portalFollowUps[i];
+                //followupKitsHtml += "<tr><td>" + portalFollowUp.FollowUpType + " follow up</td><td><a onclick='ReadFollowUpKits(\"" + portalFollowUp.Id + "\",\"" + portalFollowUp.FollowUpType + "\")';><i class='fa fa-pencil fa-fw'></i></a></td>" + "</tr>";
+                followupKitsHtml += "<li><div class='grid-x grid-margin-x align-middle'><div class='cell medium-6'><p>Name: <strong>" + portalFollowUp.FollowUpType + "</strong></p><p>Program Type: <strong>" + portalFollowUp.ProgramType + "</strong></p></div>";
+                followupKitsHtml += "<div class='cell medium-6 text-right'><span><a href='#' onclick='ReadFollowUpKits(\"" + portalFollowUp.Id + "\",\"" + portalFollowUp.FollowUpType + "\")'><img src='" + url +"/Images/organization/icon-edit.svg' alt=''> Edit</a></span></div></div><div class='portal-form-edit editfollowupKitsDetails' id='editfollowupKits_" + portalFollowUp.Id + "'></div></li>";
+            }
+            followupKitsHtml += "</div></ul>";
+            $('#kit-followup-results').html(followupKitsHtml);
+        }
+        else {
+            $('#kit-followup-results').html("");
+            $('#kit-followup-results').html("<div id='no-graph' class='cell main-graph-container'><div class='cell main-chart'><div class='no-graph-info text-center'><img src='" + url +"/Images/device/no-data.png' alt='Alternate Text'><span>No data found.</span></div></div></div>");
+
+        }
+    }
+
+    function ReadFollowUpKits(portalFollowUpId, followUpType) {
+        var followupKitsDetailsHtml = "<div id='kit-followup-details' class='grid-x grid-margin-x align-middle'> <div class='cell medium-6'> <h5 id='FollowupTypeText'></h5> </div><div class='cell medium-6 text-right small-only-text-center'><button id='add-kit' onclick='AddEditKit()' class='button secondary small'><i class='fa fa-plus'></i>Add Kit</button></div><div id='kit-list-body' class='cell medium-12'></div><div class='cell medium-12'> <div id='kit-block' style='display:none;'> <form id='add-kit-program' class='organization-modal-form create-profile-form' data-abide novalidate> <div class='grid-x grid-margin-x grid-margin-y'> <div class='cell medium-6'><label>Kit</label><select id='kits' required></select></div><div class='cell medium-6'><label>Order</label><input type='number' id='order' required/></div><div class='cell flex-container align-justify form-save-button'> <button type='button' class='small' onclick='SaveKit()' id='save-kit'>Save</button> <button class='small secondary' type='reset' id='close-save-kit'>Cancel</button> </div></div><div class='grid-x'> </div><div class='grid-x button-set'> <div class='cell medium-6 medium-text-left'></div><div class='cell medium-6 medium-text-right'></div></div></form> </div></div></div><div id='kit-followups-details'></div>";
+        $(".programs-list").find("li").removeClass("is-active");
+        $('.editfollowupKitsDetails').html('');
+        $('#editfollowupKits_' + portalFollowUpId + '').html('');
+        $('#editfollowupKits_' + portalFollowUpId + '').html(followupKitsDetailsHtml);
+        $("#editfollowupKits_" + portalFollowUpId + "").parents("li").addClass("is-active");
+        //$("#kit-followup-details").removeClass("hide");
+        $("#PortalFollowUpId").val(portalFollowUpId);
+        if (followUpType != undefined)
+            $("#FollowupTypeText").html("Kits for " + followUpType + " Follow Up");
+        $.ajax({
+            url: "@Url.Action("ReadFollowUpKits", "Portal")",
+            data: { portalFollowUpId: portalFollowUpId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    LoadKits(data.Records);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function AddEditKit() {
+            $('#kits').val('');
+            $('#order').val('');
+            $('#kit-block').show();
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                data: { page: null, pageSize: null, totalRecords: null },
+                url: "@Url.Action("ListEduKits", "Kit")",
+                success: function (data) {
+                    $("#kits").append("<option value=''>-- Select --</option>");
+                    for (i = 0; i < data.Records.length; i++) {
+                        $("#kits").append("<option value=" + data.Records[i].Id + ">" + data.Records[i].Name + "</option>");
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+
+    function SaveKit() {
+        var portalFollowUpId = $("#PortalFollowUpId").val();
+        var kitId = $("#kits").val();
+        var order = $("#order").val();
+        if (kitId && order) {
+            $.ajax({
+            url: "@Url.Action("AddKittoFollowUp", "Portal")",
+            data: { kitId: kitId, portalFollowUpId: portalFollowUpId, order: order },
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.Record != null) {
+                    $("#kit-block").hide();
+                    ReadFollowUpKits(portalFollowUpId);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+    }
+    function LoadKits(data) {
+        $("#kit-list-body").html("");
+        var html = "";
+        if (data.length > 0) {
+            html = html + "<table class='columns medium-12'><thead><tr><th>Name</th><th>Order</th><th></th></tr></thead>"
+            for (var i = 0; i < data.length; i++) {
+                html = html + "<tr><td>" + data[i].Name + "</td><td> " + data[i].Order + "</td><td><a onclick='RemoveKit(" + data[i].Id + ")'><i class='fa fa-times'></i></a></td></tr>";
+            }
+            html = html + "</table>"
+        }
+        $("#kit-list-body").html(html);
+    }
+
+    function ReadIncentive(id) {
+        $.ajax({
+            url: "@Url.Action("GetIncentiveDetails", "Portal")",
+            data: { portalId: portalId, portalIncentiveId:id  },
+            type: 'POST',
+            success: function (data) {
+                $('#PortalIncentiveId').val(id);
+                $(".programs-list").find("li").removeClass("is-active");
+                $('.editIncentiveDetails').html('');
+                $("#editIncentiveDetails_" + id + "").html(data);
+                $("#editIncentiveDetails_" + id + "").parents("li").addClass("is-active");
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    $("#add-prog-button").on("click", function (e) {
+        $.ajax({
+            url: "@Url.Action("GetProgramDetails", "Portal")",
+            data: { PrograminPortalId: 0 },
+            type: 'POST',
+            success: function (data) {
+                $('#PrograminPortalId').val("");
+                $("#add-program").html(data);
+                $("#add-program-model").foundation("open");
+            },
+            complete: function () {
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    });
+
+    $("#addIncentive").on("click", function (e) {
+        $.ajax({
+            url: "@Url.Action("GetIncentiveDetails", "Portal")",
+            data: { portalId: portalId, portalIncentiveId: 0},
+            type: 'POST',
+            success: function (data) {
+                $('#PortalIncentiveId').val("");
+                $("#add-incentive").html(data);
+                $("#add-incentive-model").foundation("open");
+            },
+            complete: function () {
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    });
+
+    function changeIncentiveType() {
+        var type = document.getElementById("incentiveType").value;
+        if (type == 2 || type == 4 || type == 5) {
+            $('.refClass').hide();
+            $('.lbl' + type).show()
+            $('.ProgramType').show();
+        }
+        else {
+            $('.refClass').hide();
+            $('.ProgramType').hide();
+        }
+    }
+
+    function ReadRaffles(id) {
+        $.ajax({
+            url: "@Url.Action("GetRaffleDetails", "Portal")",
+            data: { portalId: portalId, raffleId: id},
+            type: 'POST',
+            async: false,
+            success: function (data) {
+                $(".programs-list").find("li").removeClass("is-active");
+                $('.editRafflesDetails').html('');
+                $("#editRafflesDetails_" + id + "").html(data);
+                $("#editRafflesDetails_" + id + "").parents("li").addClass("is-active");
+            },
+            complete: function () {
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function displayPortalValues() {
+        if (portalRefresh) {
+            @if (Model.portal.ValidLabs != null) {
+               @: $('#portalValidLabs').val(toLocalDateFormat("@Model.portal.ValidLabs"));
+               @: $("#portalValidLabs").trigger("change");
+            }
+            @if(Model.portal.CampaignStartDate != null) {
+               @: $('#campaignStartDate').val(toLocalDateFormat("@Model.portal.CampaignStartDate"));
+               @: $("#campaignStartDate").trigger("change");
+            }
+            @if (Model.portal.CampaignEndDate != null) {
+               @: $('#campaignEndDate').val(toLocalDateFormat("@Model.portal.CampaignEndDate"));
+               @: $("#campaignEndDate").trigger("change");
+            }
+            portalRefresh = false;
+        }
+        $('#portalStartDateDisplay').html(toLocalDateFormat('@Model.portal.StartDate.ToString()'), false);
+        $('#portalEndDateDisplay').html(toLocalDateFormat('@Model.portal.EndDate.ToString()'), false);
+        $("#portalStartDate").val(toLocalDateFormat('@Model.portal.StartDate'));
+        $("#portalEndDate").val(toLocalDateFormat('@Model.portal.EndDate'));
+        $("#portalStartDate").trigger("change");
+        $("#portalEndDate").trigger("change");
+        //Assessment
+        $('#healthAssessmentDisplay').html($('select[name="portal.HasHRA"] option:selected').val() != '' ? $('select[name="portal.HasHRA"] option:selected').text() : "N/A");
+        $('#hraVersionDisplay').html($('select[name="portal.HRAVer"] option:selected').val() != '' ? $('select[name="portal.HRAVer"] option:selected').text() : "N/A");
+        $('#assessmentNameDisplay').html($('select[name="portal.AssessmentName"] option:selected').val() != '' ? $('select[name="portal.AssessmentName"] option:selected').text() : "N/A");
+        $('#hraValidityDisplay').html($('[name="portal.HRAValidity"]').val() != '' ? $('[name="portal.HRAValidity"]').val() : "N/A");
+        $('#awvDisplay').html($('select[name="portal.AWV"] option:selected').val() != '' ? $('select[name="portal.AWV"] option:selected').text() : "N/A");
+        $('#cacScanDisplay').html($('select[name="portal.CACScanQuestion"] option:selected').val() != '' ? $('select[name="portal.CACScanQuestion"] option:selected').text() : "N/A");
+        $('#ginaDisplay').html($('select[name="portal.GINAQuestion"] option:selected').val() != '' ? $('select[name="portal.GINAQuestion"] option:selected').text() : "N/A");
+        $('#clientNameinReportdisplay').html($('select[name="portal.ClientNameInReport"] option:selected').val() != '' ? $('select[name="portal.ClientNameInReport"] option:selected').text() : "N/A");
+        $('#autoImmuneDisplay').html($('select[name="portal.AutoImmune"] option:selected').val() != '' ? $('select[name="portal.AutoImmune"] option:selected').text() : "N/A");
+        $('#mailScoreCardDisplay').html($('select[name="portal.MailScoreCard"] option:selected').val() != '' ? $('select[name="portal.MailScoreCard"] option:selected').text() : "N/A");
+        $('#carePlanDisplay').html($('select[name="portal.CarePlan"] option:selected').val() != '' ? $('select[name="portal.CarePlan"] option:selected').text() : "N/A");
+        $('#carePlanTypeDisplay').html($('select[name="portal.CarePlanType"] option:selected').val() != '' ? $('select[name="portal.CarePlanType"] option:selected').text() : "N/A");
+        $('#labIntegrationDisplay').html($('select[name="portal.LabIntegration"] option:selected').val() != '' ? $('select[name="portal.LabIntegration"] option:selected').text() : "N/A");
+        $('#LabProcedureDisplay').html($('select[name="LabProcedure"] option:selected').text() != '' ? getMultiSelect('LabProcedure', true) : "N/A");
+        $('#usePreviousLabsDisplay').html($('select[name="portal.usePreviousLabs"] option:selected').val() != '' ? $('select[name="portal.usePreviousLabs"] option:selected').text() : "N/A");
+        $('#validLabsDisplay').html($('[name="portal.ValidLabs"]').val() != '' ? $('[name="portal.ValidLabs"]').val() : "N/A");
+        $('#showPostmenopausalDisplay').html($('select[name="portal.ShowPostmenopausal"] option:selected').val() != '' ? $('select[name="portal.ShowPostmenopausal"] option:selected').text() : "N/A");
+        $('#selfEnterLabsDisplay').html($('select[name="portal.SelfEnterLabs"] option:selected').val() != '' ? $('select[name="portal.SelfEnterLabs"] option:selected').text() : "N/A");
+        //Programs
+        $('#hasCoachingProgramDisplay').html($('select[name="portal.HasCoachingProgram"] option:selected').val() != '' ? $('select[name="portal.HasCoachingProgram"] option:selected').text() : "N/A");
+        $('#hasSelfHelpProgramDisplay').html($('select[name="portal.HasSelfHelpProgram"] option:selected').val() != '' ? $('select[name="portal.HasSelfHelpProgram"] option:selected').text() : "N/A");
+        $('#hraforCoachingProgramDisplay').html($('select[name="portal.HRAforCoachingProgram"] option:selected').val() != '' ? $('select[name="portal.HRAforCoachingProgram"] option:selected').text() : "N/A");
+        $('#hraforSelfHelpProgramDisplay').html($('select[name="portal.HRAforSelfHelpProgram"] option:selected').val() != '' ? $('select[name="portal.HRAforSelfHelpProgram"] option:selected').text() : "N/A");
+        $('#showPricingDisplay').html($('select[name="portal.ShowPricing"] option:selected').val() != '' ? $('select[name="portal.ShowPricing"] option:selected').text() : "N/A");
+        $('#showProgramOptionDisplay').html($('select[name="portal.ShowProgramOption"] option:selected').val() != '' ? $('select[name="portal.ShowProgramOption"] option:selected').text() : "N/A");
+        $('#coachingAvailableForDisplay').html($('select[name="CoachingCondition"] option:selected').text() != '' ? getMultiSelect('CoachingCondition', true) : "N/A");
+        $('#selfSchedulingDisplay').html($('select[name="portal.SelfScheduling"] option:selected').val() != '' ? $('select[name="portal.SelfScheduling"] option:selected').text() : "N/A");
+        $('#assignProgramsDisplay').html($('select[name="portal.AssignPrograms"] option:selected').val() != '' ? $('select[name="portal.AssignPrograms"] option:selected').text() : "N/A");
+        //Follow Up
+        $('#followUpforCoachingDisplay').html($('select[name="portal.FollowUpforCoaching"] option:selected').val() != '' ? $('select[name="portal.FollowUpforCoaching"] option:selected').text() : "N/A");
+        $('#followUpforCoachingDisplay').html($('select[name="portal.FollowUpforCoaching"] option:selected').val() != '' ? $('select[name="portal.FollowUpforCoaching"] option:selected').text() : "N/A");
+        $('#followUpforSelfHelpDisplay').html($('select[name="portal.FollowUpforSelfHelp"] option:selected').val() != '' ? $('select[name="portal.FollowUpforSelfHelp"] option:selected').text() : "N/A");
+        $('#followuplabsDisplay').html($('select[name="followuplabs"] option:selected').text() != '' ? getMultiSelect('followuplabs', true)  : "N/A");
+        $('#selfhelpfollowuplabsDisplay').html($('select[name="selfhelpfollowuplabs"] option:selected').text() != '' ? getMultiSelect('selfhelpfollowuplabs', true)  : "N/A");
+        $('#coachingfollowupsDisplay').html($('select[name="portalcoachingfollowups"] option:selected').text() != '' ? getMultiSelect('portalcoachingfollowups', true) : "N/A");
+        $('#selfhelpfollowupsDisplay').html($('select[name="portalselfhelpfollowups"] option:selected').text() != '' ? getMultiSelect('portalselfhelpfollowups', true)  : "N/A");
+        $('#followUpValidityDisplay').html($('[name="portal.FollowUpValidity"]').val() != '' ? $('[name="portal.FollowUpValidity"]').val() : "N/A");
+        //Coaching Enrollment Text
+        $('#incompleteHRADisplay').html($('[name="portal.IncompleteHRA"]').val() != '' ? $('[name="portal.IncompleteHRA"]').val() : "N/A");
+        $('#hraOnlyDisplay').html($('[name="portal.HRAOnly"]').val() != '' ? $('[name="portal.HRAOnly"]').val() : "N/A");
+        $('#hraandBiometricsDisplay').html($('[name="portal.HRAandBiometrics"]').val() != '' ? $('[name="portal.HRAandBiometrics"]').val() : "N/A");
+        $('#firstCoachingDisplay').html($('[name="portal.FirstCoaching"]').val() != '' ? $('[name="portal.FirstCoaching"]').val() : "N/A");
+        $('#completedCoachingDisplay').html($('[name="portal.CompletedCoaching"]').val() != '' ? $('[name="portal.CompletedCoaching"]').val() : "N/A");
+        $('#firstTimeHRADisplay').html($('[name="portal.FirstTimeHRA"]').val() != '' ? $('[name="portal.FirstTimeHRA"]').val() : "N/A");
+        $('#reportTextDisplay').html($('[name="portal.ReportText"]').val() != '' ? $('[name="portal.ReportText"]').val() : "N/A");
+        $('#programTextDisplay').html($('[name="portal.ProgramText"]').val() != '' ? $('[name="portal.ProgramText"]').val() : "N/A");
+        $('#contactTextDisplay').html($('[name="portal.ContactText"]').val() != '' ? $('[name="portal.ContactText"]').val() : "N/A");
+        //Eligibility and Claims
+        $('#eligibilityImportLoadFlagDisplay').html($('select[name="portal.EligibilityImportLoadFlag"] option:selected').val() != '' ? $('select[name="portal.EligibilityImportLoadFlag"] option:selected').text() : "N/A");
+        $('#processInterventCodesDisplay').html($('select[name="portal.ProcessInterventCodes"] option:selected').val() != '' ? $('select[name="portal.ProcessInterventCodes"] option:selected').text() : "N/A");
+        $('#eligibilityTerminateFlagDisplay').html($('select[name="portal.EligibilityTerminateFlag"] option:selected').val() != '' ? $('select[name="portal.EligibilityTerminateFlag"] option:selected').text() : "N/A");
+        $('#processLivongoCodesDisplay').html($('select[name="portal.ProcessLivongoCodes"] option:selected').val() != '' ? $('select[name="portal.ProcessLivongoCodes"] option:selected').text() : "N/A");
+        $('#eligibilityFolderPathDisplay').html($('[name="portal.EligibilityFolderPath"]').val() != '' ? $('[name="portal.EligibilityFolderPath"]').val() : "N/A");
+        $('#claimsDirectoryPathDisplay').html($('[name="portal.ClaimsDirectoryPath"]').val() != '' ? $('[name="portal.ClaimsDirectoryPath"]').val() : "N/A");
+        $('#eligibilityFormatDisplay').html($('select[name="portal.EligibilityFormat"] option:selected').val() != '' ? $('select[name="portal.EligibilityFormat"] option:selected').text() : "N/A");
+        $('#eligibilitytoIntuityDisplay').html($('select[name="portal.EligtoIntuity"] option:selected').val() != '' ? $('select[name="portal.EligtoIntuity"] option:selected').text() : "N/A");
+        //Additional Features
+        $('#CampaignCallsDisplay').html($('select[name="portal.CampaignCalls"] option:selected').val() != '' ? $('select[name="portal.CampaignCalls"] option:selected').text() : "N/A");
+        $('#AppointmentCallsDisplay').html($('select[name="portal.AppointmentCalls"] option:selected').val() != '' ? $('select[name="portal.AppointmentCalls"] option:selected').text() : "N/A");
+        $('#TrackingCallsDisplay').html($('select[name="portal.TrackingCalls"] option:selected').val() != '' ? $('select[name="portal.TrackingCalls"] option:selected').text() : "N/A");
+        $('#AllowCardiacQuestionDisplay').html($('select[name="portal.AllowCardiacQuestion"] option:selected').val() != '' ? $('select[name="portal.AllowCardiacQuestion"] option:selected').text() : "N/A");
+        $('#NoOfTrackingCallsDisplay').html($('[name="portal.NoOfTrackingCalls"]').val() != '' ? $('[name="portal.NoOfTrackingCalls"]').val() : "N/A");
+        $('#NoProgDaysDisplay').html($('[name="portal.NoProgDays"]').val() != '' ? $('[name="portal.NoProgDays"]').val() : "N/A");
+        $('#LabCorpAttachmentDisplay').html($('[name="portal.LabCorpAttachment"]').val() != '' ? $('[name="portal.LabCorpAttachment"]').val() : "N/A");
+        $('#DoctorOfficeAttachmentDisplay').html($('[name="portal.DoctorOfficeAttachment"]').val() != '' ? $('[name="portal.DoctorOfficeAttachment"]').val() : "N/A");
+        $('#CampaignStartDateDisplay').html($('[name="portal.CampaignStartDate"]').val() != '' ? $('[name="portal.CampaignStartDate"]').val() : "N/A");
+        $('#CampaignEndDateDisplay').html($('[name="portal.CampaignEndDate"]').val() != '' ? $('[name="portal.CampaignEndDate"]').val() : "N/A");
+        $('#NeedCareplanApprovalDisplay').html($('select[name="portal.NeedCareplanApproval"] option:selected').val() != '' ? $('select[name="portal.NeedCareplanApproval"] option:selected').text() : "N/A");
+        $('#CareplanPathDisplay').html($('[name="portal.CareplanPath"]').val() != '' ? $('[name="portal.CareplanPath"]').val() : "N/A");
+        $('#ShowTimeTrackerDisplay').html($('select[name="portal.ShowTimeTracker"] option:selected').val() != '' ? $('select[name="portal.ShowTimeTracker"] option:selected').text() : "N/A");
+        $('#ProviderDetailsDisplay').html($('select[name="portal.ProviderDetails"] option:selected').val() != '' ? $('select[name="portal.ProviderDetails"] option:selected').text() : "N/A");
+        $('#FaxReportsDisplay').html($('select[name="portal.FaxReports"] option:selected').val() != '' ? $('select[name="portal.FaxReports"] option:selected').text() : "N/A");
+        $('#KitAlertDisplay').html($('select[name="portal.KitAlert"] option:selected').val() != '' ? $('select[name="portal.KitAlert"] option:selected').text() : "N/A");
+        $('#employerIncentiveTextDisplay').html($('[name="portal.EmployerIncentiveText"]').val() != '' ? $('[name="portal.EmployerIncentiveText"]').val() : "N/A");
+        }
+
+    $('#tabAssessment').on('click', function () {
+        if (isEditEnabled) {
+            $('#saveOtherdetails').trigger('click');
+            SerializeData();
+        }
+        if (!$(".rounded-tabs-content .form-error").hasClass("is-visible"))
+            updateFor = 2;
+    });
+
+    $('#tabPrograms').on('click', function () {
+        if (isEditEnabled) {
+            $('#saveOtherdetails').trigger('click');
+            SerializeData();
+        }
+        if (!$(".rounded-tabs-content .form-error").hasClass("is-visible"))
+            updateFor = 3;
+    });
+
+    $('#tabFollow-Up').on('click', function () {
+        if (isEditEnabled) {
+            $('#saveOtherdetails').trigger('click');
+            SerializeData();
+        }
+        if (!$(".rounded-tabs-content .form-error").hasClass("is-visible"))
+            updateFor = 4;
+    });
+
+    $('#tabCoaching').on('click', function () {
+        if (isEditEnabled) {
+            $('#saveOtherdetails').trigger('click');
+            SerializeData();
+        }
+        if (!$(".rounded-tabs-content .form-error").hasClass("is-visible"))
+            updateFor = 5;
+    });
+    $('#tabEligibility').on('click', function () {
+        if (isEditEnabled) {
+            $('#saveOtherdetails').trigger('click');
+            SerializeData();
+        }
+        if (!$(".rounded-tabs-content .form-error").hasClass("is-visible"))
+            updateFor = 6;
+    });
+    $('#tabAdditionalFeatures').on('click', function () {
+        if (isEditEnabled) {
+            $('#saveOtherdetails').trigger('click');
+            SerializeData();
+        }
+        if (!$(".rounded-tabs-content .form-error").hasClass("is-visible"))
+            updateFor = 7;
+    });
+
+
+
+    function SerializeData() {
+        var serializeData;
+        if (updateFor == 2) {
+            if ($('#HValidLabs').val() != '')
+                $('#portalValidLabs').val($('#HValidLabs').val());
+            var labProcedure = getMultiSelect('LabProcedure', false);
+            serializeData = $("#edit-Assessment").serialize() + '&portal.Id=' + portalId + '&updateFor=' + updateFor + '&portal.LabProceduresStr=' + labProcedure;
+            if ($('#HValidLabs').val() != '')
+                $('#portalValidLabs').val(toLocalDateFormat($('#HValidLabs').val()));
+        } else if (updateFor == 3) {
+            var coachingCondition = getMultiSelect('CoachingCondition', false);
+            serializeData = $("#edit-Programs").serialize() + '&portal.Id=' + portalId + '&updateFor=' + updateFor + '&portal.CoachingConditionsStr=' + coachingCondition;
+        } else if (updateFor == 4) {
+            var followuptypes = getMultiSelect('portalcoachingfollowups', false);
+            var selfhelpfollowuptypes = getMultiSelect('portalselfhelpfollowups', false);
+            var followuplabs = getMultiSelect('followuplabs', false);
+            var selfhelpfollowuplabs = getMultiSelect('selfhelpfollowuplabs', false);
+            serializeData = $("#edit-Follow-Up").serialize() + '&portal.Id=' + portalId + '&updateFor=' + updateFor + '&portal.followupTypeStr=' + followuptypes + '&portal.selfhelpFollowupTypeStr=' + selfhelpfollowuptypes + '&portal.followuplabStr=' + followuplabs + '&portal.selfhelpfollowuplabStr=' + selfhelpfollowuplabs;
+        } else if (updateFor == 5) {
+            serializeData = $("#edit-CoachingEnrollment").serialize() + '&portal.Id=' + portalId + '&updateFor=' + updateFor;
+        } else if (updateFor == 6) {
+            serializeData = $("#edit-Eligibility").serialize() + '&portal.Id=' + portalId + '&updateFor=' + updateFor;
+        } else if (updateFor == 7) {
+            if ($('#HCampaignStartDate').val() != '')
+                $('#campaignStartDate').val($('#HCampaignStartDate').val());
+            if ($('#HCampaignEndDate').val() != '')
+                $('#campaignEndDate').val($('#HCampaignEndDate').val());
+            serializeData = $("#edit-Additional-Features").serialize() + '&portal.Id=' + portalId + '&updateFor=' + updateFor;
+            if ($('#HCampaignStartDate').val() != '')
+                $('#campaignStartDate').val(toLocalDateFormat($('#HCampaignStartDate').val()));
+            if ($('#HCampaignEndDate').val() != '')
+                $('#campaignEndDate').val(toLocalDateFormat($('#HCampaignEndDate').val()));
+        }
+        EditOtherPortalDetails(serializeData);
+    }
+</script>

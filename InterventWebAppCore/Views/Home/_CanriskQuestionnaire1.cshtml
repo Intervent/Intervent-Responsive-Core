@@ -1,0 +1,1840 @@
+﻿@using InterventWebApp
+@model CanriskModel
+
+<section class="main lmc-dashboard canrisk-dashboard">
+    <div class="grid-container">
+        <div class="grid-x align-center">
+            <div class="cell medium-9">
+
+                @{
+                    string diabetesLogo = "canadian-diabetes-logo.svg", healthcareLogo = "canadian-healthcare-logo.svg";
+                    if (Model.languagePreference != null && Model.languagePreference == "fr")
+                    {
+                        diabetesLogo = "canadian-diabetes-logo-fr.png";
+                        healthcareLogo = "canadian-healthcare-logo-fr.png";
+                    }
+                }
+                <div class="lmc-page-top">
+                    <p>@Translate.Message("L3343")</p>
+                    @if (!Model.HasAdminRole)
+                    {
+                        <p><a href="#" onclick="OpenModal('info');">@Translate.Message("L3344")</a></p>
+                    }
+                    @if (Model.HasAdminRole && (Model.canrisk != null && Model.canrisk.CanriskScore.HasValue))
+                    {
+                        <p>Completed On @CommonUtility.dateFormater(TimeZoneInfo.ConvertTimeFromUtc(Model.canrisk.CompletedOn.Value, TimeZoneInfo.FindSystemTimeZoneById(User.TimeZone())), true, ViewData["DateFormat"].ToString())</p>
+                    }
+                </div>
+
+                <div class="lmc-page-content">
+                    <form class="lmc-form" id="lmc-form" novalidate onkeypress="return event.keyCode != 13;">
+                        <ul class="form-captions">
+                            <li class="active"><a href="#section-1" onclick="changeSection()"></a></li>
+                            <li><a href="#section-2" onclick="changeSection()"></a></li>
+                            <li><a href="#section-3" onclick="changeSection()"></a></li>
+                            <li><a href="#section-4" onclick="changeSection()"></a></li>
+                            <li><a href="#section-5" onclick="changeSection()"></a></li>
+                            <li><a href="#section-6" onclick="changeSection()"></a></li>
+                            <li><a href="#section-7" onclick="changeSection()"></a></li>
+                            <li><a href="#section-8" onclick="changeSection()"></a></li>
+                            <li><a href="#section-9" onclick="changeSection()"></a></li>
+                            <li><a href="#section-10" onclick="changeSection()"></a></li>
+                        </ul>
+                        <div class="lmc-quiz-section">
+                            <div>
+                                <div class="lmc-form-elements active" id="section-1">
+                                    <div>
+                                        <label>@Translate.Message("L3345")</label>
+                                        <div class="grid-x grid-margin-x">
+                                            <div class="cell small-4">
+                                                @Html.DropDownListFor(x => x.month, Model.months, "--" + Translate.Message("L3346") + "--")
+                                                <small id="Error_month" class="form-error">@Translate.Message("L480").</small>
+                                            </div>
+                                            <div class="cell small-4">
+                                                @Html.DropDownListFor(x => x.day, Model.days, "--" + Translate.Message("L3347") + "--")
+                                                <small id="Error_day" class="form-error">@Translate.Message("L480").</small>
+                                            </div>
+                                            <div class="cell small-4">
+                                                @Html.DropDownListFor(x => x.year, Model.years, "--" + Translate.Message("L3348") + "--")
+                                                <small id="Error_year" class="form-error">@Translate.Message("L480").</small>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="canrisk.DOB" id="DOB" />
+                                    </div>
+                                    <div>
+                                        <label>@Translate.Message("L884")</label>
+                                        @Html.DropDownListFor(m => m.canrisk.Gender, Model.GenderList, "" + Translate.Message("L3349") + "")
+                                        <small id="Error_canrisk_Gender" class="form-error">@Translate.Message("L946").</small>
+                                    </div>
+                                    <div>
+                                        <label>@Translate.Message("L3443")</label>
+                                        @Html.TextBoxFor(M => M.canrisk.Zip, new Dictionary<string, object> { { "id", "postal-code" }, { "class", "medium" }, { "onkeydown", "changeSection();" } })
+                                        <small id="Error_postal-code" class="form-error">@Translate.Message("L3350").</small>
+                                        <p class="form-notes">@Translate.Message("L3724")</p>
+                                    </div>
+                                </div>
+                                <!--Section One Ends-->
+
+                                <div class="lmc-form-elements" id="section-2">
+                                    <div>
+                                        <label>@Translate.Message("L3351")</label>
+                                        <div class="flex-container">
+                                            <div class="tick-buttons radio-btn radio-orange">
+                                                @Html.RadioButtonFor(M => M.canrisk.PreDiabetes, 2, new Dictionary<string, object> { { "id", "PreDiabetesNo" }, { "Name", "canrisk.PreDiabetes" } })
+                                                <label for="PreDiabetesNo">
+                                                    @Translate.Message("L3")
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                            <div class="tick-buttons radio-btn radio-orange">
+                                                @Html.RadioButtonFor(M => M.canrisk.PreDiabetes, 1, new Dictionary<string, object> { { "id", "PreDiabetesYes" }, { "Name", "canrisk.PreDiabetes" } })
+                                                <label for="PreDiabetesYes">
+                                                    @Translate.Message("L2")
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <small id="Error_PreDiabetesNo" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                    <div>
+                                        <label>@Translate.Message("L3352")</label>
+                                        <div class="flex-container">
+                                            <div class="tick-buttons radio-btn radio-orange">
+                                                @Html.RadioButtonFor(M => M.canrisk.KnowA1c, 2, new Dictionary<string, object> { { "id", "KnowA1cNo" }, { "Name", "canrisk.KnowA1c" } })
+                                                <label for="KnowA1cNo">
+                                                    @Translate.Message("L3")
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                            <div class="tick-buttons radio-btn radio-orange">
+                                                @Html.RadioButtonFor(M => M.canrisk.KnowA1c, 1, new Dictionary<string, object> { { "id", "KnowA1cYes" }, { "Name", "canrisk.KnowA1c" } })
+                                                <label for="KnowA1cYes">
+                                                    @Translate.Message("L2")
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <small id="Error_KnowA1cNo" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                    <div id="a1cDiv" hidden>
+                                        <label>@Translate.Message("L3353")</label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(M => M.canrisk.A1c, new Dictionary<string, object> { { "id", "A1c" }, { "name", "a1c-level" }, { "class", "input-group-field small" }, { "onkeydown", "changeSection();" }, { "onchange", "validateValue('A1c');" } })
+                                            <span class="input-group-label">%</span>
+                                        </div>
+                                        <small id="Error_A1c" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                    <div>
+                                        <label>@Translate.Message("L3354")</label>
+                                        <div class="flex-container">
+                                            <div class="tick-buttons radio-btn radio-orange">
+                                                @Html.RadioButtonFor(M => M.canrisk.KnowGlucose, 2, new Dictionary<string, object> { { "id", "KnowGlucoseNo" }, { "Name", "canrisk.KnowGlucose" } })
+                                                <label for="KnowGlucoseNo">
+                                                    @Translate.Message("L3")
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                            <div class="tick-buttons radio-btn radio-orange">
+                                                @Html.RadioButtonFor(M => M.canrisk.KnowGlucose, 1, new Dictionary<string, object> { { "id", "KnowGlucoseYes" }, { "Name", "canrisk.KnowGlucose" } })
+                                                <label for="KnowGlucoseYes">
+                                                    @Translate.Message("L2")
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <small id="Error_KnowGlucoseNo" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                    <div id="glucoseDiv" hidden>
+                                        <label>@Translate.Message("L3355")</label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(M => M.canrisk.Glucose, new Dictionary<string, object> { { "id", "Glucose" }, { "name", "Glucose" }, { "class", "input-group-field small" }, { "onkeydown", "changeSection();" }, { "onchange", "validateValue('Glucose');" } })
+                                            <span class="input-group-label"></span>
+                                        </div>
+                                        <small id="Error_Glucose" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                                <!--Section Two Ends-->
+
+                                <div class="lmc-form-elements" id="section-3">
+                                    <div class="top-notification">
+                                        <p>@Html.Raw(Translate.Message("L3356"))</p>
+                                    </div>
+
+                                    <label>@Translate.Message("L3357")</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.AbilitytoRead, 2, new Dictionary<string, object> { { "id", "AbilitytoReadNo" }, { "Name", "canrisk.AbilitytoRead" } })
+                                            <label for="AbilitytoReadNo">
+                                                @Translate.Message("L3")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.AbilitytoRead, 1, new Dictionary<string, object> { { "id", "AbilitytoReadYes" }, { "Name", "canrisk.AbilitytoRead" } })
+                                            <label for="AbilitytoReadYes">
+                                                @Translate.Message("L2")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <small id="Error_AbilitytoReadNo" class="form-error">@Translate.Message("L480")</small>
+
+                                    <div id="supporttoReadDiv" hidden>
+                                        <label>@Translate.Message("L3358")</label>
+                                        <div class="flex-container">
+                                            <div class="tick-buttons radio-btn radio-orange">
+                                                @Html.RadioButtonFor(M => M.canrisk.HasSupporttoRead, 2, new Dictionary<string, object> { { "id", "HasSupporttoReadNo" }, { "Name", "canrisk.HasSupporttoRead" } })
+                                                <label for="HasSupporttoReadNo">
+                                                    @Translate.Message("L3")
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                            <div class="tick-buttons radio-btn radio-orange">
+                                                @Html.RadioButtonFor(M => M.canrisk.HasSupporttoRead, 1, new Dictionary<string, object> { { "id", "HasSupporttoReadYes" }, { "Name", "canrisk.HasSupporttoRead" } })
+                                                <label for="HasSupporttoReadYes">
+                                                    @Translate.Message("L2")
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <small id="Error_HasSupporttoReadNo" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+
+                                    <label>@Html.Raw(Translate.Message("L3359"))</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.Diabetes, 2, new Dictionary<string, object> { { "id", "DiabetesNo" }, { "Name", "canrisk.Diabetes" } })
+                                            <label for="DiabetesNo">
+                                                @Translate.Message("L3")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.Diabetes, 1, new Dictionary<string, object> { { "id", "DiabetesYes" }, { "Name", "canrisk.Diabetes" } })
+                                            <label for="DiabetesYes">
+                                                @Translate.Message("L2")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <small id="Error_DiabetesNo" class="form-error">@Translate.Message("L480")</small>
+
+                                    <label>@Translate.Message("L3360")</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.GlucoseLowering, 2, new Dictionary<string, object> { { "id", "GlucoseLoweringNo" }, { "Name", "canrisk.GlucoseLowering" } })
+                                            <label for="GlucoseLoweringNo">
+                                                @Translate.Message("L3")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.GlucoseLowering, 1, new Dictionary<string, object> { { "id", "GlucoseLoweringYes" }, { "Name", "canrisk.GlucoseLowering" } })
+                                            <label for="GlucoseLoweringYes">
+                                                @Translate.Message("L2")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <small id="Error_GlucoseLoweringNo" class="form-error">@Translate.Message("L480")</small>
+
+                                    <label>@Translate.Message("L3361")</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.WeightLoss, 2, new Dictionary<string, object> { { "id", "WeightLossNo" }, { "Name", "canrisk.WeightLoss" } })
+                                            <label for="WeightLossNo">
+                                                @Translate.Message("L3")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.WeightLoss, 1, new Dictionary<string, object> { { "id", "WeightLossYes" }, { "Name", "canrisk.WeightLoss" } })
+                                            <label for="WeightLossYes">
+                                                @Translate.Message("L2")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <small id="Error_WeightLossNo" class="form-error">@Translate.Message("L480")</small>
+
+                                    <label>@Translate.Message("L3362")</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.SteroidMed, 2, new Dictionary<string, object> { { "id", "SteroidMedNo" }, { "Name", "canrisk.SteroidMed" } })
+                                            <label for="SteroidMedNo">
+                                                @Translate.Message("L3")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.SteroidMed, 1, new Dictionary<string, object> { { "id", "SteroidMedYes" }, { "Name", "canrisk.SteroidMed" } })
+                                            <label for="SteroidMedYes">
+                                                @Translate.Message("L2")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <small id="Error_SteroidMedNo" class="form-error">@Translate.Message("L480")</small>
+
+                                    <label>@Html.Raw(Translate.Message("L3363"))</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.Pancreatitis, 2, new Dictionary<string, object> { { "id", "PancreatitisNo" }, { "Name", "canrisk.Pancreatitis" } })
+                                            <label for="PancreatitisNo">
+                                                @Translate.Message("L3")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.Pancreatitis, 1, new Dictionary<string, object> { { "id", "PancreatitisYes" }, { "Name", "canrisk.Pancreatitis" } })
+                                            <label for="PancreatitisYes">
+                                                @Translate.Message("L2")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <small id="Error_PancreatitisNo" class="form-error">@Translate.Message("L480")</small>
+
+                                </div>
+                                <!--Section Three Ends-->
+
+                                <div class="lmc-form-elements" id="section-4">
+                                    <div class="top-notification">
+                                        <p>@Html.Raw(Translate.Message("L3364"))</p>
+                                    </div>
+                                    <label>@Html.Raw(Translate.Message("L3365"))</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.Cancer, 2, new Dictionary<string, object> { { "id", "CancerNo" }, { "Name", "canrisk.Cancer" } })
+                                            <label for="CancerNo">
+                                                @Translate.Message("L3")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.Cancer, 1, new Dictionary<string, object> { { "id", "CancerYes" }, { "Name", "canrisk.Cancer" } })
+                                            <label for="CancerYes">
+                                                @Translate.Message("L2")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <small id="Error_CancerNo" class="form-error">@Translate.Message("L480")</small>
+
+                                    <label>@Html.Raw(Translate.Message("L3366"))</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.Hemoglobinopathy, 2, new Dictionary<string, object> { { "id", "HemoglobinopathyNo" }, { "Name", "canrisk.Hemoglobinopathy" } })
+                                            <label for="HemoglobinopathyNo">
+                                                @Translate.Message("L3")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.Hemoglobinopathy, 1, new Dictionary<string, object> { { "id", "HemoglobinopathyYes" }, { "Name", "canrisk.Hemoglobinopathy" } })
+                                            <label for="HemoglobinopathyYes">
+                                                @Translate.Message("L2")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <small id="Error_HemoglobinopathyNo" class="form-error">@Translate.Message("L480")</small>
+
+                                    <label>@Translate.Message("L3367")</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.StudyDrug, 2, new Dictionary<string, object> { { "id", "StudyDrugNo" }, { "Name", "canrisk.StudyDrug" } })
+                                            <label for="StudyDrugNo">
+                                                @Translate.Message("L3")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.StudyDrug, 1, new Dictionary<string, object> { { "id", "StudyDrugYes" }, { "Name", "canrisk.StudyDrug" } })
+                                            <label for="StudyDrugYes">
+                                                @Translate.Message("L2")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <small id="Error_StudyDrugNo" class="form-error">@Translate.Message("L480")</small>
+
+                                    <div>
+                                        <label>@Translate.Message("L592")</label>
+                                        <div class="flex-container">
+                                            <div class="tick-buttons radio-btn radio-orange">
+                                                @Html.RadioButtonFor(M => M.canrisk.Pregnant, 2, new Dictionary<string, object> { { "id", "PregnantNo" }, { "Name", "canrisk.Pregnant" } })
+                                                <label for="PregnantNo">
+                                                    @Translate.Message("L3368")
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                            <div class="tick-buttons radio-btn radio-orange">
+                                                @Html.RadioButtonFor(M => M.canrisk.Pregnant, 1, new Dictionary<string, object> { { "id", "PregnantYes" }, { "Name", "canrisk.Pregnant" } })
+                                                <label for="PregnantYes">
+                                                    @Translate.Message("L2")
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <small id="Error_PregnantNo" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                                <!--Section Four Ends-->
+
+                                <div class="lmc-form-elements measurement-sec" id="section-5">
+                                    <div class="weight-slider">
+                                        <label><img src="~/Images/lmc/lmc-weight-icon.png" />@Html.Raw(Translate.Message("L3369")) <span>@Html.Raw(Translate.Message("L4428"))</span></label>
+                                        @Html.TextBoxFor(M => M.canrisk.Weight, new Dictionary<string, object> { { "id", "weight-slider" }, { "class", "small" }, { "onchange", "validateValue('weight-slider');" } })
+                                        <div class="switch slider-switch">
+                                            @Html.CheckBoxFor(M => M.WeightUnit, new Dictionary<string, object> { { "id", "WeightUnit" }, { "class", "switch-input" } })
+                                            <label class="switch-paddle" for="WeightUnit">
+                                                <span class="switch-inactive" aria-hidden="true">@Translate.Message("L1981")</span>
+                                                <span class="switch-active" aria-hidden="true">@Translate.Message("L3370")</span>
+                                            </label>
+                                        </div>
+                                        <small id="Error_weight-slider" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                    <div class="height-slider">
+                                        <label><img src="~/Images/lmc/lmc-height-icon.png" />@Html.Raw(Translate.Message("L3371"))</label>
+                                        @Html.TextBoxFor(M => M.canrisk.Height, new Dictionary<string, object> { { "id", "height-slider" }, { "class", "small" }, { "onchange", "validateValue('height-slider');" } })
+                                        <div class="switch slider-switch">
+                                            @Html.CheckBoxFor(M => M.HeightUnit, new Dictionary<string, object> { { "id", "HeightUnit" }, { "class", "switch-input" } })
+                                            <label class="switch-paddle" for="HeightUnit">
+                                                <span class="switch-inactive" aria-hidden="true">@Translate.Message("L3372")</span>
+                                                <span class="switch-active" aria-hidden="true">@Translate.Message("L3373")</span>
+                                            </label>
+                                        </div>
+                                        <small id="Error_height-slider" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                    <div class="waist-slider">
+                                        <label><img src="~/Images/lmc/lmc-tape-icon.png" />@Translate.Message("L752") <a href="#" class="form-modal-anchor" onclick="OpenModal('waist')">@Translate.Message("L3374")</a></label>
+                                        @Html.TextBoxFor(M => M.canrisk.Waist, new Dictionary<string, object> { { "id", "waist-slider" }, { "class", "small" }, { "onchange", "validateValue('waist-slider');" } })
+                                        <div class="switch slider-switch">
+                                            @Html.CheckBoxFor(M => M.WaistUnit, new Dictionary<string, object> { { "id", "WaistUnit" }, { "class", "switch-input" } })
+                                            <label class="switch-paddle" for="WaistUnit">
+                                                <span class="switch-inactive" aria-hidden="true">@Translate.Message("L3372")</span>
+                                                <span class="switch-active" aria-hidden="true">@Translate.Message("L3373")</span>
+                                            </label>
+                                        </div>
+                                        <small id="Error_waist-slider" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                                <!--Section Five Ends-->
+
+                                <div class="lmc-form-elements" id="section-6">
+                                    <div class="top-notification">
+                                        <p>@Html.Raw(Translate.Message("L3375"))</p>
+                                    </div>
+                                    <label>@Html.Raw(Translate.Message("L3376"))</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.BriskWalking, 2, new Dictionary<string, object> { { "id", "BriskWalkingNo" }, { "Name", "canrisk.BriskWalking" } })
+                                            <label for="BriskWalkingNo">
+                                                @Translate.Message("L3")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.BriskWalking, 1, new Dictionary<string, object> { { "id", "BriskWalkingYes" }, { "Name", "canrisk.BriskWalking" } })
+                                            <label for="BriskWalkingYes">
+                                                @Translate.Message("L2")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <small id="Error_BriskWalkingNo" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+
+                                    <label>@Translate.Message("L3377")</label>
+
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.FruitsandVeggies, 1, new Dictionary<string, object> { { "id", "FruitsandVeggiesYes" }, { "Name", "canrisk.FruitsandVeggies" } })
+                                            <label for="FruitsandVeggiesYes">
+                                                @Translate.Message("L3378")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-orange">
+                                            @Html.RadioButtonFor(M => M.canrisk.FruitsandVeggies, 2, new Dictionary<string, object> { { "id", "FruitsandVeggiesNo" }, { "Name", "canrisk.FruitsandVeggies" } })
+                                            <label for="FruitsandVeggiesNo">
+                                                @Translate.Message("L3379")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <small id="Error_FruitsandVeggiesYes" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                                <!--Section Six Ends-->
+
+                                <div class="lmc-form-elements" id="section-7">
+                                    <label>@Translate.Message("L3380")</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-btn-trigger">
+                                            @Html.RadioButtonFor(M => M.canrisk.BloodPressure, 1, new Dictionary<string, object> { { "id", "BloodPressureYes" }, { "Name", "canrisk.BloodPressure" } })
+                                            <label for="BloodPressureYes">
+                                                @Translate.Message("L3381")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-btn-trigger">
+                                            @Html.RadioButtonFor(M => M.canrisk.BloodPressure, 2, new Dictionary<string, object> { { "id", "BloodPressureNo" }, { "Name", "canrisk.BloodPressure" } })
+                                            <label for="BloodPressureNo">
+                                                @Translate.Message("L3382")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <small id="Error_BloodPressureYes" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                    <label>
+                                        @Translate.Message("L3383")
+                                        <span id="tooltip" data-tooltip aria-haspopup="true" title="@Translate.Message("L3720")" class="label-tooltip" hidden><i class="fa fa-info-circle"></i></span>
+                                    </label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-btn-trigger">
+                                            @Html.RadioButtonFor(M => M.canrisk.BloodGlucose, 1, new Dictionary<string, object> { { "id", "BloodGlucoseYes" }, { "Name", "canrisk.BloodGlucose" } })
+                                            <label for="BloodGlucoseYes">
+                                                @Translate.Message("L2")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-btn-trigger">
+                                            @Html.RadioButtonFor(M => M.canrisk.BloodGlucose, 2, new Dictionary<string, object> { { "id", "BloodGlucoseNo" }, { "Name", "canrisk.BloodGlucose" } })
+                                            <label for="BloodGlucoseNo">
+                                                @Translate.Message("L3382")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <small id="Error_BloodGlucoseYes" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                                <!--Section Seven Ends-->
+
+                                <div class="lmc-form-elements" id="section-8">
+                                    <label>@Translate.Message("L3384")</label>
+                                    <div class="flex-container">
+                                        <div class="tick-buttons radio-btn radio-btn-trigger">
+                                            @Html.RadioButtonFor(M => M.canrisk.GiveBirth, 1, new Dictionary<string, object> { { "id", "GiveBirthYes" }, { "Name", "canrisk.GiveBirth" } })
+                                            <label for="GiveBirthYes">
+                                                @Translate.Message("L3381")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-btn-trigger">
+                                            @Html.RadioButtonFor(M => M.canrisk.GiveBirth, 2, new Dictionary<string, object> { { "id", "GiveBirthNo" }, { "Name", "canrisk.GiveBirth" } })
+                                            <label for="GiveBirthNo">
+                                                @Translate.Message("L3385")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <small id="Error_GiveBirthYes" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                                <!--Section Eight Ends-->
+
+                                <div class="lmc-form-elements" id="section-9">
+                                    <label>@Translate.Message("L3386")</label>
+                                    <label>@Translate.Message("L3387")</label>
+                                    @Html.DropDownListFor(m => m.canrisk.MothersEthnic, Model.RaceFemaleList, "" + Translate.Message("L3349") + "")
+                                    <small id="Error_canrisk_MothersEthnic" class="form-error">@Translate.Message("L480")</small>
+                                    <label>@Translate.Message("L3444")</label>
+                                    @Html.DropDownListFor(m => m.canrisk.FathersEthnic, Model.RaceMaleList, "" + Translate.Message("L3349") + "")
+                                    <small id="Error_canrisk_FathersEthnic" class="form-error">@Translate.Message("L480")</small>
+                                    <label>@Html.Raw(Translate.Message("L3388"))</label>
+                                    <div class="tick-buttons check-btn">
+                                        @Html.CheckBoxFor(M => M.DiabetesMotherBool, new Dictionary<string, object> { { "class", "DiabetesFamily" } })
+                                        <label for="DiabetesMotherBool">
+                                            @Translate.Message("L3389")
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <div class="tick-buttons check-btn">
+                                        @Html.CheckBoxFor(M => M.DiabetesFatherBool, new Dictionary<string, object> { { "class", "DiabetesFamily" } })
+                                        <label for="DiabetesFatherBool">
+                                            @Translate.Message("L3390")
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <div class="tick-buttons check-btn">
+                                        @Html.CheckBoxFor(M => M.DiabetesSiblingsBool, new Dictionary<string, object> { { "class", "DiabetesFamily" } })
+                                        <label for="DiabetesSiblingsBool">
+                                            @Translate.Message("L3391")
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <div class="tick-buttons check-btn">
+                                        @Html.CheckBoxFor(M => M.DiabetesChildrenBool, new Dictionary<string, object> { { "class", "DiabetesFamily" } })
+                                        <label for="DiabetesChildrenBool">
+                                            @Translate.Message("L3392")
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <div class="tick-buttons check-btn">
+                                        @Html.CheckBoxFor(M => M.DiabetesOthersBool, new Dictionary<string, object> { { "class", "DiabetesFamily" } })
+                                        <label for="DiabetesOthersBool">
+                                            @Translate.Message("L1440")
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <div class="tick-buttons check-btn">
+                                        @Html.CheckBoxFor(M => M.DiabetesNotSureBool, new Dictionary<string, object> { { "class", "DiabetesFamily" } })
+                                        <label for="DiabetesNotSureBool">
+                                            @Translate.Message("L3382")
+                                            <span class="checkmark"></span>
+                                            <small id="Error_DiabetesMotherBool" class="form-error">@Translate.Message("L480")</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <!--Section Nine Ends-->
+
+                                <div class="lmc-form-elements" id="section-10">
+                                    <label>@Translate.Message("L3393")</label>
+                                    <div class="education">
+                                        <div class="tick-buttons radio-btn radio-btn-trigger">
+                                            @Html.RadioButtonFor(M => M.canrisk.Education, 1, new Dictionary<string, object> { { "id", "EducationUniversity" }, { "Name", "canrisk.Education" } })
+                                            <label for="EducationUniversity">
+                                                @Translate.Message("L3394")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-btn-trigger">
+                                            @Html.RadioButtonFor(M => M.canrisk.Education, 2, new Dictionary<string, object> { { "id", "EducationCollege" }, { "Name", "canrisk.Education" } })
+                                            <label for="EducationCollege">
+                                                @Translate.Message("L3395")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-btn-trigger">
+                                            @Html.RadioButtonFor(M => M.canrisk.Education, 3, new Dictionary<string, object> { { "id", "EducationHS" }, { "Name", "canrisk.Education" } })
+                                            <label for="EducationHS">
+                                                @Translate.Message("L3396")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        <div class="tick-buttons radio-btn radio-btn-trigger">
+                                            @Html.RadioButtonFor(M => M.canrisk.Education, 4, new Dictionary<string, object> { { "id", "EducationLess" }, { "Name", "canrisk.Education" } })
+                                            <label for="EducationLess">
+                                                @Translate.Message("L3397")
+                                                <span class="checkmark"></span>
+                                            </label>
+                                            <small id="Error_EducationUniversity" class="form-error">@Translate.Message("L480")</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Section Ten Ends-->
+                                @*<div class="lmc-form-elements" id="section-11">
+                                <div>
+                                <label>@Translate.Message("L3233")</label>
+                                @Html.TextBoxFor(M => M.canrisk.Name, new Dictionary<string, object> { { "id", "Name" }, { "onchange", "validateValue('Name');" } })
+                                <small id="Error_Name" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                                <div>
+                                <label>@Translate.Message("L572")</label>
+                                @Html.TextBoxFor(M => M.canrisk.Email, new Dictionary<string, object> { { "id", "Email" } })
+                                <small id="Error_Email" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                                <div>
+                                <label>@Translate.Message("L1626")</label>
+                                @Html.TextBoxFor(M => M.canrisk.PhoneNumber, new Dictionary<string, object> { { "id", "PhoneNumber" } })
+                                <small id="Error_PhoneNumber" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                                @Html.HiddenFor(M => M.canrisk.EligibilityId, new Dictionary<string, object> { { "id", "EligibilityId" } })
+                                @Html.HiddenFor(M => M.UserId, new Dictionary<string, object> { { "id", "UserId" } })
+                                <div class="tick-buttons check-btn">
+                                <label for="terms">
+                                @Html.Raw(Translate.Message("L3446"))
+                                <span class="checkmark"></span>
+                                </label>
+                                <small id="Error_Terms" class="form-error">@Translate.Message("L3445")</small>
+                                <input type="checkbox" id="terms">
+                                </div>
+                                </div>*@
+                                <!--Section Eleven Ends-->
+                            </div>
+
+                            <div class="lmc-form-submit button-group align-center">
+                                <button class="back-btn secondary hide">@Translate.Message("L3169")</button>
+                                <button class="next-btn button">@Translate.Message("L3398")</button>
+                                <button class="submit-btn button hide">
+                                    <div class="loading-spinner hide" show-if-submitting></div>
+                                    @Translate.Message("L3732")
+                                </button>
+                            </div>
+                            <div class="lmc-disclaimer-note">
+                                <p class="form-notes">@Translate.Message("L3723")</p>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="lmc-result-section text-center hide">
+                        <div class="lmc-score-section">
+                            <h4 id="qualification">@Html.Raw(Translate.Message("L3399"))</h4>
+                            <div class="score-bar-section">
+                                <div class="score-tooltip">
+                                    <p>@Translate.Message("L3400")<strong id="scoreInfo"></strong></p>
+                                </div>
+                                <div class="score-scale"></div>
+                                <div class="score-pointers">
+                                    <span>0</span>
+                                    <span>20</span>
+                                    <span>40</span>
+                                    <span>60</span>
+                                    <span>80</span>
+                                    <span>100</span>
+                                </div>
+                            </div>
+                            <p id="scoreMean">@Translate.Message("L3401")</p>
+                            <h4 id="riskText">@Translate.Message("L3402")</h4>
+                            <p id="qualifyText"></p>
+                        </div>
+                        <div class="lmc-disclaimer">
+                            <p class="hide"><strong>@Translate.Message("L3403")</strong></p>
+                            <div class="disclaimer-box">
+                                <span><img src="~/Images/lmc/exclamaiton-triangle.svg" alt="" /></span>
+                                <p>@Translate.Message("L3408")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lmc-page-btm">
+                    <p>@Translate.Message("L3722")</p>
+                    <ul>
+                        <li><img src="~/Images/lmc/canadian-intervent-logo.svg" alt="" /></li>
+                        <li><img src="~/Images/lmc/@diabetesLogo" alt="" /></li>
+                        <li><img src="~/Images/lmc/canadian-dynacare-logo.svg" alt="" /></li>
+                        <li><img src="~/Images/lmc/@healthcareLogo" width="115" alt="" /></li>
+                        <li><img src="~/Images/lmc/public-health-agency-logo.svg" alt="" /></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="cookies-box" hidden>
+    <div class="grid-container">
+        <div class="grid-x">
+            <div class="cell cookies-container">
+                <p class="small-order-2 medium-order-1">@Html.Raw(Translate.Message("L3725"))</p>
+                <button id="acceptCookies" class="button small-order-2 medium-order-1">@Translate.Message("L3726")</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="reveal small join-lmc-prog" id="create-profile" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <h2 class="text-center">@Translate.Message("L3407")</h2>
+    <div id="signup-error" class="callout hide" data-closable>
+        <a href="#" class="close">&times;</a>
+    </div>
+    <form id="sign-up-inlineform" data-abide novalidate>
+        <div class="small-6 cell">
+            <label>@Translate.Message("L938")</label>
+            <input class="red" type="text" id="infirstName" name="FirstName" placeholder="@Translate.Message("L938")" required pattern="[a-zA-Z]+" disabled>
+            <small class="form-error red">@Translate.Message("L432")</small>
+        </div>
+        <div class="small-6 cell">
+            <label>@Translate.Message("L939")</label>
+            <input class="red" type="text" id="inlastName" name="LastName" placeholder="@Translate.Message("L939")" required pattern="[a-zA-Z]+" disabled>
+            <small class="form-error red">@Translate.Message("L433")</small>
+        </div>
+        <div class="small-6 cell">
+            <label>@Translate.Message("L572")</label>
+            <input class="red" type="text" id="EmailAddress" name="EmailAddress" placeholder="@Translate.Message("L986")" required>
+            <small class="form-error red">@Translate.Message("L434")</small>
+        </div>
+        <div class="form-password-field">
+            <label>@Translate.Message("L466")</label>
+            <input type="password" id="inpassword" name="Password" placeholder="" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+                   required class="red">
+            <small class="form-error red">@Translate.Message("L1929")</small>
+            <div class="password-req-list">
+                <p>@Translate.Message("L4269")</p>
+                <ul>
+                    <li class="upper-char"><span>@Translate.Message("L4270")</span></li>
+                    <li class="lower-char"><span>@Translate.Message("L4271")</span></li>
+                    <li class="number-char"><span>@Translate.Message("L4272")</span></li>
+                    <li class="min-length"><span>@Translate.Message("L4273")</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="small-6 cell">
+            <label>@Translate.Message("L253")</label>
+            <input class="red" type="password" placeholder="" data-equalto="inpassword">
+            <small class="form-error red">@Translate.Message("L438")</small>
+        </div>
+        <input type="hidden" id="inDOB" name="DOB" />
+        <input type="hidden" id="inUniqueId" name="UniqueId" />
+        <input type="hidden" id="organizationId" name="OrganizationId" value="@ViewData["OrgId"]" />
+        <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+        <div class="small-6 cell text-center">
+            <button class="button" type="submit">@Translate.Message("L443")</button>
+        </div>
+        <input type="hidden" id="SignUpDate" name="SignUpDate" value="" />
+    </form>
+</div>
+
+<div class="reveal text-center large disqualify-modal" id="disqualify" data-reveal>
+    <h4 id="disqualifyText">@Translate.Message("L3409")</h4>
+    <p id="reasonText"></p>
+    <a href="#" class="button hide" data-close>@Translate.Message("L3410")</a>
+
+    <div class="popup-suggestion-box" id="popup">
+        <p id="referralLink"></p>
+
+        <a href="https://www.lmc.ca/new-patients/" target="_blank" class="button" hidden id="selfForm">@Translate.Message("L3411")</a>
+    </div>
+
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="reveal small waist-modal" id="waist-modal" data-reveal>
+    <div class="waist-image-box"><img src="~/Images/lmc/waist-measure-img.png" /></div>
+
+    <div class="waist-measure-steps">
+        <h4>@Translate.Message("L3412")</h4>
+        <ol id="waistText">
+            <li>@Translate.Message("L3413")</li>
+            <li>@Translate.Message("L3414")</li>
+            <li>@Translate.Message("L3415")</li>
+            <li>@Translate.Message("L3416")</li>
+            <li>@Translate.Message("L3417")</li>
+            <li>@Translate.Message("L3418")</li>
+            <li>@Translate.Message("L3419")</li>
+        </ol>
+    </div>
+
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="reveal healthy-life small" id="healthy-life" data-reveal>
+    <div class="intro-section">
+        <h3>@Translate.Message("L3420")</h3>
+        <div class="intro-desciption">
+            <img src="~/Images/lmc/diabetes-prevention-logo.svg" alt="" />
+            <p id="infoText">
+                @Translate.Message("L3421").
+                <a style='color:deepskyblue;' class="read-more-link" href="#" onclick="$('#morestories').foundation('open'); return false;">
+                    @Translate.Message("L1363")
+                    <span class="read-more-content"></span>
+                </a>
+            </p>
+        </div>
+    </div>
+    <div class="services-list">
+        <h3>@Translate.Message("L3727")</h3>
+        <ul>
+            <li>
+                <img src="~/Images/lmc/personal-coach-logo.svg" alt="" />
+                <p>@Translate.Message("L3728")</p>
+            </li>
+            <li>
+                <img src="~/Images/lmc/individual-support-logo.svg" alt="" />
+                <p>@Translate.Message("L3729")</p>
+            </li>
+            <li>
+                <img src="~/Images/lmc/technology-logo.svg" alt="" />
+                <p>@Translate.Message("L3730")</p>
+            </li>
+            <li>
+                <img src="~/Images/lmc/lasting-change-logo.svg" alt="" />
+                <p>@Translate.Message("L3731")</p>
+            </li>
+        </ul>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div id="morestories" class="reveal small" data-reveal data-close-on-click="true">
+    <video class="margin-top-1" width="100%" height="100%" controls>
+        <source src="~/Videos/LMCMoreInfo.mp4" type="video/mp4" />
+        @Translate.Message("L3650")
+    </video>
+    <button class="close-button" data-close aria-label="Close modal" type="button" onclick="pauseVideo()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@Html.Partial("_EmailConfirmation")
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/PasswordValidation.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/AgeValidation.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/RegistrationSignIn.js")?v=@CommonUtility.GetRandom()"></script>
+
+<script>
+    const canriskReasons = {
+        POSTAL_CODE: '1',
+        CANRISK_SCORE: '2',
+        A1C_VALUE_ON_CANRISK: '3',
+        GLUCOSE_VALUE_ON_CANRISK: '4',
+        NO_ABILITY_TO_READ_EN_OR_FR_AND_NO_SUPPORT: '5',
+        YES_TO_DIABETES: '6',
+        YES_TO_MEDICATIONS_LOW_BLD_SGR: '7',
+        YES_TO_PRESCRIBED_MED_TO_LOSE_WGHT: '8',
+        YES_TO_STEROIDS_IN_PAST3MONTHS: '9',
+        YES_TO_PANCREATITIS: '10',
+        YES_TO_ACTIVE_OR_BEING_TREATED_FOR_CANCER: '11',
+        YES_TO_HAEMOGLOBINOPATHY: '12',
+        YES_TO_RESEARCH_STUDY_WITH_DRUG: '13',
+        YES_TO_PREGNANCY: '14',
+        WEIGHT_OUT_OF_RANGE: '15'
+    }
+    var guid = "";
+    var eligibilityId;
+    var validPostalCode = false;
+    var canRiskReasonId = "";
+    $(document).ready(function () {
+        if (document.cookie.indexOf("intervent_canrisk-cookie") < 0) {
+            $('.cookies-box').show();
+        }
+        $(".radio-btn.radio-orange input").on('click', function () {
+            if (($(this)[0].id.indexOf("Pregnant") >= 0 && $("#canrisk_Gender").val() == 2) || $(this)[0].id.indexOf("Pregnant") < 0) {
+                //
+                var isDisabled = $('input').attr('data-radio-chk', 'yes').is(':disabled');
+                if (isDisabled) {
+                    var child = $(this)[0].id;
+                    if (child == 'KnowA1cYes') {
+                        $("#a1cDiv").show();
+                    }
+                    else if (child == 'KnowA1cNo') {
+                        $("#a1cDiv").hide();
+                        $("#A1c").val('');
+                        changeSection();
+                    }
+                    else if (child == 'KnowGlucoseYes') {
+                        $("#glucoseDiv").show();
+                    }
+                    else if (child == 'KnowGlucoseNo') {
+                        $("#glucoseDiv").hide();
+                        $("#Glucose").val('');
+                        changeSection();
+                    }
+                    else if (child == 'AbilitytoReadYes') {
+                        $("#HasSupporttoReadNo").parents(".radio-orange").removeClass("selected");
+                        $("#HasSupporttoReadNo").removeAttr("checked");
+                        $("#HasSupporttoReadYes").parents(".radio-orange").removeClass("selected");
+                        $("#HasSupporttoReadYes").removeAttr("checked");
+                        $("#supporttoReadDiv").hide();
+                    }
+                    else if (child == 'AbilitytoReadNo') {
+                        $("#supporttoReadDiv").show();
+                    }
+                    $(this).parents(".flex-container").find(".radio-orange.selected input[type='radio']").removeAttr('checked');
+                    $(this).parents(".flex-container").find(".radio-orange").removeClass("selected");
+                    if ($(this).is(":checked")) {
+                        $(this).parent(".radio-orange").addClass("selected");
+                    }
+                    var $current = $('.lmc-form-elements.active, .form-captions li.active');
+                    if ($current[1].id == "section-3" || $current[1].id == "section-4") {
+                        canRiskReasonId = '';
+                        var result = CriteriaChange(child, $current[1].id);
+                        if (!result) {
+                            if (canRiskReasonId != '') {
+                                UpdateTracking(GetPageCompleted($current[1].id), canRiskReasonId, '');
+                            }
+                            else {
+                                //if eligible you dont set the reason id
+                                //alert('Reason is false but no can risk id selected')
+                            }
+                        }
+                        else {
+                            UpdateTracking(GetPageCompleted($current[1].id), '', '');
+                        }
+                        return result;
+                    }
+                }
+            }
+        });
+
+        $(".radio-btn-trigger input").on('click', function () {
+            $(this).parents(".flex-container").find(".radio-btn.selected input[type='radio']").removeAttr('checked');
+            $(this).parents(".flex-container").find(".radio-btn").removeClass("selected");
+            $(this).parents(".education").find(".radio-btn.selected input[type='radio']").removeAttr('checked');
+            $(this).parents(".education").find(".radio-btn").removeClass("selected");
+            if ($(this).children("input[type='radio']:checked")) {
+                $(this).parent(".radio-btn").addClass("selected");
+                $(".radio-btn.selected input[type='radio']").attr("checked", "checked");
+            }
+        });
+
+        $(".check-btn input").on('click', function () {
+            if ($(this).is(":checked")) {
+                $(this).parent(".check-btn").addClass("selected");
+            }
+            else {
+                $(this).parent(".check-btn").removeClass("selected");
+            }
+        });
+
+        //return page number recorded in tracking for current section
+        function GetPageCompleted(section) {
+            var page = parseInt(section.replace("section-", ""));
+            page--;
+            return page;
+        }
+
+        $("#weight-slider").on("change", function () {
+            canRiskReasonId = '';
+            var result = CriteriaChange("#weight-slider", "section-5");
+            if (!result) {
+                if (canRiskReasonId != '') {
+                    UpdateTracking(GetPageCompleted('section-5'), canRiskReasonId, $("#weight-slider").val());
+                }
+            }
+            else {
+                UpdateTracking(GetPageCompleted('section-5'), '', '');
+            }
+            return result;
+        });
+
+        $("#height-slider").val("");
+        $("#weight-slider").val("");
+        $("#waist-slider").val("");
+
+    @if (Model.canrisk != null && Model.canrisk.CanriskScore.HasValue)
+    {
+        @:CheckCanriskEligibility('@Model.canriskEligibility.isEligible', "@Html.Raw(Model.canriskEligibility.riskLevel)", "@Html.Raw(Model.canriskEligibility.qualifyText)", '@Model.canrisk.CanriskScore');
+        @:  if ($("#UserId").val() > 0) {
+        @:$("#profile").hide();
+        @:$("#servicelink").hide();
+        @:  }
+    }
+
+    @if (Model.canrisk != null && Model.canrisk.EligibilityId.HasValue)
+    {
+        if (Model.canrisk.DOB.HasValue)
+        {
+            @:$("#month").prop("disabled", false);
+            @:$("#day").prop("disabled", false);
+            @:$("#year").prop("disabled", false);
+            @:$("#month").val('@Model.canrisk.DOB.Value.Month');
+            @:$("#day").val('@Model.canrisk.DOB.Value.Day');
+            @:$("#year").val('@Model.canrisk.DOB.Value.Year');
+        }
+        if (Model.canrisk.Gender.HasValue)
+        {
+            @:$("#canrisk_Gender").attr("disabled", true);
+        }
+        if (!String.IsNullOrEmpty(Model.canrisk.Zip))
+        {
+            @: if (validateValue('postal-code'))
+            @:$("#postal-code").attr("disabled", true);
+        }
+        if (!String.IsNullOrEmpty(Model.canrisk.Name))
+        {
+            @: if (validateValue("Name"))
+            @:$("#Name").attr("disabled", true);
+        }
+        if (!String.IsNullOrEmpty(Model.canrisk.Email))
+        {
+            @:$("#Email").attr("disabled", true);
+        }
+        if (!String.IsNullOrEmpty(Model.canrisk.PhoneNumber))
+        {
+            @: if (validateValue('PhoneNumber'))
+            @:$("#PhoneNumber").attr("disabled", true);
+        }
+        if (!String.IsNullOrEmpty(Model.canrisk.Name))
+        {
+            @: if (validateValue('Name'))
+            @:$("#Name").attr("disabled", true);
+        }
+    }
+
+            $("#sign-up-inlineform").foundation();
+        //When Not Valid
+        $("#sign-up-inlineform")
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                console.log(invalid_fields);
+            })
+            //When Valid
+            .on('formvalid.zf.abide', function (e) {
+                $('#SignUpDate').val(toSystemDateFormat(new Date().toLocaleDateString()));
+                e.preventDefault();
+                $.ajax({
+                    url: "@Url.Action("RegisterUsingEligibility", "Account")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#sign-up-inlineform").serialize(),
+                    success: function (data) {
+                        if (data.Success) {
+                            var username = $('#EmailAddress').val();
+                            var password = $('#inpassword').val();
+                            var organizationEmail = $('#supportEmail').val();
+                            var loginURL = "@Url.Action("Login", "Account")";
+                            var streamURL = "@Url.Action("Stream", "Participant")";
+                            validateSignIn(data, username, password, organizationEmail, loginURL, streamURL);
+                            $('.register-modal-email').text($('#inemail').val());
+                            document.getElementById("sign-up-inlineform").reset();
+                        }
+                        else {
+                            $("#signup-error").text(data.ErrorMessage);
+                            $("#signup-error").removeClass("hide");
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            })
+            .on("submit", function (ev) {
+                ev.preventDefault();
+            })
+
+        $('button.submit-btn').on('click', function (e) {
+            e.preventDefault();
+            var $current = $('.lmc-form-elements.active, .form-captions li.active');
+            if (validate($current[1].id)) {
+                $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+                $('[show-if-submitting]').removeClass('hide');
+                $('#Error_Terms').removeClass("is-visible");
+                $('#GiveBirthNo').attr("disabled", false);
+                $('#GiveBirthYes').attr('disabled', false);
+                var tempDOB = ($("#month").val() + "/" + $("#day").val() + "/" + $("#year").val());
+                $('#DOB').val(tempDOB);
+                $("#lmc-form :input").attr("disabled", false);
+                var formData = $("#lmc-form").serialize();
+                $.ajax({
+                    url: "@Url.Action("SubmitCanriskQuestionnaire1", "Home")",
+                    type: 'POST',
+                    data: formData,
+                    success: function (data) {
+                        if (data.success) {
+                            var a1c = $("#A1c").val();
+                            var glucose = $("#Glucose").val();
+                            CheckCanriskEligibility(data.canriskEligibility.riskLevel, data.canriskEligibility.qualifyText, data.score);
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                            $("#EmailAddress").val($("#Email").val());
+                            $("#inDOB").val($("#DOB").val());
+                        }
+                        else {
+                            alert("@Html.Raw(Translate.Message("L3422"))");
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            }
+        });
+
+        $('button.next-btn').on('click', function (e) {
+            e.preventDefault();
+            var $current = $('.lmc-form-elements.active, .form-captions li.active');
+            if ($current[1].id == "section-2" && !PrediabetesExclusion()) {
+                $('button.next-btn').attr("disabled", true);
+                return;
+            }
+            if ($current[1].id == "section-1") {
+                var age = GetAge();
+                if (age != 'NaN' && $("#month").val() != "" && $("#year").val() != "" && $("#date").val() != "" && age < 18) {
+                    $('#Error_DOB').text("@Html.Raw(Translate.Message("L3423"))");
+                    $('#Error_DOB').addClass("is-visible");
+                    return false;
+                }
+                if ($("#postal-code").val() != "") {
+                    if (!validateValue('postal-code')) {
+                        $('#Error_postal-code').text('@Translate.Message("L3424")');
+                        $('#Error_postal-code').addClass("is-visible");
+                        return false;
+                    }
+                    else {
+                        checkIfEligible();
+                        if (!(validPostalCode)) {
+                            if ($("#EligibilityId").val() > 0) {
+                                alert("@Html.Raw(Translate.Message("L3425"))");
+                            }
+                            else {
+                                $('#reasonText').html("@Html.Raw(Translate.Message("L3425"))");
+                                $('#referralLink').text("@Html.Raw(Translate.Message("L3426"))");
+                                $('#disqualifyText').text("@Html.Raw(Translate.Message("L3873"))");
+                                $('#disqualifyText').show();
+                                $('#reasonNote').show();
+                                $('#popup').show();
+                                $('#selfForm').hide();
+                                $('#disqualify').foundation('open');
+                                $('#Error_postal-code').removeClass("is-visible");
+                            }
+                            UpdateTracking(0, canriskReasons.POSTAL_CODE, $("#postal-code").val());
+                            return false;
+                        }
+                        else
+                            $('#Error_postal-code').removeClass("is-visible");
+                    }
+                }
+
+                if (age != 'NaN' && $("#month").val() != "" && $("#year").val() != "" && $("#date").val() != "" && age < 18 || age > 74) {
+                    var alertText = "@Html.Raw(Translate.Message("L3427"))";
+                    if ($("#EligibilityId").val() > 0) {
+                        alert(alertText);
+                    }
+                    else {
+                        $('#disqualify').foundation('open');
+                        $('#disqualifyText').hide();
+                        $('#popup').hide();
+                        $('#reasonText').text(alertText);
+                        $('#selfForm').hide();
+                    }
+                }
+            }
+            if (validate($current[1].id)) {
+                $('.lmc-form-elements, .form-captions li').removeClass('active');
+
+                if ($current.is(':first-child')) {
+                    $('.lmc-form-submit .back-btn').removeClass('hide');
+                    $('.cdpp-notification').addClass('hide');
+                }
+
+                if ($current.is(':nth-child(9)')) {
+                    $('.lmc-form-submit .next-btn').addClass('hide');
+                    $('.lmc-form-submit .submit-btn').removeClass('hide');
+                    $current.next().addClass('active');
+                    $current.addClass('complete');
+                }
+                else {
+                    $current.next().addClass('active');
+                    $current.addClass('complete');
+                }
+                addMargin();
+                UpdateTracking($current[1].id.split('-')[1], '', '');
+            }
+        });
+
+        $('button.back-btn').on('click', function (e) {
+            e.preventDefault();
+            $('button.next-btn').attr("disabled", false);
+            var $current = $('.lmc-form-elements.active, .form-captions li.active');
+            $('.lmc-form-elements, .form-captions li').removeClass('active');
+
+            $('.lmc-form-submit .next-btn').removeClass('hide');
+            $('.lmc-form-submit .submit-btn').addClass('hide');
+
+            if ($current.is(':nth-child(2)')) {
+                $('.lmc-form-submit .back-btn').addClass('hide');
+                $('.cdpp-notification').removeClass('hide');
+            }
+
+            $current.prev().addClass('active');
+            $current.prev().removeClass('complete');
+            addMargin();
+        });
+        $('.fdatepicker').fdatepicker({
+            format: "@ViewData["DateFormat"].ToString().ToLower()",
+            onRender: function (date) {
+                var d = new Date();
+                d.setDate(d.getDate() - 365);
+                return date.valueOf() > Date.now() ? 'disabled' : '';
+            }
+        });
+
+        $('.slider-switch input.switch-input').on('click', function () {
+            if ($(this)[0].id.indexOf("Weight") > -1) {
+                $("#Error_weight-slider").removeClass("is-visible");
+                $("#weight-slider").val("");
+            }
+            if ($(this)[0].id.indexOf("Height") > -1) {
+                $("#height-slider").val("");
+                $("#Error_height-slider").removeClass("is-visible");
+            }
+            if ($(this)[0].id.indexOf("Waist") > -1) {
+                $("#waist-slider").val("");
+                $("#Error_waist-slider").removeClass("is-visible");
+            }
+        });
+    });
+
+    $('#acceptCookies').on('click', function () {
+        var d = new Date();
+        d.setTime(d.getTime() + (1825 * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = "intervent_canrisk-cookie = yes;" + expires + ";path=/";
+        $('.cookies-box').hide();
+    });
+
+    $(document).on('click', 'li.complete a', function (e) {
+        e.preventDefault();
+        var $current = $(this).parent('li');
+        var pointer = $current.index();
+        var showTab = $(this).attr("href");
+
+        $('.lmc-form-elements, .form-captions li').removeClass('active');
+        $('' + showTab).addClass('active');
+        $current.addClass('active').removeClass('complete');
+
+        $('.lmc-form-submit .next-btn').removeClass('hide');
+        $('.lmc-form-submit .submit-btn').addClass('hide');
+
+        if ($current.is(':first-child')) {
+            $('.lmc-form-submit .back-btn').addClass('hide');
+            $('.cdpp-notification').removeClass('hide');
+        }
+
+        $('.form-captions li').each(function () {
+            if ($(this).index() > pointer) {
+                $(this).removeClass('complete');
+            }
+        });
+        addMargin();
+    });
+
+    function UpdateTracking(pageCompleted, reasonId, reason) {
+        var gender = $("#canrisk_Gender").val();
+        var dob = ($("#month").val() + "/" + $("#day").val() + "/" + $("#year").val());
+        $.ajax({
+            type: 'POST',
+            url: "@Url.Action("TrackCanriskParticipation", "Home")",
+            data: {
+                guid: guid,
+                page: pageCompleted,
+                reason: reason,
+                reasonId: reasonId,
+                eligibilityId: $("#EligibilityId").val(),
+                dob: dob.toLocaleString(),
+                gender: gender
+            },
+            dataType: 'json',
+            success: function (data) {
+                guid = data;
+            }
+        })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function addMargin() {
+        var wt = $(window).width();
+        if (wt < 640 && $('.top-notification').is(':visible')) {
+            $('ul.form-captions').addClass('push');
+        }
+        else {
+            $('ul.form-captions').removeClass('push');
+        }
+        $("html, body").animate({
+            scrollTop: 0
+        }, "fast");
+    }
+
+    function validate(id) {
+        var els = $("#" + id).find(':input');
+        var response = true;
+        for (var i = 0; i < els.length; i++) {
+            if (els[i].id == 'canrisk_Gender') {
+                if (els[i].value == 1) {
+                    $("#GiveBirthNo").prop('checked', true);
+                    $("#GiveBirthNo").parent(".radio-btn").addClass("selected");
+                    $("#GiveBirthNo").attr("disabled", true);
+                    $("#GiveBirthYes").attr('disabled', true);
+                    $("#PregnantNo").parents(".radio-orange").addClass("selected");
+                    $("#PregnantNo").attr("checked", "checked");
+                    $("#PregnantYes").parents(".radio-orange").removeClass("selected");
+                }
+                else {
+                    $("#GiveBirthNo").prop('checked', false);
+                    $("#GiveBirthNo").parent(".radio-btn").removeClass("selected");
+                    $("#GiveBirthNo").attr("disabled", false);
+                    $("#GiveBirthYes").attr('disabled', false);
+                    $("#PregnantNo").parents(".radio-orange").removeClass("selected");
+                    $("#PregnantNo").removeAttr("checked");
+                }
+            }
+            if (els[i].type == 'checkbox' && els[i].classList[0] != "") {
+                if (!validateCheckbox(els[i].classList[0]) && els[i].id != 'terms') {
+                    $('#Error_' + els[i].id + '').addClass("is-visible");
+                    response = false;
+                    continue;
+                }
+                else {
+                    $('#Error_' + els[i].id + '').removeClass("is-visible");
+                }
+                continue;
+            }
+            if (els[i].type != 'radio') {
+                if ((els[i].value == "" || els[i].value == "NaN") && ($('#' + els[i].id).is(':visible'))) {
+                    $('#Error_' + els[i].id + '').text("@Translate.Message("L480")");
+                    $('#Error_' + els[i].id + '').addClass("is-visible");
+                    response = false;
+                    continue;
+                }
+                else {
+                    if ((els[i].value != "") && (els[i].id == 'Name' || els[i].id == 'PhoneNumber' || els[i].id == 'weight-slider' || els[i].id == "height-slider" || els[i].id == 'waist-slider' || els[i].id == 'A1c' || els[i].id == 'Glucose')) {
+                        var checkResponse = validateValue(els[i].id);
+                        if (response)
+                            response = checkResponse;
+                        continue;
+                    }
+                    $('#Error_' + els[i].id + '').removeClass("is-visible");
+                }
+            }
+            if (els[i].type == 'radio') {
+                if ((($("[name='" + els[i].name + "']").parents(".radio-orange").length > 0 && $("[name='" + els[i].name + "']").parents(".selected").length == 0)
+                    || (($("[name='" + els[i].name + "']").parents(".radio-orange").length == 0 && $("input[name='" + els[i].name + "']:checked").length == 0)))
+                    && (els[i].name != "canrisk.HasSupporttoRead" || ($("#AbilitytoReadNo").parents(".selected").length == 1))) {
+                    $('#Error_' + els[i].id + '').addClass("is-visible");
+                    response = false;
+                    continue;
+                }
+                else {
+                    if ((id == 'section-3' || id == 'section-4') && $("#" + els[i].id).parents(".selected").length > 0) {
+                        var checkResponse = CriteriaChange(els[i].id, id);
+                        if (response)
+                            response = checkResponse;
+                    }
+                    $('#Error_' + els[i].id + '').removeClass("is-visible");
+                }
+            }
+        }
+        if ((id == 'section-3' || id == 'section-4')) {
+            var elements = $("#" + id).find(':input').parents(".selected");
+            elements.each(function (i) {
+                if ((elements[i].innerText == 'Yes' && elements[i].children[0].id != "AbilitytoReadYes" && elements[i].children[0].id != "HasSupporttoReadYes") || (elements[i].children[0].id == "HasSupporttoReadNo")) {
+                    response = false;
+                }
+            });
+        }
+        return response;
+    }
+
+    function validateCheckbox(className) {
+        if (className == "switch-input") {
+            return true;
+        }
+        else if ($("." + className + ":checked").length == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    function CriteriaChange(id, section) {
+        //console.log(id);
+        //console.log(section);
+        var weightValue = false;
+        var reasonText = "";
+        var referralLink = "";
+        if (id.indexOf("weight") > -1) {
+            var max = 200;
+            if ($("#WeightUnit").prop('checked')) {
+                max = 440;
+            }
+            var weight = $("#weight-slider").val();
+            if (weight > max) {
+                weightValue = true;
+                reasonText = "@Html.Raw(Translate.Message("L3681"))";
+                referralLink = "@Html.Raw(Translate.Message("L3431"))";
+                $('#selfForm').hide();
+            }
+        }
+        else {
+            if (id.indexOf('Diabetes') > -1) {
+                reasonText = "@Html.Raw(Translate.Message("L3428"))";
+                referralLink = "@Html.Raw(Translate.Message("L3429"))";
+                $('#selfForm').show();
+            }
+            else if (id.indexOf('Pregnant') > -1) {
+                reasonText = "@Html.Raw(Translate.Message("L3430"))";
+                referralLink = "@Html.Raw(Translate.Message("L3431"))";
+                $('#selfForm').hide();
+            }
+            else {
+                reasonText = "@Html.Raw(Translate.Message("L3432"))";
+                referralLink = "@Html.Raw(Translate.Message("L3433"))";
+                $('#selfForm').hide();
+            }
+        }
+
+        if ((id.indexOf('Yes') > 0 && id != "AbilitytoReadYes"
+            && id != "HasSupporttoReadYes") ||
+            (id == "HasSupporttoReadNo") || weightValue) {
+            if ($("#EligibilityId").val() > 0) {
+                alert(reasonText);
+            }
+            else {
+                $('#disqualify').foundation('open');
+                $('#popup').show();
+                $('#reasonNote').hide();
+                $('#disqualifyText').text("@Html.Raw(Translate.Message("L3409"))");
+                $('#disqualifyText').show();
+                $('#reasonText').text(reasonText);
+                $('#referralLink').text(referralLink);
+            }
+            if (id.indexOf('Yes') > -1) {
+                if (id == 'GlucoseLoweringYes') {
+                    canRiskReasonId = canriskReasons.YES_TO_MEDICATIONS_LOW_BLD_SGR;
+                }
+                else if (id == 'DiabetesYes') {
+                    canRiskReasonId = canriskReasons.YES_TO_DIABETES;
+                }
+                else if (id == 'WeightLossYes') {
+                    canRiskReasonId = canriskReasons.YES_TO_PRESCRIBED_MED_TO_LOSE_WGHT;
+                }
+                else if (id == 'SteroidMedYes') {
+                    canRiskReasonId = canriskReasons.YES_TO_STEROIDS_IN_PAST3MONTHS;
+                }
+                else if (id == 'PancreatitisYes') {
+                    canRiskReasonId = canriskReasons.YES_TO_PANCREATITIS;
+                }
+                else if (id == 'CancerYes') {
+                    canRiskReasonId = canriskReasons.YES_TO_ACTIVE_OR_BEING_TREATED_FOR_CANCER;
+                }
+                else if (id == 'HemoglobinopathyYes') {
+                    canRiskReasonId = canriskReasons.YES_TO_HAEMOGLOBINOPATHY;
+                }
+                else if (id == 'StudyDrugYes') {
+                    canRiskReasonId = canriskReasons.YES_TO_RESEARCH_STUDY_WITH_DRUG;
+                }
+                else if (id == 'PregnantYes') {
+                    canRiskReasonId = canriskReasons.YES_TO_PREGNANCY;
+                }
+
+            }
+            if (weightValue) {
+                canRiskReasonId = canriskReasons.WEIGHT_OUT_OF_RANGE;
+            }
+            if (id == "HasSupporttoReadNo") {
+                canRiskReasonId = canriskReasons.NO_ABILITY_TO_READ_EN_OR_FR_AND_NO_SUPPORT;
+            }
+            $('button.next-btn').attr("disabled", true);
+            return false;
+        }
+        else {
+            var disable = false;
+            var elements = $("#" + section).find(':input').parents(".selected");
+            elements.each(function (i) {
+                if ((elements[i].innerText == 'Yes' && elements[i].children[0].id != "AbilitytoReadYes" && elements[i].children[0].id != "HasSupporttoReadYes") || (elements[i].children[0].id == "HasSupporttoReadNo")) {
+                    disable = true;
+                }
+            });
+            $('button.next-btn').attr("disabled", disable);
+            return true;
+        }
+    }
+
+    function PrediabetesExclusion() {
+        $('#selfForm').hide();
+        var referralLink = "";
+        var reasonText = "";
+        var reasonId = "";
+        var reasonValue = "";
+        var prediabetes = $("#PreDiabetesYes").parents(".selected").length > 0;
+        var a1cvalue = $("#A1c").val();
+        var glucvalue = $("#Glucose").val();
+        var regex = /^\d+\.?\d*$/;
+        if ((a1cvalue != '' && !regex.exec(a1cvalue)) || (glucvalue != '' && !regex.exec(glucvalue))) {
+            return false;
+        }
+        var age = GetAge();
+        if (((a1cvalue != '' && a1cvalue < 6) && (glucvalue == '' || glucvalue < 6.1) && (age < 18 || age > 74)) ||
+            ((glucvalue != '' && glucvalue < 6.1) && (a1cvalue == '' || a1cvalue < 6) && (age < 18 || age > 74)) ||
+            (prediabetes == false && a1cvalue == '' && glucvalue == '' && (age < 18 || age > 74))) {
+            reasonText = "@Html.Raw(Translate.Message("L3434"))";
+            referralLink = "@Html.Raw(Translate.Message("L3435"))"
+        }
+        else if (a1cvalue >= 6.5 || glucvalue >= 7) {
+            reasonText = "@Html.Raw(Translate.Message("L3436"))";
+            if (a1cvalue >= 6.5) {
+                reasonId = canriskReasons.A1C_VALUE_ON_CANRISK;
+                reasonValue = a1cvalue;
+            }
+            else if (glucvalue >= 7) {
+                reasonId = canriskReasons.GLUCOSE_VALUE_ON_CANRISK;
+                reasonValue = glucvalue;
+            }
+            referralLink = "@Html.Raw(Translate.Message("L3437"))";
+            $('#selfForm').show();
+        }
+        else if (prediabetes == true && a1cvalue == '' && glucvalue == '' && (age < 18 || age > 74)) {
+            reasonText = "@Html.Raw(Translate.Message("L3438"))";
+            referralLink = "@Html.Raw(Translate.Message("L3439"))";
+        }
+        if (reasonText.length > 0) {
+            if (reasonId != '') {
+                UpdateTracking(1, reasonId, reasonValue);
+            }
+            if ($("#EligibilityId").val() > 0) {
+                alert(reasonText);
+            }
+            else {
+
+                $('#disqualify').foundation('open');
+                $('#popup').show();
+                $('#reasonNote').hide();
+                $('#disqualifyText').text("@Html.Raw(Translate.Message("L3409"))");
+                $('#disqualifyText').show();
+                $('#reasonText').text(reasonText);
+                $('#referralLink').text(referralLink);
+            }
+            return false;
+        }
+        else {
+            //clear the values
+            UpdateTracking(1, '', '');
+            if (a1cvalue >= 6 || glucvalue >= 6.1) {
+                $("#tooltip").show();
+                $("#BloodGlucoseYes").attr("checked", "checked");
+            }
+            else {
+                $("#tooltip").hide();
+            }
+            $('button.next-btn').attr("disabled", false);
+            return true;
+        }
+    }
+
+    function changeSection() {
+        $('button.next-btn').attr("disabled", false);
+    }
+
+    $("#profile").on('click', function () {
+        if (document.getElementById('consent').checked == false) {
+            $('#Error_Consent').addClass("is-visible");
+            return;
+        }
+        $('#Error_Consent').removeClass("is-visible");
+        if ($("#EligibilityId").val() > 0) {
+            $.ajax({
+                type: 'POST',
+                url: "@Url.Action("TelephonicRegistration", "Account")",
+                data: {
+                    eligibilityId: $("#EligibilityId").val(),
+                    emailAddress: $("#Email").val()
+                },
+                dataType: 'json',
+                success: function (data) {
+                    //redirect
+                    if (data.Success)
+                        window.location.href = 'Stream?ForceParticipant=true';
+                    else
+                        alert(data.ErrorMessage);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+        else {
+            $("#create-profile").foundation("open");
+        }
+    });
+
+    $(".DiabetesFamily").on('change', function () {
+        if ($(this).is(':checked')) {
+            var els = document.getElementsByClassName("DiabetesFamily");
+            for (var i = 0; i < els.length; i++) {
+                if (this.id == "DiabetesNotSureBool") {
+                    if (els[i].id != "DiabetesNotSureBool")
+                        $('#' + els[i].id).prop("checked", false);
+                }
+                else {
+                    $("#DiabetesNotSureBool").prop("checked", false);
+                }
+            }
+        }
+    });
+
+    function GetAge() {
+        var today = new Date();
+        var birthDate = new Date($("#month").val() + "/" + $("#day").val() + "/" + $("#year").val());
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    $("#DOB").on('change', function () {
+        changeSection();
+    });
+
+    $("#postal-code").on('change', function () {
+        changeSection();
+    });
+
+    function CheckCanriskEligibility(riskLevel, qualifyText, score) {
+        $("#scoreInfo").text(score);
+        $("#qualifyText").html("" + qualifyText + "");
+        $("#riskText").text("" + riskLevel + "");
+        $("#scoreInfo").closest("div").attr("style", "left: " + score + "%");
+        $('form.lmc-form').addClass('hide');
+        $('.lmc-result-section').removeClass('hide');
+    }
+
+    function validateValue(id) {
+        var response = true;
+        if (id == "A1c") {
+            var min = @Math.Round(Convert.ToDouble(Model.measurementsMetric[BioLookup.A1c].Min), 1);
+            var max = @Math.Round(Convert.ToDouble(Model.measurementsMetric[BioLookup.A1c].Max), 1);
+            var a1c = $("#A1c").val();
+            if (!($("#A1c").is(':visible')) || (parseFloat(a1c) >= min && parseFloat(a1c) <= max)) {
+                $("#Error_A1c").removeClass("is-visible");
+                response = true;
+            }
+            else {
+                $("#Error_A1c").text('@Translate.Message("L956") ' + min + ' @Translate.Message("L3739") ' + max);
+                $("#Error_A1c").addClass("is-visible");
+                response = false;
+            }
+        }
+        else if (id == "Glucose") {
+            var min = @Math.Round(Convert.ToDouble(Model.measurementsMetric[BioLookup.Glucose].Min), 1);
+            var max = @Math.Round(Convert.ToDouble(Model.measurementsMetric[BioLookup.Glucose].Max), 1);
+            var glucose = $("#Glucose").val();
+            if (!($("#Glucose").is(':visible')) || (parseInt(glucose) >= min && parseInt(glucose) <= max)) {
+                $("#Error_Glucose").removeClass("is-visible");
+                response = true;
+            }
+            else {
+                $("#Error_Glucose").text('@Translate.Message("L957") ' + min + ' @Translate.Message("L3739") ' + max);
+                $("#Error_Glucose").addClass("is-visible");
+                response = false;
+            }
+        }
+        else if (id == "weight-slider") {
+            var min = @Math.Round(Convert.ToDouble(Model.measurementsMetric[BioLookup.Weight].Min), 1);
+            var max = 204;
+            if ($("#WeightUnit").prop('checked')) {
+                min = @Math.Round(Convert.ToDouble(Model.measurementsImperial[BioLookup.Weight].Min), 1);
+                max = 450;
+            }
+            var weight = $("#weight-slider").val();
+            if ((weight >= min && weight <= max) && (!(weight != weight.replace(/[^0-9\.]/g, '')))) {
+                $("#Error_weight-slider").removeClass("is-visible");
+                response = true;
+            }
+            else {
+                $("#Error_weight-slider").text('@Translate.Message("L955") ' + min + ' @Translate.Message("L3739") ' + max);
+                $("#Error_weight-slider").addClass("is-visible");
+                response = false;
+            }
+        }
+        else if (id == "height-slider") {
+            var min = @Math.Round(Convert.ToDouble(Model.measurementsMetric[BioLookup.Height].Min), 1);
+            var max = @Math.Round(Convert.ToDouble(Model.measurementsMetric[BioLookup.Height].Max), 1);
+            if ($("#HeightUnit").prop('checked')) {
+                min = 24;
+                max = 96;
+            }
+            var height = $("#height-slider").val();
+            if ((height >= min && height <= max) && (!(height != height.replace(/[^0-9\.]/g, '')))) {
+                $("#Error_height-slider").removeClass("is-visible");
+                response = true;
+            }
+            else {
+                $("#Error_height-slider").text('@Translate.Message("L954") ' + min + ' @Translate.Message("L3739") ' + max);
+                $("#Error_height-slider").addClass("is-visible");
+                response = false;
+            }
+        }
+        else if (id == "waist-slider") {
+            var min = @Math.Round(Convert.ToDouble(Model.measurementsMetric[BioLookup.Waist].Min), 1);
+            var max = @Math.Round(Convert.ToDouble(Model.measurementsMetric[BioLookup.Waist].Max), 1);
+            if ($("#WaistUnit").prop('checked')) {
+                min = @Math.Round(Convert.ToDouble(Model.measurementsImperial[BioLookup.Waist].Min), 1);
+                max = @Math.Round(Convert.ToDouble(Model.measurementsImperial[BioLookup.Waist].Max), 1);
+            }
+            var waist = $("#waist-slider").val();
+            if ((waist >= min && waist <= max) && (!(waist != waist.replace(/[^0-9\.]/g, '')))) {
+                $("#Error_waist-slider").removeClass("is-visible");
+                response = true;
+            }
+            else {
+                $("#Error_waist-slider").text('@Translate.Message("L976") ' + min + ' @Translate.Message("L3739") ' + max);
+                $("#Error_waist-slider").addClass("is-visible");
+                response = false;
+            }
+        }
+        else if (id == 'PhoneNumber') {
+            if ($("#PhoneNumber").val().length < 10) {
+                $("#Error_PhoneNumber").text('@Translate.Message("L3442")');
+                $("#Error_PhoneNumber").addClass("is-visible");
+                response = false;
+            }
+        }
+        else if (id == "postal-code") {
+            var value = $("#postal-code").val().trim();
+            var regex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
+            var match = regex.exec(value);
+            if (match) {
+                if ((value.indexOf("-") !== -1 || value.indexOf(" ") !== -1) && value.length == 7) {
+                    response = true;
+                } else if ((value.indexOf("-") == -1 || value.indexOf(" ") == -1) && value.length == 6) {
+                    response = true;
+                }
+            } else {
+                response = false;
+            }
+        }
+        else if (id == "Name") {
+            var name = $("#Name").val(), i, count = 0;
+            var names = name.split(" ");
+            for (i = 0; i < names.length; ++i) {
+                if (names[i].length > 0)
+                    count++;
+            }
+            if (count <= 1) {
+                $("#Error_Name").html("@Translate.Message("L3441")");
+                $("#Error_Name").addClass("is-visible");
+                response = false;
+            }
+            else {
+                $("#Error_Name").html("@Translate.Message("L480")");
+                $("#Error_Name").removeClass("is-visible");
+            }
+        }
+        return response;
+    }
+
+    function OpenModal(name) {
+        var text = '';
+        if (name == 'info') {
+            text = document.getElementById('infoText').innerHTML;;
+            if ($("#EligibilityId").val() > 0) {
+                alert(text);
+            }
+            else {
+                $("#healthy-life").foundation('open');
+            }
+        }
+        else {
+            text = document.getElementById('waistText').innerHTML;
+            if ($("#EligibilityId").val() > 0) {
+                alert(text);
+            }
+            else {
+                $("#waist-modal").foundation('open');
+            }
+        }
+    }
+
+    function checkIfEligible() {
+        $.ajax({
+            url: "@Url.Action("CheckIfEligible", "Home")",
+            type: 'POST',
+            dataType: "json",
+            data: { postalCode: $("#postal-code").val() },
+            async: false,
+            success: function (data) {
+                validPostalCode = data.Success;
+            }
+        });
+    }
+
+    function pauseVideo() {
+        $('.margin-top-1')[0].pause();
+    }
+</script>

@@ -1,0 +1,2202 @@
+﻿@using InterventWebApp;
+@model InterventWebApp.TeamsBP_PPRModel
+
+<div class="webform-side-tabs-container">
+	<div class="grid-x grid-margin-x">
+		<div class="cell small-12 form-title">
+			@{
+				if ((Model.TeamsBP_PPR != null) && (Model.TeamsBP_PPR.Id > 0))
+				{
+					<h2>Update Wellness Data</h2>
+				}
+				else
+				{
+					<h2>Add New Wellness Data</h2>
+				}
+			}
+		</div>
+		<div class="cell medium-4 large-3">
+			<div class="tab-scroll-wrapper">
+				<ul class="tabs" data-tabs id="wellness-sidebar-tabs">
+					<li class="tabs-title is-active" onclick="SaveForm()">
+						<a href="#panel1" aria-selected="true">
+							<img src="~/Images/participant/side-tab-form/step-1.svg" alt="Step 1">
+							<p>
+								<span>Section 1</span> General Overview
+							</p>
+						</a>
+					</li>
+					<li class="tabs-title" onclick="SaveForm()">
+						<a data-tabs-target="panel2" href="#panel2">
+							<img src="~/Images/participant/side-tab-form/step-2.svg" alt="Step 2">
+							<p>
+								<span>Section 2</span> Health and Medication
+							</p>
+						</a>
+					</li>
+					<li class="tabs-title" onclick="SaveForm()">
+						<a data-tabs-target="panel3" href="#panel3">
+							<img src="~/Images/participant/side-tab-form/step-3.svg" alt="Step 3">
+							<p>
+								<span>Section 3</span> Diet and Physical Activities
+							</p>
+						</a>
+					</li>
+					<li class="tabs-title" onclick="SaveForm()">
+						<a data-tabs-target="panel4" href="#panel4">
+							<img src="~/Images/participant/side-tab-form/step-4.svg" alt="Step 4">
+							<p>
+								<span>Section 4</span> Falls and Rehabilitation
+							</p>
+						</a>
+					</li>
+					<li class="tabs-title" onclick="SaveForm()">
+						<a data-tabs-target="panel5" href="#panel5">
+							<img src="~/Images/participant/side-tab-form/step-5.svg" alt="Step 5">
+							<p>
+								<span>Section 5</span> Community / Social Services
+							</p>
+						</a>
+					</li>
+					<li class="tabs-title" onclick="SaveForm()">
+						<a data-tabs-target="panel6" href="#panel6">
+							<img src="~/Images/participant/side-tab-form/step-6.svg" alt="Step 6">
+							<p>
+								<span>Section 6</span> Notes
+							</p>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!--Side tab ends-->
+
+		<div class="cell medium-8 large-9">
+			<form id="wellness-data-form" data-abide novalidate>
+				@Html.HiddenFor(M => M.TeamsBP_PPR.Id)
+				@Html.HiddenFor(M => M.TeamsBP_PPR.WellnessId)
+				@Html.HiddenFor(M => M.TeamsBP_PPR.WellnessData.Id)
+				@Html.HiddenFor(M => M.TeamsBP_PPR.WellnessData.CollectedOn)
+				@Html.HiddenFor(M => M.TeamsBP_PPR.WellnessData.CollectedBy)
+				<div class="tabs-content" data-tabs-content="wellness-sidebar-tabs">
+					<div class="tabs-panel is-active" id="panel1">
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Review Coaching Goals: How well are you doing in…</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+									<div class="cell">
+										<h3>Aligned with BP Action Plan and 3M Promise:</h3>
+									</div>
+									<div class="cell medium-8"><label><span class="required">*</span> Monitoring your blood pressure?</label></div>
+									<div class="cell medium-4">
+										@Html.DropDownListFor(M => M.TeamsBP_PPR.MonitoringBP, Model.Ratings, "Select One...")
+									</div>
+									<hr>
+									<div class="cell medium-8"><label><span class="required">*</span> Taking your blood pressure medication as prescribed?</label></div>
+									<div class="cell medium-4">
+										@Html.DropDownListFor(M => M.TeamsBP_PPR.TakingBPMed, Model.Ratings, "Select One...")
+									</div>
+									<hr>
+									<div class="cell medium-8"><label><span class="required">*</span> Being physically active?</label></div>
+									<div class="cell medium-4">
+										@Html.DropDownListFor(M => M.TeamsBP_PPR.WellnessData.PhysicallyActive, Model.Ratings, "Select One...")
+									</div>
+									<hr>
+
+									<div class="cell">
+										<h3>Other lifestyle goals:</h3>
+									</div>
+									<div class="cell medium-8"><label><span class="required">*</span> Following a healthy diet low in sodium?</label></div>
+									<div class="cell medium-4">
+										@Html.DropDownListFor(M => M.TeamsBP_PPR.HealthyDiet, Model.Ratings, "Select One...")
+									</div>
+									<hr>
+									<div class="cell medium-8"><label><span class="required">*</span> Managing your weight?</label></div>
+									<div class="cell medium-4">
+										@Html.DropDownListFor(M => M.TeamsBP_PPR.ManagingWeight, Model.Ratings, "Select One...")
+									</div>
+									<hr>
+									<div class="cell medium-8"><label><span class="required">*</span> Managing stress?</label></div>
+									<div class="cell medium-4">
+										@Html.DropDownListFor(M => M.TeamsBP_PPR.WellnessData.ManageStress, Model.Ratings, "Select One...")
+									</div>
+									<hr>
+									@if (Model.IsAlcoholicUser)
+									{
+										<div class="cell medium-8"><label><span class="required">*</span> Avoiding or limiting alcohol?</label></div>
+										<div class="cell medium-4">
+											@Html.DropDownListFor(M => M.TeamsBP_PPR.LimitingAlcohol, Model.Ratings, "Select One...")
+										</div>
+										<hr>
+									}
+									@if (Model.IsTobaccoUser)
+									{
+										<div class="cell medium-8"><label><span class="required">*</span> Quitting smoking/tobacco?</label></div>
+										<div class="cell medium-4">
+											@Html.DropDownListFor(M => M.TeamsBP_PPR.QuitSmoking, Model.Ratings, "Select One...")
+										</div>
+										<hr>
+									}
+									<div class="cell medium-8"><label>Staying motivated to work toward your wellness vision and long-term health goals?</label></div>
+									<div class="cell medium-4">
+										@Html.DropDownListFor(M => M.TeamsBP_PPR.WellnessData.Motivation, Model.Ratings, "Select One...")
+									</div>
+									<hr>
+									<div class="cell medium-8"><label>Other Goals:</label></div>
+									<div class="cell medium-4 medium-text-right">
+										@Html.HiddenFor(M => M.TeamsBP_PPR.OtherGoals, new { maxlength = 500 })
+										<div id="other-goals">
+											<textarea name="newGoal" id="newGoal-1" rows="2"></textarea>
+										</div>
+
+										<a href="#" class="add-new-record anchor-blue" id="addNewGoal"><i class="fa fa-plus"></i> Add another goal</a>
+									</div>
+								</div>
+							</div>
+						</fieldset>
+
+						<div class="grid-x grid-margin-x button-set @(Model.IsReadOnly ? "hide" : "")">
+							<div class="cell medium-text-right">
+								<a href="#" class="button tab-next">Next</a>
+							</div>
+						</div>
+					</div>
+					<!-- Tab panel 1 ends -->
+					<div class="tabs-panel" id="panel2">
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Review BP Reading Trends and BP Monitoring Trends</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+									<div class="cell medium-8"><label>Most recent:</label></div>
+									<div class="cell medium-4">
+										<div class="input-group cell">
+											@Html.TextBoxFor(M => M.TeamsBP_PPR.WellnessData.SBP, new Dictionary<string, object> { { "class", "input-group-field" }, { "placeholder", "Systolic BP" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+											<span class="input-group-label postfix">mmHg</span>
+										</div>
+										<div class="input-group cell">
+											@Html.TextBoxFor(M => M.TeamsBP_PPR.WellnessData.DBP, new Dictionary<string, object> { { "class", "input-group-field" }, { "placeholder", "Diastolic BP" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+											<span class="input-group-label postfix">mmHg</span>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8"><label>Reviewed BP triage/escalation process?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.BPTriage, true, new { @id = "BPTriage_yes" })
+												<label for="BPTriage_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.BPTriage, false, new { @id = "BPTriage_no" })
+												<label for="BPTriage_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8"><label>Monitored BP at least 6 days/week?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.MonitoredBP, true, new { @id = "MonitoredBP_yes" })
+												<label for="MonitoredBP_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.MonitoredBP, false, new { @id = "MonitoredBP_no" })
+												<label for="MonitoredBP_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+
+									<hr>
+									<div class="cell large-8 MonitoredBP hide"><label>Monitored BP an average of</label></div>
+									<div class="cell large-4 MonitoredBP hide">
+										<div class="input-group cell">
+											@Html.TextBoxFor(M => M.TeamsBP_PPR.MonitoredBPDays, new Dictionary<string, object> { { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+											<span class="input-group-label postfix">days/week</span>
+										</div>
+									</div>
+									<div class="cell large-8 MonitoredBP hide"><label><span class="required">*</span> What are the key reasons why you were unable to monitor your blood pressure at least 6 days/week?</label></div>
+									<div class="cell large-4 MonitoredBP hide">
+										@Html.HiddenFor(M => M.TeamsBP_PPR.NotMonitoredReason)
+										@Html.DropDownListFor(M => M.NotMonitoredReason, Model.UnableToMonitorBPList, new Dictionary<string, object> { { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "Select All That Apply" }, { "aria-errormessage", "moduleserror" } })
+									</div>
+									<hr class="MonitoredBP hide">
+									<div class="cell large-8 NotMonitoredReasonText hide"><label>Other</label></div>
+									<div class="cell large-4 NotMonitoredReasonText hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.NotMonitoredReasonText)
+									</div>
+									<hr class="NotMonitoredReasonText hide">
+									<div class="cell large-8 MonitoredBPHelpful hide"><label><span class="required">*</span> What factors have been most helpful when it comes to monitoring your blood pressure?</label></div>
+									<div class="cell large-4 MonitoredBPHelpful hide">
+										@Html.HiddenFor(M => M.TeamsBP_PPR.MonitoredBPHelpful)
+										@Html.DropDownListFor(M => M.MonitoredBPHelpful, Model.FactorsInMonitoringBPList, new Dictionary<string, object> { { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "Select All That Apply" }, { "aria-errormessage", "moduleserror" } })
+									</div>
+									<hr class="MonitoredBPHelpful hide">
+									<div class="cell large-8 MonitoredBPHelpfulText hide"><label>Other</label></div>
+									<div class="cell large-4 MonitoredBPHelpfulText hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.MonitoredBPHelpfulText)
+									</div>
+									<hr class="MonitoredBPHelpfulText hide">
+									<div class="cell large-8"><label>Has “BP monitoring” goal changed?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeInBPMonitoringGoal, true, new { @id = "ChangeInBPMonitoringGoal_yes" })
+												<label for="ChangeInBPMonitoringGoal_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeInBPMonitoringGoal, false, new { @id = "ChangeInBPMonitoringGoal_no" })
+												<label for="ChangeInBPMonitoringGoal_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 NewBPMonitoringGoal hide"><label>New BP monitoring goal:</label></div>
+									<div class="cell large-4 NewBPMonitoringGoal hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.NewBPMonitoringGoal, new { maxlength = 100 })
+									</div>
+								</div>
+							</div>
+						</fieldset>
+
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Review BP Medications and Adherence</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+									<div class="cell large-8"><label>Reviewed current BP medication(s)?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.CurrentBPMed, true, new { @id = "CurrentBPMed_yes" })
+												<label for="CurrentBPMed_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.CurrentBPMed, false, new { @id = "CurrentBPMed_no" })
+												<label for="CurrentBPMed_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8"><label><span class="required">*</span> Have you had any medication changes?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.MedicationChanges, true, new { @id = "MedicationChanges_yes" })
+												<label for="MedicationChanges_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.MedicationChanges, false, new { @id = "MedicationChanges_no" })
+												<label for="MedicationChanges_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 MedListChanges hide"><label><span class="required">*</span> List medication changes:</label></div>
+									<div class="cell large-4 MedListChanges hide">
+										<div class="input-group cell">
+											@Html.TextAreaFor(M => M.TeamsBP_PPR.MedListChanges, new { maxlength = 250 })
+										</div>
+									</div>
+									<hr class="MedListChanges hide">
+									<div class="cell large-8"><label>Number of days medications missed since last coaching session/enrollment in study:</label></div>
+									<div class="cell large-4">
+										<div class="input-group cell">
+											@Html.TextBoxFor(M => M.TeamsBP_PPR.MissedMed, new Dictionary<string, object> { { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+											<span class="input-group-label postfix">day(s)</span>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8"><label><span class="required">*</span> Are you taking your medications as prescribed?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.TakingMedication, true, new { @id = "TakingMedication_yes" })
+												<label for="TakingMedication_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.TakingMedication, false, new { @id = "TakingMedication_no" })
+												<label for="TakingMedication_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+
+									</div>
+									<hr>
+									<div class="cell large-8 ReasonNotTakingMed hide"><label><span class="required">*</span> What are the key reasons why you are not taking your medications as prescribed/missed doses?</label></div>
+									<div class="cell large-4 ReasonNotTakingMed hide">
+										@Html.HiddenFor(M => M.TeamsBP_PPR.ReasonNotTakingMed)
+										@Html.DropDownListFor(M => M.ReasonNotTakingMed, Model.NotTakingMedicationsList, new Dictionary<string, object> { { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "Select All That Apply" }, { "aria-errormessage", "moduleserror" } })
+									</div>
+									<hr class="ReasonNotTakingMed hide">
+									<div class="cell large-8 ReasonNotTakingMedText hide"><label>Other</label></div>
+									<div class="cell large-4 ReasonNotTakingMedText hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.ReasonNotTakingMedText)
+									</div>
+									<hr class="ReasonNotTakingMedText hide">
+									<div class="cell large-8"><label>Has “taking BP medication as prescribed” goal changed?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeInBPMedPrescribed, true, new { @id = "ChangeInBPMedPrescribed_yes" })
+												<label for="ChangeInBPMedPrescribed_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeInBPMedPrescribed, false, new { @id = "ChangeInBPMedPrescribed_no" })
+												<label for="ChangeInBPMedPrescribed_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 NewBPMedPrescribed hide"><label>New “taking BP medication as prescribed” goal:</label></div>
+									<div class="cell large-4 NewBPMedPrescribed hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.NewBPMedPrescribed, new { maxlength = 100 })
+									</div>
+								</div>
+							</div>
+						</fieldset>
+
+						<div class="grid-x grid-margin-x button-set align-middle @(Model.IsReadOnly ? "hide" : "")">
+							<div class="cell small-6">
+								<a href="#" class="back-btn anchor-blue tab-prev">Back</a>
+							</div>
+							<div class="cell small-6 medium-text-right">
+								<a href="#" class="button tab-next">Next</a>
+							</div>
+						</div>
+					</div>
+					<!-- Tab panel 2 ends -->
+					<div class="tabs-panel" id="panel3">
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Physical Activity</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+									<div class="cell large-8"><label><span class="required">*</span> How many minutes of aerobic physical activity did you do in the past 7 days?</label></div>
+									<div class="cell large-4">
+										<div class="input-group cell">
+											@Html.TextBoxFor(M => M.TeamsBP_PPR.WellnessData.ExerMin, new Dictionary<string, object> { { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+											<span class="input-group-label postfix">mins</span>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8"><label><span class="required">*</span> Was it Moderate, High, or a Combination of both?</label></div>
+									<div class="cell large-4">
+										@Html.DropDownListFor(M => M.TeamsBP_PPR.WellnessData.ExerInt, Model.ExerIntList, "Select One...")
+									</div>
+									<hr>
+									<div class="cell large-8"><label>Average steps/day reviewed?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.AvgStepsDayReviewed, true, new { @id = "AvgStepsDayReviewed_yes" })
+												<label for="AvgStepsDayReviewed_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.AvgStepsDayReviewed, false, new { @id = "AvgStepsDayReviewed_no" })
+												<label for="AvgStepsDayReviewed_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8"><label>Goal attained?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.StepsGoalAttained, true, new { @id = "StepsGoalAttained_yes" })
+												<label for="StepsGoalAttained_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.StepsGoalAttained, false, new { @id = "StepsGoalAttained_no" })
+												<label for="StepsGoalAttained_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8"><label>Average minutes/day reviewed?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.AvgMinutesDayReviewed, true, new { @id = "AvgMinutesDayReviewed_yes" })
+												<label for="AvgMinutesDayReviewed_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.AvgMinutesDayReviewed, false, new { @id = "AvgMinutesDayReviewed_no" })
+												<label for="AvgMinutesDayReviewed_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8"><label>Goal attained?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.MinutesGoalAttained, true, new { @id = "MinutesGoalAttained_yes" })
+												<label for="MinutesGoalAttained_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.MinutesGoalAttained, false, new { @id = "MinutesGoalAttained_no" })
+												<label for="MinutesGoalAttained_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 YAcheivedGoal hide"><label><span class="required">*</span> What are the key reasons why you were able to achieve your physical activity goals?</label></div>
+									<div class="cell large-4 YAcheivedGoal hide">
+										@Html.HiddenFor(M => M.TeamsBP_PPR.YAcheivedGoal)
+										@Html.DropDownListFor(M => M.YAcheivedGoal, Model.AchievePAGoalList, new Dictionary<string, object> { { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "Select All That Apply" }, { "aria-errormessage", "moduleserror" } })
+									</div>
+									<hr class="YAcheivedGoal hide">
+									<div class="cell large-8 YAcheivedGoalText hide"><label>Other</label></div>
+									<div class="cell large-4 YAcheivedGoalText hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.YAcheivedGoalText)
+									</div>
+									<hr class="YAcheivedGoalText hide">
+									<div class="cell large-8 YNotAcheivedGoal hide"><label><span class="required">*</span> What are the key reasons why you were unable to achieve your physical activity goals?</label></div>
+									<div class="cell large-4 YNotAcheivedGoal hide">
+										@Html.HiddenFor(M => M.TeamsBP_PPR.YNotAcheivedGoal)
+										@Html.DropDownListFor(M => M.YNotAcheivedGoal, Model.UnableToAchievePAGoalList, new Dictionary<string, object> { { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "Select All That Apply" }, { "aria-errormessage", "moduleserror" } })
+									</div>
+									<hr class="YNotAcheivedGoal hide">
+									<div class="cell large-8 YNotAcheivedGoalText hide"><label>Other</label></div>
+									<div class="cell large-4 YNotAcheivedGoalText hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.YNotAcheivedGoalText)
+									</div>
+									<hr class="YNotAcheivedGoalText hide">
+									<div class="cell large-8"><label>Has “being physically active” goal changed?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeInPAGoal, true, new { @id = "ChangeInPAGoal_yes" })
+												<label for="ChangeInPAGoal_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeInPAGoal, false, new { @id = "ChangeInPAGoal_no" })
+												<label for="ChangeInPAGoal_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 NewPAGoal hide"><label>New “being physically active” goal:</label></div>
+									<div class="cell large-4 NewPAGoal hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.NewPAGoal, new { maxlength = 100 })
+									</div>
+									<div class="cell large-8 NewPAGoal hide"><label>Min/week goal:</label></div>
+									<div class="cell large-4 NewPAGoal hide">
+										<div class="grid-x grid-margin-x collapse">
+											<div class="input-group cell">
+												@Html.TextBoxFor(M => M.TeamsBP_PPR.MinGoal, new Dictionary<string, object> { { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+												<span class="input-group-label postfix">mins/wk</span>
+											</div>
+										</div>
+									</div>
+									<div class="cell large-8 NewPAGoal hide"><label>Steps/day goal:</label></div>
+									<div class="cell large-4 NewPAGoal hide">
+										<div class="grid-x grid-margin-x collapse">
+											<div class="input-group cell">
+												@Html.TextBoxFor(M => M.TeamsBP_PPR.StepGoal, new Dictionary<string, object> { { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+												<span class="input-group-label postfix">steps/day</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</fieldset>
+
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Following a Healthy Diet Low in Sodium</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+									<div class="cell large-8"><label><span class="required">*</span> Most recent weight</label></div>
+									<div class="cell large-4">
+										<div class="grid-x grid-margin-x collapse">
+											<div class="input-group cell">
+												@Html.TextBoxFor(M => M.TeamsBP_PPR.WellnessData.Weight, new Dictionary<string, object> { { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" } })
+												<span class="input-group-label postfix">@Model.WeightText</span>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8"><label><span class="required">*</span> Have you followed a healthy diet that is low in sodium?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.FollowedLSD, true, new { @id = "FollowedLSD_yes" })
+												<label for="FollowedLSD_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.FollowedLSD, false, new { @id = "FollowedLSD_no" })
+												<label for="FollowedLSD_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 ReasonNotFollowedLSD hide"><label><span class="required">*</span> What are the key reasons why you were unable to follow a healthy diet low in sodium?</label></div>
+									<div class="cell large-4 ReasonNotFollowedLSD hide">
+										@Html.HiddenFor(M => M.TeamsBP_PPR.ReasonNotFollowedLSD)
+										@Html.DropDownListFor(M => M.ReasonNotFollowedLSD, Model.UnableToFollowHDGoalList, new Dictionary<string, object> { { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "Select All That Apply" }, { "aria-errormessage", "moduleserror" } })
+									</div>
+									<hr class="ReasonNotFollowedLSD hide">
+									<div class="cell large-8 ReasonNotFollowedLSDText hide"><label>Other</label></div>
+									<div class="cell large-4 ReasonNotFollowedLSDText hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.ReasonNotFollowedLSDText)
+									</div>
+									<hr class="ReasonNotFollowedLSDText hide">
+									<div class="cell large-8"><label>Has “follow a healthy diet low in sodium” goal changed?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeInHDGoal, true, new { @id = "ChangeInHDGoal_yes" })
+												<label for="ChangeInHDGoal_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeInHDGoal, false, new { @id = "ChangeInHDGoal_no" })
+												<label for="ChangeInHDGoal_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 NewHDGoal hide"><label>New “following a healthy diet low in sodium” goal:</label></div>
+									<div class="cell large-4 NewHDGoal hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.NewHDGoal, new { maxlength = 100 })
+									</div>
+								</div>
+							</div>
+						</fieldset>
+
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Problem List and Neurology Follow-up Appointments</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+									<div class="cell large-8"><label>Reviewed problem list?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ReviewedProblemList, true, new { @id = "ReviewedProblemList_yes" })
+												<label for="ReviewedProblemList_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ReviewedProblemList, false, new { @id = "ReviewedProblemList_no" })
+												<label for="ReviewedProblemList_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8"><label>List</label></div>
+									<div class="cell large-4">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.ReviewedProblemListText, new { maxlength = 100 })
+									</div>
+									<hr>
+									<div class="cell large-8"><label>Reviewed neurology follow-up appointments (from BP Action Plan)?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ReviewedNeurology, true, new { @id = "ReviewedNeurology_yes" })
+												<label for="ReviewedNeurology_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ReviewedNeurology, false, new { @id = "ReviewedNeurology_no" })
+												<label for="ReviewedNeurology_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</fieldset>
+
+						<div class="grid-x grid-margin-x button-set align-middle @(Model.IsReadOnly ? "hide" : "")">
+							<div class="cell small-6">
+								<a href="#" class="back-btn anchor-blue tab-prev">Back</a>
+							</div>
+							<div class="cell small-6 medium-text-right">
+								<a href="#" class="button tab-next">Next</a>
+							</div>
+						</div>
+					</div>
+					<!-- Tab panel 3 ends -->
+					<div class="tabs-panel" id="panel4">
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Emergency Department and Hospital</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+									<div class="cell large-8"><label><span class="required">*</span> Have you been to the emergency department since your last coaching session/enrollment in study?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.HasVisitedED, true, new { @id = "HasVisitedED_yes" })
+												<label for="HasVisitedED_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.HasVisitedED, false, new { @id = "HasVisitedED_no" })
+												<label for="HasVisitedED_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 HasVisitedED hide"><label><span class="required">*</span> How many times?</label></div>
+									<div class="cell large-4 HasVisitedED hide">
+										<!-- Change the `data-field` of buttons and `name` of input field's for multiple plus minus buttons-->
+										<div class="input-group plus-minus-input">
+											@if (!Model.IsReadOnly)
+											{
+												<span class="input-group-label prefix" data-quantity="minus" data-field="emergency-admission-count">
+													<i class="fa fa-minus" aria-hidden="true"></i>
+												</span>
+											}
+											@Html.TextBoxFor(M => M.TeamsBP_PPR.EDVisitsNumber, new Dictionary<string, object> { { "class", "input-group-field" }, { "placeholder", "0" }, { "data-name", "emergency-admission-count" }, { "readonly", "readonly" } })
+											@if (!Model.IsReadOnly)
+											{
+												<span class="input-group-label postfix" data-quantity="plus" data-field="emergency-admission-count">
+													<i class="fa fa-plus" aria-hidden="true"></i>
+												</span>
+											}
+										</div>
+										<!--Counter code ends-->
+
+										@Html.HiddenFor(M => M.TeamsBP_PPR.EDDateOfVisit)
+										@Html.HiddenFor(M => M.TeamsBP_PPR.EDVisitReason)
+									</div>
+									<hr class="HasVisitedED hide">
+
+									<div id="emergency-admission-entry" class="cell"></div>
+
+									<div class="cell large-8"><label><span class="required">*</span> Have you been admitted to hospital since your last coaching session/enrollment in study?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.WasAdmittedHospital, true, new { @id = "WasAdmittedHospital_yes" })
+												<label for="WasAdmittedHospital_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.WasAdmittedHospital, false, new { @id = "WasAdmittedHospital_no" })
+												<label for="WasAdmittedHospital_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 WasAdmittedHospital hide"><label><span class="required">*</span> How many times?</label></div>
+									<div class="cell large-4 WasAdmittedHospital hide">
+										<!-- Change the `data-field` of buttons and `name` of input field's for multiple plus minus buttons-->
+										<div class="input-group plus-minus-input">
+											@if (!Model.IsReadOnly)
+											{
+												<span class="input-group-label prefix" data-quantity="minus" data-field="hospital-admission-count">
+													<i class="fa fa-minus" aria-hidden="true"></i>
+												</span>
+											}
+											@Html.TextBoxFor(M => M.TeamsBP_PPR.HospitalVisitsNumber, new Dictionary<string, object> { { "class", "input-group-field" }, { "placeholder", "0" }, { "data-name", "hospital-admission-count" }, { "readonly", "readonly" } })
+											@if (!Model.IsReadOnly)
+											{
+												<span class="input-group-label postfix" data-quantity="plus" data-field="hospital-admission-count">
+													<i class="fa fa-plus" aria-hidden="true"></i>
+												</span>
+											}
+										</div>
+										<!--Counter code ends-->
+										@Html.HiddenFor(M => M.TeamsBP_PPR.DateOfAdmit)
+										@Html.HiddenFor(M => M.TeamsBP_PPR.DaysInHospital)
+										@Html.HiddenFor(M => M.TeamsBP_PPR.HospitalizationReason)
+									</div>
+									<hr class="WasAdmittedHospital hide">
+
+									<div id="hospital-admission-entry" class="cell"></div>
+								</div>
+							</div>
+						</fieldset>
+
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Falls</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+									<div class="cell large-8"><label><span class="required">*</span> Have you fallen since your last coaching session/enrollment in study?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.HasFallen, true, new { @id = "HasFallen_yes" })
+												<label for="HasFallen_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.HasFallen, false, new { @id = "HasFallen_no" })
+												<label for="HasFallen_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 NumberOfFalls hide"><label><span class="required">*</span> How many times?</label></div>
+									<div class="cell large-4 NumberOfFalls hide">
+										<!-- Change the `data-field` of buttons and `name` of input field's for multiple plus minus buttons-->
+										<div class="input-group plus-minus-input">
+											@if (!Model.IsReadOnly)
+											{
+												<span class="input-group-label prefix" data-quantity="minus" data-field="falls-count">
+													<i class="fa fa-minus" aria-hidden="true"></i>
+												</span>
+											}
+											@Html.TextBoxFor(M => M.TeamsBP_PPR.NumberOfFalls, new Dictionary<string, object> { { "class", "input-group-field" }, { "placeholder", "0" }, { "data-name", "falls-count" }, { "readonly", "readonly" } })
+											@if (!Model.IsReadOnly)
+											{
+												<span class="input-group-label postfix" data-quantity="plus" data-field="falls-count">
+													<i class="fa fa-plus" aria-hidden="true"></i>
+												</span>
+											}
+										</div>
+										<!--Counter code ends-->
+
+										@Html.HiddenFor(M => M.TeamsBP_PPR.InjuredWhenFell)
+										@Html.HiddenFor(M => M.TeamsBP_PPR.HowSeriousWasInjury)
+									</div>
+									<hr class="NumberOfFalls hide">
+
+									<div id="falls-entry" class="cell"></div>
+								</div>
+							</div>
+						</fieldset>
+
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Rehabilitation Therapy</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+									<div class="cell large-8"><label><span class="required">*</span> Have you been referred for rehabilitation therapy?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ReferredByProvider, true, new { @id = "ReferredByProvider_yes" })
+												<label for="ReferredByProvider_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ReferredByProvider, false, new { @id = "ReferredByProvider_no" })
+												<label for="ReferredByProvider_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 NeedsProviderReferral hide"><label>Does participant need a referral for rehabilitation therapy?</label></div>
+									<div class="cell large-4 NeedsProviderReferral hide">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.NeedsProviderReferral, true, new { @id = "NeedsProviderReferral_yes" })
+												<label for="NeedsProviderReferral_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.NeedsProviderReferral, false, new { @id = "NeedsProviderReferral_no" })
+												<label for="NeedsProviderReferral_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr class="NeedsProviderReferral hide">
+									<div class="cell large-8 AttendingAsScheduled hide"><label><span class="required">*</span> Are you attending rehabilitation therapy as scheduled?</label></div>
+									<div class="cell large-4 AttendingAsScheduled hide">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.AttendingAsScheduled, true, new { @id = "AttendingAsScheduled_yes" })
+												<label for="AttendingAsScheduled_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.AttendingAsScheduled, false, new { @id = "AttendingAsScheduled_no" })
+												<label for="AttendingAsScheduled_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr class="AttendingAsScheduled hide">
+									<div class="cell large-8 NotAttendingReason hide"><label><span class="required">*</span> What are the key reasons why you are not attending rehabilitation therapy as scheduled?</label></div>
+									<div class="cell large-4 NotAttendingReason hide">
+										@Html.HiddenFor(M => M.TeamsBP_PPR.NotAttendingReason)
+										@Html.DropDownListFor(M => M.NotAttendingReason, Model.UnableToAttendTherapyList, new Dictionary<string, object> { { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "Select All That Apply" }, { "aria-errormessage", "moduleserror" } })
+									</div>
+									<hr class="NotAttendingReason hide">
+									<div class="cell large-8 NotAttendingReasonText hide"><label>Other</label></div>
+									<div class="cell large-4 NotAttendingReasonText hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.NotAttendingReasonText)
+									</div>
+								</div>
+							</div>
+						</fieldset>
+
+						<div class="grid-x grid-margin-x button-set align-middle @(Model.IsReadOnly ? "hide" : "")">
+							<div class="cell small-6">
+								<a href="#" class="back-btn anchor-blue tab-prev">Back</a>
+							</div>
+							<div class="cell small-6 medium-text-right">
+								<a href="#" class="button tab-next">Next</a>
+							</div>
+						</div>
+					</div>
+					<!-- Tab panel 4 ends -->
+					<div class="tabs-panel" id="panel5">
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Community/Social Services</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+									<div class="cell large-8"><label><span class="required">*</span> Are you using any community or social services to help with your stroke recovery?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.CommunityStrokeRecovery, true, new { @id = "CommunityStrokeRecovery_yes" })
+												<label for="CommunityStrokeRecovery_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.CommunityStrokeRecovery, false, new { @id = "CommunityStrokeRecovery_no" })
+												<label for="CommunityStrokeRecovery_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 CommunityUsing hide"><label><span class="required">*</span> What community or social services are you using?</label></div>
+									<div class="cell large-4 CommunityUsing hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.CommunityUsing, new { maxlength = 500 })
+									</div>
+									<hr class="CommunityUsing hide">
+									<div class="cell large-8"><label><span class="required">*</span> Are any new community or social services needed to help with your stroke recovery?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.NewCommunityHelp, true, new { @id = "NewCommunityHelp_yes" })
+												<label for="NewCommunityHelp_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.NewCommunityHelp, false, new { @id = "NewCommunityHelp_no" })
+												<label for="NewCommunityHelp_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 CommunityNeeded hide"><label><span class="required">*</span> What community or social services are needed?</label></div>
+									<div class="cell large-4 CommunityNeeded hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.CommunityNeeded, new { maxlength = 500 })
+									</div>
+								</div>
+							</div>
+						</fieldset>
+
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Changes to Other Lifestyle Goals</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+									<div class="cell"><h3>Have any of the following lifestyle goals changed?</h3></div>
+									<div class="cell large-8"><label>Managing weight?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeManagingWeight, true, new { @id = "ChangeManagingWeight_yes" })
+												<label for="ChangeManagingWeight_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeManagingWeight, false, new { @id = "ChangeManagingWeight_no" })
+												<label for="ChangeManagingWeight_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 ChangeManagingWeight hide"><label>New “managing weight” goal</label></div>
+									<div class="cell large-4 ChangeManagingWeight hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.NewWeightGoal, new { maxlength = 100 })
+									</div>
+									<hr class="ChangeManagingWeight hide">
+
+									<div class="cell large-8"><label>Managing stress?</label></div>
+									<div class="cell large-4">
+										<div class="flex-container align-right">
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeManagingStress, true, new { @id = "ChangeManagingStress_yes" })
+												<label for="ChangeManagingStress_yes">
+													Yes
+													<span class="checkmark"></span>
+												</label>
+											</div>
+											<div class="tick-buttons radio-btn">
+												@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeManagingStress, false, new { @id = "ChangeManagingStress_no" })
+												<label for="ChangeManagingStress_no">
+													No
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<hr>
+									<div class="cell large-8 ChangeManagingStress hide"><label>New “managing stress” goal:</label></div>
+									<div class="cell large-4 ChangeManagingStress hide">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.NewStressGoal, new { maxlength = 100 })
+									</div>
+									<hr class="ChangeManagingStress hide">
+									@if (Model.IsAlcoholicUser)
+									{
+										<div class="cell large-8"><label>Avoiding or limiting alcohol?</label></div>
+										<div class="cell large-4">
+											<div class="flex-container align-right">
+												<div class="tick-buttons radio-btn">
+													@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeLimitingAlcohol, true, new { @id = "ChangeLimitingAlcohol_yes" })
+													<label for="ChangeLimitingAlcohol_yes">
+														Yes
+														<span class="checkmark"></span>
+													</label>
+												</div>
+												<div class="tick-buttons radio-btn">
+													@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeLimitingAlcohol, false, new { @id = "ChangeLimitingAlcohol_no" })
+													<label for="ChangeLimitingAlcohol_no">
+														No
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</div>
+										</div>
+										<hr>
+										<div class="cell large-8 ChangeLimitingAlcohol hide"><label>New “Avoiding or limiting alcohol” goal:</label></div>
+										<div class="cell large-4 ChangeLimitingAlcohol hide">
+											@Html.TextAreaFor(M => M.TeamsBP_PPR.NewAlcoholGoal, new { maxlength = 100 })
+										</div>
+										<hr class="ChangeLimitingAlcohol hide">
+									}
+									@if (Model.IsTobaccoUser)
+									{
+										<div class="cell large-8"><label>Quitting smoking/tobacco?</label></div>
+										<div class="cell large-4">
+											<div class="flex-container align-right">
+												<div class="tick-buttons radio-btn">
+													@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeQuitSmoking, true, new { @id = "ChangeQuitSmoking_yes" })
+													<label for="ChangeQuitSmoking_yes">
+														Yes
+														<span class="checkmark"></span>
+													</label>
+												</div>
+												<div class="tick-buttons radio-btn">
+													@Html.RadioButtonFor(M => M.TeamsBP_PPR.ChangeQuitSmoking, false, new { @id = "ChangeQuitSmoking_no" })
+													<label for="ChangeQuitSmoking_no">
+														No
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</div>
+										</div>
+										<hr>
+										<div class="cell large-8 ChangeQuitSmoking hide"><label>New “Quitting smoking/tobacco” goal:</label></div>
+										<div class="cell large-4 ChangeQuitSmoking hide">
+											@Html.TextAreaFor(M => M.TeamsBP_PPR.NewSmokingGoal, new { maxlength = 100 })
+										</div>
+									}
+								</div>
+							</div>
+						</fieldset>
+
+						<div class="grid-x grid-margin-x button-set align-middle @(Model.IsReadOnly ? "hide" : "")">
+							<div class="cell small-6">
+								<a href="#" class="back-btn anchor-blue tab-prev">Back</a>
+							</div>
+							<div class="cell small-6 medium-text-right">
+								<a href="#" class="button tab-next">Next</a>
+							</div>
+						</div>
+					</div>
+					<!-- Tab panel 5 ends -->
+					<div class="tabs-panel" id="panel6">
+						<fieldset @(Model.IsReadOnly ? "disabled='disabled'" : "")>
+							<legend>Add description about the call</legend>
+							<div class="section-elements">
+								<div class="grid-x grid-margin-x">
+
+									<div class="cell large-8"><label>Notes:</label></div>
+									<div class="cell">
+										@Html.TextAreaFor(M => M.TeamsBP_PPR.Notes, new { maxlength = 1000, rows = 6 })
+									</div>
+								</div>
+							</div>
+						</fieldset>
+
+						<div class="grid-x grid-margin-x button-set align-middle @(Model.IsReadOnly ? "hide" : "")">
+							<div class="cell small-6">
+								<a href="#" class="back-btn anchor-blue tab-prev">Back</a>
+							</div>
+							<div class="cell small-6 medium-text-right">
+								@if (!Model.IsReadOnly)
+								{
+									<button class="button" type="submit" id="AddData">Save</button>
+								}
+							</div>
+						</div>
+					</div>
+					<!-- Tab panel 6 ends -->
+				</div>
+			</form>
+
+		</div>
+		<!-- Main form ends -->
+	</div>
+</div>
+
+<div id="loader-wrapper">
+	<div id="loader"></div>
+</div>
+<!-- This is the nested modal -->
+<div class="reveal" id="confirmation-modal" data-reveal data-multiple-opened="true">
+	<p>Do you want to save this form?</p>
+	<div class="flex-container align-justify align-middle">
+		<button class="button hollow" id="saveFormNo" data-close>No</button>
+		<button class="button" id="saveFormYes" onclick="SubmitForm();">Yes</button>
+	</div>
+</div>
+<script type="text/javascript" src="@Url.Content("~/Scripts/ValidateNumbers.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+    Foundation.Abide.defaults.validators['validateWeight'] = function ($el, required, parent) {
+        var min = @Model.Measurements[BioLookup.Weight].Min;
+        var max = @Model.Measurements[BioLookup.Weight].Max;
+        var pregDueDate = $el.val().replace(/[^0-9\.]/g, '');
+        if ((($el.val() >= min && $el.val() <= max) || (required == false && $el.val() == "")) && (!($el.val() != pregDueDate)))
+            return true;
+        else
+            return false;
+    };
+
+	$(document).ready(function () {
+		$(document).foundation();
+        $("#loader-wrapper").fadeOut();
+		function initDatepicker() {
+			$('.fdatepicker').fdatepicker({
+				format: "@Model.dataFormat.ToLower()"
+			});
+		}
+
+		@if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.NotMonitoredReason)) {
+            foreach (var reason in Model.TeamsBP_PPR.NotMonitoredReason.Split('|')) {
+                @: $('#select-NotMonitoredReason li[data-value="@Model.UnableToMonitorBPList.Where(x => x.Text == reason).Select(x => x.Value).FirstOrDefault()"]').trigger("click");
+            }
+        }
+
+		@if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.MonitoredBPHelpful)) {
+            foreach (var reason in Model.TeamsBP_PPR.MonitoredBPHelpful.Split('|')) {
+                @: $('#select-MonitoredBPHelpful li[data-value="@Model.FactorsInMonitoringBPList.Where(x => x.Text == reason).Select(x => x.Value).FirstOrDefault()"]').trigger("click");
+            }
+        }
+
+		@if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.ReasonNotTakingMed)) {
+            foreach (var reason in Model.TeamsBP_PPR.ReasonNotTakingMed.Split('|')) {
+                @: $('#select-ReasonNotTakingMed li[data-value="@Model.NotTakingMedicationsList.Where(x => x.Text == reason).Select(x => x.Value).FirstOrDefault()"]').trigger("click");
+            }
+        }
+
+		@if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.YAcheivedGoal)) {
+            foreach (var reason in Model.TeamsBP_PPR.YAcheivedGoal.Split('|')) {
+                @: $('#select-YAcheivedGoal li[data-value="@Model.AchievePAGoalList.Where(x => x.Text == reason).Select(x => x.Value).FirstOrDefault()"]').trigger("click");
+            }
+        }
+
+		@if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.YNotAcheivedGoal)) {
+            foreach (var reason in Model.TeamsBP_PPR.YNotAcheivedGoal.Split('|')) {
+                @: $('#select-YNotAcheivedGoal li[data-value="@Model.UnableToAchievePAGoalList.Where(x => x.Text == reason).Select(x => x.Value).FirstOrDefault()"]').trigger("click");
+            }
+        }
+
+		@if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.ReasonNotFollowedLSD)) {
+            foreach (var reason in Model.TeamsBP_PPR.ReasonNotFollowedLSD.Split('|')) {
+                @: $('#select-ReasonNotFollowedLSD li[data-value="@Model.UnableToFollowHDGoalList.Where(x => x.Text == reason).Select(x => x.Value).FirstOrDefault()"]').trigger("click");
+            }
+        }
+
+		@if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.NotAttendingReason)) {
+            foreach (var reason in Model.TeamsBP_PPR.NotAttendingReason.Split('|')) {
+                @: $('#select-NotAttendingReason li[data-value="@Model.UnableToAttendTherapyList.Where(x => x.Text == reason).Select(x => x.Value).FirstOrDefault()"]').trigger("click");
+            }
+        }
+
+		@if (Model.IsReadOnly)
+        {
+			@:$('li').addClass('disabled');
+        }
+
+		@if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.OtherGoals))
+        {
+            string[] values = Model.TeamsBP_PPR.OtherGoals.Split('|');
+			@:$("#newGoal-1").val('@values[0]');
+            if (values.Length > 1)
+            {
+				@:$("#other-goals").append('<textarea name="newGoal" id="newGoal-2" rows="2">@values[1]</textarea>');
+            }
+            if (values.Length > 2)
+            {
+				@:$("#other-goals").append('<textarea name="newGoal" id="newGoal-3" rows="2">@values[2]</textarea>');
+				@:$("#addNewGoal").addClass("hide");
+            }
+        }
+
+		@if(Model.TeamsBP_PPR.EDVisitsNumber.HasValue && Model.TeamsBP_PPR.EDVisitsNumber.Value > 0)
+        {
+            string[] visit = Model.TeamsBP_PPR.EDDateOfVisit.Split('|');
+            string[] reason = Model.TeamsBP_PPR.EDVisitReason.Split('|');
+
+            for (int i = 1; i <= visit.Length; i++)
+            {
+                @:var showFields = '<div class="grid-x grid-margin-x" id="emergency-' + @i + '"><div class="cell large-8 HasVisitedED"><label><span class="required">*</span> Date of visit to ED:</label></div><div class="cell large-4 HasVisitedED"><input autocomplete="off" id="TeamsBP_PPR_EDDateOfVisit' + @i + '" name="TeamsBP_PPR.EDDateOfVisit' + @i + '" type="text" class="fdatepicker input-date" value="@visit[i-1]"></div><div class="cell large-8 HasVisitedED"><label><span class="required">*</span> Reason for going to ED:</label></div><div class="cell large-4 HasVisitedED"><textarea id="TeamsBP_PPR_EDVisitReason' + @i + '" name="TeamsBP_PPR.EDVisitReason' + @i + '" rows="3" maxlength="100" value="">@reason[i-1]</textarea></div><hr class="HasVisitedED"></div>';
+				@:$("#emergency-admission-entry").append(showFields);
+                @:initDatepicker();
+            }
+        }
+
+		@if(Model.TeamsBP_PPR.HospitalVisitsNumber.HasValue && Model.TeamsBP_PPR.HospitalVisitsNumber.Value > 0)
+        {
+            string[] days = Model.TeamsBP_PPR.DaysInHospital.Split('|');
+            string[] date = Model.TeamsBP_PPR.DateOfAdmit.Split('|');
+            string[] reason = Model.TeamsBP_PPR.HospitalizationReason.Split('|');
+
+            for (int i = 1; i <= days.Length; i++)
+            {
+                @:var showFields = '<div class="grid-x grid-margin-x" id="hospital-' + @i + '"><div class="cell large-8 WasAdmittedHospital"><label><span class="required">*</span> Date of admission to hospital:</label></div><div class="cell large-4 WasAdmittedHospital"><input autocomplete="off" id="TeamsBP_PPR_DateOfAdmit' + @i + '" name="TeamsBP_PPR.DateOfAdmit" type="text" value="@date[i-1]" class="fdatepicker input-date"></div><div class="cell large-8 WasAdmittedHospital"><label><span class="required">*</span> Number of days in hospital:</label></div><div class="cell large-4 WasAdmittedHospital"><input id="TeamsBP_PPR_DaysInHospital' + @i + '" name="TeamsBP_PPR.DaysInHospital" type="number" value="@days[i-1]"></div><div class="cell large-8 WasAdmittedHospital"><label><span class="required">*</span> Reason for hospitalization:</label></div><div class="cell large-4 WasAdmittedHospital"><textarea id="TeamsBP_PPR_HospitalizationReason' + @i + '" name="TeamsBP_PPR.HospitalizationReason" rows="3" maxlength="100" value="">@reason[i-1]</textarea></div><hr class="WasAdmittedHospital"></div>';
+				@:$("#hospital-admission-entry").append(showFields);
+                @:initDatepicker();
+            }
+        }
+
+		@if(Model.TeamsBP_PPR.NumberOfFalls.HasValue && Model.TeamsBP_PPR.NumberOfFalls.Value > 0)
+        {
+            string[] fall = Model.TeamsBP_PPR.InjuredWhenFell.Split('|');
+            string[] injury = Model.TeamsBP_PPR.HowSeriousWasInjury.Split('|');
+
+            for (int i = 1; i <= fall.Length; i++)
+            {
+                @:var showFields = '<div class="grid-x grid-margin-x falls-status" id="falls-' + @i + '"><div class="cell large-8 NumberOfFalls"><label><span class="required">*</span> Did you injure yourself when you fell?</label></div><div class="cell large-4 NumberOfFalls"><div class="flex-container align-right"><div class="tick-buttons radio-btn"><input id="InjuredWhenFell_yes' + @i + '" name="TeamsBP_PPR.InjuredWhenFell' + @i + '" type="radio" value="True" @(fall[i-1] == "True" ? "checked" : "")><label for="InjuredWhenFell_yes' + @i + '">Yes<span class="checkmark"></span></label></div><div class="tick-buttons radio-btn"><input id="InjuredWhenFell_no' + @i + '" name="TeamsBP_PPR.InjuredWhenFell' + @i + '" type="radio" value="False" @(fall[i-1] == "False" ? "checked" : "")><label for="InjuredWhenFell_no' + @i + '">No<span class="checkmark"></span></label></div></div></div><hr class="NumberOfFalls"><div class="cell large-8 HowSeriousWasInjury @(fall[i-1] == "False" ? "hide" : "")"><label><span class="required">*</span> How serious was the injury?</label></div><div class="cell large-4 HowSeriousWasInjury @(fall[i-1] == "False" ? "hide" : "")"><select id="HowSeriousWasInjury' + @i + '" name="HowSeriousWasInjury' + @i + '"><option value="">Select One...</option><option value="1" @(injury[i-1].Contains("Minor") ? "selected" : "")>Minor (application of dressing, ice, cleaning, dressing, bruising or abrasion)</option><option value="2" @(injury[i-1].Contains("Moderate") ? "selected" : "")>Moderate (suturing, application of steri-strips/skin glue, splinting, muscle/joint strain)</option><option value="3" @(injury[i-1].Contains("Major") ? "selected" : "")>Major (surgery, casting, traction, consultation for neurological or internal injury, receipt of blood products)</option></select></div><hr class="HowSeriousWasInjury @(fall[i-1] == "False" ? "hide" : "")"></div>'
+				@:$("#falls-entry").append(showFields);
+            }
+        }
+
+
+        @if(Model.TeamsBP_PPR.MonitoredBP.HasValue && Model.TeamsBP_PPR.MonitoredBP.Value)
+        {
+            <text>
+                $(".MonitoredBPHelpful").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.MonitoredBP.HasValue && !Model.TeamsBP_PPR.MonitoredBP.Value)
+        {
+            <text>
+                $(".MonitoredBP").removeClass('hide');
+            </text>
+        }
+
+         @if(Model.TeamsBP_PPR.ChangeInBPMonitoringGoal.HasValue && Model.TeamsBP_PPR.ChangeInBPMonitoringGoal.Value)
+        {
+            <text>
+                $(".NewBPMonitoringGoal").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.MissedMed.HasValue && Model.TeamsBP_PPR.MissedMed.Value > 0 || Model.TeamsBP_PPR.TakingMedication.HasValue && !Model.TeamsBP_PPR.TakingMedication.Value)
+        {
+            <text>
+                $(".ReasonNotTakingMed").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.ChangeInBPMedPrescribed.HasValue && Model.TeamsBP_PPR.ChangeInBPMedPrescribed.Value)
+        {
+            <text>
+                $(".NewBPMedPrescribed").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.MedicationChanges.HasValue && Model.TeamsBP_PPR.MedicationChanges.Value)
+        {
+            <text>
+                $(".MedListChanges").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.StepsGoalAttained.HasValue && Model.TeamsBP_PPR.StepsGoalAttained.Value
+            && Model.TeamsBP_PPR.MinutesGoalAttained.HasValue && Model.TeamsBP_PPR.MinutesGoalAttained.Value)
+        {
+            <text>
+                $(".YAcheivedGoal").removeClass('hide');
+            </text>
+        } else if (Model.TeamsBP_PPR.StepsGoalAttained.HasValue && !Model.TeamsBP_PPR.StepsGoalAttained.Value
+            || Model.TeamsBP_PPR.MinutesGoalAttained.HasValue && !Model.TeamsBP_PPR.MinutesGoalAttained.Value)
+        {
+            <text>
+                $(".YNotAcheivedGoal").removeClass('hide');
+            </text>
+        }
+
+        @if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.YAcheivedGoal) && Model.TeamsBP_PPR.YAcheivedGoal.Contains("Other (text)"))
+        {
+            <text>
+                $(".YAcheivedGoalText").removeClass('hide');
+            </text>
+        }
+
+        @if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.YNotAcheivedGoal) && Model.TeamsBP_PPR.YNotAcheivedGoal.Contains("Other (text)"))
+        {
+            <text>
+                $(".YNotAcheivedGoalText").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.ChangeInPAGoal.HasValue && Model.TeamsBP_PPR.ChangeInPAGoal.Value)
+        {
+            <text>
+                $(".NewPAGoal").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.FollowedLSD.HasValue && !Model.TeamsBP_PPR.FollowedLSD.Value)
+        {
+            <text>
+                $(".ReasonNotFollowedLSD").removeClass('hide');
+            </text>
+        }
+
+        @if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.ReasonNotFollowedLSD) && Model.TeamsBP_PPR.ReasonNotFollowedLSD.Contains("Other (text)"))
+        {
+            <text>
+                $(".ReasonNotFollowedLSDText").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.ChangeInHDGoal.HasValue && Model.TeamsBP_PPR.ChangeInHDGoal.Value)
+        {
+            <text>
+                $(".NewHDGoal").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.HasVisitedED.HasValue && Model.TeamsBP_PPR.HasVisitedED.Value)
+        {
+            <text>
+                $(".HasVisitedED").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.WasAdmittedHospital.HasValue && Model.TeamsBP_PPR.WasAdmittedHospital.Value)
+        {
+            <text>
+                $(".WasAdmittedHospital").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.HasFallen.HasValue && Model.TeamsBP_PPR.HasFallen.Value)
+        {
+            <text>
+				$(".NumberOfFalls").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.ReferredByProvider.HasValue && !Model.TeamsBP_PPR.ReferredByProvider.Value)
+        {
+            <text>
+                $(".NeedsProviderReferral").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.ReferredByProvider.HasValue && Model.TeamsBP_PPR.ReferredByProvider.Value)
+        {
+            <text>
+                $(".AttendingAsScheduled").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.AttendingAsScheduled.HasValue && !Model.TeamsBP_PPR.AttendingAsScheduled.Value)
+        {
+            <text>
+                $(".NotAttendingReason").removeClass('hide');
+            </text>
+        }
+
+        @if(!string.IsNullOrEmpty(Model.TeamsBP_PPR.NotAttendingReason) && Model.TeamsBP_PPR.NotAttendingReason.Contains("Other (text)"))
+        {
+            <text>
+                $(".NotAttendingReasonText").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.CommunityStrokeRecovery.HasValue && Model.TeamsBP_PPR.CommunityStrokeRecovery.Value)
+        {
+            <text>
+                $(".CommunityUsing").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.NewCommunityHelp.HasValue && Model.TeamsBP_PPR.NewCommunityHelp.Value)
+        {
+            <text>
+				$(".CommunityNeeded").removeClass('hide');
+            </text>
+        }
+
+		@if(Model.TeamsBP_PPR.ChangeManagingWeight.HasValue && Model.TeamsBP_PPR.ChangeManagingWeight.Value)
+        {
+            <text>
+                $(".ChangeManagingWeight").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.ChangeManagingStress.HasValue && Model.TeamsBP_PPR.ChangeManagingStress.Value)
+        {
+            <text>
+                $(".ChangeManagingStress").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.ChangeLimitingAlcohol.HasValue && Model.TeamsBP_PPR.ChangeLimitingAlcohol.Value)
+        {
+            <text>
+                $(".ChangeLimitingAlcohol").removeClass('hide');
+            </text>
+        }
+
+        @if(Model.TeamsBP_PPR.ChangeQuitSmoking.HasValue && Model.TeamsBP_PPR.ChangeQuitSmoking.Value)
+        {
+            <text>
+                $(".ChangeQuitSmoking").removeClass('hide');
+            </text>
+        }
+
+        $('#closeAddTask').on('click', function () {
+            $('#add-wellness-data').foundation('close');
+        });
+        $("#wellness-data-form").foundation();
+        $("#wellness-data-form").on('forminvalid.zf.abide', function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+            if (invalid_fields) {
+                var scrollTo = $('#' + invalid_fields[0].id).offset().top;
+                $('html, body').animate({
+                    scrollTop: scrollTo
+                }, 400);
+            }
+		}).on('formvalid.zf.abide', function () {
+            $("#AddData").attr("disabled", true);
+            SubmitForm();
+            $('#add-wellness-data').foundation('close');
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        });
+
+		$("a.add-new-record").on("click", function (e) {
+            e.preventDefault();
+            var otherGoalsCount = $('textarea[name=newGoal]').length + 1;
+            $("#other-goals").append('<textarea name="newGoal" id="newGoal-' + (otherGoalsCount)  +'" rows="2"></textarea>');
+
+            // $(this).siblings(".new-record-container").removeClass("hide");
+            if (otherGoalsCount == 3) {
+                $("#addNewGoal").addClass("hide");
+            }
+        });
+
+		//jQuery for the plus-minus counter
+		// This button will increment the value
+		$('[data-quantity="plus"]').on('click', function(e){
+			// Stop acting like a button
+			e.preventDefault();
+			// Get the field name
+			fieldName = $(this).data('field');
+			// Get its current value
+			var currentVal = parseInt($("[data-name='"+fieldName+"']").val());
+			// If is not undefined
+			if (!isNaN(currentVal) && currentVal < 10) {
+				// Increment
+				$('input[data-name='+fieldName+']').val(currentVal + 1);
+				currentVal = currentVal + 1;
+			}
+            else if(currentVal == 10){
+                return;
+            }
+            else {
+				// Otherwise put a 0 there
+				$('input[data-name='+fieldName+']').val(1);
+				currentVal = 1;
+			}
+
+			switch (fieldName) {
+				case "emergency-admission-count":
+                    var showFields = '<div class="grid-x grid-margin-x" id="emergency-' + currentVal + '"><div class="cell large-8 HasVisitedED"><label><span class="required">*</span> Date of visit to ED:</label></div><div class="cell large-4 HasVisitedED"><input autocomplete="off" id="TeamsBP_PPR_EDDateOfVisit' + currentVal + '" name="TeamsBP_PPR.EDDateOfVisit' + currentVal + '" type="text" class="fdatepicker input-date" value=""></div><div class="cell large-8 HasVisitedED"><label><span class="required">*</span> Reason for going to ED:</label></div><div class="cell large-4 HasVisitedED"><textarea id="TeamsBP_PPR_EDVisitReason' + currentVal + '" name="TeamsBP_PPR.EDVisitReason' + currentVal +'" rows="3" maxlength="100" value=""></textarea></div><hr class="HasVisitedED"></div>';
+
+					$("#emergency-admission-entry").append(showFields);
+                    initDatepicker();
+					break;
+				case "hospital-admission-count":
+                    var showFields = '<div class="grid-x grid-margin-x" id="hospital-' + currentVal + '"><div class="cell large-8 WasAdmittedHospital"><label><span class="required">*</span> Date of admission to hospital:</label></div><div class="cell large-4 WasAdmittedHospital"><input autocomplete="off" id="TeamsBP_PPR_DateOfAdmit' + currentVal + '" name="TeamsBP_PPR.DateOfAdmit" type="text" value="" class="fdatepicker input-date"></div><div class="cell large-8 WasAdmittedHospital"><label><span class="required">*</span> Number of days in hospital:</label></div><div class="cell large-4 WasAdmittedHospital"><input id="TeamsBP_PPR_DaysInHospital' + currentVal + '" name="TeamsBP_PPR.DaysInHospital" type="number" value=""></div><div class="cell large-8 WasAdmittedHospital"><label><span class="required">*</span> Reason for hospitalization:</label></div><div class="cell large-4 WasAdmittedHospital"><textarea id="TeamsBP_PPR_HospitalizationReason' + currentVal +'" name="TeamsBP_PPR.HospitalizationReason" rows="3" maxlength="100" value=""></textarea></div><hr class="WasAdmittedHospital"></div>';
+
+					$("#hospital-admission-entry").append(showFields);
+                    initDatepicker();
+					break;
+				case "falls-count":
+                    var showFields = '<div class="grid-x grid-margin-x falls-status" id="falls-' + currentVal + '"><div class="cell large-8 NumberOfFalls"><label><span class="required">*</span> Did you injure yourself when you fell?</label></div><div class="cell large-4 NumberOfFalls"><div class="flex-container align-right"><div class="tick-buttons radio-btn"><input id="InjuredWhenFell_yes' + currentVal + '" name="TeamsBP_PPR.InjuredWhenFell' + currentVal + '" type="radio" value="True"><label for="InjuredWhenFell_yes' + currentVal + '">Yes<span class="checkmark"></span></label></div><div class="tick-buttons radio-btn"><input id="InjuredWhenFell_no' + currentVal + '" name="TeamsBP_PPR.InjuredWhenFell' + currentVal + '" type="radio" value="False"><label for="InjuredWhenFell_no' + currentVal +'">No<span class="checkmark"></span></label></div></div></div><hr class="NumberOfFalls"><div class="cell large-8 HowSeriousWasInjury hide"><label><span class="required">*</span> How serious was the injury?</label></div><div class="cell large-4 HowSeriousWasInjury hide"><select id="HowSeriousWasInjury'+currentVal+'" name="HowSeriousWasInjury'+currentVal+'"><option value="">Select One...</option><option value="1">Minor (application of dressing, ice, cleaning, dressing, bruising or abrasion)</option><option value="2">Moderate (suturing, application of steri-strips/skin glue, splinting, muscle/joint strain)</option><option value="3">Major (surgery, casting, traction, consultation for neurological or internal injury, receipt of blood products)</option></select></div><hr class="HowSeriousWasInjury hide"></div>'
+
+					$("#falls-entry").append(showFields);
+					break;
+			}
+		});
+
+		// This button will decrement the value till 0
+		$('[data-quantity="minus"]').on('click', function(e) {
+			// Stop acting like a button
+			e.preventDefault();
+			// Get the field name
+			fieldName = $(this).data('field');
+			// Get its current value
+			var currentVal = parseInt($('[data-name="'+fieldName+'"]').val());
+
+			switch (fieldName) {
+				case "emergency-admission-count":
+					$("#emergency-"+currentVal).remove();
+					break;
+				case "hospital-admission-count":
+					$("#hospital-"+currentVal).remove();
+					break;
+				case "falls-count":
+					$("#falls-"+currentVal).remove();
+					break;
+			}
+			// If it isn't undefined or its greater than 0
+			if (!isNaN(currentVal) && currentVal > 0) {
+				// Decrement one
+				$('input[data-name='+fieldName+']').val(currentVal - 1);
+			} else {
+				// Otherwise put a 0 there
+				$('input[data-name='+fieldName+']').val(0);
+			}
+		});
+
+        // Custom next/prev button inside each tab
+        $("#panel1 a.tab-next").on("click", function(e){
+            e.preventDefault();
+            $(".tabs-title a[data-tabs-target='panel2']").trigger("click");
+        });
+
+        $("#panel2 a.tab-next").on("click", function(e){
+            e.preventDefault();
+            $(".tabs-title a[data-tabs-target='panel3']").trigger("click");
+        });
+
+        $("#panel2 a.tab-prev").on("click", function(e){
+            e.preventDefault();
+            $(".tabs-title a#panel1-label").trigger("click");
+        });
+
+        $("#panel3 a.tab-next").on("click", function(e){
+            e.preventDefault();
+            $(".tabs-title a[data-tabs-target='panel4']").trigger("click");
+        });
+
+        $("#panel3 a.tab-prev").on("click", function(e){
+            e.preventDefault();
+            $(".tabs-title a[data-tabs-target='panel2']").trigger("click");
+        });
+
+        $("#panel4 a.tab-next").on("click", function(e){
+            e.preventDefault();
+            $(".tabs-title a[data-tabs-target='panel5']").trigger("click");
+        });
+
+        $("#panel4 a.tab-prev").on("click", function(e){
+            e.preventDefault();
+            $(".tabs-title a[data-tabs-target='panel3']").trigger("click");
+        });
+
+        $("#panel5 a.tab-prev").on("click", function(e){
+            e.preventDefault();
+            $(".tabs-title a[data-tabs-target='panel4']").trigger("click");
+        });
+
+		$("#panel5 a.tab-next").on("click", function(e){
+			e.preventDefault();
+			$(".tabs-title a[data-tabs-target='panel6']").trigger("click");
+		});
+
+		$("#panel6 a.tab-prev").on("click", function(e){
+			e.preventDefault();
+			$(".tabs-title a[data-tabs-target='panel5']").trigger("click");
+		});
+
+        $(".tabs-panel a.tab-prev, .tabs-panel a.tab-next").on("click", function(){
+            $('.reveal-overlay').animate({
+                scrollTop: $("#add-wellness-data").offset().top
+            }, 500);
+		});
+
+    });
+
+	$('input[name="TeamsBP_PPR.MissedMed"]').on('change', function () {
+		if (this.value == 0 && $('input[name="TeamsBP_PPR.TakingMedication"]:checked').val() == 'True') {
+			$(".ReasonNotTakingMed").addClass('hide');
+			clearMultiSelect("ReasonNotTakingMed");
+            $('#TeamsBP_PPR_ReasonNotTakingMedText').val("");
+            $('#TeamsBP_PPR_ReasonNotTakingMedText').val("");
+		}
+        else
+			$(".ReasonNotTakingMed").removeClass('hide');
+    });
+
+    $('input[name="TeamsBP_PPR.MedicationChanges"]').on('click', function () {
+        if (this.value == "True")
+            $(".MedListChanges").removeClass('hide');
+        else {
+            $(".MedListChanges").addClass('hide');
+			$('textarea[name="TeamsBP_PPR.MedListChanges"]').val("");
+        }
+    });
+
+	$('input[name="TeamsBP_PPR.TakingMedication"]').on('click', function () {
+		if (this.value == "True" && ($('input[name="TeamsBP_PPR.MissedMed"]').val() == '0' || $('input[name="TeamsBP_PPR.MissedMed"]').val() == '')) {
+			$(".ReasonNotTakingMed").addClass('hide');
+			clearMultiSelect("ReasonNotTakingMed");
+            $('#TeamsBP_PPR_ReasonNotTakingMedText').val("");
+		}
+        else
+            $(".ReasonNotTakingMed").removeClass('hide');
+    });
+
+    $('input[name="TeamsBP_PPR.ChangeInBPMedPrescribed"]').on('click', function () {
+        if (this.value == "True")
+            $(".NewBPMedPrescribed").removeClass('hide');
+        else {
+            $(".NewBPMedPrescribed").addClass('hide');
+            $('textarea[name="TeamsBP_PPR.NewBPMedPrescribed"]').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.StepsGoalAttained"]').on('click', function () {
+        if (this.value == "True") {
+            if ($('input[name="TeamsBP_PPR.MinutesGoalAttained"]:checked').val() == 'True') {
+                $(".YAcheivedGoal").removeClass('hide');
+				$(".YNotAcheivedGoal").addClass('hide');
+                clearMultiSelect("YNotAcheivedGoal");
+                $('#TeamsBP_PPR_YNotAcheivedGoalText').val("");
+            }
+        }
+        else {
+            $(".YNotAcheivedGoal").removeClass('hide');
+            $(".YAcheivedGoal").addClass('hide');
+            clearMultiSelect("YAcheivedGoal");
+            $('#TeamsBP_PPR_YAcheivedGoalText').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.MinutesGoalAttained"]').on('click', function () {
+        if (this.value == "True") {
+            if ($('input[name="TeamsBP_PPR.StepsGoalAttained"]:checked').val() == 'True') {
+                $(".YAcheivedGoal").removeClass('hide');
+                $(".YNotAcheivedGoal").addClass('hide');
+                clearMultiSelect("YNotAcheivedGoal");
+                $('#TeamsBP_PPR_YNotAcheivedGoalText').val("");
+            }
+        }
+        else {
+            $(".YNotAcheivedGoal").removeClass('hide');
+            $(".YAcheivedGoal").addClass('hide');
+            clearMultiSelect("YAcheivedGoal");
+            $('#TeamsBP_PPR_YAcheivedGoalText').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.ChangeInPAGoal"]').on('click', function () {
+        if (this.value == "True")
+            $(".NewPAGoal").removeClass('hide');
+        else {
+            $(".NewPAGoal").addClass('hide');
+            $('textarea[name="TeamsBP_PPR.NewPAGoal"]').val("");
+            $('input[name="TeamsBP_PPR.MinGoal"]').val("");
+            $('input[name="TeamsBP_PPR.StepGoal"]').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.FollowedLSD"]').on('click', function () {
+		if (this.value == "True") {
+			$(".ReasonNotFollowedLSD").addClass('hide');
+            clearMultiSelect("ReasonNotFollowedLSD");
+            $('#TeamsBP_PPR_ReasonNotFollowedLSDText').val("");
+		} else
+			$(".ReasonNotFollowedLSD").removeClass('hide');
+    });
+
+    $('input[name="TeamsBP_PPR.ChangeInHDGoal"]').on('click', function () {
+        if (this.value == "True")
+            $(".NewHDGoal").removeClass('hide');
+        else
+        {
+            $(".NewHDGoal").addClass('hide');
+            $('textarea[name="TeamsBP_PPR.NewHDGoal"]').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.HasVisitedED"]').on('click', function () {
+        if (this.value == "True")
+            $(".HasVisitedED").removeClass('hide');
+        else {
+			$(".HasVisitedED").addClass('hide');
+			$('input[name="TeamsBP_PPR.EDVisitsNumber"]').val(null);
+            $('#emergency-admission-entry').html("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.WasAdmittedHospital"]').on('click', function () {
+        if (this.value == "True")
+            $(".WasAdmittedHospital").removeClass('hide');
+        else {
+			$(".WasAdmittedHospital").addClass('hide');
+			$('input[name="TeamsBP_PPR.HospitalVisitsNumber"]').val(null);
+            $('#hospital-admission-entry').html("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.HasFallen"]').on('click', function () {
+		if (this.value == "True")
+			$(".NumberOfFalls").removeClass('hide');
+		else {
+			$(".NumberOfFalls").addClass('hide');
+			$('input[name="TeamsBP_PPR.NumberOfFalls"]').val(null);
+            $('#falls-entry').html("");
+		}
+    });
+
+    $(document).on('click', '#falls-entry .tick-buttons label', function () {
+		if ($(this).siblings("input[type='radio']").val() == "True") {
+            $(this).parents(".falls-status").find(".HowSeriousWasInjury").removeClass('hide');
+            $(this).parents(".falls-status").find("hr.NumberOfFalls").addClass('hide');
+        }
+        else {
+			$(this).parents(".falls-status").find(".HowSeriousWasInjury").addClass('hide');
+            $(this).parents(".falls-status").find("hr.NumberOfFalls").removeClass('hide');
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.ReferredByProvider"]').on('click', function () {
+        if (this.value == "True") {
+			$(".AttendingAsScheduled").removeClass('hide');
+            $(".NotAttendingReason").addClass('hide');
+            clearMultiSelect("NotAttendingReason");
+            $('#TeamsBP_PPR_NotAttendingReasonText').val("");
+			$(".NeedsProviderReferral").addClass('hide');
+		} else {
+            clearMultiSelect("NotAttendingReason");
+            $('#TeamsBP_PPR_NotAttendingReasonText').val("");
+            $(".AttendingAsScheduled").addClass('hide');
+            $(".NotAttendingReason").addClass('hide');
+            $(".NeedsProviderReferral").removeClass('hide');
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.AttendingAsScheduled"]').on('click', function () {
+        if (this.value == "True") {
+            clearMultiSelect("NotAttendingReason");
+            $('#TeamsBP_PPR_NotAttendingReasonText').val("");
+            $(".NotAttendingReason").addClass('hide');
+        }
+        else
+            $(".NotAttendingReason").removeClass('hide');
+    });
+
+    $('input[name="TeamsBP_PPR.MonitoredBP"]').on('click', function () {
+        if (this.value == "True") {
+            $(".MonitoredBP").addClass('hide');
+            $(".MonitoredBPHelpful").removeClass('hide');
+			clearMultiSelect("NotMonitoredReason");
+			$('#TeamsBP_PPR_NotMonitoredReasonText').val("");
+            $('#TeamsBP_PPR_MonitoredBPDays').val("");
+
+        } else {
+            $(".MonitoredBP").removeClass('hide');
+			$(".MonitoredBPHelpful").addClass('hide');
+			clearMultiSelect("MonitoredBPHelpful");
+			$('#TeamsBP_PPR_MonitoredBPHelpfulText').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.ChangeInBPMonitoringGoal"]').on('click', function () {
+        if (this.value == "True")
+            $(".NewBPMonitoringGoal").removeClass('hide');
+        else {
+            $(".NewBPMonitoringGoal").addClass('hide');
+            $('textarea[name="TeamsBP_PPR.NewBPMonitoringGoal"]').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.MonitoredBPHelpful"]').on('click', function () {
+        if (this.value == "True") {
+            $(".MonitoredBPHelpful").removeClass('hide');
+            $(".MonitoredBPHelpfulText").removeClass('hide');
+        }
+        else {
+            $(".MonitoredBPHelpful").addClass('hide');
+            $(".MonitoredBPHelpfulText").addClass('hide');
+        }
+    });
+
+    $('select[name="NotMonitoredReason"]').on('change', function () {
+        if (IsOtherSelected("NotMonitoredReason")) {
+            $(".NotMonitoredReasonText").removeClass('hide');
+            $("hr.MonitoredBP").addClass('hide');
+        }
+        else {
+			$(".NotMonitoredReasonText").addClass('hide');
+            $("hr.MonitoredBP").removeClass('hide');
+        }
+    });
+
+    $('select[name="MonitoredBPHelpful"]').on('change', function () {
+        if (IsOtherSelected("MonitoredBPHelpful")) {
+            $(".MonitoredBPHelpfulText").removeClass('hide');
+            $("hr.MonitoredBPHelpful").addClass("hide");
+        }
+        else {
+			$(".MonitoredBPHelpfulText").addClass('hide');
+            $("hr.MonitoredBPHelpful").removeClass("hide");
+        }
+    });
+
+    $('select[name="ReasonNotTakingMed"]').on('change', function () {
+        if (IsOtherSelected("ReasonNotTakingMed")) {
+            $(".ReasonNotTakingMedText").removeClass('hide');
+            $("hr.ReasonNotTakingMed").addClass("hide");
+        }
+        else {
+			$(".ReasonNotTakingMedText").addClass('hide');
+            $("hr.ReasonNotTakingMed").removeClass("hide");
+        }
+    });
+
+    $('select[name="YAcheivedGoal"]').on('change', function () {
+        if (IsOtherSelected("YAcheivedGoal")) {
+            $(".YAcheivedGoalText").removeClass('hide');
+            $("hr.YAcheivedGoal").addClass("hide");
+        }
+        else {
+			$(".YAcheivedGoalText").addClass('hide');
+            $("hr.YAcheivedGoal").removeClass("hide");
+        }
+    });
+
+    $('select[name="YNotAcheivedGoal"]').on('change', function () {
+        if (IsOtherSelected("YNotAcheivedGoal")) {
+            $(".YNotAcheivedGoalText").removeClass('hide');
+            $("hr.YNotAcheivedGoal").addClass("hide");
+        }
+        else {
+			$(".YNotAcheivedGoalText").addClass('hide');
+            $("hr.YNotAcheivedGoal").removeClass("hide");
+        }
+    });
+
+    $('select[name="ReasonNotFollowedLSD"]').on('change', function () {
+        if (IsOtherSelected("ReasonNotFollowedLSD")) {
+            $(".ReasonNotFollowedLSDText").removeClass('hide');
+            $("hr.ReasonNotFollowedLSD").addClass("hide");
+        }
+        else {
+			$(".ReasonNotFollowedLSDText").addClass('hide');
+            $("hr.ReasonNotFollowedLSD").removeClass("hide");
+        }
+    });
+
+    $('select[name="HowSeriousWasInjury"]').on('change', function () {
+        if (IsOtherSelected("HowSeriousWasInjury"))
+            $(".HowSeriousWasInjury").removeClass('hide');
+        else
+            $(".HowSeriousWasInjury").addClass('hide');
+    });
+
+    $('select[name="NotAttendingReason"]').on('change', function () {
+        if (IsOtherSelected("NotAttendingReason")) {
+            $(".NotAttendingReasonText").removeClass('hide');
+            $("hr.NotAttendingReason").addClass("hide");
+        }
+        else {
+			$(".NotAttendingReasonText").addClass('hide');
+            $("hr.NotAttendingReason").removeClass("hide");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.CommunityStrokeRecovery"]').on('click', function () {
+        if (this.value == "True")
+            $(".CommunityUsing").removeClass('hide');
+        else {
+            $(".CommunityUsing").addClass('hide');
+            $('textarea[name="TeamsBP_PPR.CommunityUsing"]').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.NewCommunityHelp"]').on('click', function () {
+        if (this.value == "True")
+            $(".CommunityNeeded").removeClass('hide');
+        else {
+            $(".CommunityNeeded").addClass('hide');
+            $('textarea[name="TeamsBP_PPR.CommunityNeeded"]').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.ChangeManagingWeight"]').on('click', function () {
+        if (this.value == "True")
+            $(".ChangeManagingWeight").removeClass('hide');
+        else {
+            $(".ChangeManagingWeight").addClass('hide');
+            $('textarea[name="TeamsBP_PPR.NewWeightGoal"]').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.ChangeLimitingAlcohol"]').on('click', function () {
+        if (this.value == "True")
+            $(".ChangeLimitingAlcohol").removeClass('hide');
+        else {
+            $(".ChangeLimitingAlcohol").addClass('hide');
+            $('textarea[name="TeamsBP_PPR.NewAlcoholGoal"]').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.ChangeManagingStress"]').on('click', function () {
+        if (this.value == "True")
+            $(".ChangeManagingStress").removeClass('hide');
+        else {
+            $(".ChangeManagingStress").addClass('hide');
+            $('textarea[name="TeamsBP_PPR.NewStressGoal"]').val("");
+        }
+    });
+
+    $('input[name="TeamsBP_PPR.ChangeQuitSmoking"]').on('click', function () {
+        if (this.value == "True")
+            $(".ChangeQuitSmoking").removeClass('hide');
+        else {
+            $(".ChangeQuitSmoking").addClass('hide');
+            $('textarea[name="TeamsBP_PPR.NewSmokingGoal"]').val("");
+        }
+    });
+
+    $('.override-select').foundationSelect();
+
+    function getOtherGoals() {
+        var result = $('#newGoal-1').val();
+        if ($('#newGoal-2').length)
+            result += "|" + $('#newGoal-2').val();
+        if ($('#newGoal-3').length)
+            result += "|" + $('#newGoal-3').val();
+        $('#TeamsBP_PPR_OtherGoals').val(result);
+	}
+
+	function getEDValues() {
+        var value = $('[name="TeamsBP_PPR.EDVisitsNumber"]').val();
+		if (value > 0) {
+			var visit = "";
+            var reason = "";
+			for (var i = 1; i <= value; i++) {
+                visit += $('#TeamsBP_PPR_EDDateOfVisit' + i).val() == '' ? " " : $('#TeamsBP_PPR_EDDateOfVisit' + i).val();
+                reason += $('#TeamsBP_PPR_EDVisitReason' + i).val() == '' ? " " : $('#TeamsBP_PPR_EDVisitReason' + i).val();
+				if (i < value) {
+                    visit += "|";
+                    reason += "|";
+				}
+			}
+            $('#TeamsBP_PPR_EDDateOfVisit').val(visit);
+            $('#TeamsBP_PPR_EDVisitReason').val(reason);
+		}
+		else {
+			$('#TeamsBP_PPR_EDDateOfVisit').val(null);
+			$('#TeamsBP_PPR_EDVisitReason').val(null);
+		}
+	}
+
+    function getHospitalValues() {
+        var value = $('[name="TeamsBP_PPR.HospitalVisitsNumber"]').val();
+        if (value > 0) {
+            var date = "";
+            var days = "";
+            var reason = "";
+            for (var i = 1; i <= value; i++) {
+                date += $('#TeamsBP_PPR_DateOfAdmit' + i).val() == '' ? " " : $('#TeamsBP_PPR_DateOfAdmit' + i).val();
+                days += $('#TeamsBP_PPR_DaysInHospital' + i).val() == '' ? " " : $('#TeamsBP_PPR_DaysInHospital' + i).val();
+                reason += $('#TeamsBP_PPR_HospitalizationReason' + i).val() == '' ? " " : $('#TeamsBP_PPR_HospitalizationReason' + i).val();
+                if (i < value) {
+                    date += "|";
+                    days += "|";
+                    reason += "|";
+                }
+            }
+            $('#TeamsBP_PPR_DateOfAdmit').val(date);
+            $('#TeamsBP_PPR_DaysInHospital').val(days);
+            $('#TeamsBP_PPR_HospitalizationReason').val(reason);
+
+        }
+        else {
+            $('#TeamsBP_PPR_DateOfAdmit').val(null);
+            $('#TeamsBP_PPR_DaysInHospital').val(null);
+            $('#TeamsBP_PPR_HospitalizationReason').val(null);
+        }
+    }
+
+	function getFallValues() {
+		var value = $('[name="TeamsBP_PPR.NumberOfFalls"]').val();
+		if (value > 0) {
+			var fall = "";
+			var injury = "";
+			for (var i = 1; i <= value; i++) {
+                fall += $('input[name="TeamsBP_PPR.InjuredWhenFell' + i + '"]:checked').val() == undefined ? null : $('input[name="TeamsBP_PPR.InjuredWhenFell' + i + '"]:checked').val();
+				injury += $('#HowSeriousWasInjury' + i).find(":selected").text() == 'Select One...' ? " " : $('#HowSeriousWasInjury' + i).find(":selected").text();
+				if (i < value) {
+					fall += "|";
+					injury += "|";
+				}
+			}
+			$('#TeamsBP_PPR_InjuredWhenFell').val(fall);
+			$('#TeamsBP_PPR_HowSeriousWasInjury').val(injury);
+		}
+		else
+		{
+            $('#TeamsBP_PPR_InjuredWhenFell').val(null);
+            $('#TeamsBP_PPR_HowSeriousWasInjury').val(null);
+		}
+    }
+
+	function clearMultiSelect(name) {
+		var selectObject = $('[name="' + name + '"]')[0].selectedOptions;
+		while (selectObject.length > 0) {
+			$('#select-' + name + ' li[data-value="' + selectObject[0].value + '"]').trigger("click");
+        }
+    }
+
+	function getMultiSelect(name) {
+		var response = "";
+		if ($('[name="' + name + '"]')[0].options != null) {
+			var options = $('[name="' + name + '"]')[0].options;
+			var selectObject = $('[name="' + name + '"]')[0].selectedOptions;
+			for (var i = 0, j = 0; i < options.length; i++) {
+				if (0 == selectObject.length) {
+					 if(i < options.length - 1)
+						response = response + "|";
+				} else if (j == selectObject.length) {
+                    if (i < options.length - 1)
+						response = response + "|";
+				} else if(options[i].label != selectObject[j].label) {
+                    if (i < options.length - 1)
+						response = response + "|";
+				} else {
+					if (response == "") {
+                        response = selectObject[j].label + "|";
+						j++;
+					}
+					else {
+						response = response + selectObject[j].label;
+						if (i < options.length - 1)
+                            response = response + "|";
+						j++;
+					}
+				}
+			}
+			return response;
+		}
+    }
+
+    function IsOtherSelected(name) {
+        var selectObject = $('[name="' + name + '"]')[0].selectedOptions;
+        for (var i = 0; i < selectObject.length; i++) {
+            if ("Other (text)" == selectObject[i].label)
+                return true;
+        }
+        return false;
+	}
+
+
+	function SaveForm() {
+		@if (!Model.IsReadOnly)
+        {
+            @:if ($('#TeamsBP_PPR_Id').val() == 0) {
+			@:$("#confirmation-modal").foundation("open");
+            @:}
+			@:else {
+            @:    SubmitForm();
+            @:}
+        }
+	}
+
+    function SubmitForm() {
+		$("#loader-wrapper").fadeIn();
+		$('#TeamsBP_PPR_ReasonNotFollowedLSD').val(getMultiSelect("ReasonNotFollowedLSD"));
+		$('#TeamsBP_PPR_MonitoredBPHelpful').val(getMultiSelect("MonitoredBPHelpful"));
+		$('#TeamsBP_PPR_NotMonitoredReason').val(getMultiSelect("NotMonitoredReason"));
+		$('#TeamsBP_PPR_ReasonNotTakingMed').val(getMultiSelect("ReasonNotTakingMed"));
+		$('#TeamsBP_PPR_YAcheivedGoal').val(getMultiSelect("YAcheivedGoal"));
+		$('#TeamsBP_PPR_YNotAcheivedGoal').val(getMultiSelect("YNotAcheivedGoal"));
+		if ($('[name=HowSeriousWasInjury]')[0] != undefined)
+			$('#TeamsBP_PPR_HowSeriousWasInjury').val(getMultiSelect("HowSeriousWasInjury"));
+		$('#TeamsBP_PPR_NotAttendingReason').val(getMultiSelect("NotAttendingReason"));
+		getOtherGoals();
+		getEDValues();
+		getHospitalValues();
+		getFallValues();
+
+		$.ajax({
+			url: "@Url.Action("AddEditTeamsBP_PPR", "Participant")",
+			type: 'POST',
+			dataType: "json",
+			data: $("#wellness-data-form").serialize(),
+			success: function (data) {
+				if (data.success == true) {
+					$('#TeamsBP_PPR_Id').val(data.Id);
+					$('#TeamsBP_PPR_WellnessId').val(data.wellnessId);
+					$('#TeamsBP_PPR_WellnessData_Id').val(data.wellnessId);
+				}
+				$("#confirmation-modal").foundation("close");
+				$("#loader-wrapper").fadeOut();
+			}
+		}).fail(function (jqXHR, textStatus, errorThrown) {
+			RedirectToErrorPage(jqXHR.status);
+            $("#loader-wrapper").fadeOut();
+		})
+	}
+
+</script>
+<script>
+	var scrollVal = 0;
+	$("#wellness-sidebar-tabs").on('change.zf.tabs', function () {
+		setTimeout(function () {
+			var tabWrapper = $('#wellness-sidebar-tabs').parent('.tab-scroll-wrapper');
+			if (tabWrapper.width() < tabWrapper[0].scrollWidth) {
+				var selectedItem = $('#wellness-sidebar-tabs li.is-active');
+				scrollVal = selectedItem.position().left - 10;
+
+				$('#wellness-sidebar-tabs').parent(".tab-scroll-wrapper").animate({
+					scrollLeft: scrollVal
+				}, 500);
+			}
+		}, 600);
+	});
+</script>
+<a class="close-button" data-close aria-label="Close">&#215;</a>

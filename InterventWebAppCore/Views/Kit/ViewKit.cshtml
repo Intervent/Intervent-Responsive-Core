@@ -1,0 +1,612 @@
+﻿<!--USER VIEW-->
+@model Intervent.Web.DTO.GetKitByIdResponse
+@using System.Web;
+@using InterventWebApp
+@using System.Text.Json;
+
+@{
+    ViewBag.Title = "KitPreview";
+    if (!Model.preview)
+    {
+        Layout = "~/Views/Shared/_UserLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+}
+<section class="main courses @Model.KitColor">
+    <script src="@Url.Content("~/Scripts/Core.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/FollowUpChart.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/IVCharts.js")?v=@CommonUtility.GetRandom()"></script>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <ul class="breadcrumbs">
+                <li><a href="~/Program/MyProgram/">@Translate.Message("L934")</a></li>
+                <li class="unavailable"><a href="@Context.Request.Scheme://@Context.Request.Host@Context.Request.Path">@Model.EduKit.Name</a></li>
+            </ul>
+            <div class="course-header small-12 cell">
+                <div class="grid-x grid-margin-x">
+                    <div class="medium-10 cell">
+                        <h1>@Model.EduKit.Name</h1>
+                    </div>
+                    <div class="medium-2 cell text-right">                      
+                        <div class="progress progress progress-bar kit-progress-bar radius" role="progressbar" tabindex="0" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            <div id="meterIcon" class="meter-text progress-meter"  style="width: 10%"></div>
+                            <div id="meterText" class="meter-text"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="main-column small-12 cell">
+                <div id="activity-error" class="callout alert" hidden data-closable>
+                    Answer all the questions
+                    <a href="#" class="close">&times;</a>
+                </div>
+                <div class="course-content">
+                    <div class="page" id="page1">
+                        <h2 class="course-section lesson-outline">@Translate.Message("L1882")</h2>
+                        <ul>
+                            @{
+                                bool isAdditionalResource = false;
+                                bool ResourcesTopic = false;
+                            }
+                            @foreach (var step in @Model.StepNames)
+                            {
+                                if (step.PageIdentifier == "KC" || step.IsAppendix)
+                                {
+                                    isAdditionalResource = true;
+                                    if (ResourcesTopic == false)
+                                    {
+                                        @Html.Raw("</ul><h2 class='course-section lesson-outline'>" + Translate.Message("L1681") + "</h2><ul>")
+                                        ResourcesTopic = true;
+                                    }
+                                }
+
+                                <li>
+                                    @if (!step.HideLink || isAdditionalResource)
+                                    {
+                                        if (step.PageIdentifier == "KC")
+                                        {
+                                            step.StepName = Translate.Message("L3816");
+                                        }
+                                        <a href="#" onclick="moveToPage(@step.Index, '@step.PageIdentifier')">@step.StepName</a>
+                                    }
+                                    else
+                                    {
+                                        @step.StepName
+                                    }
+                                </li>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.EduKit.Pdf))
+                            {
+                                var pdfs = Model.EduKit.Pdf.Split(';');
+                                if (!isAdditionalResource)
+                                {
+                                    isAdditionalResource = true;
+                                    @Html.Raw("</ul><h2 class='course-section lesson-outline'>" + Translate.Message("L1681") + "</h2><ul>")
+                                }
+                                for (int i = 0; i < pdfs.Count(); i++)
+                                {
+                                    <li><a href="~/Pdf/@pdfs[i]" target="_blank">@pdfs[i].Split('.')[0]</a></li>
+                                }
+                            }
+                            @if (!string.IsNullOrEmpty(Model.EduKit.Audio))
+                            {
+                                if (!isAdditionalResource)
+                                {
+                                    isAdditionalResource = true;
+                                    @Html.Raw("</ul><h2 class='course-section lesson-outline'>" + Translate.Message("L1681") + "</h2><ul>")
+                                }
+
+                                <li><a href='#' onclick="listenAudio()">@Translate.Message("L2179")</a></li>
+                            }
+                        </ul>
+                    </div>
+
+                    @foreach (var step in @Model.PageIdentifier)
+                    {
+                        <div id="@step.PageId" class="page hide">
+                        </div>
+                    }
+
+                </div>
+            </div>
+            <div class="cell program-btn-set button-set">
+                <div class="grid-x grid-margin-x">
+                    <div class="medium-4 medium-text-right cell hide medium-order-3" id="finish-page-div"><button id="finish-page-btn" class="small button" type="button">@Translate.Message("L1883")</button></div>
+                    <div class="medium-4 medium-text-right cell medium-order-3" id="next-page-div"><button id="next-page-btn" class="small button" type="button">@Translate.Message("L871")</button></div>
+                    <div class="medium-4 medium-text-left cell medium-order-1"><button class="secondary small hide button" id="prev-page-btn" type="button">@Translate.Message("L1884")</button></div>
+                    <div class="medium-4 medium-text-left hide cell medium-order-1"><button class="secondary small hide button" id="home-page-btn" type="button">@Translate.Message("L1884")</button></div>
+                    <div class="medium-4 text-center cell medium-order-2"><span id="current-page" class="current-page"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="kit-modal" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+    <div id="details-modal" class="reveal large device-chart-container" data-reveal>
+       <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div id="resource-cholesterol-triglycerides" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"">
+    </div>
+    <div id="rpe" class="reveal large rec-modal exercise" data-reveal data-close-on-click="false" data-close-on-esc="false">
+        @Html.Partial("_RPE")
+        <<!-- a class="close-reveal-modal" href="#" data-open="details-modal" data-reveal-ajax="@Html.Raw(Url.Action("ExerciseRecommendation", "Reports", new { fromKit = true}))">&#215;</a> -->
+         <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    @Html.Partial("_GoalsinKits")
+</section>
+<div id="CompleteKitAlert" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <h2>@Translate.Message("L2799")</h2>
+        </div>
+    </div>
+    <p><a id="closeCompleteKitAlertMyProgram"><u>@Translate.Message("L2800")</u></a></p>
+    <p><a id="closeCompleteKitAlertMyDashboard"><u>@Translate.Message("L2851")</u></a></p>
+    <p><a id="closeCompleteKitAlertAdditionalResources"><u>@Translate.Message("L2852")</u></a></p>
+</div>
+<div class='reveal' data-reveal data-close-on-click='false' data-close-on-esc='false' data-reset-on-close='true' id='kit-video'>
+    <div class='flex-video'>
+        <iframe width='640' height='480' src='https://www.youtube.com/embed/QlDnN9t1mdI' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
+    </div>
+    <button class='close-button' data-close><span aria-hidden='true'>&times;</span></button>
+</div>
+<script>
+
+        var count = 1;
+        var KitId = @Model.EduKit.Id;
+        var KitsInUserProgramId = @Model.KitsInUserProgramId;
+        var PercentCompleted = @Model.PercentCompleted;
+        var validationInCount = 0;
+        var validationCount = 0;
+        var hadWrongAnswer = true;
+        var kitColor = "@Model.KitColor";
+        $(document).ready(function () {
+            count = @Model.PageIdentifier.Count +1;
+            writePercentage(PercentCompleted);
+            if ('@string.IsNullOrEmpty(Model.pageIdentifier)' == 'False'){
+                moveToPage('@Model.index', '@Model.pageIdentifier');
+            }
+            $(document).on('click', "[data-open]", function (e) { showmodal($(this), e) });
+        });
+        var totalPages = @Model.TotalPages + 1;
+        var meterWidth = 0;
+        function moveToPage(index, id){
+            var visPage = $('.page:visible');
+            //hide currently visible page
+            visPage.fadeOut().addClass('hide');
+            $("#prev-page-btn").removeClass('hide');
+            $("#home-page-btn").addClass('hide');
+            if (index == totalPages - 1) {
+                $("#next-page-div").addClass('hide');
+                $('#finish-page-div').removeClass('hide');
+            }
+            $(".page").eq(index).fadeIn().removeClass('hide');
+            index = index + 1;
+            if(index <= totalPages)
+                $("#current-page").text("Page " + (index) + "/" + totalPages);
+
+            loadPage(id);
+            if(index > totalPages){
+                $("#prev-page-btn").addClass('hide');
+                $("#next-page-div").addClass('hide');
+                $('#home-page-btn').removeClass('hide');
+            }
+        }
+
+        function lessonNav(bool) {
+            var visPage = $('.page:visible');
+            var visPageIndex = $(".page").index(visPage);
+            var visPageId = visPage.attr('id');
+            if ($("#" + visPageId + "").find('#HValidationInCount').val() != undefined && $("#" + visPageId + "").find('#HValidationInCount').val() == 1) {
+                validationInCount = 1;
+                validationCount++;
+            }
+            else {
+                validationInCount = 0;
+            }
+
+            if(hadWrongAnswer == true && validationCount < 2){
+                $(".wrong").addClass("hide");
+                hadWrongAnswer = saveActivityChanges(visPageIndex, visPageId);
+                if(hadWrongAnswer != null){
+                    if(hadWrongAnswer){
+                        if(validationCount == 0)
+                            $("#" +visPageId + ' #FirstWrong').removeClass("hide");
+                        else
+                            $("#" +visPageId + ' #SecondWrong').removeClass("hide");
+                    }
+                    else{
+                        if(validationCount == 0)
+                            $("#" +visPageId + ' #FirstCorrect').removeClass("hide");
+                        else
+                            $("#" +visPageId + ' #SecondCorrect').removeClass("hide");
+                    }
+                    validationCount++;
+                    return;
+                }
+            }
+
+            validationCount = 0;
+            hadWrongAnswer = true;
+            //hide currently visible page
+            visPage.fadeOut().addClass('hide');
+            $("#home-page-btn").addClass('hide');
+            //show next/previous page
+            if (typeof bool !== 'undefined') {
+                $(".page").eq(visPageIndex + 1).fadeIn().removeClass('hide');
+                if (visPageIndex == 0) {
+                    $("#prev-page-btn").removeClass('hide');
+                }
+                if (visPageIndex == totalPages - 2) {
+                    $("#next-page-div").addClass('hide');
+                    $('#finish-page-div').removeClass('hide');
+                }
+                else
+                    $('#finish-page-div').addClass('hide');
+                if((visPageIndex + 2) <= totalPages)
+                    $("#current-page").text("Page " + (visPageIndex + 2) + "/" + totalPages);
+                loadPage($(".page").eq(visPageIndex + 1).attr('id'));
+                calculatePercentage(visPageIndex + 1);
+            } else {
+                $(".page").eq(visPageIndex - 1).fadeIn().removeClass('hide');
+                if (visPageIndex == 1) {
+                    $("#prev-page-btn").addClass('hide');
+                }
+                if (visPageIndex == totalPages - 1) {
+                    $("#next-page-div").removeClass('hide');
+                    $('#finish-page-div').addClass('hide');
+                }
+                if(visPageIndex <= totalPages)
+                    $("#current-page").text("Page " + (visPageIndex) + "/" + totalPages);
+                if($(".page").eq(visPageIndex -1).html().trim() == "")
+                    loadPage($(".page").eq(visPageIndex - 1).attr('id'));
+            }
+            movetoTop();
+        }
+
+
+
+
+    function saveActivityChanges(pageIndex, visPageId, islast) {
+
+        //3 state variable 1. null if no quiz 2. true if it has wrong answer 3. false if everything is correct
+        var hasWrongAnswer = null;
+        var isQuiz = false;
+        if(visPageId.indexOf(separator) == -1)
+            isQuiz = true;
+
+        var dict = new Dirctionry();
+        if (typeof bool == 'undefined') {
+            var totalIncorrect = 0;
+            $('.page:visible :input').each(
+                function (index) {
+                var input = $(this);
+                var value = input.val();
+                var ids = input.attr('id').split('_');
+                var type = ids[0];
+                if (type == "checkbox") {
+                    var questionId = input.attr('name').split('_')[1];
+                    if (input.is(":checked")) {
+                        dict.Update(questionId, ids[1] + ",");
+                    }
+                    else {
+                        dict.Update(questionId, "");
+                    }
+                }
+                else if (type == "option") {
+                    input.parent().removeClass('incorrect');
+                    if (validationInCount == 1 && $('input[name=' + input.attr('name') + ']:checked').val()) {
+                        $('input[name=' + input.attr('name') + ']').attr('disabled', 'disabled');
+                    }
+                    if (input.is(":checked")) {
+                        var questionId = input.attr('name').split('_')[1];
+                        dict.Add(questionId, ids[1]);
+                        input.parent().addClass('incorrect');
+                        input.parents('.qOption').addClass('incorrect-single');
+                        if(value == "true" && !hasWrongAnswer) hasWrongAnswer = false;
+                        if(value == "true") {
+                            input.parent().removeClass('incorrect').addClass('correct part-1');
+                            input.parents('.question').removeClass('incorrect');
+                            input.parents('.qOption').removeClass('incorrect-single');
+                        }
+                    }
+                    else if(value == "true") {
+                        hasWrongAnswer = true;
+                        var questionId = input.attr('name').split('_')[1];
+                        if(validationCount == 0) {
+                            input.parents('.qOption').addClass('incorrect-single');
+                            input.parents('.question').addClass('incorrect');
+                            totalIncorrect++;
+                        } else {
+                            input.parent().removeClass('incorrect').addClass('correct part-2');
+                            $("#answer_" + questionId).removeClass('hide');
+                        }
+                    }
+                }
+                else if (type == "select") {
+                    var value = input.val();
+                    if(value != "0")
+                        dict.Add(ids[1], value);
+                }
+                else if (type == "textbox") {
+                    var value = input.val();
+                    if (value != "" || input[0].defaultValue != "")
+                        dict.Add(ids[1], value);
+                }
+            });
+            if(totalIncorrect) {
+                $('.incorrect-summary').removeClass('hide');
+                $('.incorrect-summary .total').html(totalIncorrect);
+                    var str = "@Html.Raw(Translate.Message("L3819"))";
+                if($('#FirstWrong .incorrect-inline').length){
+                    $('#FirstWrong .incorrect-inline').html(str.replace("{0}", totalIncorrect) +'.');
+                    $('#SecondWrong .incorrect-inline').html(str.replace("{0}", totalIncorrect) +'.');
+                }
+                else
+                {
+                    $('#FirstWrong').append('<div class="incorrect-inline">' + str.replace("{0}", totalIncorrect) +'.</div>');
+                    $('#SecondWrong').append('<div class="incorrect-inline">' + str.replace("{0}", totalIncorrect) +'.</div>');
+                }
+            } else {
+                $('.incorrect-summary').addClass('hide');
+            }
+        }
+        if (@Model.KitsInUserProgramId > 0) {
+            var UserAnswer = [];
+            var percent = calculate(pageIndex + 1);
+            if(PercentCompleted < percent)
+                PercentCompleted = percent;
+            if(typeof isQuiz == 'undefined')
+                isQuiz = false;
+
+            if(dict.Count() > 0){
+                for (var index = 0; index < dict.Count() ; index++) {
+                    var Answer = {};
+                    var item = dict.Get(index);
+                    Answer.Value = escape(item.Value);
+                    Answer.Text = item.Key;
+                    UserAnswer.push(Answer);
+                }
+            }
+            
+            var request = {};
+            request.KitsInUserProgramsId = @Model.KitsInUserProgramId;
+            request.IsQuiz = isQuiz;
+            request.PercentComplete = PercentCompleted;
+            request.UserAnswer = UserAnswer;
+
+            $.ajax({
+                url: "@Url.Action("SaveUserOptions", "Program")",
+                data: request,
+                type: 'POST',
+                success: function (data) {
+                    if (islast == true) {
+                        $('#CompleteKitAlert').foundation('open');
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+        return hasWrongAnswer;
+    }
+
+    function loadPage(id) {
+        var $dummy = $('#' + id);
+        var lang = "@Model.LanguageCode";
+        var url = "@Url.Action("KitStepDetails", "Reports")";
+        $dummy.load(url + "?kitId=" + KitId + "&pageIdentifier=" + id + "&kitsInUserProgramsId=" + @Model.KitsInUserProgramId + "&languageCode=" + lang, function (response, status, xhr) {
+        });
+    }
+
+     @if (Model.StepNames.Count > 0 && Model.StepNames.FirstOrDefault().Index == 1 && !Model.StepNames.FirstOrDefault().HideLink && Model.PercentCompleted != 100)
+     {
+            @: $("#next-page-btn").html("@Translate.Message("L537")");
+     }
+     else
+     {
+         @: $("#next-page-btn").html("@Translate.Message("L871")");
+     }
+
+    $("#next-page-btn").on('click', function () {
+        $("#next-page-btn").html("@Translate.Message("L871")");
+    })
+
+    //events
+    $("#next-page-btn").on("click", function () {
+        if(validate())
+            lessonNav(1);
+    });
+
+    $("#prev-page-btn").on("click", function () {
+        lessonNav();
+    });
+
+    $("#home-page-btn").on("click", function () {
+        window.location.href = "@Context.Request.Scheme://@Context.Request.Host@Context.Request.Path";
+    });
+
+    var separator = "@Intervent.Web.DataLayer.KitReader.Separator"
+
+    $("#finish-page-btn").on("click", function () {
+        if (validate()) {
+            var visPage = $('.page:visible');
+            var visPageId = visPage.attr('id')
+            var visPageIndex = $(".page").index(visPage);
+            saveActivityChanges(visPageIndex, visPageId, true);
+        }
+    });
+
+
+    function calculatePercentage(current) {
+        var percent = calculate(current);
+        writePercentage(percent);
+    }
+
+    function calculate(current){
+        return  Math.round(current / totalPages * 100);
+    }
+
+    function writePercentage(percent){
+
+        if (meterWidth < percent) {
+            meterWidth = percent;
+            $('#meterIcon').width(percent + "%");
+            $('#meterText').text(percent + "% @Html.Raw(Translate.Message("L7"))")
+        }
+    }
+    var model = @Html.Raw(JsonSerializer.Serialize(Model));
+
+    function movetoTop(){
+        window.scrollTo(500, 0);
+    }
+
+    function listenAudio() {
+        if ('@Model.ListenedAudio' == 'False')
+        {
+        $.ajax({
+            url: "@Url.Action("ListenedAudio", "Kit")",
+            type: 'POST',
+            dataType: "json",
+            data: { kitsinUserProgramId: @Model.KitsInUserProgramId },
+            success: function (data) {
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+        $('#modal-audio').foundation('open');
+    }
+
+    $('#closeCompleteKitAlertMyProgram').on('click', function () {
+        window.location.href = "@Url.Action("MyProgram", "Program", new { id = Model.UserinProgramId })";
+    });
+
+    $('#closeCompleteKitAlertMyDashboard').on('click', function () {
+            window.location.href = "@Url.Action("Stream", "Participant", new { ForceParticipant = true })";
+    });
+
+    $('#closeCompleteKitAlertAdditionalResources').on('click', function () {
+        window.location.href = "@Url.Action("ViewKit", "Kit", new { id = Model.EduKit.Id, kitsInUserProgramId = @Model.KitsInUserProgramId })";
+    });
+
+</script>
+<div id="modal-audio" class="reveal small" data-reveal>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    @if (!string.IsNullOrEmpty(Model.EduKit.Audio))
+    {
+        var audios = Model.EduKit.Audio.Split(';');
+        if (audios.Count() > 0)
+        {
+            foreach (var audio in audios)
+            {
+                var title = Model.EduKit.Name;
+                @Html.Raw(title + ":");
+                {
+                    <div class="grid-x grid-margin-x">
+                        <div class="medium-6 cell">
+                            <audio controls preload="none" id="audio-@title">
+                                <source src="~/Audio/@audio">
+                            </audio>
+                        </div>
+                    </div>
+                }
+            }
+        }
+    }
+</div>
+<div id="asa" class="reveal session-timeout-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="cell text-center">
+				<img src="@Url.Content("~/Images/leaving-space-icon.svg")" alt="" />
+				<p>@Translate.Message("L3687")</p>
+			</div>
+			<div class="cell align-spaced flex-container">
+				<button class="button hollow" type="button" onclick="$('#asa').foundation('close');">@Translate.Message("L967")</button>
+				<a href="/ASAOAuth/ConnecttoASA" target="_blank" class="button" onclick="$('#asa').foundation('close');">@Translate.Message("L478")</a>
+			</div>
+		</div>
+	</div>
+
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+<script>
+    $("#closeModal").on('click', function () {
+        $("#modal-audio").find("audio").each(function () {
+            var myAudio = document.getElementById(this.id);
+            myAudio.pause();
+        });
+    });
+
+    $('#resource-cholesterol-triglycerides').on('close', function () {
+        $("#details-modal").foundation('open');
+    });   
+
+    function validate()
+    {
+        var isvalid = true;
+        var els = $('*[id^="activity"], *[id^="question"]').find(':input');
+        for (var i = 0, n = els.length; i < n; i++)
+        {
+            $("#Error_" + els[i].id).hide();
+            $("#Error_" + els[i].id).removeClass("is-visible");
+            if (els[i].getAttribute("required") !== null) {
+                if (els[i].type == 'checkbox' && els[i].name != "") {
+                    $("#Error_" + els[i].name).hide();                 
+                    $("#Error_" + els[i].name).removeClass("is-visible");
+                    if (!validateCheckbox(els[i].name)) {
+                        $("#Error_" + els[i].name).show();
+                        $("#Error_" + els[i].name).addClass("is-visible");
+                        isvalid = false;
+                    }
+                    continue;
+                }
+                else if (els[i].value == "0" && ($('#' + els[i].id).is(':visible')) && els[i].type == 'select-one') {
+                    $("#Error_" + els[i].id).show();
+                    $("#Error_" + els[i].id).addClass("is-visible");
+                    $("#" + els[i].id +"").addClass("is-invalid-input");
+                    isvalid = false;
+                }
+                else if (els[i].value == "" && ($('#' + els[i].id).is(':visible')) && els[i].type != 'radio') {
+                    $("#Error_" + els[i].id).show();
+                    $("#Error_" + els[i].id).addClass("is-visible");
+                    $("#" + els[i].id +"").addClass("is-invalid-input");
+                    isvalid = false;
+                }
+                else if (els[i].type == 'radio' && $("input[name='" + els[i].name + "']:checked").length == 0) {
+                    $("#Error_" + els[i].name).show();
+                    $("#Error_" + els[i].name).addClass("is-visible");
+                    isvalid = false;
+                }
+            }
+        }
+        if (!isvalid)
+            return false;
+        return true;
+    }
+
+    function validateCheckbox(name) {
+        if ($("input[name='" + name + "'].switch-input").length > 0) {
+            return true;
+        }
+        else if ($("input[name='" + name + "']:checked").length == 0) {
+            return false;
+        }
+        return true;
+    }
+</script>

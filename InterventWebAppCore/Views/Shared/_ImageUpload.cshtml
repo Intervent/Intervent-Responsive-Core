@@ -1,0 +1,90 @@
+﻿@model Intervent.Web.DTO.UserDto
+@using InterventWebApp
+
+<script>
+    @if (string.IsNullOrEmpty(Model.Picture))
+    {
+        <text>
+            $("#removelink-@Model.Id").hide();
+        </text>
+    }
+    function removepicture() {
+        var image = $('#profilepicdiv-@Model.Id').find('#profilepic').css('background-image');
+        var cleanup = /\"|\'|\)/g;
+        var imageName = image.split('/').pop().replace(cleanup, '');
+
+        $.ajax({
+            url: "@Url.Action("RemovePicture", "Account")",
+            type: 'POST',
+            dataType: "json",
+            data: { picture: imageName, id: '@Model.Id' },
+            success: function (data) {
+                if (data == "success") {
+                    showHideImage(data, 'remove');
+                };
+            },
+            complete: function () {
+				$('#edit-image').addClass('hide');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        return false;
+    }
+
+    function showHideImage(imageName, type) {
+        var cols;
+        var url = '@Model.BaseUrl';
+        cols = document.getElementsByClassName("anonymous-female");
+        if (cols.length == 0)
+            cols = document.getElementsByClassName("anonymous-male");
+        if (cols.length == 0)
+            cols = document.getElementsByClassName("user");
+
+        for (i = 0; i < cols.length; i++) {
+            if (type == 'add') {
+                cols[i].style.backgroundImage = "url('" + url + "/ProfilePictures/" + imageName + "')";
+                $("#removelink-@Model.Id").show();
+            }
+            else if (type == 'show') {
+                var pic = '@Model.Picture';
+                cols[i].style.backgroundImage = "url('" + url + "/ProfilePictures/" + pic + "')";
+                $("#removelink-@Model.Id").show();
+            }
+            else {
+                cols[i].style.backgroundImage = "";
+                $("#removelink-@Model.Id").hide();
+            }
+        }
+    }
+
+    function upload_files() {
+        var formData = new FormData();
+        var file = document.getElementById("imageUpload-@Model.Id").files[0];
+        formData.append("FileUpload", file);
+        formData.append("id", @Model.Id);
+        formData.append("action", 'profile');
+        var extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+        
+        if (!(extension && /^(jpg|png|jpeg|gif|svg)$/.test(extension.toLowerCase()))) {
+            alert("@Translate.Message("L2221")");
+            return;
+        }        
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("UploadFile", "Common")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.message != "Failed") {
+                    showHideImage(response.data, 'add');
+                }
+            },
+            error: function (error) {
+                 alert("@Translate.Message("L2221")");
+            }
+        });
+    }      
+</script>

@@ -1,0 +1,17 @@
+﻿@using InterventWebApp
+@using System.Collections.Generic
+@using Intervent.Web.DTO.Diff
+@model ParticipantHistoryChangesModel
+<table class="table basic-table1">
+	<thead>
+		<tr><th>Property Name</th><th>Old Value</th><th>New Value</th></tr>
+	</thead>
+    @foreach (PropertyCompare p in Model.Changes)
+    {
+        <tr>
+            <td>@p.PropertyName</td>
+            <td>@p.CurrentValue</td>
+            <td>@p.NewValue</td>
+        </tr>
+    }
+</table>

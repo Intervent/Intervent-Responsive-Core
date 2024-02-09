@@ -1,0 +1,265 @@
+﻿@using InterventWebApp
+@model InterventWebApp.UserDrugModel
+@{
+	Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="grid-container">
+	<div class="grid-x add-medication-container">
+		<div class="large-4 medium-5 cell step-block left-white-bar">
+			<div class="list-one">
+				<span class="list-one-icon-bg"><img class="icon-medication" id="medication-icon-step1" src="@Url.Content("~/Images/icon-medication.png")" alt=" "></span>
+				<h2 id="medication-header">@Translate.Message("L2975")</h2>
+				<p>@Translate.Message("L2982")</p>
+			</div>
+			<div class="list-two" style="display:none;">
+				<span class="icon-bg"><img class="icon-tab" id="medication-icon-step2" src="@Url.Content("~/Images/Capsuls.png")" alt=" "></span>
+				<div class="edit-block">
+					<img class="icon-tab" src="@Url.Content("~/Images/icon-edit.png")" alt=" ">
+					<a href="#" class="edit-option">@Translate.Message("L2166")</a>
+				</div>
+                <h2><span id="drug"></span></h2>
+                <h2><span id="Ingredient" hidden></span></h2>
+				<div class="dosage">@Translate.Message("L3161") :<span id="dosage"></span></div>
+				<div class="dosage dsg-lst" style="display:none;">@Translate.Message("L3162") :<span id="drugFormulation"></span></div>
+				<div class="dosage dsg-lst" style="display:none;">@Translate.Message("L3163") :<span id="drugFrequency"></span></div>
+				<div class="condition">@Translate.Message("L2967"): <span id="drug-conditon"></span></div>
+			</div>
+			<ul class="medi-list">
+				<li class="list-btn list-btn1 active"><a href="#" class="button">1</a></li>
+				<li class="list-btn list-btn2"><a href="#" class="button">2</a></li>
+				<li class="list-btn list-btn3"><a href="#" class="button">3</a></li>
+			</ul>
+		</div>
+		<div class="large-8 medium-7 cell step-form">
+			<form data-abide id="myForm">
+				<div class="step-one">
+					<div class="grid-x grid-margin-y medi-search">
+						<div class="cell">
+							<label>@Translate.Message("L2983") </label>
+							<input type="search" placeholder="@Translate.Message("L2984")" class="animated-search-form" id="search-id" />
+							<small id="DrugIdError" class="form-error" hidden>@Translate.Message("L480")</small>
+							<div class="ini-medi-list">
+								<div class="no-search-result text-center" id="no-results"></div>
+								<div class="medi-search-list" id="ini-medi-list"></div>
+								<div class="medi-not-found">@Translate.Message("L3164") <a href="#" id="advancedSearch">@Translate.Message("L3165") <i class="fa fa-angle-double-right"></i></a></div>
+							</div>
+						</div>
+						<div class="cell">
+							<label>@Translate.Message("L2985")</label>
+							@Html.DropDownListFor(x => x.Condition, Model.ConditionList, "Select", new { required = "required" })
+							<small id="ConditionError" class="form-error" hidden>@Translate.Message("L480")</small>
+						</div>
+						<div class="cell"><a href="#" class="button btn-cnt" id="btncnt1">@Translate.Message("L2986")</a></div>
+					</div>
+
+				</div>
+                <div class="step-two" style="display:none;">
+                    <div class="grid-x grid-margin-y">
+                        <div class="cell">
+                            <label class="inline-txt">@Translate.Message("L2987")</label>
+                            @Html.DropDownListFor(x => x.Formulation, Model.FormulationList, new { @class = "inline-ddl", @onchange = "ChangeIcon();", @required = "required" })
+                            <label class="inline-txt">@Translate.Message("L2988")</label>
+                            <div class="button-group">
+                                <button type="button" id="subtract">-</button>
+                                <div id="counter"></div>
+                                <button type="button" id="add">+</button>
+                            </div>
+                            <small id="CounterError" class="form-error error" hidden>@Translate.Message("L480")</small>
+                        </div>
+                        <div class="cell">
+                            <label>@Translate.Message("L3166")</label>
+                            @Html.DropDownListFor(x => x.Frequency, Model.FrequencyList, "Select", new { required = "required" })
+                            <small id="FrequencyError" class="form-error" hidden>@Translate.Message("L480")</small>
+                        </div>
+                        <div class="cell"><a href="#" class="button btn-cnt" id="btncnt2">@Translate.Message("L537")</a></div>
+                    </div>
+
+                </div>
+                <div class="step-three" style="display:none;">
+                    <div id="duplicateWarning" class="callout alert" hidden data-closable>
+                        @Translate.Message("L3189")
+                    </div>
+                    <div class="grid-x grid-margin-y">
+                        <div class="cell">
+                            <label>@Translate.Message("L2991")</label>
+                            <input type="text" class="animated-date" id="date" value="@CommonUtility.dateFormater(DateTime.Now, false, Model.DateFormat)" required />
+                            <small id="dateError" class="form-error" hidden>@Translate.Message("L480")</small>
+                        </div>
+                        <div class="cell">
+                            <label>@Translate.Message("L2992")</label>
+                            @Html.DropDownListFor(x => x.Duration, Model.DurationList, "Select", new { required = "required" })
+                            <small id="DurationError" class="form-error" hidden>@Translate.Message("L480")</small>
+                        </div>
+                        <div class="cell">
+                            <label>@Translate.Message("L2993")</label>
+                            <textarea rows="3" id="notes" placeholder="@Translate.Message("L2994")"></textarea>
+                        </div>
+                        <div class="cell"><a onclick="AddDrug();" class="button btn-cnt" id="btncnt3">@Translate.Message("L2995")</a></div>
+                    </div>
+
+                </div>
+				<div class="medi-adv-search" style="display: none;">
+					<div class="adv-search-top">
+						<div class="adv-search-form">
+							<span class="adv-search-back"><i class="fa fa-angle-left"></i>@Translate.Message("L3169")</span>
+							<h4>@Translate.Message("L3167")</h4>
+
+							<div class="grid-x grid-margin-x align-justify">
+								<div class="cell search-box">
+									<label>@Translate.Message("L3168")</label>
+									<input type="search" value="" id="search-filter"/>
+									<i class="fa fa-search"></i>
+								</div>
+                                <div class="cell medium-4 filter-box">
+                                    <label>@Translate.Message("L4488")</label>
+                                   @Html.DropDownList("SFormulation", Model.FormulationList, Translate.Message("L3170"))
+                                </div>
+								<div class="cell medium-5 text-right">
+									<button class="button hollow" id="medication-filter">@Translate.Message("L3171")</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+                    <div id="search-results"></div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="isAdmin" value="0" hidden> 
+@Html.HiddenFor(m => m.DrugId)
+
+@section scripts
+{
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="@Url.Content("~/Scripts/medication.js")?v=@CommonUtility.GetRandom()"></script>
+	<script>
+        var Drug_Formulation = ["", "../Images/Capsuls.png", "../Images/Teaspoon.png", "../Images/Tablespoons.png", "../Images/Spray.png", "../Images/icon-card1.png", "../Images/icon-card1.png", "../Images/Patches.png", "../Images/Drops.png", "../Images/icon-card1.png", "../Images/Suppository.png", "../Images/Others_Applications.png"];
+        var mDosage = "";
+        var mDrugText = "";
+        var mIngredient = "";
+        $(document).ready(function () {
+
+            $("#date").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+                onRender: function (date) {
+                    var d = new Date();
+                    d.setDate(d.getDate() - 365);
+                    return date.valueOf() > Date.now() || date.valueOf() < d.valueOf() ? 'disabled' : '';
+                }
+            })
+            if ('@Model.DrugId' != '') {
+                Drug_Formulation = ["", "../../Images/Capsuls.png", "../../Images/Teaspoon.png", "../../Images/Tablespoons.png", "../../Images/Spray.png", "../../Images/icon-card1.png", "../../Images/icon-card1.png", "../../Images/Patches.png", "../../Images/Drops.png", "../../Images/icon-card1.png", "../../Images/Suppository.png", "../../Images/Others_Applications.png"];
+                $('#medication-icon-step1').attr('src', Drug_Formulation[$("#Formulation option:selected").val()]);
+                $('#medication-icon-step2').attr('src', Drug_Formulation[$("#Formulation option:selected").val()]);
+                $('#medication-header').text('@Translate.Message("L3048")');
+                $("#search-id").val('@Model.MedicationName');
+			    var conditonText = $("#Condition option:selected").text();
+                $("#drug-conditon").html(conditonText);
+                $("#drug").html('@Model.MedicationName');
+                mDrugText = '@Model.MedicationName';
+                $("#Ingredient").html('@Model.Ingredient');
+                mIngredient = '@Model.Ingredient';
+                $("#dosage").html('@Model.Dosage');
+                mDosage = '@Model.Dosage';
+			    $("#drug-title").html('Edit Medication');
+			    $("#counter").val(@Model.Quantity);
+			    $("#counter").text(@Model.Quantity);
+			    counter = '@Model.Quantity';
+                $("#notes").val('@Model.Notes');
+                var dateStr = new Date('@Model.MedicationStartDate');
+                var startDate = toLocalDateFormat(dateStr);
+			    $('#date').val(startDate);
+
+		    }
+
+
+			$("#search-id").autocomplete("instance")._renderItem = function (ul, item) {
+				return $("<li>")
+					.append("<div class='medi-name'><img src='" + Drug_Formulation[item.FormulationType] + "' alt=''><p><span>" + item.label + "</span>" + item.Ingredient + "</p></div><div class='medi-type text-right'><p><span>" + item.ProductsForm + "</span>" + item.Dosage + "<p/></div>")
+					.appendTo(ul);
+			};
+        });
+        var listdrugurl = "@Url.Action("SearchDrugData", "Drug")";
+        var adddrugurl = "@Url.Action("AddUserDrug", "Drug")";
+        var filterdrugurl = "@Url.Action("FilterDrug", "Drug")";
+        var minSearchLength = 3, sliceListLength = 20;
+        var emptyResultText = "@Translate.Message("L4487")", naText = "@Translate.Message("L1149")";
+        function AddDrug() {
+        var ValidationList = ["Duration", "date"];
+        validator(ValidationList);
+            var Duration = $("#Duration").val();  
+        var date = toSystemDateFormat($("#date").val());
+        if (Duration != '' && date != 'Invalid date') {
+            var drugId = $("#DrugId").val();
+            var drug = $("#drug").text();
+            var dosage = $("#dosage").text();
+            var counter = $("#counter").text();
+            var Formulation = $("#Formulation").val();
+            var Frequency = $("#Frequency").val();
+            var Condition = $("#Condition").val();
+            var notes = $("#notes").val();
+            var ingredient = $("#Ingredient").text();
+            var model = {};
+            var strdata = {
+                'Id': drugId != '' ? drugId : 0,   
+                'medication': drug,
+                'Dosage': dosage,
+                'Quantity': counter,
+                'Formulation': Formulation,
+                'Frequency': Frequency,
+                'Condition': Condition,
+                'MedicationStartDate': (new Date(date)).toISOString().split('T')[0],
+                'Duration': Duration,
+                'Notes': notes,
+                'Ingredient': ingredient
+            };
+            model = (strdata);
+            var drugData = JSON.stringify(model);
+            $.ajax({
+                url: adddrugurl,
+                contentType: 'application/json, charset=utf-8',
+                type: 'POST',
+                dataType: "json",
+                data: drugData,
+                success: function (data) {
+                    if (data.Result == 'success') {
+                        window.location.href = "@Url.Action("MedicationDashboard", "Drug")";
+                    }
+                    else if (data.Result == 'Duplicate') {
+                        $('#duplicateWarning').show();
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+    }
+
+    function ChangeIcon() {
+        $('#medication-icon-step2').attr('src', Drug_Formulation[$("#Formulation option:selected").val()]);
+        $('#medication-icon-step1').attr('src', Drug_Formulation[$("#Formulation option:selected").val()]);
+    }
+    function validator(list) {
+        for (var i = 0; i < list.length; i++) {
+            if ($('#' + list[i] + '').val() == "")
+                $('#' + list[i] + 'Error').addClass("is-visible");
+        }
+    }
+
+    function SelectDrug(BrandName, Dosage, Ingredient, FormulationType) {
+        $("#search-id").val(BrandName);
+        $("#drug").html(BrandName);
+        $("#dosage").html(Dosage);
+        $("#Ingredient").html(Ingredient); 
+        mDrugText = BrandName;
+        mDosage = Dosage;
+        mIngredient = Ingredient;
+        $(".adv-search-back").trigger('click');
+        $('#Formulation').val(item.FormulationType);
+        ChangeIcon();
+    }
+	</script>
+}

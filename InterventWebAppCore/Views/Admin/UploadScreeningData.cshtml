@@ -1,0 +1,131 @@
+﻿@model InterventWebApp.AdminUsersModel
+@using InterventWebApp
+@{
+    ViewBag.Title = "AdminUsers";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+     <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="cell small-7">
+                    <h2>Upload Screening Data</h2>
+                </div>             
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <div class="panel filters">
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 medium-4 cell">
+                            @Html.DropDownListFor(x => x.Organization, Model.OrganizationList, "--Select Organization--", new Dictionary<string, object> { { "class", "primary-select" } })
+                        </div>
+                        <div class="small-12 medium-3 cell">
+                            <select id="FileType" required class="primary-select">
+                                <option disabled selected>Select Type</option>
+                                <option id="1" value="1">Quest's HL7 File</option>
+                                <option id="2" value="2">Excel File</option>
+                            </select>
+                        </div>
+                        <div class="small-12 medium-3 cell">
+                            @Html.DropDownListFor(x => x.Unit, Model.Units, "--Select Unit--", new Dictionary<string, object> { { "class", "primary-select" } })
+                        </div>
+                        <div class="small-12 medium-2 cell text-right">
+                            <div class="file-upload file-upload-new button">
+                                <span>Browse</span>
+                                <input type="file" id="imageUpload" class="upload" name="files" onchange="Upload();" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="result" hidden>
+            <div class="grid-x grid-margin-x">
+                <div class="small-12 cell">
+                    <div class="panel filters">
+                        <div class="grid-x grid-margin-x">
+                            <span id="rows"></span>
+                        </div>
+                        <div class="grid-x grid-margin-x">
+                            <span id="errors"></span>
+                        </div>
+                        <div class="grid-x grid-margin-x">
+                            <span id="uploadError"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    var orgId;
+    var unit;
+    var filetype;
+    $('#Organization').on('change', function () {
+        filetype = $('#FileType').val();
+        orgId = $('#Organization').val();
+        Upload();
+    });
+    $('#Unit').on('change', function () {
+        filetype = $('#FileType').val();
+        unit = $('#Unit').val();
+        Upload();
+    });
+    $('#FileType').on('change', function () {
+        filetype = $('#FileType').val();
+        orgId = $('#Organization').val();
+        Upload();
+    });
+
+    function Upload() {
+        if(!orgId || !filetype){
+            return false;
+        }
+        var formData = new FormData();
+        var file = document.getElementById("imageUpload").files[0];
+        if (!file) {
+            return false;
+        }
+        formData.append("FileUpload", file);
+        formData.append("orgId", orgId);
+        formData.append("filetype", filetype);
+        formData.append("unit", unit);
+        var extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+
+        //if (!(extension && /^(xlsx)$/.test(extension.toLowerCase()))) {
+        //    alert("Please upload XLSX file.");
+        //    return;
+        //}
+
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("UploadLabFile", "Admin")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                $('#result').show();
+                document.getElementById('rows').innerHTML = '';
+                document.getElementById('errors').innerHTML = '';
+                document.getElementById('uploadError').innerHTML = '';
+                if (response.Count > 0) {
+                    document.getElementById('rows').innerHTML = response.Count + " row(s) were inserted successfully.";
+                }
+                if (response.Error.length > 0) {
+                    document.getElementById('errors').innerHTML = response.Error;
+                }
+                if (response.Status) {
+                    document.getElementById('uploadError').innerHTML = "<p>One or more row(s) could not be inserted. Please check the <a href='../AdminReports/ScreeningDataErrorLog'><u>error log</u></a> for further details.<p>";
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+</script>

@@ -1,0 +1,624 @@
+﻿@model InterventWebApp.AdminProfileModel
+@using InterventWebApp
+
+<div class="grid-container">
+	<div class="grid-x">
+		<div class="cell">
+			<h2 class="text-center">Admin Profile</h2>
+			<form data-abide="ajax" id="adminprofile-form" class="form-component" novalidate="novalidate">
+				<!--PERSONAL INFORMATION-->
+				<fieldset>
+					<legend>Personal</legend>
+					<div class="grid-x grid-padding-x">
+						<div class="cell large-4">
+							<!--PHOTO-->
+							<label>My Photo</label>
+							<div class="photo-frame-wrapper" id="profilepicdiv-@Model.user.Id">
+								@{
+									string className = "";
+
+									if (Model.user.Id != 0 ? (Model.user.Gender.HasValue && Model.user.Gender.Value == 2) : true)
+									{
+										className = "anonymous-female";
+									}
+									else
+									{
+										className = "anonymous-male";
+									}
+
+									string styleText = "";
+									var url = "";
+								}
+
+								@if (Model.user.Picture != null)
+								{
+									url = Model.BaseUrl;
+									url = url + "/ProfilePictures/" + Model.user.Picture;
+									styleText = "background-image:url('" + @url + "')";
+
+								}
+								<div id="profilepic" class="photo-frame @className" style="@styleText" value="fff"></div>
+								@*<div>
+										<a onclick="rotateimage(1, '@url');"><i class="fa fa-rotate-left"></i></a>
+										<a onclick="rotateimage(2, '@url');"><i class="fa fa-rotate-right"></i></a>
+									</div>*@
+
+								<div class="text-right hide" id="edit-image"><a class="anchor-blue" data-open="rotate-image">Edit Image</a></div>
+
+								<div class="reveal" id="rotate-image" data-reveal data-multiple-opened="true" data-close-on-click="false" data-close-on-esc="false">
+									<div class="img-preview" style="display: none; margin-bottom: 15px;">
+										<div id="imgPreview"></div>
+									</div>
+									<div class="flex-container align-justify align-middle">
+										<button class="button" id="save-rotation-image" data-close type="button">Save</button>
+										<div>
+											<button class="button hollow" onclick="rotateimage(1, '@url');"><i class="fa fa-rotate-left"></i>Left</button>
+											<button class="button hollow" onclick="rotateimage(2, '@url');"><i class="fa fa-rotate-right"></i>Right</button>
+										</div>
+									</div>
+
+									<div id="loader" class="section-loader"></div>
+								</div>
+							</div>
+							<div class="profile-pic-buttons flex-container align-justify">
+								<div class="file-upload button small">
+									<span>@Translate.Message("L415")</span>
+									@*<input type="file" id="imageUpload-@Model.user.Id" class="upload" name="files" onchange="upload_files();" placeholder="@Translate.Message("L2874")" />*@
+									<input type="file" id="imageUpload-@Model.user.Id" class="upload upload-profile-pic" name="files" placeholder="@Translate.Message("L2874")" />
+								</div>
+								<a id="removelink-@Model.user.Id" href="" class="button hollow" onclick="return removepicture();">@Translate.Message("L416")</a>
+							</div>
+						</div>
+						<div class="large-8 cell">
+							<!--NAME-->
+							<div class="grid-x grid-margin-x">
+								<!--PREFIX-->
+								<div class="medium-2 cell">
+									<label>
+										Prefix
+										@Html.DropDownListFor(m => m.user.NamePrefix, Model.NamePrefixList, "", new { @required = "required" })
+										<small class="form-error">Prefix is required.</small>
+									</label>
+								</div>
+								<!--FIRST NAME-->
+								<div class="medium-5 cell">
+									<label>
+										First Name
+										@Html.TextBoxFor(m => m.user.FirstName, new { @required = "required", @pattern = "[a-zA-Z]+" })
+										<small class="form-error">First Name is required.</small>
+									</label>
+								</div>
+								<!--MIDDLE NAME-->
+								<div class="medium-5 cell">
+									<label>
+										Middle Name
+										@Html.TextBoxFor(m => m.user.MiddleName, new { @pattern = "[a-zA-Z]+" })
+									</label>
+								</div>
+							</div>
+
+							<div class="grid-x grid-margin-x">
+								<!--Suffix-->
+								<div class="medium-7 cell">
+									<label>
+										@Translate.Message("L939")
+										@Html.TextBoxFor(m => m.user.LastName, new { @required = "required", @pattern = "[a-zA-Z]+" })
+										<small class="form-error">@Translate.Message("L433")</small>
+									</label>
+								</div>
+								<div class="medium-5 cell">
+									<label>
+										Suffix
+										@Html.TextBoxFor(m => m.user.Suffix)
+									</label>
+								</div>
+								<!--LAST NAME-->
+
+							</div>
+							<!--DOB-->
+							<div class="grid-x grid-margin-x">
+								<!--month-->
+								<div class="small-5 medium-6 cell">
+									<label>
+										Date of Birth
+										@Html.DropDownListFor(m => m.month, Model.months, "", new { @required = "required" })
+										<small class="form-error">Month is required.</small>
+									</label>
+								</div>
+								<!--day-->
+								<div class="small-3 cell">
+									<label>
+										<br>
+										@Html.DropDownListFor(m => m.day, Model.days, "", new { @required = "required" })
+										<small class="form-error">Day is required.</small>
+									</label>
+								</div>
+								<!--year-->
+								<div class="small-4 medium-3 cell">
+									<label>
+										<br>
+										@Html.DropDownListFor(m => m.year, Model.years, "", new { @required = "required" })
+										<small class="form-error">Year is required.</small>
+									</label>
+								</div>
+							</div>
+							<div class="grid-x grid-margin-x">
+								<div class="medium-4 cell">
+									<!--gender-->
+									<label>
+										Gender
+										@Html.DropDownListFor(m => m.user.Gender, Model.GenderList, "", new { @required = "required" })
+										<small class="form-error">Gender is required.</small>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+				<!--ADDRESS-->
+				<fieldset>
+					<legend>Address</legend>
+					<div class="grid-x grid-padding-x">
+						<div class="medium-4 cell">
+							<!--street-->
+							<label>
+								Street Address
+								@Html.TextBoxFor(m => m.user.Address, new { @placeholder = "e.g. 123 Main Street", @required = "required" })
+								<small class="form-error">Street Address is required.</small>
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--address-->
+							<label>
+								@Translate.Message("L4267")
+								@Html.TextBoxFor(m => m.user.Address2, new { @placeholder = Translate.Message("L4267") })
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--city-->
+							<label>
+								City
+								@Html.TextBoxFor(m => m.user.City, new { @placeholder = "Main City", @required = "required" })
+								<small class="form-error">City is required.</small>
+							</label>
+						</div>
+					</div>
+					<div class="grid-x grid-padding-x">
+						<div class="medium-4 cell">
+							<!--country-->
+							<label>
+								Country
+								@Html.DropDownListFor(m => m.user.Country, Model.Countries, "", new { @required = "required" })
+								<small class="form-error">Country is required.</small>
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--state-->
+							<label>
+								State/Province
+								@Html.DropDownListFor(m => m.user.State, Model.States, "", new { @required = "required" })
+								<small class="form-error">State is required.</small>
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--zip code-->
+							<label>
+								Zip Code
+								@Html.TextBoxFor(m => m.user.Zip, new { @placeholder = "Zip Code", @required = "required" })
+								<small class="form-error">Zip is required.</small>
+							</label>
+						</div>
+					</div>
+				</fieldset>
+				<!--CONTACT INFO-->
+				<fieldset>
+					<legend>Contact</legend>
+					<div class="grid-x grid-padding-x">
+						<div class="medium-4 cell">
+							<!--home phone-->
+							<label>
+								Home Phone
+								@Html.TextBoxFor(m => m.user.HomeNumber, new { @type = "tel" })
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--work phone-->
+							<label>
+								Work Phone
+								@Html.TextBoxFor(m => m.user.WorkNumber, new { @type = "tel" })
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--cell phone-->
+							<label>
+								Cell Phone
+								@Html.TextBoxFor(m => m.user.CellNumber, new { @type = "tel" })
+							</label>
+						</div>
+					</div>
+					<div class="grid-x grid-padding-x">
+						<div class="medium-4 cell">
+							<!--email-->
+							<label>
+								Email Address
+								@Html.TextBoxFor(m => m.user.Email, new { @type = "email", @required = "required" })
+								<small class="form-error">Email is required.</small>
+							</label>
+						</div>
+						@if (Model.user == null || Model.user.Id == 0)
+						{
+							<div class="medium-4 cell">
+								<!--password-->
+								<label>
+									Password
+									@Html.TextBoxFor(m => m.Password, new { @type = "password", @required = "required", @pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$" })
+									<small class="form-error" data-error-message>@Translate.Message("L1929")</small>
+								</label>
+							</div>
+							<div class="medium-4 cell">
+								<!--password-->
+								<label>
+									Confirm Password
+									<input type="password" data-equalto="Password" />
+									<small class="form-error">The password did not match</small>
+								</label>
+							</div>
+						}
+					</div>
+				</fieldset>
+				<!--Other-->
+				<fieldset>
+					<legend>Other</legend>
+					<div class="grid-x grid-padding-x">
+						<div class="medium-4 cell">
+							<!--Occupation-->
+							<label>
+								Occupation
+								@Html.TextBoxFor(m => m.user.Occupation)
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--time zone-->
+							<label>
+								My Time Zone
+								@Html.DropDownListFor(m => m.user.TimeZoneId, Model.TimeZones, "", new { @required = "required" })
+								<small class="form-error">TimeZone is required.</small>
+							</label>
+						</div>
+						<div class="medium-4 cell">
+							<!--Organizations -->
+							<label>
+								Organization
+								@Html.DropDownListFor(m => m.user.OrganizationId, Model.ListOrganizations, "", new { @required = "required" })
+								<small class="form-error">Organization is required.</small>
+							</label>
+						</div>
+					</div>
+					<div class="grid-x grid-padding-x">
+						@if (CommonUtility.HasSuperAdminRole(User.RoleCode()))
+						{
+							<div class="medium-4 cell">
+								<!--Roles-->
+								<label>
+									Role
+									@Html.DropDownListFor(m => m.Role, Model.Roles, new Dictionary<string, object> { { "class", "override-select-profile" }, { "multiple", "multiple" }, { "data-prompt", "Select" } })
+								</label>
+							</div>
+							<div class="medium-4 cell">
+								<!--Specialization-->
+								<label>
+									Specialization
+									@Html.DropDownListFor(m => m.Specialization, Model.Specialization, new Dictionary<string, object> { { "class", "override-select-profile" }, { "multiple", "multiple" }, { "data-prompt", "Select" } })
+								</label>
+							</div>
+							<div class="medium-4 cell">
+								<label>
+									Languages
+									@Html.DropDownListFor(m => m.Language, Model.Language, new Dictionary<string, object> { { "class", "override-select-profile" }, { "multiple", "multiple" }, { "data-prompt", "Select" } })
+								</label>
+							</div>
+						}
+					</div>
+					<div class="grid-x grid-padding-x">
+						@if (CommonUtility.HasSuperAdminRole(User.RoleCode()) && (Model.user.Organization.IntegrationWith == (byte)Integrations.LMC || Model.user.OrganizationId == 2))
+						{
+							<div class="medium-4 cell" id="coachstatesdropdown">
+								<label>
+									Coaching Locations
+									@Html.DropDownListFor(m => m.CoachStates, Model.States1, new Dictionary<string, object> { { "class", "override-select-profile" }, { "multiple", "multiple" }, { "data-prompt", "Select" } })
+								</label>
+							</div>
+						}
+						<div class="medium-4 cell">
+							<!--Measurement-->
+							<label>
+								Unit
+								@Html.DropDownListFor(m => m.user.Unit, Model.Units, "", new { @required = "required" })
+								<small class="form-error">Unit is required.</small>
+							</label>
+						</div>
+					</div>
+				</fieldset>
+				@if (CommonUtility.HasSuperAdminRole(User.RoleCode()))
+				{
+					<fieldset>
+						<legend>Properties</legend>
+						<div class="grid-x grid-padding-x">
+							<div class="medium-12 cell">
+								<label>
+									Profile Language
+									@Html.DropDownList("language", ViewData["languageList"] as IEnumerable<SelectListItem>, new Dictionary<string, object> { { "onchange", "LanguageChange()" } })
+								</label>
+							</div>
+							<div class="medium-12 cell">
+								<label>
+									Profile
+									@Html.TextAreaFor(m => m.user.AdminProperty.Profile)
+								</label>
+							</div>
+							<div class="medium-3 cell">
+								<div class="tick-buttons">
+									<label>
+										@Html.CheckBox("user.AdminProperty.Video", Model.user.Id != 0 ? (Model.user.AdminProperty.Video != null && (bool)Model.user.AdminProperty.Video) : true)
+										<span class="checkmark"></span>
+										Video Coaching
+									</label>
+								</div>
+							</div>
+							<div class="medium-3 cell">
+								<div class="tick-buttons">
+									<label>
+										@Html.CheckBox("user.AdminProperty.AllowAppt", Model.user.Id != 0 ? (Model.user.AdminProperty.AllowAppt != null && (bool)Model.user.AdminProperty.AllowAppt) : true)
+										<span class="checkmark"></span>
+										Appointment Calls?
+									</label>
+								</div>
+							</div>
+							<input type="hidden" name="existingEmail" id="existingEmail" />
+						</div>
+						<div id="MeetingIdTab" class="grid-x grid-padding-x">
+							<div class="medium-3 cell">
+								<!--Meeting ID-->
+								<label>
+									Meeting ID
+									@Html.TextBoxFor(m => m.user.AdminProperty.MeetingId, new Dictionary<string, object> { { "id", "meetingId" } })
+									<small class="form-error">Meeting Id is required.</small>
+								</label>
+							</div>
+						</div>
+					</fieldset>
+				}
+				<!--HIDDEN-->
+				@Html.HiddenFor(m => m.user.Id)
+				@Html.HiddenFor(m => m.user.IsActive)
+				@Html.HiddenFor(m => m.user.InactiveReason)
+				@Html.HiddenFor(m => m.CurrentRole)
+				@Html.HiddenFor(m => m.CurrentSpecialization)
+				@Html.HiddenFor(m => m.CurrentLanguage)
+				@Html.HiddenFor(m => m.CurrenCoachtState)
+				<div class="grid-x align-center">
+					<div class="small-12 medium-4 cell">
+						<button class="expand button" type="submit">Save</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+@Html.Partial("_ImageUpload", Model.user)
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/NoZipCountries.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+
+    var existingEmail = "";
+    var formsubmit = true;
+    var element = document.getElementById("user_Zip");
+    if ('@String.IsNullOrEmpty(Model.user.Zip)' == 'True') {
+        element.required = false;
+        $('#user_Zip').prop("disabled", true);
+    }
+    Foundation.Abide.defaults.validators['validateExam'] = function ($el, required, parent) {
+        if ($("input[name='user.Text']:checked").length == 0)
+            return false;
+        else
+            return true;
+    };
+    $(document).ready(function () {
+		$('.override-select-profile').foundationSelect();
+        @if (Model.UserRoles != null) {
+            foreach (var role in Model.UserRoles) {
+                @: $('li[data-value="@role.Name"]').trigger("click");
+            }
+        }
+
+        @if (Model.UserSpecializations != null) {
+            foreach (var speciality in Model.UserSpecializations) {
+                @: $('#select-Specialization li[data-value="@speciality.Id"]').trigger("click");
+            }
+        }
+        @if (Model.UserLanguages != null) {
+            foreach (var language in Model.UserLanguages) {
+                @: $('#select-Language li[data-value="@language.Id"]').trigger("click");
+            }
+        }
+        @if (Model.CoachStates != null) {
+            foreach (var state in Model.CoachStates) {
+                @: $('#select-CoachStates li[data-value="@state.Id"]').trigger("click");
+            }
+        }
+        @if (!Model.user.AdminProperty.Video.HasValue || !Model.user.AdminProperty.Video.Value) {
+             @: $("#MeetingIdTab").hide();
+        }
+
+        existingEmail = '@Model.user.Email';
+            formsubmit = true;
+            $('#adminprofile-form').foundation();
+            $('#adminprofile-form')
+                .on('forminvalid.zf.abide', function () {
+                  var invalid_fields = $(this).find('[data-invalid]');
+                  if (invalid_fields) {
+                      var scrollTo = $('#' + invalid_fields[0].id).position().top;
+                      $('.reveal-overlay').animate({
+                          scrollTop: scrollTo
+                      }, 400);
+                  }
+              })
+              .on('formvalid.zf.abide', function () {
+                  var newEmail = $("#user_Email").val();
+                  if (existingEmail != newEmail) {
+                      $("#existingEmail").val(existingEmail);
+                  }
+                  else
+                      $("#existingEmail").val('');
+                  if (formsubmit == true) {
+                      var roles = getSelectItems("Role");
+                      var specialities = getSelectItems("Specialization");
+                      var languages = getSelectItems("Language");
+                      var coachStates = getSelectItems("CoachStates");
+                      var profileLanguage = getSelectItems("language");
+                      $.ajax({
+                          url: "@Url.Action("AdminProfile", "Admin")",
+                          type: 'POST',
+                          dataType: "json",
+                          data: $("#adminprofile-form").serialize() + '&roles=' + roles + '&specialities=' + specialities + '&languages=' + languages + '&eligibleStates=' + coachStates + '&profileLanguage=' + profileLanguage,
+                          success: function (data) {
+                              if (data == "success") {
+                                  $('#admin-profile').foundation('close');
+                                  @if (Model.user.Id == 0) {
+                                     @: ListUsers();
+                                  }
+                              }
+                              else {
+                                  $('#admin-profile').find('#login-error').removeClass('hide');
+                              }
+                          }
+                      }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+                      formsubmit = false;
+                  }
+
+                })
+                // to prevent form from submitting upon successful validation
+                .on("submit", function (ev) {
+                    ev.preventDefault();
+
+                })
+    });
+
+    $('#user_Country').on('change', function () {
+        CountryChange('user_Country', 'user_Unit', 'user_State', 'user_Zip', "@Url.Action("ListStates", "Common")", '', '', true, "@Url.Action("CheckIfCountryHasZipCode", "Common")");
+    });
+
+    $('#user_AdminProperty_Video').on('change', function () {
+        $("input[name='user.AdminProperty.Video']:checked").length == 0 ? $("#MeetingIdTab").hide() : $("#MeetingIdTab").show();
+        if ($("input[name='user.AdminProperty.Video']:checked").length == 0) {
+            $("#meetingId").val("");
+            $("#meetingId").prop('required', false);
+        } else {
+            $("#meetingId").prop('required', true);
+        }
+    });
+
+    function getSelectItems(id) {
+        var ddlValues = "";
+        var ddlElement = $("[name='" + id + "']");
+        if (ddlElement != null && ddlElement[0] != undefined) {
+            var selectObject = ddlElement[0].selectedOptions;
+            for (var i = 0; i < selectObject.length; i++) {
+                if (ddlValues == "") {
+                    ddlValues = selectObject[i].value
+                }
+                else {
+                    ddlValues = ddlValues + "-" + selectObject[i].value;
+                }
+            }
+        }
+        return ddlValues;
+    }
+
+    function LanguageChange() {
+        var lang = $('#language').val();
+        var id = @Model.user.Id;
+        $("#user_AdminProperty_Profile").val('');
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("GetProfileText", "Admin")',
+            data: { id: id, language: lang },
+            dataType: 'json',
+            success: function (response) {
+                $("#user_AdminProperty_Profile").val(response.Record)
+            }
+        });
+    }
+</script>
+
+<script>
+	var rotation = 0;
+	function rotateimage(directions, url) {
+		$('#rotate-image').addClass('show-loader');
+		//Code for UI
+		if (directions == 2) {
+			rotation = (rotation + 90) % 360;
+		};
+		if (directions == 1) {
+			rotation = (rotation - 90) % 360;
+		};
+
+		$(".pic-view").css({ 'transform': 'rotate(' + rotation + 'deg)' });
+
+		if (rotation != 0) {
+			$(".pic-view").css({ 'width': '300px', 'height': 'auto' });
+		} else {
+			$(".pic-view").css({ 'width': 'auto', 'height': '300px' });
+		}
+		$('#rotation').val(rotation);
+
+		//Code for controller
+        var image = $('#profilepicdiv-@Model.user.Id').find('#profilepic').css('background-image');
+        var cleanup = /\"|\'|\)/g;
+        var imageName = image.split('/').pop().replace(cleanup, '');
+        var id = @Model.user.Id;
+		$.ajax({
+			url: "@Url.Action("RotateImage", "Common")",
+			type: 'POST',
+			dataType: "json",
+			data: { image: imageName, direction: directions, userId: id },
+			success: function (data) {
+				showHideImage(data.Image, 'add');
+			},
+			complete: function () {
+				$('#rotate-image').removeClass('show-loader');
+			}
+        });
+	}
+
+	function filePreview(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				//$('#imgPreview img').remove();
+				$('#imgPreview').html('<img src="' + e.target.result + '" class="pic-view" width="300" height="auto"/>');
+			};
+			reader.readAsDataURL(input.files[0]);
+			$('.img-preview').css('display', 'flex');
+			$('#edit-image').removeClass('hide');
+			//$('#rotate-image').foundation('open');
+		} else {
+			$('#imgPreview').html('');
+			$('.img-preview').css('display', 'none');
+		}
+	}
+
+	$(".upload-profile-pic").on('change', function () {
+		// Image preview
+		rotation = 0;
+		filePreview(this);
+		upload_files();
+	});
+
+</script>
+
+<button class="close-button" data-close aria-label="Close reveal" type="button">
+	<span aria-hidden="true">&times;</span>
+</button>

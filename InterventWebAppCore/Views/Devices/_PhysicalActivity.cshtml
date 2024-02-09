@@ -1,0 +1,670 @@
+﻿@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <div class="grid-x main-chart-header">
+            <div class="cell medium-6">
+                <h6>@Translate.Message("L271"): </h6>
+                <div class="graph-selector-container" id="graph-selector-container">
+                    <span data-toggle="graph-date-filter" data-value="pa-week-data">@Translate.Message("L2741")</span>
+                    <div class="graph-selector dropdown-pane" id="graph-date-filter" data-dropdown data-close-on-click="true">
+                        <ul>
+                            <li data-value="pa-week-data">@Translate.Message("L2741")</li>
+                            <li data-value="pa-month-data">@Translate.Message("L2740")</li>
+                            <li data-value="pa-90days-data">@Translate.Message("L2739")</li>
+                            <li data-value="pa-yesterday-data">@Translate.Message("L2742")</li>
+                            <li data-value="pa-date-range">@Translate.Message("L2744")</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="graph-date-range hide">
+                    <form id="date-search">
+                        <div class="input-container">
+                            <label for="graph-start-date">
+                                <input type="text" name="graph-start-date" placeholder="@Translate.Message("L1445")" id="graph-start-date" autocomplete="off" />
+                                <input id="HStartDate" type="hidden" />
+                            </label>
+                            <label for="graph-end-date">
+                                <input type="text" name="graph-end-date" placeholder="@Translate.Message("L4001")" id="graph-end-date" autocomplete="off" />
+                                <input id="HEndDate" type="hidden" />
+                            </label>
+                        </div>
+                        <div class="button-group align-center">
+                            <button type="reset" class="button hollow" id="reset-date">@Translate.Message("L3967")</button>
+                            <button type="submit" class="button" id="submit-date">@Translate.Message("L963")</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="no-graph" class="cell main-graph-container hide">
+        <div class="cell main-chart ">
+            <div class="no-graph-info text-center">
+                <img src="~/Images/device/no-data.png" alt="Alternate Text">
+                <span>@Translate.Message("L4000")</span>
+            </div>
+        </div>
+    </div>
+    <div id="has-data" class="cell">
+
+        <div class="main-graph-container pa-graph-container">
+            <div class="units-list">
+                <ul>
+                    <li>
+                        <img src="~/Images/device/pa-time-icon.png" alt="" />
+                        <span class="unit-count" id="timeAvg"></span> <spam id="timeAvgText"></spam>
+                        <i class="fa fa-info" data-toggle="physical-tooltip1"></i>
+                        @*<div class="pa-units-wrapper">
+                                <span class="units-tag green" id="rangeMinutes">In Range</span>
+                            </div>*@
+                        <div class="dropdown-pane device-tooltip" data-position="top" data-alignment="center" id="physical-tooltip1" data-dropdown data-v-offset="6" data-auto-focus="true" data-hover="true" data-hover-pane="true">
+                            <p> @Translate.Message("L3999")</p>
+                        </div>
+                    </li>
+                    <li>
+                        <img src="~/Images/device/pa-steps-icon.png" alt="" />
+                        <span class="unit-count" id="stepsAvg"></span> <spam id="stepsAvgText"></spam>
+                    </li>
+                    <li>
+                        <img src="~/Images/device/pa-calories-icon.png" alt="" />
+                        <span class="unit-count" id="avgCalories"></span> <spam id="avgCaloriesText"></spam>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="chart-data" class="cell main-chart"></div>
+
+            <div class="main-graph-summary grid-x grid-padding-x">
+                <div class="cell">
+                    <div class="grid-x grid-padding-x">
+                        <div class="cell medium-4 medium-offset-4">
+                            <div class="switch slider-switch">
+                                <input type="checkbox" id="pa-toggle" class="switch-input" onchange="clickShowAllReadings();" />
+                                <label class="switch-paddle" for="pa-toggle">
+                                    <span class="switch-inactive" aria-hidden="true">@Translate.Message("L2749")</span>
+                                    <span class="switch-active" aria-hidden="true">@Translate.Message("L725")</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cell medium-3">
+                    <div class="callout callout-select" id="AllReadings" onclick="showAllReadings();">
+                        @Translate.Message("L3996")
+                        <p>
+                            <span class="hide" id="weekCount"></span>
+                            <span class="hide" id="stepsDataCount"></span>
+                        </p>
+                    </div>
+                </div>
+                <div class="cell medium-9">
+                    <div class="grid-x grid-padding-x hide toggle-time-steps pa-steps-cards">
+                        <div class="cell medium-3">
+                            <div class="callout" onclick="changeRangeGraph(1, true);">
+                                <p><span id="range1Value"></span> @Translate.Message("L2749")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="range1Count"></span>/<span name="count"></span></div>
+                            </div>
+                        </div>
+                        <div class="cell medium-3">
+                            <div class="callout" onclick="changeRangeGraph(2, true);">
+                                <p><span id="range2Value"></span> @Translate.Message("L2749")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="range2Count"></span>/<span name="count"></span></div>
+                            </div>
+                        </div>
+                        <div class="cell medium-3">
+                            <div class="callout" onclick="changeRangeGraph(3, true);">
+                                <p><span id="range3Value"></span> @Translate.Message("L2749")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="range3Count"></span>/<span name="count"></span></div>
+                            </div>
+                        </div>
+                        <div class="cell medium-3">
+                            <div class="callout" onclick="changeRangeGraph(4, true);">
+                                <p><span id="range4Value"></span> @Translate.Message("L2749")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="range4Count"></span>/<span name="count"></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-x grid-padding-x toggle-time-steps pa-time-cards">
+                        <div class="cell medium-3">
+                            <div class="callout" onclick="changeRangeGraph(1, false);">
+                                <p><span id="timerange1Value"></span> @Translate.Message("L3985")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="timerange1Count"></span>/<span name="timecount"></span></div>
+                            </div>
+                        </div>
+                        <div class="cell medium-3">
+                            <div class="callout" onclick="changeRangeGraph(2, false);">
+                                <p><span id="timerange2Value"></span> @Translate.Message("L3985")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="timerange2Count"></span>/<span name="timecount"></span></div>
+                            </div>
+                        </div>
+                        <div class="cell medium-3">
+                            <div class="callout" onclick="changeRangeGraph(3, false);">
+                                <p><span id="timerange3Value"></span> @Translate.Message("L3985")</p>
+                                @Translate.Message("L3986")
+                                <div class="activity-count"><span id="timerange3Count"></span>/<span name="timecount"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-graph-details pa-graph-details" id="WeeklyData">
+            <h5>@Translate.Message("L3992")</h5>
+            <div class="grid-x align-center">
+                <div class="cell medium-10">
+                    <ul class="pa-activity-details toggle-time-steps">
+                        <li>
+                            @Translate.Message("L3993")
+                            <p><strong><span id="weeklyAvgTime"></span></strong> <span class="unit"> @Translate.Message("L3985")</span></p>
+                        </li>
+                        <li>
+                            @Translate.Message("L3994")
+                            <p><strong><span id="leastActiveWeekTimenumber"></span><span id="leastActiveWeekTime"></span></strong> <span id="leastActiveWeekUnit"> @Translate.Message("L3985")</span></p>
+                        </li>
+                        <li>
+                            @Translate.Message("L3995")
+                            <p><strong><span id="mostActiveWeekTimenumber"></span><span id="mostActiveWeekTime"></span></strong> <span class="unit"> @Translate.Message("L3985")</span></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-graph-details pa-graph-details" id="StepsData">
+            <h5>@Translate.Message("L3991")</h5>
+            <div class="grid-x align-center">
+                <div class="cell medium-10">
+                    <ul class="pa-activity-details hide toggle-time-steps">
+                        <li>
+                            @Translate.Message("L3990")
+                            <p><strong><span id="DailyAvgSteps"></span></strong> <span class="steps"> @Translate.Message("L2749")</span></p>
+                        </li>
+                        <li>
+                            @Translate.Message("L3989")
+                            <p><strong><span id="leastActiveDay"></span><span id="leastActiveDayValue"></span></strong> <span id="leastActiveStep"> @Translate.Message("L2749")</span></p>
+                        </li>
+                        <li>
+                            @Translate.Message("L3988")
+                            <p><strong><span id="mostActiveDay"></span><span id="mostActiveDayValue"></span></strong> <span class="steps"> @Translate.Message("L2749")</span></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var showWeeklyDiv = true;
+    var notApplicable = "@Translate.Message("L1149")";
+    $("#graph-start-date").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#graph-start-date').val()));
+    });
+    $("#graph-end-date").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#graph-end-date').val()));
+    });
+    $(document).ready(function () {
+		$("input#pa-toggle").on('click', function () {
+			$(".toggle-time-steps").toggleClass("hide");
+		});
+
+        var pagraphData, pagraphData1;;
+        var range1 = 0, range2 = 0, range3 = 0, range4 = 0;
+        var trange1 = 0, trange2 = 0, trange3 = 0;
+		LoadPAData(7);
+
+		$(".graph-selector ul li").on("click", function () {
+			var showData = $(this).data("value");
+			var showText = $(this).text();
+			$(".graph-selector-container span").text(showText);
+			$(".graph-selector-container span").data('value', showData);
+			$("#graph-date-filter").foundation("close");
+            changeGraph();
+            if ($("#pa-toggle").is(":checked")) {
+                $('#pa-toggle').prop('checked', false);
+                $(".toggle-time-steps").toggleClass("hide");
+            }
+		});
+
+	    $('.main-graph-summary .callout').on('click', function () {
+		    $('.main-graph-summary .callout').removeClass('callout-select');
+		    $(this).addClass('callout-select');
+		});
+
+        $("#graph-start-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()}).on('change', function (selected) {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#graph-end-date').fdatepicker('setDate', minDate);
+            }
+            $('#graph-end-date').fdatepicker('setStartDate', minDate);
+            $("#graph-end-date").trigger("change");
+        });
+        $("#graph-end-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()
+        });
+        $("#date-search").on('submit', function (ev) {
+            LoadPAData(0);
+            ev.preventDefault();
+            $(".graph-date-range").addClass("hide");
+        });
+
+		$(document).on('click', function(){
+			$('.graph-date-range').addClass("hide");
+		});
+		$('.graph-date-range, .datepicker, .graph-selector').on('click', function(e){
+			e.stopPropagation();
+		});
+    });
+
+    function clickShowAllReadings() {
+        $("#AllReadings").trigger("click");
+    }
+
+    function showAllReadings() {
+        if($("#pa-toggle").is(":checked")){
+            changeRangeGraph(0, true);
+            $("#weekCount").addClass("hide");
+            $("#stepsDataCount").removeClass("hide");
+            $("#WeeklyData").addClass("hide");
+            $("#StepsData").removeClass("hide");
+        }
+        else{
+            changeRangeGraph(0, false);
+            $("#stepsDataCount").addClass("hide");
+            if (showWeeklyDiv == true) {
+                $("#WeeklyData").removeClass("hide");
+                $("#weekCount").removeClass("hide");
+            }
+            $("#StepsData").addClass("hide");
+        }
+    }
+
+    function changeGraph() {
+		if ($(".graph-selector-container span").data('value').includes("week-data")) {
+			$(".graph-date-range").addClass("hide");
+            $("#WeeklyData").removeClass("hide");
+            LoadPAData(7);
+        }
+        else if ($(".graph-selector-container span").data('value').includes("month-data")) {
+			$(".graph-date-range").addClass("hide");
+            $("#WeeklyData").removeClass("hide");
+            LoadPAData(30);
+            $("#pastDays").html(30);
+        }
+		else if ($(".graph-selector-container span").data('value').includes("90days-data")) {
+            $(".graph-date-range").addClass("hide");
+            $("#WeeklyData").removeClass("hide");
+            LoadPAData(90);
+            $("#pastDays").html(90);
+		}
+		else if ($(".graph-selector-container span").data('value').includes("date-range")) {
+            $(".graph-date-range").removeClass("hide");
+            $("#graph-start-date").val("");
+            $("#graph-end-date").val("");
+		}
+		else {
+			$(".graph-date-range").addClass("hide");
+            LoadPAData(1);
+            $("#WeeklyData").addClass("hide");
+            showWeeklyDiv = false;
+        }
+    }
+
+    function LoadPAData(days) {
+        var startDate, endDate;
+        if ($(".graph-selector-container span").data('value').includes("date-range")) {
+            startDate = $("#HStartDate").val();
+            endDate = $("#HEndDate").val();
+            var diffDays = Math.round((new Date(new Date(endDate) - new Date(startDate))) / 1000 / 60 / 60 / 24);
+            if (diffDays > 1) {
+                $("#WeeklyData").removeClass("hide");
+                $("#pastDays").html(diffDays);
+            }
+            else
+                $("#WeeklyData").addClass("hide");
+        }
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            data: {days: days, startDate : startDate, endDate : endDate},
+            url: "@Url.Action("ListPhysicalActivityData", "Devices")",
+            success: function (data) {
+                if (data.graphData.length == 0 && data.graphData1.length == 0) {
+                    $("#no-graph").removeClass("hide");
+                    $("#has-data").addClass("hide");
+                }
+                else {
+                    $("#no-graph").addClass("hide");
+                    $("#has-data").removeClass("hide");
+                    $("#weekCount").text(data.TimeCount + " @Translate.Message("L3987")");
+                    $("#stepsDataCount").text(data.StepsCount + " @Translate.Message("L3987")");
+                    $("#lastUpdate").text(data.recentDate);
+                    $("#weeklyAvgTime").text(data.weeklyAvgTime);
+                    if (data.graphData.length == 0) {
+                        $("#timeAvg").text("@Translate.Message("L1149")");
+                        $("#timeAvgText").html("");
+                        $("input#pa-toggle").prop("checked", true);
+                        $(".toggle-time-steps").toggleClass("hide");
+                    }
+                    else {
+                        $("#timeAvg").text(data.avgTime);
+                        $("#timeAvgText").html("@Translate.Message("L3998")");
+                    }
+                    if (data.graphData1.length == 0) {
+                        $("#stepsAvg").text("@Translate.Message("L1149")");
+                        $("#stepsAvgText").html("");
+                    }
+                    else {
+                        $("#stepsAvg").text(data.avgSteps);
+                        $("#stepsAvgText").html("@Translate.Message("L2745")");
+                    }
+
+                    if (data.avgCalories == 0) {
+                        $("#avgCalories").text("@Translate.Message("L1149")");
+                        $("#avgCaloriesText").html("");
+                    }
+                    else {
+                        $("#avgCalories").text(data.avgCalories);
+                        $("#avgCaloriesText").html("@Translate.Message("L3997")");
+                    }
+                    if (data.dailyAvgSteps == 0) {
+                        $("#DailyAvgSteps").text("@Translate.Message("L1149")");
+                    }
+                    else {
+                        $("#DailyAvgSteps").text(data.dailyAvgSteps);
+                    }
+                    if (data.leastActiveDayValue != 0) {
+                        $("#leastActiveDayValue").text(data.leastActiveDayValue);
+                        $("#leastActiveDay").text(data.leastActiveDay);
+                        $("#leastActiveStep").text("@Translate.Message("L2749")");
+                    }
+                    else if (data.leastActiveDay != "") {
+                        $("#leastActiveDayValue").text("");
+                        $("#leastActiveStep").text("");
+                        $("#leastActiveDay").text(data.leastActiveDay);
+                    }
+                    else {
+                        $("#leastActiveDayValue").text("");
+                        $("#leastActiveDay").text(notApplicable);
+                        $("#leastActiveStep").text("");
+                    }
+                    if (data.mostActiveDayValue != 0) {
+                        $("#mostActiveDayValue").text(data.mostActiveDayValue);
+                        $("#mostActiveDay").text(data.mostActiveDay);
+                        $(".steps").text("@Translate.Message("L2749")");
+                    }
+                    else {
+                        $("#mostActiveDayValue").text("");
+                        $("#mostActiveDay").text(notApplicable);
+                        $(".steps").text("");
+                    }
+                    $("#range1Value").text(data.StepsRange1Value);
+                    $("#range2Value").text(data.StepsRange2Value);
+                    $("#range3Value").text(data.StepsRange3Value);
+                    $("#range4Value").text(data.StepsRange4Value);
+                    if (data.StepsRange1Count == 0)
+                        $("#range1Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#range1Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#range1Count").text(data.StepsRange1Count);
+                    if (data.StepsRange2Count == 0)
+                        $("#range2Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#range2Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#range2Count").text(data.StepsRange2Count);
+                    if (data.StepsRange3Count == 0)
+                        $("#range3Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#range3Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#range3Count").text(data.StepsRange3Count);
+                    if (data.StepsRange4Count == 0)
+                        $("#range4Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#range4Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#range4Count").text(data.StepsRange4Count);
+                    $("#timerange1Value").text(data.TimeRange1Value);
+                    $("#timerange2Value").text(data.TimeRange2Value);
+                    $("#timerange3Value").text(data.TimeRange3Value);
+                    if (data.TimeRange1Count == 0)
+                        $("#timerange1Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#timerange1Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#timerange1Count").text(data.TimeRange1Count);
+                    if (data.TimeRange2Count == 0)
+                        $("#timerange2Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#timerange2Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#timerange2Count").text(data.TimeRange2Count);
+                    if (data.TimeRange3Count == 0)
+                        $("#timerange3Count").parents('div').eq(1).addClass("callout-disabled");
+                    else
+                        $("#timerange3Count").parents('div').eq(1).removeClass("callout-disabled");
+                    $("#timerange3Count").text(data.TimeRange3Count);
+                    //$("#rangeMinutes").removeClass("green red");
+                    //if (data.avgTime >= 150) {
+                    //    $("#rangeMinutes").addClass("green");
+                    //    $("#rangeMinutes").html("In Range");
+                    //}
+                    //else {
+                    //    $("#rangeMinutes").addClass("red");
+                    //    $("#rangeMinutes").html("Out of Range");
+                    //}
+                    var els = document.getElementsByName("count");
+                    for (var i = 0; i < els.length; i++) {
+                        els[i].innerHTML = data.StepsCount;
+                    }
+                    var els1 = document.getElementsByName("timecount");
+                    for (var i = 0; i < els1.length; i++) {
+                        els1[i].innerHTML = data.TimeCount;
+                    }
+                    $("#lowIntensity").text(data.lowIntensity);
+                    $("#moderateIntensity").text(data.moderateIntensity);
+                    $("#vigourosIntensity").text(data.vigorousIntensity);
+                    if (days <= 7 && days != 0 || (diffDays != null && diffDays <= 7) || data.graphData.length == 0) {
+                        $("#leastActiveWeekTimenumber").text(notApplicable);
+                        $("#mostActiveWeekTimenumber").text(notApplicable);
+                        $("#leastActiveWeekTime").text("");
+                        $("#mostActiveWeekTime").text("");
+                        $("#leastActiveWeeknumber").text(notApplicable);
+                        $("#mostActiveWeeknumber").text(notApplicable);
+                        $("#leastActiveWeek").text("");
+                        $("#mostActiveWeek").text("");
+                        $(".unit").text("");
+                        $("#leastActiveWeekUnit").text("");
+                        if (data.graphData.length == 0)
+                            $("#weeklyAvgTime").text(notApplicable);
+                    }
+                    else {
+                        if (data.leastActiveWeekTime != 0) {
+                            $("#leastActiveWeekTime").text(data.leastActiveWeekTime);
+                            $("#leastActiveWeekTimenumber").text(data.leastActiveWeekTimenumber);
+                            $("#leastActiveWeekUnit").text("@Translate.Message("L3985")");
+                        }
+                        else if (data.leastActiveWeekTimenumber != "") {
+                            $("#leastActiveWeekTime").text("");
+                            $("#leastActiveWeekUnit").text("");
+                            $("#leastActiveWeekTimenumber").text(data.leastActiveWeekTimenumber);
+                        }
+                        else {
+                            $("#leastActiveWeekTimenumber").text(notApplicable);
+                            $("#leastActiveWeekTime").text("");
+                            $("#leastActiveWeekUnit").text("");
+                        }
+                        $("#mostActiveWeekTimenumber").text(data.mostActiveWeekTimenumber);
+                        $("#mostActiveWeekTime").text(data.mostActiveWeekTime);
+                        $("#leastActiveWeeknumber").text(data.leastActiveWeeknumber);
+                        $("#mostActiveWeeknumber").text(data.mostActiveWeeknumber);
+                        $("#leastActiveWeek").text(data.leastActiveWeek);
+                        $("#mostActiveWeek").text(data.mostActiveWeek);
+                        $(".unit").text("@Translate.Message("L3985")");
+                    }
+                    pagraphData = data.graphData;
+                    pagraphData1 = data.graphData1;
+                    range1 = data.StepsRange1Value;
+                    range2 = data.StepsRange2Value;
+                    range3 = data.StepsRange3Value;
+                    range4 = data.StepsRange4Value;
+                    trange1 = data.TimeRange1Value;
+                    trange2 = data.TimeRange2Value;
+                    trange3 = data.TimeRange3Value;
+                    createPAChart(data.graphData, false);
+                }
+                if (days > 1 || (diffDays != null && diffDays > 1)) {
+                    $("#WeeklyData").removeClass("hide");
+                    $("#weekCount").parents('div').trigger("click");
+                    showWeeklyDiv = true;
+                }
+                else {
+                    $("#WeeklyData").addClass("hide");
+                    $("#StepsData").addClass("hide");
+                    showWeeklyDiv = false;
+                }
+            }
+        });
+    }
+
+    function changeRangeGraph(range, isSteps) {
+        var value = 0;
+        if (isSteps) {
+            if (range == 1)
+                value = range1;
+            if (range == 2)
+                value = range2;
+            if (range == 3)
+                value = range3;
+            if (range == 4)
+                value = range4;
+            var data = pagraphData1.filter((x) => { return x.value >= value; })
+            createPAChart(data, isSteps);
+        }
+        else {
+            if (range == 1)
+                value = trange1;
+            if (range == 2)
+                value = trange2;
+            if (range == 3)
+                value = trange3;
+            var data = pagraphData.filter((x) => { return x.value2 >= value; })
+            createPAChart(data, isSteps);
+        }
+
+        var $listParent = $(".main-graph-container");
+        if ($(window).width() < 640) {
+            windowScrollClass($listParent, 45, 500);
+        }
+        else {
+            windowScrollClass($listParent, 65, 500);
+        }
+    }
+
+    function windowScrollClass(element, offset, speed) {
+        var $element = element;
+        var speed = speed ? speed : 500;
+        var offset = offset ? offset : 70;
+        var scrollPos = $element.offset().top
+
+        $("html, body").animate({
+            scrollTop: scrollPos - offset
+        }, speed);
+    }
+
+    function createPAChart(data, isSteps) {
+        // Create chart instance for Month's data
+        var chart = am4core.create("chart-data", am4charts.XYChart);
+        //chart.dateFormatter.inputDateFormat = "dd-MM-yyyy";
+        chart.responsive.enabled = true;
+
+        // Create X-axes
+        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis.startLocation = 0;
+        dateAxis.endLocation = 1;
+        dateAxis.renderer.cellStartLocation = 0;
+        dateAxis.renderer.cellEndLocation = 1;
+        dateAxis.renderer.grid.template.disabled = true;
+		dateAxis.dateFormats.setKey("day", "dd\nMMM");
+		dateAxis.periodChangeDateFormats.setKey("day", "dd\nMMM");
+        dateAxis.renderer.labels.template.fill = am4core.color("#999999");
+        dateAxis.renderer.grid.template.location = 0;
+		dateAxis.renderer.labels.template.location = 0.5;
+
+        // Create value Y-axis
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.min = 0;
+        valueAxis.renderer.opposite = true;
+        valueAxis.renderer.grid.template.disabled = true;
+        valueAxis.renderer.labels.template.fill = am4core.color("#999999");
+
+        if (isSteps) {
+
+            valueAxis.title.text = "@Translate.Message("L2749")";
+            // Create series1 column series
+            var ColSeries = chart.series.push(new am4charts.ColumnSeries());
+            ColSeries.dataFields.valueY = "value";
+            ColSeries.dataFields.dateX = "date";
+            ColSeries.name = "Visits";
+            ColSeries.zIndex = 1;
+
+            var columnTemplate = ColSeries.columns.template;
+            columnTemplate.fill = am4core.color("#03a9f4");
+            columnTemplate.fillOpacity = .8;
+            columnTemplate.strokeOpacity = 0;
+            columnTemplate.width = 10;
+            ColSeries.data = data;
+
+            /* Add a single HTML-based tooltip to first series */
+            ColSeries.tooltipHTML = `<p style="font-size: 14px; margin-bottom: 4px; color: #bcbcbc;" > {dateX.formatDate('dd MMMM')} </p>
+            <ul>
+                <strong style="font-size: 16px; color: #fff;">{valueY}</strong> @Translate.Message("L2749")
+            </ul>`;
+            ColSeries.tooltip.getFillFromObject = false;
+            ColSeries.tooltip.background.fill = am4core.color("#484848");
+            ColSeries.tooltip.pointerOrientation = "vertical";
+        }
+        else {
+            valueAxis.title.text = "@Translate.Message("L3984")";
+            // Create series2 wave series
+            var lineSeries2 = chart.series.push(new am4charts.LineSeries());
+            lineSeries2.dataFields.valueY = "value2";
+            lineSeries2.dataFields.dateX = "date";
+            lineSeries2.stroke = am4core.color("#ffd949");
+            lineSeries2.strokeWidth = 2;
+            lineSeries2.tensionX = .93;
+            lineSeries2.bullets.push(new am4charts.CircleBullet());
+            lineSeries2.data = data;
+
+            var fillModifier = new am4core.LinearGradientModifier();
+            fillModifier.opacities = [0.4, 0];
+            fillModifier.offsets = [0, 0.5];
+            fillModifier.gradient.rotation = 90;
+            lineSeries2.segments.template.fillModifier = fillModifier;
+            /* Add a single HTML-based tooltip to first series */
+            lineSeries2.tooltipHTML = `<p style="font-size: 14px; margin-bottom: 4px; color: #bcbcbc;" > {dateX.formatDate('dd MMMM')} </p>
+            <ul>
+                <strong style="font-size: 16px; color: #fff;">{valueY}</strong> @Translate.Message("L3985")
+            </ul>`;
+            lineSeries2.tooltip.getFillFromObject = false;
+            lineSeries2.tooltip.background.fill = am4core.color("#484848");
+            lineSeries2.tooltip.pointerOrientation = "vertical";
+            lineSeries2.tooltip.background.filters.clear();
+        }
+        chart.cursor = new am4charts.XYCursor();
+    }
+</script>

@@ -1,0 +1,108 @@
+﻿@model InterventWebApp.AssessmentModel
+@using InterventWebApp
+
+<div class="dashboard-content cell assessment-content">
+
+    <select id="ddlAssessment" class="assessment-select" onchange="showAssessment()">
+        @if (Model.IsEligibilForHRA || Model.IsFUAssigned)
+        {
+            <optgroup label="Current Assessments">
+
+                @if (Model.IsEligibilForHRA && (@Model.currentHRAStatus != null || !Model.hraId.HasValue))
+                {
+                    <option value="HRA-@Model.hraId">HRA @Model.currentHRAStatus</option>
+
+                }
+                @if (Model.IsFUAssigned)
+                {
+                    <option value="FollowUp-@Model.followUpId">Follow-Up @Model.currentFUStatus</option>
+                }
+                @if (Model.FUAssessments != null && Model.FUAssessments.Count > 0)
+                {
+                    foreach (var assessment in Model.FUAssessments)
+                    {
+                        var assessmentType = assessment.Key.Contains("hra") ? "HRA" : "FollowUp";
+                        <option value=@assessmentType-@assessment.Key.Substring(0, assessment.Key.IndexOf("|"))>@assessmentType @assessment.Value</option>
+                    }
+                }
+            </optgroup>
+        }
+        @if (Model.pastAssessments != null && Model.pastAssessments.Count > 0)
+        {
+            <optgroup label="Past Assessments">
+                @foreach (var assessment in Model.pastAssessments)
+                {
+                    if (assessment.Key.Contains("hra"))
+                    {
+                        <option value="HRA-@assessment.Key.Substring(0, assessment.Key.IndexOf("|"))">HRA @assessment.Value</option>
+                    }
+                    if (assessment.Key.Contains("followup"))
+                    {
+                        <option value="FollowUp-@assessment.Key.Substring(0, assessment.Key.IndexOf("|"))">FollowUp @assessment.Value</option>
+                    }
+
+                }
+            </optgroup>
+        }
+    </select>
+    <div id="divHealthAssessment"></div>
+    <div id="divFollowupAssessment"></div>
+</div>
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+<script>
+    function showAssessment() {
+        $("#loader-wrapper").fadeIn();
+        var value = $("#ddlAssessment").val();
+        if (value.indexOf("FollowUp") > -1) {
+           $("#divFollowupAssessment").html('');
+            $("#divHealthAssessment").html('');
+            var followupid = value.substring(value.indexOf("-")+1);
+            var link = '@Url.Action("FollowUpModule", "FollowUp", new { followupid = "-1" })';
+            link = link.replace("-1", followupid);
+            $.ajax({
+                type: 'POST',
+                data: followupid,
+                url: link,
+                success: function (data) {
+                    $("#divFollowupAssessment").html(data);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+        else {
+             $("#divFollowupAssessment").html('');
+            $("#divHealthAssessment").html('');
+            var hraid = value.substring(value.indexOf("-") + 1);
+            var link = '@Url.Action("HRAModule", "HRA", new { hraid = "-1" })';
+            link = link.replace("-1", hraid);
+            $.ajax({
+                type: 'POST',
+                data: hraid,
+                url: link,
+                success: function (data) {
+                    $("#divHealthAssessment").html(data);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+        $("#loader-wrapper").fadeOut();
+    }
+
+        $("#ddlAssessment")[0].getElementsByTagName('option')[0].value.substring(0, $("#ddlAssessment")[0].getElementsByTagName('option')[0].value.length)
+        showAssessment();
+
+
+        function removeForm(formName) {
+        $("#"+formName).remove();
+        }
+
+        function RealignPage() {
+        $("html, body").animate({
+                scrollTop: 0
+        }, "fast");
+    }
+</script>

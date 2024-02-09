@@ -1,0 +1,262 @@
+﻿@model InterventWebApp.NotesModel
+@using InterventWebApp
+<!--ADMIN VIEW-->
+<div class="dashboard-content participant-log cell">
+    <div class="control-bar">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 medium-4 cell">
+                <h2>Participant Log</h2>
+            </div>
+            <div class="small-12 medium-8 cell text-right notes-decline-section">
+                <div class="qbody">
+                    @if (Model.participantPortalId.HasValue)
+                    {
+                        if (Model.userinProgramId.HasValue && Model.programType.HasValue && Model.programType.Value == 2)
+                        {
+                            @Html.CheckBoxFor(m => m.UserTrackingStatus.DoNotTrack, new { id = "DoNotTrack", onclick = "DoNotTrack();" })
+                            <label>Do not Track</label>
+                        }
+                        if (string.IsNullOrEmpty(Model.enrolledinCoaching))
+                        {
+                            @Html.CheckBoxFor(m => m.UserTrackingStatus.DeclinedEnrollment, new { id = "DeclinedEnrollment", onclick = "DeclinedEnrollment();" })
+                           <label>Declined enrollment <span id="DeclinedEnrollmentReasonLabel"> @(ViewData["DeclinedEnrollmentReason"] != null ? ( "(" + ViewData["DeclinedEnrollmentReason"] + ")") : "")</span></label>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="log-container">
+        <div class="grid-x grid-margin-x collapse">
+            <div class="cell small-12 medium-6 large-8">
+                <div class="actions">
+                    @if (Model.hasActivePortal)
+                    {
+                        <div class="indicator"></div>
+                        <button id="add-note-button" data-open="add-note-entry" class="button" data-modal-path="@Html.Raw(Url.Action("AddEditNotes", "Participant"))">Add New Note</button>
+                    }
+                </div>
+            </div>
+            <div class="cell small-12 medium-6 large-4">
+                <div class="selection-container">
+                    <label>
+                        @Html.DropDownListFor(m => m.Note.Type, Model.NoteTypes, "--Select Activity Type--", new { @onchange = "GetNotes()" })
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            Total notes : <span id="totalNotes">0</span>
+        </div>
+        <div id="participant-activity">
+        </div>
+        <br />
+        <div class="left"><button type="button" class="small" id="showMore">View More</button></div>
+    </div>
+</div>
+<div id="declined-enrollment-reasons" class="eligibility reveal participant-crm-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="crm-form-title align-justify align-middle flex-container crm-details-container">
+        <h2>Declined Enrollment Reason</h2>
+    </div>
+    <div id="EnrollmentReason">
+        @Html.DropDownList("DeclinedEnrollmentReason", ViewData["DeclinedEnrollmentReasons"] as IEnumerable<SelectListItem>, "--Select--")
+        <small class="form-error">@Translate.Message("L480")</small>
+    </div>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" id="AddReason">Save</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary"  id="closeReason">Cancel</button></div>
+    </div>
+</div>
+<script>
+    var perviousYearNotes = "";
+
+    $(document).ready(function () {
+        $("#Note_Type").val("");
+        GetNotes();
+        $('#AddReason').on('click', function () {
+            if ($('#DeclinedEnrollmentReason').val() != '')
+            {
+                UpdateUserTrackingStatus(true, null, $('#DeclinedEnrollmentReason').val());
+                $('#DeclinedEnrollmentReasonLabel').html(" (" + $("#DeclinedEnrollmentReason option:selected").text() + ")");
+                $('#declined-enrollment-reasons').foundation('close');
+            }
+        });
+        $('#closeReason').on('click', function () {
+            $('#DeclinedEnrollmentReason').val('');
+            $('input[name="UserTrackingStatus.DeclinedEnrollment"]').prop('checked', false);
+            $('#declined-enrollment-reasons').foundation('close');
+        });
+    });
+
+    function DoNotTrack() {
+        UpdateUserTrackingStatus(null, $('input[name="UserTrackingStatus.DoNotTrack"]:checked').length > 0, null);
+    }
+    function DeclinedEnrollment() {
+        var isDeclinedEnrollment = $('input[name="UserTrackingStatus.DeclinedEnrollment"]:checked').length > 0;
+        if (isDeclinedEnrollment) {
+            $('#DeclinedEnrollmentReason').val('');
+            $('#declined-enrollment-reasons').foundation('open');
+        }
+        else {
+            $('#DeclinedEnrollmentReasonLabel').html("");
+            UpdateUserTrackingStatus(isDeclinedEnrollment, null, null);
+        }
+    }
+    function UpdateUserTrackingStatus(DeclinedEnrollment, DoNotTrack, DeclinedEnrollmentReason) {
+        $.ajax({
+            url: "@Url.Action("UpdateUserTrackingStatus", "Participant")",
+            data: { DeclinedEnrollment: DeclinedEnrollment, DoNotTrack: DoNotTrack, DeclinedEnrollmentReason: DeclinedEnrollmentReason },
+            type: 'POST',
+            success: function (data) {
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    function GetNotes() {
+        var currentPortalId = '@Model.participantPortalId';
+        $.ajax({
+            url: "@Url.Action("GetNotes", "Participant")",
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                var Type = $("#Note_Type").val();
+                if (data != false || data != null) {
+                    if (data.Records != null) {
+                        $("#participant-activity").html("");
+                        var html = "", totalNotes = 0, perviousNotes = 0;
+                        perviousYearNotes= "";
+                        $("#showMore").hide();
+                        for (var i = 0; i < data.Records.length; i++) {
+                            if (data.Records[i].Type == Type || Type == "" || Type == undefined) {
+                                var datakind = "";
+                                var typeClass = "";
+                                var noteType = "";
+                                if (data.Records[i].Type == 1) {
+                                    datakind = "user";
+                                    typeClass = "fa-user";
+                                    noteType = "Coaching";
+                                }
+                                else if (data.Records[i].Type == 2) {
+                                    datakind = "headphones";
+                                    typeClass = "fa fa-headphones";
+                                    noteType = "Outreach";
+                                }
+                                else if (data.Records[i].Type == 3) {
+                                    datakind = "phone";
+                                    typeClass = "fa fa-phone-square";
+                                    noteType = "Tracking";
+                                }
+                                else if (data.Records[i].Type == 4) {
+                                    datakind = "pencil";
+                                    typeClass = "fa fa-pencil-square-o";
+                                    noteType = "Note";
+                                }
+                                else if (data.Records[i].Type == 5) {
+                                    datakind = "weixin";
+                                    typeClass = "fa fa-weixin";
+                                    noteType = "Other";
+                                }
+                                else if (data.Records[i].Type == 6) {
+                                    datakind = "share";
+                                    typeClass = "fa fa-share-alt";
+                                    noteType = "Other Referrals";
+                                }
+                                else if (data.Records[i].Type == 7) {
+                                    datakind = "unlock";
+                                    typeClass = "fa fa-file-pdf-o";
+                                    noteType = "Biometric Review Only";
+                                }
+                                else if (data.Records[i].Type == 8) {
+                                    datakind = "share";
+                                    typeClass = "fa fa-user-md";
+                                    noteType = "PCP Referral";
+                                }
+                                else if (data.Records[i].Type == 9) {
+                                    datakind = "hand";
+                                    typeClass = "fa fa-hand-o-right";
+                                    noteType = "Navigation Call";
+                                }
+                                else if (data.Records[i].Type == 10) {
+                                    datakind = "hand";
+                                    typeClass = "fa fa-bell";
+                                    noteType = "Critical Alert";
+                                }
+                                else if (data.Records[i].Type == 12) {
+                                    datakind = "hand";
+                                    typeClass = "fa fa-thumbs-down";
+                                    noteType = "Complaint";
+                                }
+                                else if (data.Records[i].Type == 13) {
+                                    datakind = "hand";
+                                    typeClass = "fa fa-credit-card";
+                                    noteType = "Marketing Feedback";
+                                }
+                                else if (data.Records[i].Type == 14) {
+                                    datakind = "hand";
+                                    typeClass = "fa fa-flask";
+                                    noteType = "Labs Outreach";
+                                }
+                                if (data.Records[i].Type == 4 && data.Records[i].Pinned == true)
+                                {
+                                    datakind1 = "thumb";
+                                    typeClass1 = "fa fa-thumb-tack";
+                                }
+                                else {
+                                    datakind1 = "";
+                                    typeClass1 = "";
+                                }
+
+                                if (currentPortalId == data.Records[i].PortalId || data.Records[i].Pinned == true)
+                                {
+                                    totalNotes++;
+                                    if (data.Records[i].Pinned == true) {
+                                        typeClass = typeClass1;
+                                        noteType = "Pinned Note";
+                                    }
+                                    html = html + "<div class='grid-x log-entry' data-kind='" + datakind + "'><div class='indicator'></div><div class='small-6 cell log-title'>" + "<span data-tooltip title='" + noteType + "'>" + "<i class='fa " + typeClass + "'></i>" + "</span>" + "<span class='log-from'>" +
+                                        data.Records[i].Name + "</span></div><div class='small-6 cell log-date'><span>" + toLocalDateFormat(data.Records[i].NotesDate, "12hour") + "</span></div><div data-kind='" + datakind1 + "'></div> <div class='small-12 cell log-content'>" +
+                                        data.Records[i].Text
+
+                                    if ('@Model.hasActivePortal' == "True" && (data.Records[i].CanEdit == true || data.Records[i].Pinned == true))
+                                        html = html + "<div class='small container-text right'><a style='color:deepskyblue' data-open ='add-note-entry' data-modal-path='" + '../AddEditNotes/' + data.Records[i].Id + "'>Edit Note</a></div>"
+                                    html = html + "</div>" + "</div>";
+                                }
+                                else
+                                {
+                                    perviousNotes++;
+                                    if (data.Records[i].Pinned == true) {
+                                        typeClass = typeClass1;
+                                        noteType = "Pinned Note";
+                                    }
+                                    perviousYearNotes = perviousYearNotes + "<div class='grid-x log-entry' data-kind='" + datakind + "'><div class='indicator'></div><div class='small-6 cell log-title'>" + "<span data-tooltip title='" + noteType + "'>" + "<i class='fa " + typeClass + "'></i>" + "</span>" + "<span class='log-from'>" +
+                                        data.Records[i].Name + "</span></div><div class='small-6 cell log-date'><span>" + toLocalDateFormat(data.Records[i].NotesDate, "12hour") + "</span></div><div data-kind='" + datakind1 + "'></div> <div class='small-12 cell log-content'>" +
+                                        data.Records[i].Text
+
+                                    if ('@Model.hasActivePortal' == "True" && (data.Records[i].CanEdit == true || data.Records[i].Pinned == true))
+                                        perviousYearNotes = perviousYearNotes + "<div class='small container-text right'><a style='color:deepskyblue' data-open ='add-note-entry' data-modal-path='" + '../AddEditNotes/' + data.Records[i].Id + "'>Edit Note</a></div>"
+                                    perviousYearNotes = perviousYearNotes + "</div>" + "</div>";
+                                    $("#showMore").show();
+                                }
+                            }
+                            $("#showMore").val(totalNotes + perviousNotes);
+                        }
+                        $("#totalNotes").text(totalNotes);
+                        $("#participant-activity").append(html);
+                        $(document).foundation();
+                    }
+                    $("[data-open]").on('click', function (e) {
+                        showmodal($(this), e)
+                    });
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    $("#showMore").on('click', function () {
+        $("#totalNotes").text($(this).val());
+        $("#participant-activity").append(perviousYearNotes);
+        $("#showMore").hide();
+    });
+</script>

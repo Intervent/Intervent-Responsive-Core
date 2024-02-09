@@ -1,0 +1,423 @@
+﻿
+@using InterventWebApp
+@model InterventWebApp.ProgramWellnessDataModel
+<div class="content-box wellness-section">
+    <div class="heading-content">
+        <h5 class="heading">@Translate.Message("L2449") <i class="fa fa-info" data-toggle="wellness-info"></i></h5>
+        <div class="dropdown-pane device-tooltip" id="wellness-info" data-dropdown data-auto-focus="true" data-hover="true" data-hover-pane="true" data-position="top" data-alignment="center" data-v-offset="15">
+            <p>@Translate.Message("L3952")</p>
+        </div>
+        @if (Model.hasActivePortal)
+        {
+            <div class="edit-info" data-edit="edit-wt" onclick="wellnessDetailEdit(this)">@Translate.Message("L3954")</div>
+        }
+    </div>
+    <div class="wellness-slider">
+        <div class="wellness-thumbs">
+            <div class="wellness-thumb">
+                <h5>@Translate.Message("L275")</h5>
+                <img src="~/Images/program/wellness-icon-1.svg" alt="" />
+                <ul>
+                    @{String WeightString; }
+                    @if (Model.Weight.HasValue)
+                    {
+                        WeightString = Model.Weight.Value.ToString() + " " + @Translate.Message(Model.Measurements[BioLookup.Weight].MeasurementUnit);
+                    }
+                    else
+                    {
+                        WeightString = Translate.Message("L1149");
+                    }
+                    <li><span class="rcircle"></span><b>@WeightString</b></li>
+                    @if (Model.WeightDiff != 0)
+                    {
+                        string diffClass = Model.WeightStatus;
+                        <li class="trend @diffClass"><img src="~/Images/program/t-arrow.svg" alt="" />@Model.WeightDiff @Translate.Message(@Model.Measurements[BioLookup.Weight].MeasurementUnit)</li>
+                    }
+                </ul>
+
+                <div class="edit-thumb-details" data-edit="edit-wt" onclick="wellnessDetailEdit(this)">
+                    <p><img src="~/Images/program/icon-edit.png" alt="" /> @Translate.Message("L2166")</p>
+                </div>
+            </div>
+            <div class="wellness-thumb">
+                <h5>@Translate.Message("L1233")</h5>
+                <img src="~/Images/program/wellness-icon-2.svg" alt="" />
+                <ul>
+                    <li><span class="ycircle"></span>@Translate.Message("L1503") <b>@(Model.SBP != 0 && Model.SBP != null ? Model.SBP.ToString() : Translate.Message("L1149"))</b></li>
+                    <li><span class="rcircle"></span>@Translate.Message("L1504") <b>@(Model.DBP != 0 && Model.DBP != null ? Model.DBP.ToString() : Translate.Message("L1149"))</b></li>
+                </ul>
+
+                <div class="edit-thumb-details" data-edit="edit-bp" onclick="wellnessDetailEdit(this)">
+                    <p><img src="~/Images/program/icon-edit.png" alt="" /> @Translate.Message("L2166")</p>
+                </div>
+            </div>
+        </div>
+        <div class="wellness-thumbs">
+            <div class="wellness-thumb">
+                <h5>@Translate.Message("L3953")</h5>
+                <img src="~/Images/program/wellness-icon-waist.svg" alt="" />
+                <ul>
+                    @{String WaistString; }
+                    @if (Model.Waist.HasValue)
+                    {
+                        WaistString = Model.Waist.Value.ToString() + " " + @Translate.Message(Model.Measurements[BioLookup.Waist].MeasurementUnit);
+                    }
+                    else
+                    {
+                        WaistString = Translate.Message("L1149");
+                    }
+                    <li><span class="rcircle"></span><b>@WaistString</b></li>
+                </ul>
+
+                <div class="edit-thumb-details" data-edit="edit-waist" onclick="wellnessDetailEdit(this)">
+                    <p><img src="~/Images/program/icon-edit.png" alt="" /> @Translate.Message("L2166")</p>
+                </div>
+            </div>
+            <div class="wellness-thumb">
+                <h5>@Translate.Message("L3955")</h5>
+                <img src="~/Images/program/wellness-icon-glucose.svg" alt="" />
+                <ul>
+                    <li><span class="ycircle"></span><b>@Model.Glucose</b></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-right">
+        <span class="edit-info" data-open="wellness-graphs">@Translate.Message("L4576")</span>
+    </div>
+</div>
+
+
+<div class="reveal edit-wellness-data" id="edit-wellness-data" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form id="wellness-data-form" data-abide novalidate>
+        <h2>@Translate.Message("L2449")</h2>
+        @Html.HiddenFor(m => m.wellnessDataId, new Dictionary<string, object> { { "id", "wellnessDataId" } })
+        <div class="wellness-form">
+            <ul class="accordion" id="wellness-accordion" data-accordion data-allow-all-closed="true">
+                <li class="accordion-item" id="edit-wt" data-accordion-item>
+                    <!-- Accordion tab title -->
+                    <a href="#" class="accordion-title">@Translate.Message("L275")</a>
+
+                    <!-- Accordion tab content -->
+                    <div class="accordion-content" data-tab-content data-remote="edit-wt">
+                        <p>@Html.Raw(Translate.Message("L3956"))</p>
+                        <div class="data-input-field">
+                            <div>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.Weight, new Dictionary<string, object> { { "id", "WellnessData_Weight" }, { "data-validator", "validateWeight" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "placeholder", Translate.Message("L3937") } })
+                                    <span class="input-group-label">@Translate.Message(@Model.Measurements[BioLookup.Weight].MeasurementUnit)</span>
+                                </div>
+                                <small data-form-error-for="WellnessData_Weight" class="form-error" data-abide-error>@Translate.Message("L2021") @Model.Measurements[BioLookup.Weight].Min-@Model.Measurements[BioLookup.Weight].Max.</small>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <!-- Accordion tab ends -->
+                <li class="accordion-item" id="edit-bp" data-accordion-item>
+                    <!-- Accordion tab title -->
+                    <a href="#" class="accordion-title">@Translate.Message("L503")</a>
+
+                    <!-- Accordion tab content -->
+                    <div class="accordion-content" data-tab-content data-remote="edit-bp">
+                        <p>@Html.Raw(Translate.Message("L3959"))</p>
+                        <div class="data-input-field">
+                            <div>
+                                @Html.TextBoxFor(m => m.SBP, new Dictionary<string, object> { { "id", "SBP" }, { "data-validator", "validateSBP" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "placeholder", Translate.Message("L3957") } })
+                                <small data-form-error-for="SBP" class="form-error" id="sbpError">@Translate.Message("L595") @Model.Measurements[BioLookup.SBP].Min-@Model.Measurements[BioLookup.SBP].Max.</small>
+                            </div>
+                        </div>
+                        <div class="data-input-field">
+                            <div>
+                                @Html.TextBoxFor(m => m.DBP, new Dictionary<string, object> { { "id", "DBP" }, { "data-validator", "validateDBP" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "placeholder", Translate.Message("L3958") } })
+                                <small data-form-error-for="DBP" class="form-error" id="dbpError">@Translate.Message("L980") @Model.Measurements[BioLookup.DBP].Min-@Model.Measurements[BioLookup.DBP].Max.</small>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="accordion-item" id="edit-vision" data-accordion-item>
+                    <!-- Accordion tab title -->
+                    <a href="#" class="accordion-title">@Translate.Message("L3961")</a>
+
+                    <!-- Accordion tab content -->
+                    <div class="accordion-content" data-tab-content data-remote="edit-vision">
+                        <p>@Translate.Message("L3962")</p>
+                        <div class="data-input-field">
+                            <div>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.WellnessVision, new Dictionary<string, object> { { "id", "WellnessData_WellnessVision" }, { "data-validator", "validateWellnessVision" }, { "placeholder", Translate.Message("L3960") } })
+                                    <small data-form-error-for="WellnessVision" class="form-error" id="wellnessvisionError">@Translate.Message("L3963")</small>
+
+                                    @*<textarea id="WellnessData_WellnessVision"></textarea>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <!-- Accordion tab ends -->
+                <li class="accordion-item" id="edit-waist" data-accordion-item>
+                    <!-- Accordion tab title -->
+                    <a href="#" class="accordion-title">@Translate.Message("L3953")</a>
+
+                    <!-- Accordion tab content -->
+                    <div class="accordion-content" data-tab-content data-remote="edit-waist">
+                        <p>@Translate.Message("L3964")</p>
+                        <div class="data-input-field">
+                            @Html.TextBoxFor(m => m.Waist, new Dictionary<string, object> { { "id", "WellnessData_Waist" }, { "data-validator", "validateWaist" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "placeholder", Translate.Message("L3965") } })
+                            <small data-form-error-for="Waist" class="form-error" id="waistError">@Translate.Message("L3966")</small>
+                            @*<input type="text" name="name" placeholder="Enter Waist" autocomplete="off" />*@
+                        </div>
+                    </div>
+                </li>
+                <!-- Accordion tab ends -->
+            </ul>
+        </div>
+        <div class="wellness-action">
+            <div class="button-group align-center">
+                <button type="reset" class="button hollow">@Translate.Message("L3967")</button>
+                <button type="submit" class="button">@Translate.Message("L3776")</button>
+            </div>
+        </div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </form>
+</div>
+
+<div class="content-box vision-section">
+    <h5 class="heading">@Translate.Message("L3968")</h5>
+    <div class="vision-content">
+        <div class="media">
+            <img src="~/Images/program/vision-icon.svg" alt="" />
+        </div>
+        @if (string.IsNullOrEmpty(Model.WellnessVision))
+        {
+            <div class="content">
+                <p class="title"> @Translate.Message("L3969")</p>
+                <p class="link" data-edit="edit-vision" onclick="wellnessDetailEdit(this)"> @Translate.Message("L3970")</p>
+            </div>
+        }
+        else
+        {
+            <div class="content ">
+                <p class="title">@Model.WellnessVision </p>
+                @if (Model.hasActivePortal) {
+                    <p class="link" data-edit="edit-vision" onclick="wellnessDetailEdit(this)"> @Translate.Message("L4072")</p>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="reveal large" id="wellness-graphs" data-reveal>
+    <div class="content-box">
+        <div class="content-chart">
+            <div id="health-data-chart" style="width:100%;height:400px;"></div>
+        </div>
+
+        <div id="no-wellness-graph" class="cell main-graph-container">
+            <div class="cell main-chart ">
+                <div class="no-graph-info text-center">
+                    <img src="~/Images/device/no-data.png" alt="Alternate Text">
+                    <span>@Translate.Message("L4000")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/ValidateNumbers.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/LoadWellnessDataAndChart.js")?v=@CommonUtility.GetRandom()"></script>
+
+<!--dependency script for Amcharts graphs-->
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")"></script>
+
+<script>
+	var pageSize = 15;
+	var totalRecords = 0;
+	var currentPage = 0;
+    var totalPages = 0;
+    var isTeamsBP = false;
+
+    Foundation.Abide.defaults.validators['validateWeight'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.Weight].Min;
+        var max = @Model.Measurements[BioLookup.Weight].Max;
+        var weight = $el.val();
+        if (!$("#edit-wt").hasClass("is-active")) {
+            return true;
+        }
+        if ((((parseFloat(weight)) >= min && (parseFloat(weight)) <= max) || (required == false && weight == "")) && (!(weight != weight.replace(/[^0-9\.]/g, ''))))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateSBP'] = function ($el, required, parent) {
+       var min = @Model.Measurements[BioLookup.SBP].Min;
+        var max = @Model.Measurements[BioLookup.SBP].Max;
+        if (!$("#edit-bp").hasClass("is-active"))
+        {
+            return true;
+        }
+	    if((parseInt($el.val()) >= min && parseInt($el.val()) <= max) || (required == false && $el.val() == ""))
+		    if ($el.val() != "")
+		    {
+			    var response = compareBP();
+			    if (response == false)
+			    {
+				    $("#sbpError").text("@Translate.Message("L2134")");
+				    return false;
+			    }
+			    else
+				    return true;
+		    }
+		    else
+			    return true;
+	    else
+	    {
+		    $("#sbpError").text("@Translate.Message("L595")" + " " + min + " - " + max);
+		    return false;
+	    }
+    };
+    Foundation.Abide.defaults.validators['validateDBP'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.DBP].Min;
+	    var max = @Model.Measurements[BioLookup.DBP].Max;
+        if ((parseInt($el.val()) >= min && parseInt($el.val()) <= max) || (required == false && $el.val() == "") || ($("#edit-vision").hasClass("is-active")))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateWellnessVision'] = function ($el, required, parent) {
+        if (!($("#edit-vision").hasClass("is-active")))
+            return true;
+        else if (($el.val() != ""))
+            return true;
+        else
+            return false;
+    };
+    Foundation.Abide.defaults.validators['validateWaist'] = function ($el, required, parent) {
+        if (!$("#edit-waist").hasClass("is-active")) {
+            return true;
+        }
+	    var min = @Model.Measurements[BioLookup.Waist].Min;
+        var max = @Model.Measurements[BioLookup.Waist].Max;
+        var waist = $el.val();
+        if (((parseInt(waist) >= min && parseInt(waist) <= max) || (required == false && waist == "")) && (!(waist != waist.replace(/[^0-9\.]/g, ''))))
+            return true;
+        else {
+            $("#waistError").text("@Translate.Message("L976")" + " " + min + " - " + max);
+            return false;
+        }
+    };
+    $(document).ready(function () {
+        $("#wellnessDataId").val('@Model.wellnessDataId')
+        $(".close-button").on('click', function (e) {
+                $(".form-error").removeClass("is-visible");
+                $("#Weight").removeClass("is-invalid-input");
+                $("#SBP").removeClass("is-invalid-input");
+                $("#DBP").removeClass("is-invalid-input");
+                $("#Waist").removeClass("is-invalid-input");
+                $("#WellnessData_WellnessVision").removeClass("is-invalid-input");
+            });
+        function slider_num(num, element) {
+            var $status = $(num);
+            var $slickElement = $(element);
+            $slickElement.on('init reInit afterChange', function (event, slick, currentSlide, nextSlide) {
+                var i = (currentSlide ? currentSlide : 0) + 1;
+                $status.text(i + '/' + slick.slideCount);
+            });
+
+            $slickElement.slick({
+                dots: false,
+                infinite: false,
+                speed: 300,
+                slidesToShow: 1,
+                slidesToScroll: 1,
+            });
+        }
+
+        slider_num('.pagingInfo', '.wellness-slider');
+        var url = "@Html.Raw(Url.Action("ListWellnessData", "Participant"))";
+        @if (Model.isTeamsBP)
+        {
+            @: isTeamsBP = true;
+        }
+        var healthData = GetHealthData(currentPage, pageSize, totalRecords, isTeamsBP, url, '@ViewData["Weight"]', '@ViewData["Waist"]',  false);
+        if (healthData[0].length > 0) {
+            $('.content-chart').removeClass('hide');
+            $("#no-wellness-graph").addClass("hide");
+            var isDiabetic = healthData[2];
+            var chart;
+            if (isDiabetic)
+                chart = CreateChart(healthData[0], "health-data-chart", '@Translate.Message("L504")', '@Translate.Message("L1503")', '@Translate.Message("L1504")', '@Translate.Message("L1515")');
+            else
+                chart = CreateChart(healthData[0], "health-data-chart", '@Translate.Message("L504")', '@Translate.Message("L1503")', '@Translate.Message("L1504")', null);
+            chart.validateData();
+        }
+		else {
+            $('.content-chart').addClass('hide');
+            $("#no-wellness-graph").removeClass("hide");
+        }
+    });
+    function wellnessDetailEdit(el) {
+        if ($("#wellnessDataId").val() == "0")
+            $("#wellness-data-form").find('input,textarea').val('');
+        var $this = $(el);
+		var dataTarget = $this.data("edit");
+		$('#wellness-accordion').foundation('up', $('.accordion-content'));
+		$('#wellness-accordion').foundation('down', $('[data-remote="' + dataTarget + '"]'));
+		if ('@Model.hasActivePortal' == "True") {
+			$("#edit-wellness-data").foundation("open");
+		}
+    }
+
+    $("#wellness-data-form").foundation();
+    $('#wellness-data-form').on("forminvalid.zf.abide", function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+    }).on('formvalid.zf.abide', function () {
+            $.ajax({
+                url: "@Url.Action("AddEditProgramWellnessData", "Program")",
+                type: 'POST',
+                dataType: "json",
+                data: $("#wellness-data-form").serialize(),
+                success: function (data) {
+                    if (data.Result == "success") {
+                        $("#wellnessDataId").val(data.Record.Id);
+                        editAll = false;
+                        $('#wellnessDataId').val(data.Record)
+                        $('#edit-wellness-data').foundation('close');
+                        ProgramWellnessData();
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            })
+        })
+        // to prevent form from submitting upon successful validation
+        .on("submit", function(ev) {
+            ev.preventDefault();
+        })
+    function compareBP() {
+        return (parseInt($("#SBP").val()) > parseInt($("#DBP").val())) || (!$.isNumeric($("#SBP").val()) || !$.isNumeric($("#DBP").val()));
+    }
+
+    function showDetails() {
+        var data = GetHealthData();
+        var healthData = data[0];
+        if (healthData.length > 0) {
+            $('.content-chart').removeClass('hide');
+            $("#no-wellness-graph").addClass("hide");
+            var chart = CreateChart(healthData, "health-data-chart", '@Translate.Message("L504")', '@Translate.Message("L1503")', '@Translate.Message("L1504")');
+            chart.validateData();
+        }
+		else {
+            $('.content-chart').addClass('hide');
+            $("#no-wellness-graph").removeClass("hide");
+        }
+    }
+</script>

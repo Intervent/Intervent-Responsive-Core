@@ -1,0 +1,174 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass chi-memorial info">
+    @Html.Partial("FullCircle/_FullCircleHeader")
+</section>
+
+<!--Signup Modal-->
+<div id="sign-up-modal" class="reveal small" data-reveal data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="cell medium-12">
+        <h2 class="text-center">@Translate.Message("L431")</h2>
+        <div data-alert id="signup-error" class="alert-box alert hide">
+            Sign Up Error
+            <a href="#" class="close">&times;</a>
+        </div>
+    </div>
+    <div class="cell">@Html.Partial("_SignUp")</div>
+    <div class="cell text-center">
+        <a href="#" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</a>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<section class="container feature">
+    <a name="beingempowered" class="compass mcallen anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                <img src="../Images/Twohandsheart.svg" alt="" />
+            </div>
+            <div class="feature-info cell medium-7 medium-order-1">
+                <h2>@Translate.Message("L2028")</h2>
+                <p>@Translate.Message("L2777")</p>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="plantbasedapproach" class="compass mcallen anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+            <div class="feature-icon cell medium-5 text-center">
+                <img src="../Images/Vegansvg.svg" alt="" />
+            </div>
+            <div class="feature-info cell medium-7">
+                <h2>@Translate.Message("L2697")</h2>
+                <p>@Translate.Message("L2698")</p>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="healthassessment" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/assessment.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L535")</h2>
+                    <p>@Translate.Message("L2470")</p>
+                    <p>@Translate.Message("L2471")</p>
+                    <p>@Translate.Message("L2472")</p>
+                    <p>@Html.Raw(Translate.Message("L2726"))</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="coachedprogram" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/coaching.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L1349")</h2>
+                    <p>@Translate.Message("L2778").</p>
+                    <p>@Translate.Message("L1909").</p>
+                    <p>@Html.Raw(string.Format(Translate.Message("L2727"), "(404) 537-3719"))</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="selfhelpprograms" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/self-help.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1913")</h2>
+                    <p>@Translate.Message("L1914").</p>
+                    <p>@Translate.Message("L1915").</p>
+                    <p>@Html.Raw(Translate.Message("L2728"))</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="resources" class="compass mcallen anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="~/Images/free webinar.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L2699")</h2>
+                    <p class="more-link" href="#" onclick="window.open('http://fullcirclehealthcoachingllc.com/') ">@Translate.Message("L2700")</p>
+                    <p class="more-link" href="#" onclick="window.open('http://fullcirclehealthcoachingllc.com/') ">@Translate.Message("L2701")</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="cardiosmart" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/CardioSmart.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L2065")</h2>
+                    <p>@Translate.Message("L2702")</p>
+                    <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/Join') ">
+                        @Translate.Message("L2703")
+                    </p>
+                    <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/AZ-Topics') ">
+                        @Translate.Message("L2704")
+                    </p>
+                    <p class="more-link" href="#" onclick="window.open('https://www.cardiosmart.org/Drugs-and-Treatments/Find-a-Drug') ">
+                        @Translate.Message("L2705")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature">
+    <a name="successstories" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/success.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L1351")</h2>
+                    <p>@Translate.Message("L2729")</p>
+                    <ul class="checkmark green listinside">
+                        <li>“@Translate.Message("L2431")”</li>
+                        <li>“@Translate.Message("L2432")”</li>
+                        <li>“@Translate.Message("L2433")”</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>

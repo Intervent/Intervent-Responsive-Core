@@ -1,0 +1,516 @@
+﻿@model InterventWebApp.AppointmenstModel
+@using InterventWebApp
+
+@{
+    ViewBag.Title = "ViewAppointments";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<section class="main search-participants appointments-section admin-main-body">
+    <!--<header>
+        <div>INTERVENT</div>
+        <div class="header-right">Scheduler</div>
+    </header>-->
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x scheduler-offset-small-only">
+                <div class="small-12 medium-8 large-6 cell">
+                    @Html.Partial("_SchedulerSelect",
+                    new ViewDataDictionary(ViewData) {
+                    { "Kind", "appointments" }
+                    })
+                </div>
+                <div class="small-6 medium-4 text-right large-6 cell hide-for-print">
+                    <button class="button show-for-large hide-for-print" onclick="doPrint();"><i class="fa fa-print"></i>Print</button>
+                </div>
+            </div>
+        @*</div>*@
+    </div>
+
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <div class="panel filters">
+                    <form data-abide="ajax" id="view-appt-filter-form">
+                        <div class="grid-x grid-margin-x">
+							<div class="small-12 medium-6 cell">
+								<span class="print-only">Start Date</span>
+								<input type="text" placeholder="Start Date..." id="StartDate" value="@Model.dateFormat" required oninvalid="this.setCustomValidity('Please enter a start date')"
+								oninput="this.setCustomValidity('')" />
+								<input id="HStartDate" type="hidden" />
+							</div>
+                            <div class="small-12 medium-6 end cell">
+                                <span class="print-only">End Date</span>
+                                <input type="text" placeholder="End Date..." id="EndDate" value="@Model.dateFormat">
+                                <input id="HEndDate" type="hidden" />
+                            </div>
+                        </div>
+                        <div class="grid-x grid-margin-x">
+                            <div class="small-12 medium-6 cell print-option">
+                                @Html.LabelFor(model => model.Coach)
+                                @Html.DropDownListFor(x => x.Coach, Model.Coaches, "--Select Coach/CSR--", new Dictionary<string, object> { { "class", "primary-select" } })
+                            </div>
+                        </div>
+                        <div class="grid-x grid-margin-x">
+                            <div class="small-6 cell">
+                                <button type="submit" class="button" id="search">
+                                    <div class="loading-spinner hide" show-if-submitting></div>
+                                    <i class="fa fa-filter"></i>
+                                    Filter
+                                </button>
+                            </div>
+							<div class="small-6 cell text-right">
+								@if (CommonUtility.HasSuperAdminRole(User.RoleCode()))
+								{
+									<button type="button" id="moveAppointmentPopup" class="button hollow" data-open="move-appointment-modal">
+										<i class="fa fa-arrow-circle-right"></i>Move
+									</button>
+								}
+							</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="search-results-container hide" id="appointment-container">
+            <div class="search-results" id="appointment">
+            </div>
+            <div class="cell small-12">
+                <!-- pagination Start -->
+                <div class="pagination-area hide" id="pagination-centered">
+                    <ul>
+                        <li id="numeric"></li>
+                    </ul>
+                    <!-- page-link Start -->
+                    <div class="page-link">
+                        <label>@Translate.Message("L4041")</label>
+                        <div class="grid-x">
+                            <input type="text" id="jumptoPageNo">
+                            <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                        </div>
+                    </div>
+                    <!-- page-link End -->
+                </div>
+                <!-- pagination End -->
+            </div>
+        </div>
+    </div>
+</section>
+<div id="move-appointment-modal" class="reveal large" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    <h3><span>Move Appointment</span></h3>
+    <form data-abide id="move-appointment-form" novalidate>
+        <div class="grid-x grid-margin-x">
+            <div class="medium-6 cell">
+                @Html.DropDownListFor(x => x.CoachId, Model.Coaches, "--Select Coach/CSR--", new Dictionary<string, object> { { "id", "CoachId" }, { "required", "required" } })
+                <small class="form-error" id="CoacheError">Required</small>
+            </div>
+            <div class="medium-6 cell">
+                <input type="text" placeholder="Start Date..." id="MoveDateStart" value="@DateTime.Now.ToShortDateString()" aria-errormessage="MoveDateStartError" required>
+                <small class="form-error" id="MoveDateStartError" >Required</small>
+                <input id="HMoveDateStart" type="hidden" />
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="medium-6 cell">
+                @Html.DropDownListFor(x => x.ToCoachId, Model.Coaches, new Dictionary<string, object> { { "id", "ToCoachOption" }, { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "--To Coach/CSR--" } })
+            </div>
+            <div class="medium-6 cell">
+                <input type="text" placeholder="End Date..." id="MoveDateEnd" value="@DateTime.Now.ToShortDateString()" data-validator="validateEndDate" aria-errormessage="MoveDateEndError" required>
+                <small class="form-error" id="MoveDateEndError">Required</small>
+                <input id="HMoveDateEnd" type="hidden" />
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <button type="submit" class="button">
+                    <i class="fa fa-arrow-circle-right"></i>
+                    Move
+                </button>
+            </div>
+        </div>
+    </form>
+    <div id="moveAppointmentsConformDiv" class="hide">
+        <span id="conformText"></span>
+        <a href="#" class="anchor-blue" id="moveAppointmentsYes"><u>YES</u></a>&nbsp;&nbsp;<a href="#" class="anchor-blue" id="moveAppointmentsNo"><u>NO</u></a>
+    </div>
+
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <div id="search-results"></div>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <div id="Movedappointment"></div>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <div id="Unmovedappointment"></div>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    var nowDate = new Date();
+    var compDate = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), nowDate.getHours(), nowDate.getMinutes(), 0, 0);
+    compDate.setDate(compDate.getDate() - 1)
+    function doPrint() {
+        window.print();
+    }
+    $("#StartDate").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#StartDate').val()));
+    });
+    $("#EndDate").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#EndDate').val()));
+    });
+    $("#MoveDateStart").on("change", function () {
+        $('#HMoveDateStart').val(toSystemDateFormat($("#MoveDateStart").val(), "24hour"));
+    });
+    $("#MoveDateEnd").on("change", function () {
+        $('#HMoveDateEnd').val(toSystemDateFormat($("#MoveDateEnd").val(), "24hour"));
+    });
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+
+    Foundation.Abide.defaults.validators['validateEndDate'] = function ($el, required, parent) {
+        var startDate = new Date($("#HMoveDateStart").val().replace(/-/g, '/'));
+        var endDate = new Date($("#HMoveDateEnd").val().replace(/-/g, '/'));
+        if (startDate > endDate) {
+            $("#endDateError").text('End Date should not be lesser than the Start Date');
+            return false;
+        }
+        return true;
+    };
+
+    $(document).ready(function () {
+        $("#StartDate").fdatepicker({
+            format: "@Model.dateFormat.ToLower()"
+        })
+            .on('change', function (selected) {
+                var endDate = new Date($("#HEndDate").val());
+                var minDate = new Date($("#HStartDate").val());
+                if (endDate < minDate) {
+                    $('#EndDate').fdatepicker('setDate', minDate);
+                }
+                $('#EndDate').fdatepicker('setStartDate', minDate);
+                $("#EndDate").trigger("change");
+            });
+        $("#EndDate").fdatepicker({
+            format: "@Model.dateFormat.ToLower()"
+        });
+
+        $("#MoveDateStart").fdatepicker({
+            format: '@Model.dateFormat.ToLower() hh:ii',
+            minuteStep: 15,
+            disableDblClickSelection: true,
+            pickTime: true,
+            onRender: function (date) {
+                return date.valueOf() < compDate.valueOf() ? 'disabled' : '';
+            }
+        }).on('change', function (selected) {
+            var endDate = new Date($("#HMoveDateEnd").val().replace(/-/g, '/'));
+            var minDate = new Date($("#HMoveDateStart").val().replace(/-/g, '/'));
+            minDate.setDate(minDate.getDate() - 1);  // to enable UI to show MoveDateEnd the same as MoveDateStart on selection.
+            if (endDate < minDate) {
+                $('#MoveDateEnd').fdatepicker('setDate', minDate);
+            }
+            $('#MoveDateEnd').fdatepicker('setStartDate', minDate);
+            $("#MoveDateEnd").trigger("change");
+        });
+        $("#MoveDateEnd").fdatepicker({
+            format: '@Model.dateFormat.ToLower() hh:ii',
+            minuteStep: 15,
+            disableDblClickSelection: true,
+            pickTime: true,
+            onRender: function (date) {
+                return date.valueOf() < compDate.valueOf() ? 'disabled' : '';
+            }
+        });
+
+        $("#move-appointment-form")
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                if (invalid_fields) {
+                    var scrollTo = $('#' + invalid_fields[0].id).offset().top;
+                }
+            })
+            .on('formvalid.zf.abide', function () {
+                var startDate = $("#HMoveDateStart").val();
+                var endDate = $("#HMoveDateEnd").val();
+                var coachID = $("#CoachId").val();
+                var ToCoachIds = getToCoach();
+                if (startDate != "" && endDate != "" && coachID > 0) {
+                    $('#moveAppointmentsConformDiv').removeClass('hide');
+                    $('#Movedappointment').html('');
+                    $('#Unmovedappointment').html('');
+                    $('#conformText').html("Are you sure you want to move all appointments from " + toLocalDateFormat(startDate) + " to " + toLocalDateFormat(endDate) + " for this coach?");
+                }
+            })
+            .on("submit", function (ev) {
+                ev.preventDefault();
+            });
+        $("#StartDate").trigger("change");
+        $("#EndDate").trigger("change");
+    });
+
+	$("#search").on('click', function ListAppointments(ev) {
+        var valCheck = $("#StartDate").val();
+        if (valCheck == '')
+			document.getElementById("view-appt-filter-form").reportValidity();
+        $('[show-if-submitting]').parent().prop('disabled', true);
+        $('[show-if-submitting]').removeClass('hide');
+        startIndex = 0;
+        pageSize = 25;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        ListAppointment();
+        ev.preventDefault();
+    });
+    function ListAppointment()
+    {
+        var startDate = $("#HStartDate").val();
+        var endDate = $("#HEndDate").val();
+        var coachID = $("#Coach").val();
+        var TimeZoneID = $("#TimeZoneId").val();
+		if (startDate == "Invalid date") {
+			$('[show-if-submitting]').parent().prop('disabled', false);
+			$('[show-if-submitting]').addClass('hide');
+            return true;
+        }
+        $.ajax({
+            url: "@Url.Action("ListAppointments", "Scheduler")",
+            type: 'POST',
+            dataType: "json",
+            data: { StartDateTime: startDate, EndDateTime: endDate, coachID: coachID, TimeZoneId: TimeZoneID, page: currentPage, pageSize: pageSize, totalRecords: totalRecords },
+            success: function (data) {
+                totalRecords = data.Records.totalRecords;
+                totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                if (data != null) {
+                    $("#appointment-container").removeClass("hide");
+                    var comment, textResponse;
+                    var usersHtml = [];
+                    $('#appointment').html(usersHtml.join(''));
+					usersHtml.push("<div class='grid-x title'><div class='name medium-3 cell'>Time</div><div class='risk medium-1 cell show-for-medium'>Length</div>" +
+                        "<div class='risk medium-3 cell show-for-medium'>Name</div><div class='risk medium-2 cell show-for-medium'>Company</div><div class='risk medium-2 cell show-for-medium'>Coach</div><div class='medium-1 cell show-for-medium'></div></div>");
+                    if (data.Records.Appointments != null && data.Records.Appointments.length > 0) {
+                        for (var i = 0; i < data.Records.Appointments.length; i++) {
+                            var ListAppoinments = data.Records.Appointments[i];
+                            var date = new Date(parseInt(ListAppoinments.Date.substr(6)));
+                            if (ListAppoinments.Comments != null)
+                                comment = ListAppoinments.Comments;
+                            else
+                                comment = "No Comments";
+                            if (ListAppoinments.TextResponse != null)
+                                textResponse = "<div class='detailed-content'>" + "<span class='element'>Text Response: </span><span class='content'>" + ListAppoinments.TextResponse + "</span>" + "</div>";
+                            else
+                                textResponse = "";
+                            var NoShow;
+                            if (ListAppoinments.InActiveReason == 5) {
+                                NoShow = "Yes";
+                            }
+                            else {
+                                NoShow = "";
+                            }
+                            var Video;
+                            if (ListAppoinments.VideoRequired == true) {
+                                Video = "Yes";
+                            }
+                            else {
+                                Video = "";
+                            }
+                            usersHtml.push("<div class='item-container'><div class='grid-x item'><div class='name medium-3 cell'>" + toLocalDateFormat(ListAppoinments.Date) + " " + ListAppoinments.StartTime + "</div>" +
+                                "<div class='risk medium-1 cell show-for-medium'>" + ListAppoinments.Minutes + " min" + "</div>" +
+                                "<div class='name small-11 medium-3 cell show-for-medium'>" + ListAppoinments.UserName +"</div>" +
+                                "<div class='risk small-11 medium-2 cell show-for-medium'>" + ListAppoinments.Company + "</div>" +
+                                "<div class='risk small-11 medium-2 cell show-for-medium'>" + ListAppoinments.CoachName + "</div>" +
+                                "<div class='control small-1 medium-1 cell'><i class='fa fa-chevron-right is-inactive'></i><i class='fa fa-chevron-down is-active'></i>" + "</div>" +
+                                "</div>" +
+                                "<div class='detailed-info hide'>" +
+                                "<div class='grid-x'>" +
+                                "<div class='cell hide-for-print show-for-small-only'>" +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>Duration: </span><span class='content'>" + ListAppoinments.Minutes + " min" + "</span>" +
+                                "</div>" +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>Name: </span><span class='content'>" + ListAppoinments.UserName +"</span>" +
+                                "</div>" +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>Coach Name: </span><span class='content'>" + ListAppoinments.CoachName + "</span>" +
+                                "</div>" +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>Company: </span><span class='content'>" + ListAppoinments.Company + "</span>" +
+                                "</div>" +
+                                "</div>" +
+                                "<div class='small-12 medium-6 end cell'>" +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>Id: </span><span class='content'>" + ListAppoinments.UserId + "</span>" +
+                                "</div>" +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>Type: </span><span class='content'>" + ListAppoinments.ApptType + "</span>" +
+                                "</div>" +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>Language: </span><span class='content'>" + ListAppoinments.Language + "</span>" +
+                                "</div>" +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>Go to Participant Info: </span><span class='content'><a onclick='ViewParticipant(" + ListAppoinments.UserId + ")'><i class='fa fa-user-plus'></i></a></span>" +
+                                "</div>" +
+                                "</div>" +
+                                "<div class='small-12 medium-4 end cell'>" +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>Comment: </span><span class='content'>" + ListAppoinments.Comments + "</span>" +
+                                "</div>" +
+                                textResponse +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>Phone Number: </span><span class='content'>" + ListAppoinments.PhoneNumber + "</span>" +
+                                "</div>" +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>Video: </span><span class='content'>" + Video + "</span>" +
+                                "</div>" +
+                                "<div class='detailed-content'>" +
+                                "<span class='element'>No Show: </span><span class='content'>" + NoShow + "</span>" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>");
+                        }
+                        $('#appointment').html(usersHtml.join(''));
+                        $('#pagination-centered').removeClass('hide');
+                    }
+                    else {
+                        $('#pagination-centered').addClass('hide');
+                        $('#appointment').html("<center>@Translate.Message("L2774")</center>");
+                    }
+                }
+                AddPager();
+                $('[show-if-submitting]').parent().prop('disabled', '');
+                $('[show-if-submitting]').addClass('hide');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#search-results").fadeOut();
+    }
+    $("#moveAppointmentPopup").on('click', function () {
+        $('#Movedappointment').html('');
+        $('#Unmovedappointment').html('');
+        $("#CoachId").val('');
+        $('#moveAppointmentsConformDiv').addClass('hide');
+        var selectedOptions = document.getElementById("ToCoachOption").selectedOptions;
+        for (var i = 0; i < selectedOptions.length; i++) {
+            $("li[data-value='" + selectedOptions[i].value + "']").removeClass("selected");
+        }
+        $(".custom-dropdown-button").html("--To Coach/CSR--");
+        $('[name="ToCoachId]').val('');
+        $("#MoveDateStart").val('');
+        $("#MoveDateEnd").val('');
+
+    });
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListAppointment();
+    }
+
+    function getToCoach() {
+        var groups = "";
+        var selectObject = $('[name="ToCoachId"]')[0].selectedOptions;
+        for (var i = 0; i < selectObject.length; i++) {
+            if (groups == "") {
+                groups = selectObject[i].value
+            }
+            else {
+                groups = groups + "-" + selectObject[i].value;
+            }
+        }
+        return groups;
+    }
+    $('#moveAppointmentsYes').on('click', function () {
+        var startDate = $("#HMoveDateStart").val();
+        var endDate = $("#HMoveDateEnd").val();
+        var coachID = $("#CoachId").val();
+        var ToCoachIds = getToCoach();
+        $.ajax({
+            url: "@Url.Action("MoveAppointments", "Scheduler")",
+            type: 'POST',
+            dataType: "json",
+            data: { StartDateTime: startDate, EndDateTime:endDate, coachID: coachID, ToCoachIds : ToCoachIds},
+            success: function (data) {
+                $('#moveAppointmentsConformDiv').addClass('hide');
+                if (data != null && data.Records != "0") {
+                    $('#Movedappointment').html('');
+                    $('#Unmovedappointment').html('');
+                    $("#noAppointment").hide();
+                    if (data.Records.AssignedList.length > 0) {
+                        var comment;
+                        var usersHtml = [];
+                        $('#Movedappointment').html('');
+                        var movedHtml = "<h4>Moved Appointments</h4>";
+                        movedHtml += "<table class='table'>";
+                        movedHtml += "<tr><th class='green'>Name</th><th class='green'>Time</th><th class='green'>Length</th><th class='green'>Coach</th></tr>"
+                        for (var i = 0; i < data.Records.AssignedList.length; i++) {
+                            var ListAppoinments = data.Records.AssignedList[i];
+                            var date = new Date(parseInt(ListAppoinments.Date.substr(6)));
+                            movedHtml += "<tr><td>" + ListAppoinments.UserName + "</td>" + "<td>" + toLocalDateFormat(ListAppoinments.Date) + " " + ListAppoinments.StartTime + "</td>" +
+                                            "<td>" + ListAppoinments.Minutes + " min" + "</td>" + "<td>" + ListAppoinments.CoachName + "</td></tr>";
+                        }
+                        $('#Movedappointment').html(movedHtml);
+                        $('#Movedappointment').removeClass("hide");
+                    }
+                    if (data.Records.NotAssignedList.length > 0) {
+                        $('#Unmovedappointment').html('');
+                        var unmovedHtml = "<h4>Appointments Not Moved</h4>";
+                        unmovedHtml += "<table class='table'>";
+                        unmovedHtml += "<tr><th class='pink'>Name</th><th class='pink'>Time</th><th class='pink'>Length</th></tr>"
+                        for (var i = 0; i < data.Records.NotAssignedList.length; i++) {
+                            var ListAppoinments = data.Records.NotAssignedList[i];
+                            var date = new Date(parseInt(ListAppoinments.Date.substr(6)));
+                            unmovedHtml += "<tr><td>" + ListAppoinments.UserName + "</td>" + "<td>" + toLocalDateFormat(ListAppoinments.Date) + " " + ListAppoinments.StartTime + "</td>" +
+                                            "<td>" + ListAppoinments.Minutes + " min" + "</td></tr>";
+                        }
+                        unmovedHtml += "</table>";
+                        $('#Unmovedappointment').append(unmovedHtml);
+                        $('#Unmovedappointment').removeClass("hide");
+                    }
+                }
+                else {
+                    $('#Movedappointment').html($("#CoachId option:selected").text() + '  doesn\'t have an apppointment to move');
+                    $('#Unmovedappointment').html('');
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+    $('#moveAppointmentsNo').on('click', function () {
+        $('#moveAppointmentsConformDiv').addClass('hide');
+    });
+    $("#closepopup").on('click', function closePopup() {
+        $('#move-appointment-modal').foundation('close');
+    })
+    function ViewParticipant(Id) {
+    var link = '@Url.Action("ParticipantProfile", "Participant", new { Id = "PId" })';
+    window.location.href = link.replace("PId", Id)
+    }
+</script>

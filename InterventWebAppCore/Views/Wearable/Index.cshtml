@@ -1,0 +1,75 @@
+﻿@{
+    ViewBag.Title = "Wearable";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main wearable-page">
+	<div class="grid-container">
+		<div data-alert id="connection-alert" class="callout alert-box alert notification-callout" hidden>
+			<span>Connection unsuccessfull</span>
+		</div>
+
+		<div class="grid-x" id="wearableDevice">			
+		</div>
+	</div>
+</section>
+<script>
+    $(document).ready(function () {
+		ListWearableDevices();
+    });
+	function ListWearableDevices() {	
+		$.ajax({
+            url: "@Url.Action("ListWearableDevices", "Wearable")",
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#wearableDevice').html("");
+                var wearableDevices = "";
+				wearableDevices += "<div class='cell'><div class='section-content-wrapper'><div class='grid-x grid-margin-x grid-margin-y'><div class='cell'><p class='wearable-page-title'>Found <span id='dev-count'>" + data.wearableDevices.length + "</span> device(s). <span id='dev-count'>" + data.connectedDeviceCount +" device(s) connected</span></p></div>";
+                for (var i = 0; i < data.wearableDevices.length; i++) 
+				{
+					var device = data.wearableDevices[i];
+                    wearableDevices += "<div class='cell medium-4 large-3'><div class='card'><div class='card-img'><img src='../Images/wearables/" + device.Icon + "' class='center-block img-fluid' style='margin-bottom:20px;'></div>";
+                    wearableDevices += "<div class='card-body'><h4 class='text-center'>"+ device.Name +"</h4>";
+					wearableDevices += "<div class='wearable-buttons'>";
+					if (device.connectedDeviceId != "") {
+						wearableDevices += "<span class='button hollow'><i class='fa fa-check-circle'></i> Connected</span><a class='anchor-blue' onclick='DisconnectDevice(" + device.connectedDeviceId + ")'>Disconnect</a>"
+					}
+					else
+					{
+                        wearableDevices += "<a class='button' onclick='AuthenticateUser(\"" + device.AuthUrl + "\")'><i class='fa fa-plus-circle'></i> Connect</a>";
+					}
+					wearableDevices += "</div></div></div></div>";
+				}
+				wearableDevices += "</div></div>";
+				$('#wearableDevice').append(wearableDevices);
+			}
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+	}
+    function DisconnectDevice(deviceId) {
+         $.ajax({
+            url: "@Url.Action("DisconnectDevice", "Wearable")",
+            data: { deviceId: deviceId },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+				$("#connection-alert").find('span').html(data.Message);
+                $("#connection-alert").show('slow');
+                ListWearableDevices();
+                setTimeout(function () {
+                    $('#connection-alert').addClass('hide');
+                }, 2000);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+	}
+
+	function AuthenticateUser(url) {
+		url = "../Wearable/" + url;
+        window.open(url, '_blank');
+	}
+
+</script>

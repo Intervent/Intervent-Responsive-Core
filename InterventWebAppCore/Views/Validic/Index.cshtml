@@ -1,0 +1,201 @@
+﻿
+@using InterventWebApp
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<section class="main devices dashboard-content">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x grid-margin-y">
+            <div class="small-12 cell">
+                <a href="@string.Format("https://app.validic.com/{0}/{1}", Model.OrganisationId, Model.UserAccessToken)" target="_blank">
+                    <button class="secondary button small">@Translate.Message("L1890")</button>
+                </a>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x device-box">
+            <div class="small-6 medium-4 cell">
+                <div class="chart-card blue" data-open="weight-chart-modal" data-modal-path="@Html.Raw(Url.Action("GetWeight", "Validic"))">
+                    <div class="pie-chart">
+                        <div class="pie pie-top"></div>
+                        <div class="pie pie-1"></div>
+                        <div class="pie pie-2"></div>
+                    </div>
+                    <div class="title">@Translate.Message("L504")</div>
+                </div>
+            </div>
+            <div class="small-6 medium-4 cell">
+                <div class="chart-card red" data-open="blood-pressure-chart-modal" data-modal-path="@Html.Raw(Url.Action("GetBiometrics", "Validic"))">
+                    <div class="bar-chart">
+                        <div class="bar bar-4"></div>
+                        <div class="bar bar-2"></div>
+                        <div class="bar bar-6"></div>
+                        <div class="bar bar-1"></div>
+                        <div class="bar bar-3"></div>
+                        <div class="bar bar-5"></div>
+                    </div>
+                    <div class="title">@Translate.Message("L1233")</div>
+                </div>
+            </div>
+            <div class="small-6 medium-4 cell">
+                <div class="chart-card green" data-open="routine-chart" data-modal-path="@Html.Raw(Url.Action("GetRoutine", "Validic"))">
+                    <div class="bar-chart">
+                        <div class="bar bar-2"></div>
+                        <div class="bar bar-1"></div>
+                        <div class="bar bar-4"></div>
+                        <div class="bar bar-3"></div>
+                        <div class="bar bar-6"></div>
+                        <div class="bar bar-5"></div>
+                    </div>
+                    <div class="title">@Translate.Message("L1619")</div>
+                </div>
+            </div>
+            <div class="small-6 medium-4 cell">
+                <div class="chart-card pink" data-open="nutrition-chart-modal" data-modal-path="@Html.Raw(Url.Action("GetNutrition", "Validic"))">
+                    <div class="h-bar-chart">
+                        <div class="bar bar-1"></div>
+                        <div class="bar bar-2"></div>
+                        <div class="bar bar-3"></div>
+                        <div class="bar bar-4"></div>
+                        <div class="bar bar-5"></div>
+                    </div>
+                    <div class="title">@Translate.Message("L272")</div>
+                </div>
+            </div>
+            <div class="small-6 medium-4 cell">
+                <div class="chart-card purple" data-open="glucose-chart-modal" data-modal-path="@Html.Raw(Url.Action("GetDiabetes", "Validic"))">
+                    <div class="pie-chart">
+                        <div class="pie pie-top"></div>
+                        <div class="pie pie-3"></div>
+                        <div class="pie pie-2"></div>
+                    </div>
+                    <div class="title">@Translate.Message("L1592")</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<div id="weight-chart-modal" class="reveal large device-chart-container" data-reveal>
+    <h2>@Translate.Message("L504")</h2>
+    <a class="close-button" data-close>&#215;</a>
+    <div id="weightchart" class="device-chart"></div>
+</div>
+<div id="fitness-chart-modal" class="reveal large device-chart-container" data-reveal>
+    <h2>@Translate.Message("L1618")</h2>
+    <a class="close-button" data-close>&#215;</a>
+    <div id="fitnesschart" class="device-chart"></div>
+</div>
+<div id="blood-pressure-chart-modal" class="reveal large device-chart-container" data-reveal>
+    <h2>@Translate.Message("L1233")</h2>
+    <a class="close-button" data-close>&#215;</a>
+    <div id="bpchart" class="device-chart"></div>
+</div>
+<div id="routine-chart-modal" class="reveal large device-chart-container" data-reveal>
+        <h2>@Translate.Message("L1619")</h2>
+        <a class="close-button" data-close>&#215;</a>
+        <div id="routinechart" class="device-chart"></div>
+    </div>
+<div id="glucose-chart-modal" class="reveal large device-chart-container" data-reveal>
+    <h2>@Translate.Message("L1592")</h2>
+    <a class="close-button" data-close>&#215;</a>
+    <div id="glucosechart" class="device-chart"></div>
+</div>
+<div id="nutrition-chart-modal" class="reveal large device-chart-container" data-reveal>
+    <h2>@Translate.Message("L272")</h2>
+    <a class="close-button" data-close>&#215;</a>
+    <div id="nutritionchart" class="device-chart"></div>
+</div>
+
+<div id="routine-chart" class="reveal large device-chart-container" data-reveal data-close-on-esc="false"></div>
+
+<script src="@Url.Content("~/Scripts/moment.min.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts/amcharts.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts/serial.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts/themes/patterns.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts/themes/light.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts/plugins/responsive/responsive.min.js")"></script>
+<script>
+    function CreateChart(data, chartName, label) {
+        var chart = AmCharts.makeChart(chartName, {
+            "type": "serial",
+            "theme": "light",
+            "dataDateFormat": "DD-MMM-YYYY",
+            "marginRight": 70,
+            "dataProvider": data,
+            "valueAxes": [{
+                "axisAlpha": 0,
+                "position": "left",
+                "title": label
+            }],
+            "startDuration": 1,
+            "graphs": [{
+                "balloonText": "<b>[[source]]: [[value]]</b>",
+                "fillColorsField": "color",
+                "fillAlphas": 0.9,
+                "lineAlpha": 0.2,
+                "type": "column",
+                "valueField": "data1"
+            }],
+            "chartCursor": {
+                "categoryBalloonEnabled": false,
+                "cursorAlpha": 0,
+                "zoomable": false
+            },
+            "columnWidth": "0.3",
+            "categoryField": "date",
+            "categoryAxis": {
+                "parseDates": false,
+                "labelRotation": 90
+            },
+            "export": {
+                "enabled": true
+            }
+        });
+    }
+
+    function CreateCandleChart(data, chartName) {
+        var chart = AmCharts.makeChart("bpchart", {
+            "type": "serial",
+            "theme": "light",
+            "dataDateFormat": "DD-MMM-YYYY HH:mm",
+            "valueAxes": [{
+                "position": "left"
+            }],
+            "graphs": [{
+                "id": "g1",
+                "balloonText": "SBP:<b>[[open]]</b><br>DBP:<b>[[close]]</b><br>",
+                "closeField": "close",
+                "fillColors": "#CD0D74",
+                "highField": "high",
+                "lineColor": "#CD0D74",
+                "lineAlpha": 1,
+                "lowField": "low",
+                "fillAlphas": 0.9,
+                "negativeFillColors": "#CD0D74",
+                "negativeLineColor": "#CD0D74",
+                "openField": "open",
+                "title": "Price:",
+                "type": "candlestick",
+                "valueField": "close"
+            }],
+            "chartScrollbar": {
+                "graph": "g1",
+                "graphType": "line",
+                "scrollbarHeight": 30
+            },
+            "chartCursor": {
+                "valueLineEnabled": true,
+                "valueLineBalloonEnabled": true
+            },
+            "columnWidth": "0.3",
+            "categoryField": "date",
+            "categoryAxis": {
+                "parseDates": false,
+                "labelRotation": 90
+            },
+            "dataProvider": data
+        });
+    }
+</script>

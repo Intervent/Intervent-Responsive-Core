@@ -1,0 +1,255 @@
+﻿@using InterventWebApp
+@model InterventWebApp.HRAModel
+<section class="main health-assessment">
+    <!--NEW-->
+    <div class="grid-x grid-margin-x">
+        <div class="small-12 cell">
+            <div class="tiles">
+                <ul class="grid-x small-up-1 large-up-2">
+                    @{string status = string.Empty;}
+                    <li id="medicalList" class="cell tile">
+                        <a href="#" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("MedicalConditions", "HRA",new { adminview = true, hraid = Model.HRAId }))">
+                            <h6>1.@Translate.Message("L483") </h6>
+                            <span class="status"></span>
+                        </a>
+                    </li>
+                    <li id="otherRisksList" class="cell tile">
+                        <a href="#" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("OtherRiskFactors", "HRA",new { hraid = Model.HRAId }))" class="inactive-link">
+                            <h6>2.@Translate.Message("L484")</h6>
+                            <span class="status"></span>
+                        </a>
+                    </li>
+                    <li id="hspList" class="cell tile">
+                        <a href="#" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("HSP", "HRA",new { hraid = Model.HRAId }))" class="inactive-link">
+                            <h6>3.@Translate.Message("L485")</h6>
+                            <span class="status"></span>
+                        </a>
+                    </li>
+                    <li id="examsList" class="cell tile">
+                        <a href="#" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("ExamsandShots", "HRA",new { hraid = Model.HRAId }))" class="inactive-link">
+                            <h6>4.@Translate.Message("L486")</h6>
+                            <span class="status"></span>
+                        </a>
+                    </li>
+                    <li id="interestList" class="cell tile">
+                        <a href="#" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("Interests", "HRA",new { hraid = Model.HRAId }))" class="inactive-link">
+                            <h6>5.@Translate.Message("L487")</h6>
+                            <span class="status"></span>
+                        </a>
+                    </li>
+                    <li id="yournumbersList" class="cell tile">
+                        <a href="#" data-open="health-number-survey-modal" data-modal-path="@Html.Raw(Url.Action("HealthNumbers", "HRA",new { hraid = Model.HRAId }))" class="inactive-link">
+                            <h6>6.@Translate.Message("L488")</h6>
+                            <span class="status"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="cell small-12 text-center">
+                @if (Model.UserId != Model.CreatedBy && Model.CreatedBy > 0)
+                {
+                    <input type="checkbox" id="ChkteleHRA" checked>
+                }
+                else
+                {
+                    <input type="checkbox" id="ChkteleHRA">
+                }
+                <label for="ChkteleHRA">Telephonic HRA</label>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="survey-modal" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div id="health-number-survey-modal" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+<div id="teleHRA-model" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    @*<form id="tobacco-form">*@
+    <h2 class="text-center">Select the Admin</h2>
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-12">
+            <select id="hraAdmin"></select>
+        </div>
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="saveteleHRA">Update</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeModal">@Translate.Message("L967")</button></div>
+    </div>
+   <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    @*</form>*@
+</div>
+<div class="alert-box success hide" id="lab-order-error" data-closable>
+    <div id="labError"></div>
+</div>
+
+<script src="@Url.Content("~/Scripts/app.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetUsersByRole", "Admin")",
+            type: 'POST',
+            data: {
+                allUserswithRole: true, organization: null, firstName: null, lastName: null, page: null, pageSize: null, totalRecords: null
+            },
+            success: function (data) {
+                $("#hraAdmin").append("<option value=''>-- Select --</option>");
+                for (i = 0; i < data.Records.length; i++) {
+                    $("#hraAdmin").append("<option value=" + data.Records[i].Id + ">" + data.Records[i].Name + "</option>");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("[data-open]").on('click', function (e) {
+            showmodal($(this), e)
+        });
+        $('[data-reveal]').on('closed.zf.reveal', function () {
+            $(".inner-survey-modal").remove();
+        });
+
+    });
+    $('#closeModal').on('click', function () {
+        $('#teleHRA-model').foundation('close');
+        $('#ChkteleHRA').prop('checked', false);
+    });
+
+    if ('@Model.isPastHRA' == 'True')
+    {
+        $('#ChkteleHRA').prop('disabled', true);
+    }
+    $("#saveteleHRA").on('click', function () {
+        save();
+    });
+
+    function save() {
+        var selectedId = parseInt($("#hraAdmin").val());
+        var isteleHRA = $("#ChkteleHRA").prop('checked');
+        var saveHRA = {
+            'HRAId': @Model.HRAId,
+            'UserId': @Model.UserId,
+            'CreatedBy': isteleHRA ? selectedId : @Model.UserId,
+            'isteleHRA':isteleHRA
+        };
+
+        $.ajax({
+            url: "@Url.Action("ChangeTelHRA", "HRA")",
+            data: JSON.stringify(saveHRA),
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#teleHRA-model').foundation('close');
+
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+              RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    $('#ChkteleHRA').on('change', function() {
+        if ($(this).prop('checked')) {
+            $('#hraAdmin').prop('selectedIndex',0);
+            $('#teleHRA-model').foundation('open');
+        }
+        else {
+            save();
+        }
+    });
+
+    //update status
+    function UpdateHRAStatus(page) {
+        if (page == "MC") {
+            if (!$("#medicalList").hasClass("complete")) {
+                $("#medicalList").addClass("complete green");
+            }
+            if ($('#otherRisksList a').hasClass("inactive-link")) {
+                $("#otherRisksList a").removeClass("inactive-link");
+            }
+        }
+        else if (page == "OR") {
+            if (!$("#otherRisksList").hasClass("complete")) {
+                $("#otherRisksList").addClass("complete green");
+            }
+            if ($('#hspList a').hasClass("inactive-link")) {
+                $("#hspList a").removeClass("inactive-link");
+            }
+        }
+        else if (page == "YL") {
+            if (!$("#hspList").hasClass("complete")) {
+                $("#hspList").addClass("complete green");
+            }
+            if ($('#examsList a').hasClass("inactive-link")) {
+                $("#examsList a").removeClass("inactive-link");
+            }
+        }
+        else if (page == "EC") {
+            if (!$("#examsList").hasClass("complete")) {
+                $("#examsList").addClass("complete green");
+            }
+            if ($('#interestList a').hasClass("inactive-link")) {
+                $("#interestList a").removeClass("inactive-link");
+            }
+        }
+        else if (page == "IN") {
+            if (!$("#interestList").hasClass("complete")) {
+                $("#interestList").addClass("complete green");
+            }
+            if ($('#yournumbersList a').hasClass("inactive-link")) {
+                $("#yournumbersList a").removeClass("inactive-link");
+            }
+        }
+        else if (page == "YN") {
+            if (!$("#yournumbersList").hasClass("complete")) {
+                $("#yournumbersList").addClass("complete green");
+            }
+            if ($('#drugsList a').hasClass("inactive-link")) {
+                $("#drugsList a").removeClass("inactive-link");
+            }
+        }
+        else if (page == "MD") {
+            if (!$("#drugsList").hasClass("complete")) {
+                $("#drugsList").addClass("complete green");
+            }
+            $("html, body").animate({
+                scrollTop: 0
+            }, "fast");
+        }
+    }
+
+    @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("MC"))
+        {
+            @: $("#medicalList").addClass("complete green");
+             @: $("#otherRisksList a").removeClass("inactive-link");
+        }
+    @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("OR"))
+        {
+            @: $("#otherRisksList").addClass("complete green");
+             @: $("#hspList a").removeClass("inactive-link");
+        }
+    @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("YL"))
+        {
+            @: $("#hspList").addClass("complete green");
+             @: $("#examsList a").removeClass("inactive-link");
+        }
+    @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("EC"))
+        {
+            @: $("#examsList").addClass("complete green");
+            @: $("#interestList a").removeClass("inactive-link");
+        }
+    @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("IN"))
+        {
+            @: $("#interestList").addClass("complete green");
+            @: $("#yournumbersList a").removeClass("inactive-link");
+        }
+    @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("YN"))
+        {
+            @: $("#yournumbersList").addClass("complete green");
+            }
+    @if (Model.HAPageSeqDone != null && Model.HAPageSeqDone.Contains("MD"))
+        {
+            @: $("#drugsList").addClass("complete green");
+        }
+</script>

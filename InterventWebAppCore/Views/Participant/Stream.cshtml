@@ -1,0 +1,258 @@
+﻿<!--USER VIEW-->
+@model InterventWebApp.ParticipantDashboardModel
+@using InterventWebApp
+@{
+    ViewBag.Title = "Stream";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main stream">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x" data-equalizer data-equalize-on="medium">
+            <div class="small-12 cell">
+                <h1 class="dashboard-title">@Translate.Message("L991")</h1>
+                <div class="grid-margin-x grid-x">
+                    <div class="main-column medium-8 cell" id="dashboardData" data-equalizer-watch>
+                        <ul class="stream-items"></ul>
+                        <br />
+                        <div class="grid-x grid-margin-x button-area">
+                            <div class="medium-3 cell hide" id="viewmore-div">
+                                <button type="button" class="small" id="viewMore">@Translate.Message("L2780")</button>
+                            </div>
+                            <div class="medium-6 cell hide">
+                                <button type="button" class="small"></button>
+                            </div>
+                            <div class="medium-3 cell text-right">
+                                <button type="button" class="small hide" id="toggleVisited" value="View Read" />@Translate.Message("L2781")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="medium-4 cell" id="userSidebar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--Journal Options-->
+<div id="journal-options" class="reveal large journal-option" data-reveal>
+</div>
+<div id="external-reports" class="reveal large external-reports" data-reveal>
+</div>
+<div id="complete-hra" class="eligibility reveal participant-crm-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="crm-form-title align-justify align-middle flex-container crm-details-container">
+        <h2>Complete my Health Assessment</h2>
+    </div>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><a class="button" href="~/HRA/HRADashboard">Continue</a></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button data-close class="small secondary">Cancel</button></div>
+    </div>
+</div>
+<!--Edlogics-->
+<div id="edlogics" class="reveal medium" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-container">
+        <div class="grid-x">
+            <img src="../Images/Edlogics_logo-Blue-RGB.svg" />
+            <p>
+                @Translate.Message("L2848")
+            </p>
+            <p>
+                @Translate.Message("L2849")
+            </p>
+            <p>
+                @Translate.Message("L2850")
+            </p>
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right"><button type="submit" id="ok" onclick="window.open('https://www.myedlogics.com/intervent');$('#edlogics').trigger('click');$('#edlogics').foundation('close');">@Translate.Message("L478")</button></div>
+            <div class="cell medium-6 medium-order-1 medium-text-left"><button type="button" id="cancel" class="button hollow" onclick="$('#edlogics').foundation('close');">@Translate.Message("L967")</button></div>
+        </div>
+    </div>
+    <a id="edlogics" class="close-button" data-close>&#215;</a>
+</div>
+<div id="audio-player" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <a id="closeModal" class="close-button" data-close>&#215;</a>
+    <div class="grid-x grid-margin-x">
+        <div class="medium-6 cell">
+            <audio controls preload="none" id="audio">
+                <source id="source" type="audio/mp3" src="">
+            </audio>
+        </div>
+    </div>
+</div>
+<!--Message Modal-->
+<div id="message-modal" class="reveal message-modal" data-reveal data-close-on-click="true" data-close-on-esc="false">
+</div>
+<script>
+    var startIndex = 1;
+    var pageSize = 5;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    var newMessage = true;
+    $(document).ready(function () {
+        @if(Model.visitedTab)
+        {
+            @: document.getElementById("toggleVisited").click();
+        }
+        else {
+            @: GetDashboardMessages(newMessage);
+        }
+
+        @if (Model.openProfile)
+        {
+            @:setTimeout(function() {
+            @:  $('#profilepic').trigger("click");
+            @:}, 500);
+
+        }
+        $.ajax({
+            url: '@Url.Action("UserSidebar", "Participant")',
+            async: false,
+            data: { hraCompleteDate: '@Model.hraCompleteDate', hraPercent: '@Model.hraPercent', profileComplete: '@Model.profileComplete', ParticipantFirstName: '@Model.ParticipantFirstName', PreviousPortalAvailable: '@Model.PreviousPortalAvailable', portalStartDate: '@Model.portalStartDate', openProfile: '@Model.openProfile', externalReportId: '@Model.externalReportId', },
+            success: function (data) {
+                $("#userSidebar").html(data);
+            },
+            complete: function () {
+                $("[data-open]").on('click', function (e) {
+                    showmodal($(this), e)
+                });
+            }
+        });
+    });
+    $("#viewMore").on('click', function () {
+        GetDashboardMessages(newMessage);
+    });
+    $("#toggleVisited").on('click', function () {
+        if (this.value == "View Read") {
+            this.value = "View Unread";
+            this.innerHTML = '@Translate.Message("L2782")';
+        }
+        else {
+            this.value = "View Read";
+            this.innerHTML = '@Translate.Message("L2781")';
+        }
+        startIndex = 1;
+        pageSize = 5;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        $("#dashboardData ul").html("");
+        if (newMessage == true) {
+            newMessage = false;
+        }
+        else {
+            newMessage = true;
+        }
+        GetDashboardMessages(newMessage);
+    });
+    function GetDashboardMessages(newMessage) {
+        $.ajax({
+            type: "POST",
+            async: false,
+            dataType: 'json',
+            url: "@Url.Action("GetDashboadMessages", "Participant")",
+            data: {
+                page: currentPage, pageSize: pageSize, totalRecords: totalRecords, portalStartDate: '@Model.portalStartDate', newMessage: newMessage
+            },
+            success: function (data) {
+                if (data.Records != null && data.Records.dashboardMessages != null) {
+                    totalRecords = data.Records.totalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    currentPage = currentPage + 1;
+                    if (currentPage < totalPages) {
+                        $("#viewmore-div").removeClass('hide');
+                    }
+                    else {
+                        $("#viewmore-div").addClass('hide');
+                    }
+                    for (var i = 0; i < data.Records.dashboardMessages.length; i++) {
+                        var item = data.Records.dashboardMessages[i];
+                        var html = "";
+                        var newClass = "", pointerClass = "", url = "";
+                        if (item.New == true)
+                            newClass = "new";
+                        if (item.Url != null && '@Model.hasActivePortal' == 'True') {
+                            url = item.Url;
+                        }
+                        else {
+                            url = '#';
+                            pointerClass = "inactive-link";
+                        }
+                        html += "<li class='" + newClass + "' ";
+                        if (item.DashboardMessageType.Type != '@DashboardMessageTypes.Appointment') {
+                            html += "onClick = 'UpdateDashboardMessage(" + item.Id + ");'";
+                        }
+                        html += " id='" + item.Id + "'>";
+                        if (item.DashboardMessageType.Type == '@DashboardMessageTypes.KitAudio') {
+                            html += "<a href='#' onClick = 'OpenAudio(\"" + url + "\");' data-open='audio-player' class='" + pointerClass + "'>";
+                        }
+                        else if (item.DashboardMessageType.Type == '@DashboardMessageTypes.ProfileComplete') {
+                            html += "<a href='#' data-open='user-profile' onClick = 'OpenProfile();'>";
+                        }
+                        else if (item.DashboardMessageType.Type == '@DashboardMessageTypes.NewsLetter') {
+                            html += "<a href='" + url + "' target='_blank'>";
+                        }
+                        else {
+                            html += "<a href='" + url + "' class='" + pointerClass + "'>";
+                        }
+                        html += "<img class='stream-icon' src='../Images/" + item.DashboardMessageType.Image + "' alt='" + item.DashboardMessageType.Alt + "' /> " +
+                            "<div class='date-time'>" + toLocalDateFormat(item.CreatedOn, "12hour") + "</div>" +
+                            "<h2>" + item.Message + "</h2>" +
+                            "</a></li>"
+                        $("#dashboardData ul").append(html);
+                        $(document).foundation();
+                    }
+                    if (!data.Records.hasReadMessages) {
+                        $("#toggleVisited").addClass("hide");
+                    }
+                    else {
+                        $("#toggleVisited").removeClass("hide");
+                    }
+                }
+                else {
+                    document.getElementById("toggleVisited").click();
+                    $("#toggleVisited").hide();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    function UpdateDashboardMessage(id) {
+        if ('@Model.hasActivePortal' == "True" && $("#" + id).hasClass("new") == true) {
+            $.ajax({
+                url: "@Url.Action("UpdateDashboardMessage", "Participant")",
+                data: { id: id },
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    $("#" + id).addClass("new");
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+    }
+    function OpenAudio(url) {
+        $('audio #source').attr('src', url);
+        $('audio').get(0).load();
+    }
+    function OpenProfile() {
+        $('#profilepic').trigger("click");
+    }
+    $("#closeModal").on('click', function () {
+        $('#audio')[0].pause();
+    });
+
+    function showReport() {
+         $.ajax({
+            type: 'POST',
+            url: '@Url.Action("ExternalReports", "Participant")',
+            success: function (data) {
+                $("#profile-content").html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+</script>

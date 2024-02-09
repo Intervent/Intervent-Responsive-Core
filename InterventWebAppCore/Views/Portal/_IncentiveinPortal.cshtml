@@ -1,0 +1,209 @@
+﻿@model InterventWebApp.IncentiveDetailsModel
+@using InterventWebApp
+<form class="organization-modal-form create-profile-form" id="add-incentive-data" data-abide novalidate>
+    <div class="grid-x grid-margin-x grid-margin-y">
+        <div class="cell medium-4">
+            <label>Incentive Type</label>
+            @Html.DropDownListFor(m => m.portalIncentive.IncentiveTypeId, Model.incentiveTypes, "--Select--", new Dictionary<string, object> { { "id", "incentiveType" }, { "onchange", "changeIncentiveType()" }, { "required", "required" } })
+        <small class="form-error">Incentive Type is required.</small>
+        </div>
+        <div class="cell medium-4">
+            <label for="">Name</label>
+            @Html.TextBoxFor(m => m.portalIncentive.Name, new Dictionary<string, object> { { "id", "incName" }, { "maxlength", "1024" } })
+        </div>
+        <div class="cell medium-4">
+            <label for="">Language Item Name</label>
+            @Html.TextBoxFor(m => m.portalIncentive.LanguageItemName, new Dictionary<string, object> { { "id", "langName" }, { "maxlength", "10" } })
+        </div>
+        <div class="cell medium-4 ProgramType">
+            <label>Program Type</label>
+            @Html.DropDownListFor(m => m.portalIncentive.RefId, Model.programTypes, "--Select--", new Dictionary<string, object> { { "id", "programType" } })
+        </div>
+        <div class="cell medium-4 ProgramType">
+            <label id="lbl2" class="lbl2 refClass">Number of calls to be completed</label>
+            <label id="lbl2" class="lbl5 refClass">Number of calls to be completed + Future appointment</label>
+            <label id="lbl4" class="lbl4 refClass">If enrolled within _ days</label>
+            @Html.TextBoxFor(m => m.portalIncentive.RefValue, new Dictionary<string, object> { { "id", "refValue" }, { "type", "number" } })
+        </div>
+        <div class="cell medium-4  lbl5 refClass">
+            <label id="upload">Do you want to enable the upload option?</label>
+            @Html.CheckBoxFor(m => m.isUpload, new Dictionary<string, object> { { "id", "isUpload" } })
+        </div>
+        <div class="cell medium-4">
+            <label>Attachment</label>
+            @Html.TextBoxFor(m => m.portalIncentive.Attachment, new Dictionary<string, object> { { "id", "attachment" }, { "maxlength", "250" } })
+        </div>
+        <div class="cell medium-4 lbl5 refClass">
+            <label>Number of weeks to be in the program?</label>
+            @Html.TextBoxFor(m => m.portalIncentive.RefValue3, new Dictionary<string, object> { { "id", "nWeeks" }, { "type", "number" } })
+        </div>
+        <div class="cell medium-4 lbl4 refClass">
+            <label>Number of calls to be completed</label>
+            @Html.TextBoxFor(m => m.portalIncentive.RefValue2, new Dictionary<string, object> { { "id", "txtcalls" }, { "type", "number" } })
+        </div>
+        <div class="medium-8 cell">
+            <label>More Info</label>
+            @Html.TextBoxFor(m => m.portalIncentive.MoreInfo, new Dictionary<string, object> { { "id", "incMoreInfo" } })
+        </div>
+        <div class="cell medium-4">
+            <label for="">Language Item More Info</label>
+            @Html.TextBoxFor(m => m.portalIncentive.LanguageItemMoreInfo, new Dictionary<string, object> { { "id", "langInfo" }, { "maxlength", "10" } })
+        </div>
+        <div class="cell medium-4">
+            <label for="">Points/Cost</label>
+            @Html.TextBoxFor(m => m.portalIncentive.Points, new Dictionary<string, object> { { "id", "point" }, { "type", "number" } })
+        </div>
+        <div class="cell medium-4">
+            <label for="">PointsText</label>
+            @Html.TextBoxFor(m => m.portalIncentive.PointsText, new Dictionary<string, object> { { "id", "PointsText" }, { "required", "required" }, { "maxlength", "15" } })
+            <small class="form-error">Incentive Type is required.</small>
+        </div>
+        <div class="cell medium-4">
+			<div class="tick-buttons check-btn">
+				@Html.CheckBoxFor(m => m.portalIncentive.IsCompanyIncentive, new Dictionary<string, object> { { "id", "isCompanyIncentive" } })
+				<label for="isCompanyIncentive">
+					Is Employer Incentive
+					<span class="checkmark"></span>
+				</label>
+			</div>
+        </div>
+        <div class="cell medium-4">
+			<div class="tick-buttons check-btn">
+				@Html.CheckBoxFor(m => m.portalIncentive.IsPoint, new Dictionary<string, object> { { "id", "isPoint" } })
+				<label for="isPoint">
+					Is Point
+					<span class="checkmark"></span>
+				</label>
+			</div>
+        </div>
+        <div class="cell medium-4">
+			<div class="tick-buttons check-btn">
+                @Html.CheckBoxFor(m => m.portalIncentive.isGiftCard, new Dictionary<string, object> { { "id", "isGiftCard" } })
+				<label for="isGiftCard">
+					Is Gift card
+					<span class="checkmark"></span>
+				</label>
+			</div>
+        </div>
+        <div class="cell medium-4">
+			<div class="tick-buttons check-btn">
+                @Html.CheckBoxFor(m => m.portalIncentive.removeSurcharge, new Dictionary<string, object> { { "id", "removeSurcharge" } })
+				<label for="removeSurcharge">
+					Remove Surcharge
+					<span class="checkmark"></span>
+				</label>
+			</div>
+        </div>
+        <div class="cell medium-4">
+			<div class="tick-buttons check-btn">
+                @Html.CheckBoxFor(m => m.portalIncentive.IsActive, new Dictionary<string, object> { { "id", "isActive" } })
+				<label for="isActive">
+					Is Active
+					<span class="checkmark"></span>
+				</label>
+			</div>            
+        </div>
+        <div class="cell medium-4">
+            <label for="">Image</label>
+            @Html.TextBoxFor(m => m.portalIncentive.ImageUrl, new Dictionary<string, object> { { "id", "ImageUrl" }, { "maxlength", "100" } })
+        </div>
+        <div class="cell">
+            <div class="form-save-button new-button"><button class="button" type="submit">Save</button></div>
+        </div>
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+        if ('@Model.portalIncentive.IncentiveTypeId' == '5') {
+            if ('@Model.portalIncentive.RefValue2' == '1')
+                $("#isUpload").prop("checked", true);
+            $('#nWeeks').val('@Model.portalIncentive.RefValue3')
+        }
+        else if ('@Model.portalIncentive.IncentiveTypeId' == '4')
+            $('#txtcalls').val('@Model.portalIncentive.RefValue2')
+        var incType = $("#incentiveType").val();
+        if (incType == 2 || incType == 4 || incType == 5) {
+            $('.refClass').hide();
+            $('.lbl' + incType).show();
+            $('.ProgramType').show();
+            $('#refValue').val('@Model.portalIncentive.RefValue');
+            $('#programType').val('@Model.portalIncentive.RefId');
+        }
+        else {
+            $('.refClass').hide();
+            $('.ProgramType').hide();
+        }
+    });
+
+    $("#add-incentive-data").foundation();
+    $("#add-incentive-data").on('forminvalid.zf.abide', function () {
+    }).on('formvalid.zf.abide', function () {
+                $("#loader-wrapper").fadeIn();
+        var id = $('#PortalIncentiveId').val();
+        var type = $("#incentiveType").val();
+        var name = $("#incName").val();
+        var langname = $("#langName").val();
+        var point = $("#point").val();
+        var pointsText = $('#PointsText').val();
+        var isPoint = $('#isPoint').is(':checked');
+        var isCompanyIncentive = $('#isCompanyIncentive').is(':checked');
+        var isGiftCard = $('#isGiftCard').is(':checked');
+        var removeSurcharge = $('#removeSurcharge').is(':checked');
+        var imageUrl = $( "#ImageUrl" ).val();
+        var isActive = $('#isActive').is(':checked');
+        var refValue  = $('#refValue').val();
+        var moreInfo = $('#incMoreInfo').val();
+        var langMoreInfo = $('#langInfo').val();
+        var attachment = $("#attachment").val();
+        var value2, value3;
+        var type = document.getElementById("incentiveType").value;
+        if(type == 5){
+            var refValue2  = $('#isUpload').is(':checked');
+            value2 = 1;
+            value3 = $('#nWeeks').val();
+        }
+        else if(type == 4){
+            value2 = $("#txtcalls").val();
+        }
+        //if (pointsText.length <= 0) {
+        //    return -1;
+        //}
+        var programPortalId = $('#programType').val();
+        $.ajax({
+            url: "@Url.Action("AddEditPortalIncentive", "Portal")",
+            data: { id: id, portalId: portalId, name: name, incentiveType: type, points: point, pointsText: pointsText, isPoint: isPoint, isCompanyIncentive: isCompanyIncentive, imageUrl: imageUrl, isActive: isActive, programPortalId: programPortalId, refValue: refValue, refValue2: value2, refValue3: value3, attachment: attachment, moreInfo: moreInfo, langname: langname, langMoreInfo: langMoreInfo, isGiftCard: isGiftCard, removeSurcharge: removeSurcharge },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('.incentives-cards').trigger('click');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    });
+
+
+    $('#isCompanyIncentive').on('change', function () {
+        if ($("input[id='isCompanyIncentive']:checked").length == 0)
+        {
+            $('#isPoint').prop("disabled", false);
+        }
+        else 
+        {
+            $('#isPoint').prop("disabled", true);
+        }
+    });
+
+    $('#isPoint').on('change', function () {
+        if ($("input[id='isPoint']:checked").length == 0) {
+            $('#isCompanyIncentive').prop("disabled", false);
+        }
+        else {
+            $('#isCompanyIncentive').prop("disabled", true);
+        }
+    });
+</script>

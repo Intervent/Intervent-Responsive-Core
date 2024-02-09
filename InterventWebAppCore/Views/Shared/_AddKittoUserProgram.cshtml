@@ -1,0 +1,41 @@
+﻿@model InterventWebApp.AddKittoUserProgramModel
+
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <div>
+            <label for="KitId">Kits</label>
+            @Html.DropDownListFor(x => x.KitId, Model.Kits, "--Select--")
+        </div>
+    </div>
+</div>
+<div class="grid-x grid-margin-x button-set">
+    <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="addKit">Save</button></div>
+    <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeKit">Cancel</button></div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#closeKit').on('click', function () {
+            $('#add-kit').foundation('close');
+        });
+        $("#addKit").on('click', function () {
+            var UserinProgramId = $("#UserinProgramId").val();
+            var KitId = $("#KitId").val();
+            if (KitId > 0) {
+                $.ajax({
+                    url: "@Url.Action("AddKittoUserProgram", "Program")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: { kitId: KitId },
+                    success: function (data) {
+                        $('#add-kit').foundation('close');
+                        GetUserProgramHistory();
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            }
+        })
+    });
+</script>
+
+

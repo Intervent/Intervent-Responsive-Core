@@ -1,0 +1,203 @@
+﻿@using InterventWebApp
+@model InterventWebApp.WellnessDataViewModel
+
+<div class="dashboard-content wellness-data cell">
+    <div class="grid-x show-for-small-only">
+        <div class="small-12 cell">
+            <h2>Wellness Data</h2>
+        </div>
+    </div>
+    <div class="control-bar">
+        <div class="cell medium-6">
+            <select id="wellnessDropdown" onchange="showDetails()">
+                <option value="1" data-chart="wellness">Wellness Chart</option>
+                <option value="2" data-chart="glucose">@Translate.Message("L271")</option>
+                <option value="3" data-chart="glucose">@Translate.Message("L3982")</option>
+                <option value="4" data-chart="glucose">@Translate.Message("L503")</option>
+                <option value="5" data-chart="glucose">@Translate.Message("L165")</option>
+                <option value="6" data-chart="glucose">@Translate.Message("L272")</option>
+                <option value="7" data-chart="glucose">@Translate.Message("L2832")</option>
+                @if (Model.organizationId == Model.teamsBPOrgId)
+                {
+                    <option value="8" data-chart="glucose">RPM Summary Graph</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div id="divDeviceData" class="content-chart glucose admin-device-data">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div id="device-results"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="@Url.Content("~/Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+
+    $("#StartDate").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#StartDate').val()));
+    });
+    $("#EndDate").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#EndDate').val()));
+    });
+    $(document).ready(function () {
+        $("#divDeviceData").hide();
+        showDetails();
+        var nowDate = new Date();
+        $("#StartDate").fdatepicker({
+            format: "@Model.dateFormat.ToLower()",
+            endDate: new Date()}).on('change', function (selected) {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#EndDate').fdatepicker('setDate', minDate);
+            }
+            $('#EndDate').fdatepicker('setStartDate', minDate);
+            $("#EndDate").trigger("change");
+        });
+        $("#EndDate").fdatepicker({
+            format: "@Model.dateFormat.ToLower()",
+            endDate: new Date()
+        });
+        $("#StartDate").trigger("change");
+        $("#EndDate").trigger("change");
+    });
+
+    function showDetails() {
+        $('.content-chart').removeClass('hide');
+        var type = $("#wellnessDropdown").val();
+        if (type == 1) {
+            $("#divDeviceData").show();
+            $("#device-results").html('');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("WellnessChart", "Participant")',
+                success: function (data) {
+                    $("#device-results").html(data);
+				},
+				complete: function () {
+					$(document).foundation();
+				}
+            });
+        }
+        else if (type == 2) {
+            $("#divDeviceData").show();
+            $("#device-results").html('');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("PhysicalActivity", "Devices")',
+                success: function (data) {
+                    $("#device-results").html(data);
+				},
+				complete: function () {
+					$(document).foundation();
+				}
+            });
+        } else if (type == 3) {
+            $("#divDeviceData").show();
+            $("#device-results").html('');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Weight", "Devices")',
+                success: function (data) {
+                    $("#device-results").html(data);
+				},
+				complete: function () {
+					$(document).foundation();
+				}
+            });
+        } else if (type == 4) {
+            $("#divDeviceData").show();
+            $("#device-results").html('');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("BloodPressure", "Devices")',
+                success: function (data) {
+                    $("#device-results").html(data);
+				},
+				complete: function () {
+					$(document).foundation();
+				}
+            });
+        } else if (type == 5) {
+            $("#divDeviceData").show();
+            $("#device-results").html('');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Glucose", "Devices")',
+                success: function (data) {
+                    $("#device-results").html(data);
+				},
+				complete: function () {
+					$(document).foundation();
+				}
+            });
+        } else if (type == 6) {
+            $("#divDeviceData").show();
+            $("#device-results").html('');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Nutrition", "Devices")',
+                success: function (data) {
+                    $("#device-results").html(data);
+				},
+				complete: function () {
+					$(document).foundation();
+				}
+            });
+        } else if (type == 7) {
+            $("#divDeviceData").show();
+            $("#device-results").html('');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Sleep", "Devices")',
+                success: function (data) {
+                    $("#device-results").html(data);
+				},
+				complete: function () {
+					$(document).foundation();
+				}
+            });
+        }
+        else if (type == 8) {
+            $("#divDeviceData").show();
+            $("#device-results").html('');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("RPMSummary", "Participant")',
+                success: function (data) {
+                    $("#device-results").html(data);
+				},
+				complete: function () {
+					$(document).foundation();
+				}
+            });
+        }
+    }
+
+    //Activate the detailed info
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+        $("#wellness-data-from").fdatepicker();
+        $("#wellness-data-to").fdatepicker();
+    });
+
+    //Toggle Chart Types (Wellness/Glucose)
+    $(document).on('click', '.chart-toggle', function () {
+        var chartType = $(this).data('chart');
+        $('.content-chart').addClass('hide');
+        $('.content-chart.' + chartType).removeClass('hide');
+        $('.chart-toggle').removeClass('active');
+        $('[data-chart="' + chartType + '"]').addClass('active');
+    });
+
+</script>

@@ -1,0 +1,80 @@
+﻿@model InterventWebApp.NutritionGoalModel
+@using InterventWebApp
+<ul class="food-types-list">
+    @if (ViewData["Meat"] != "")
+    {
+        <li>
+            <span class="food-count">@ViewData["Meat"] x</span>
+            <div class="food-item-box">
+				<div class="food-item" data-toggle="serving-dropdown-@ViewData["FoodId"]-1">
+					<img src="~/Images/program/icon-meat.png" alt=""> @Translate.Message("L1642")
+				</div>
+				<div class="food-item-list dropdown-pane" data-position="bottom" data-alignment="left" id="serving-dropdown-@ViewData["FoodId"]-1" data-dropdown data-auto-focus="true" data-close-on-click="true">
+                   @Html.Raw(Model.meatTitle)
+				</div>
+            </div>
+        </li>
+    }
+    @if (ViewData["Milk"] != "")
+    {
+        <li>
+            <span class="food-count">@ViewData["Milk"] x</span>
+			<div class="food-item-box">
+				<div class="food-item" data-toggle="serving-dropdown-@ViewData["FoodId"]-2">
+					<img src="~/Images/program/icon-milk.png" alt=""> @Translate.Message("L1643")
+				</div>
+				<div class="food-item-list dropdown-pane" data-position="bottom" data-alignment="left" id="serving-dropdown-@ViewData["FoodId"]-2" data-dropdown data-auto-focus="true" data-close-on-click="true">
+                    @Html.Raw(Model.milkTitle)
+				</div>
+			</div>
+        </li>
+    }
+    @if (ViewData["Fruit"] != "")
+    {
+        <li>
+            <span class="food-count">@ViewData["Fruit"] x</span>
+			<div class="food-item-box">
+				<div class="food-item" data-toggle="serving-dropdown-@ViewData["FoodId"]-3">
+					<img src="~/Images/program/icon-fruit.png" alt=""> @Translate.Message("L1644")
+				</div>
+				<div class="food-item-list dropdown-pane" data-position="bottom" data-alignment="left" id="serving-dropdown-@ViewData["FoodId"]-3" data-dropdown data-auto-focus="true" data-close-on-click="true">
+					@Html.Raw(Model.fruitTitle)
+				</div>
+			</div>
+        </li>
+    }
+    @if (ViewData["NonStarch"] != "")
+    {
+        <li>
+            <span class="food-count">@ViewData["NonStarch"] x</span>
+			<div class="food-item-box">
+				<div class="food-item" data-toggle="serving-dropdown-@ViewData["FoodId"]-4">
+					<img src="~/Images/program/icon-non-starch-veg.png" alt=""> @Translate.Message("L1645")
+				</div>
+				<div class="food-item-list dropdown-pane" data-position="bottom" data-alignment="left" id="serving-dropdown-@ViewData["FoodId"]-4" data-dropdown data-auto-focus="true" data-close-on-click="true">
+                    @Html.Raw(Model.nonstarchTitle)
+				</div>
+			</div>
+        </li>
+    }
+    @if (ViewData["Starch"] != "")
+    {
+        <li>
+            <span class="food-count">@ViewData["Starch"] x</span>
+			<div class="food-item-box">
+				<div class="food-item" data-toggle="serving-dropdown-@ViewData["FoodId"]-5">
+					<img src="~/Images/program/icon-starch-veg.png" alt=""> @Translate.Message("L1646")/@Translate.Message("L1647")
+				</div>
+				<div class="food-item-list dropdown-pane" data-position="bottom" data-alignment="left" id="serving-dropdown-@ViewData["FoodId"]-5" data-dropdown data-auto-focus="true" data-close-on-click="true">
+                    @Html.Raw(Model.grainTitle)
+                    @Html.Raw(Model.startchTitle)
+				</div>
+			</div>
+        </li>
+    }
+</ul>
+<script>
+    $(document).ready(function () {
+        $(document).foundation();
+    });
+</script>

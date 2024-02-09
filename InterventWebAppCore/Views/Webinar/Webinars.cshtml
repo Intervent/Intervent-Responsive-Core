@@ -1,0 +1,515 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewBag.Title = "Webinars";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<section class="main search-participants admin-main-body">
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="cell">
+				<div class="main-content-wrapper">
+					<div class="grid-x grid-margin-x">
+						<div class="cell">
+							<div class="primary-section-top">
+								<div class="grid-x grid-margin-x">
+									<div class="cell medium-8">
+										<h2>Webinars</h2>
+									</div>
+									<div class="cell medium-4 text-right">
+										<button id="add-webinar-button" data-open="add-edit-webinar" class="button plus-btn right" onclick="$('#organizations-list-div').addClass('hide');">Add</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="cell">
+							<div id="search-results" class="main-results-table-container table-container"></div>
+						</div>
+						<div class="cell">
+							<!-- pagination Start -->
+							<div class="pagination-area main-results-table-container hide" id="pagination-centered">
+								<ul>
+									<li id="numeric"></li>
+								</ul>
+								<!-- page-link Start -->
+								<div class="page-link">
+									<label>@Translate.Message("L4041")</label>
+									<div class="grid-x">
+										<input type="text" id="jumptoPageNo">
+										<button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+									</div>
+								</div>
+								<!-- page-link End -->
+							</div>
+							<!-- pagination End -->
+						</div>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<input type="hidden" id="hiddenWebinarId" />
+</section>
+
+<div id="add-edit-webinar" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+	<div class="grid-container">
+		<div class="grid-x">
+			<div class="cell">
+				<form id="add-edit-webinar-data" data-abide novalidate class="form-component">
+					<h3 id="webinar-name-title" class="text-center">Create Webinar</h3>
+					<div class="grid-x grid-margin-x">
+						<div class="cell medium-6">
+							<label for="topic">
+								Topic
+								@*<textarea id="topic" name="topic" maxlength="200" rows="3" required></textarea>*@
+								<input type="text" name="topic" id="topic" value="" required />
+								<small class="form-error">Required</small>
+							</label>
+						</div>
+						<div class="cell medium-6">
+							<label for="UserText">
+								Presented By
+								<input type="text" name="to" class="user-picker typeahead tt-input" value="" placeholder="Search for a participant by name" id="UserText" required />
+								<small class="form-error" data-form-error-for="UserText">Required</small>
+							</label>
+						</div>
+						<div class="cell">
+							<label for="agenda">
+								Agenda (description)
+								<textarea id="agenda" name="agenda" maxlength="2000" rows="3" required></textarea>
+								<small class="form-error">Required</small>
+							</label>
+						</div>
+						<div class="cell medium-4">
+							<label for="webinarDate">
+								Start Time
+								<input type="text" class="fdatepicker" id="webinarDate" name="webinarDate" required>
+								<small class="form-error">Required</small>
+							</label>
+						</div>
+						<div class="cell medium-4 duration-details">
+							<label for="duration">
+								Duration (Minutes)
+								<input type="number" id="duration" name="duration" required>
+								<small class="form-error">Required</small>
+							</label>
+						</div>
+						<div class="cell medium-4">
+							<label for="password">
+								Password
+								<input type="text" id="password" name="password" maxlength="10" />
+							</label>
+						</div>
+						<div class="cell medium-4 other-details hide">
+							<label for="imageUrl">
+								ImageUrl
+								<input type="text" id="imageUrl" name="imageUrl">
+							</label>
+						</div>
+						<div class="cell medium-4 occurrence-details hide">
+							<label for="videoUrl">
+								VideoUrl
+								<input type="text" id="videoUrl" name="videoUrl">
+							</label>
+						</div>
+						<div class="cell medium-4 occurrence-details hide">
+							<label for="handout">
+								Handout
+								<input type="text" id="handout" name="handout">
+							</label>
+						</div>
+						<input type="hidden" id="webinarId" name="webinarId">
+						<input type="hidden" id="id" name="id">
+						<input type="hidden" id="presentedBy" name="presentedBy" maxlength="200" />
+
+					</div>
+
+					<div class="grid-x grid-padding-y">
+						<div class="cell small-6 text-left"><button class="small" type="submit">Save</button></div>
+						<div class="cell small-6 text-right"><button class="small secondary" type="reset" id="closeWebinar">Cancel</button></div>
+					</div>
+					<div class="notification-card text-center" hidden><span id="notificationCard">Saved successfully</span></div>
+				</form>
+				@*Form ends*@
+
+			    <div id="occurence-list-container" class="occurence-list-container hide">
+					<div class="grid-x">
+						<div class="cell">
+                            <h3 style="margin-top: 0;">Occurrences list</h3>
+							<div class="table-container">
+								<table class="table basic-table2" id="webinar-list-table">
+									<thead>
+										<tr>
+											<th><span>Start date</span></th>
+											<th><span>Start time</span></th>
+											<th><span>Status</span></th>
+											<th><span>Duration (Minutes)</span></th>
+											<th><span>Video URL</span></th>
+											<th><span>Handout</span></th>
+											<th><span></span></th>
+										</tr>
+									</thead>
+									<tbody id="occurrence-list">
+									</tbody>
+								</table>
+							</div>
+						</div>
+                    </div>
+                </div>
+
+				<div id="org-list-div" class="form-component" hidden>
+					<div class="grid-x">
+						<div class="cell"><hr /></div>
+						<div class="cell medium-8">
+							<label for="Orgs">
+								Select organizations to add
+								<select id="Orgs" multiple data-prompt="Select"></select>
+							</label>
+						</div>
+						<div class="cell medium-4">
+							<div class="grid-x grid-margin-x button-set">
+								<div class="cell medium-text-right"><button class="small" type="button" id="SendWebinar">@Translate.Message("L968")</button></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				@*Select org ends*@
+
+				<div class="previous-assigned-list">
+					<div class="grid-x">
+						<div id="organizations-list-div" class="cell hide">
+							<h3 style="margin-top: 0;">Previously Assigned</h3>
+							<div class="grid-x grid-margin-x">
+								<div id="AssignedWebinars" class="cell prev-assigned-webinar"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				@*Previous assigned list ends*@
+			</div>
+		</div>
+	</div>
+	<button class="close-button" data-close aria-label="Close modal" id="close-model" type="button"><span aria-hidden="true">&times;</span></button>
+</div>
+
+@*<script src="@Url.Content("~/Scripts/typeahead.jquery.min.js")?v=@CommonUtility.GetRandom()"></script>*@
+<script src="@Url.Content("~/Scripts/typeahead.bundle.min.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    var formChange = false, updateWebinar = false;
+    $(document).ready(function () {
+        ListWebinars();
+        $('.fdatepicker').fdatepicker({
+            format: '@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower() hh:ii',
+            disableDblClickSelection: true,
+            pickTime: true
+        });
+        $('#webinarDate').fdatepicker('setStartDate', new Date());
+        $('#close-model').on("click", function () {
+            $('#closeWebinar').trigger("click");
+        });
+        $('#closeWebinar').on("click", function () {
+            currentPage = 0;
+            ListWebinars();
+            $("#webinar-name-title").html("Create Webinar");
+            $('#org-list-div').hide();
+            $('.other-details').addClass("hide");
+            $('.occurrence-details').addClass("hide");
+            $('.occurence-list-container').addClass("hide");
+            $("#id").val("");
+            $("#hiddenWebinarId").val("");
+            $("#webinarId").val("");
+            $("#add-edit-webinar-data").clearQueue();
+            $('#add-edit-webinar').foundation('close');
+        });
+
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("ListOrganizations", "Portal")",
+            success: function (orgData) {
+                for (i = 0; i < orgData.Records.length; i++) {
+                    $("#Orgs").append("<option value=" + orgData.Records[i].Id + ">" + orgData.Records[i].Name + "</option>");
+                }
+                $('#Orgs').foundationSelect();
+                $(document).foundation();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+        // typehead
+        var users = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('Name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace
+            , remote: {
+                url: '../Admin/ListUsers?name=%QUERY&usersWithRole=true',
+                wildcard: "%QUERY"
+            },
+            limit: Number.MAX_VALUE
+        });
+
+        users.initialize();
+
+        $('.typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 3
+        }, {
+            name: 'users',
+            displayKey: 'Name',
+            source: users.ttAdapter(),
+            limit: 10
+        })
+        $('.typeahead').bind('typeahead:selected', function (ev, user) {
+            $("#presentedBy").val(user.Id);
+        });
+
+
+    });
+
+    function ListWebinars() {
+        $('#search-results').html("");
+        $('#pagination-centered').addClass('hide');
+        $.ajax({
+            url: "@Url.Action("ListWebinars", "Webinar")",
+            data: { page: currentPage, pageSize: pageSize, totalRecords: totalRecords },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    totalRecords = data.TotalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    if (data.Records != null && data.Records.length > 0) {
+						var webinarsHtml = "<table class='table basic-table1'>";
+                        webinarsHtml += "<thead><tr><th>Webinar Id</th><th>Topic</th><th>Start Time</th><th>Duration (Minutes)</th><th></th></tr></thead>";
+                        for (var i = 0; i < data.Records.length; i++) {
+                            var webinar = data.Records[i];
+							webinarsHtml += "<tr><td>" + webinar.WebinarId + "</td><td>" + webinar.Topic + "</td><td>" + toLocalDateFormat(webinar.StartTime, "12hour") + "</td><td>" + webinar.Duration + "</td><td><a class='anchor-blue' onClick='orgWebinarDetails(\"" + webinar.Id + "\")'><i class='fa fa-pencil fa-fw'></i></a></td></tr >";
+                        }
+                        webinarsHtml += "</table>";
+                        $('#search-results').append(webinarsHtml);
+                        if (totalRecords > pageSize)
+                            $('#pagination-centered').removeClass('hide');
+                    } else {
+                        var webinarsHtml = "<table class='table'>";
+                        webinarsHtml += "<tr><td>No record found</td></tr></table>";
+                        $('#search-results').append(webinarsHtml);
+                    }
+                    AddPager();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    $('#add-edit-webinar-data :input').on('change', function () { formChange = true; });
+
+    $('#add-edit-webinar-data :input[name=topic], :input[name=agenda], :input[name=webinarDate], :input[name=duration], :input[name=password]').on('change', function () { updateWebinar = true; });
+    $('#add-webinar-button').on("click", function () { formChange = true, updateWebinar = true; });
+    $("#add-edit-webinar-data").foundation();
+    $("#add-edit-webinar-data").on('formvalid.zf.abide', function () {
+        if (formChange) {
+            $.ajax({
+                url: "@Url.Action("CreateOrUpdateWebinar", "Webinar")",
+                data: $("#add-edit-webinar-data").serialize() + '&updateWebinar=' + updateWebinar +'',
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    $("#notificationCard").html(data.Message);
+                    $(".notification-card").show('slow');
+                    updateWebinar = false;
+                    setTimeout(function () {
+                        $('.notification-card').hide('slow');
+                        if ($("#id").val() == '') {
+                            $("#add-edit-webinar-data").clearQueue();
+                            $('#add-edit-webinar').foundation('close');
+                        }
+                    }, 2000);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+        else
+        {
+            $("#notificationCard").html("Webinar updated.");
+            $(".notification-card").show('slow');
+            setTimeout(function () {
+                $('.notification-card').hide('slow');
+            }, 2000);
+        }
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    })
+
+    function orgWebinarDetails(id) {
+        $.ajax({
+            url: "@Url.Action("GetWebinar", "Webinar")",
+            data: { id: id},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null && data.Record != null) {
+                        var webinar = data.Record;
+                    $("#presentedBy").val(webinar.PresentedBy);
+                    $("#id").val(webinar.Id);
+                    $("#hiddenWebinarId").val(webinar.Id);
+                    $("#webinar-name-title").html("Webinar Id - " + webinar.WebinarId);
+                    $("#agenda").val(webinar.Agenda);
+                    $("#topic").val(webinar.Topic);
+                    $("#imageUrl").val(webinar.ImageUrl);
+                    $("#videoUrl").val(webinar.VideoUrl);
+                    $("#handout").val(webinar.Handout);
+                    $("#password").val(webinar.Password);
+                    $("#duration").val(webinar.Duration);
+                    $("#webinarId").val(webinar.WebinarId);
+                    $('#webinarDate').val(webinar.StartTimeString);
+                    $("#UserText").val(webinar.PresentedByName);
+                    $('#webinarDate').fdatepicker('setStartDate', new Date());
+                    $('#add-edit-webinar').foundation('open');
+                    $('#org-list-div').show();
+                    $('.other-details').removeClass("hide");
+                    if (webinar.Type != 9) {
+                        $('.duration-details').removeClass("hide");
+                        $('.occurrence-details').removeClass("hide");
+                        $('.occurence-list-container').addClass("hide");
+                    } else {
+                        PrepareOccurenceList(data.OccurrenceList);
+                        $('.duration-details').addClass("hide");
+                        $('.occurrence-details').addClass("hide");
+                        $('.occurence-list-container').removeClass("hide");
+                    }
+                    formChange = false, updateWebinar = false;
+                    GetAssignedWebinarList();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    $("#SendWebinar").on("click", function () {
+        var selectIds = $("#Orgs").val();
+        var webinarId = $("#hiddenWebinarId").val();
+
+        if(selectIds == null || selectIds.length == 0)
+            return;
+
+        var organizationIds = selectIds.join(',');
+        var modeldata = {};
+        modeldata.OrganizationIds = organizationIds;
+        var strData = JSON.stringify({ webinarId: webinarId, organizationIds: organizationIds });
+        $.ajax({
+            url: "@Url.Action("AssignWebinar", "Webinar")",
+            type: 'POST',
+            dataType: "json",
+            contentType: 'application/json, charset=utf-8',
+            data: strData,
+            success: function (data) {
+                if (data.Record == true) {
+                    GetAssignedWebinarList();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    });
+
+    function PrepareOccurenceList(data){
+        $('#occurrence-list').html('');
+        var webinarHtml = "";
+        for (var i = 0; i < data.length; i++) {
+            webinarHtml += "<tr><td>" + data[i].Date + "</td>" +
+                "<td>" + data[i].Time + "</td>" +
+                "<td>" + data[i].Status + "</td>" +
+				"<td class='col-duration'>" + data[i].Duration + "</td>" +
+                "<td class='col-video'><span id='occurence-text-videourl-" + data[i].OccurrenceId + "' class='webinar-edit-field'>" + data[i].VideoUrl + "</span><input type='text' id='occurence-videourl-" + data[i].OccurrenceId + "' name='occurence-videourl-" + data[i].OccurrenceId + "' value='" + data[i].VideoUrl + "' class='webinar-edit-field hide'/></td>" +
+                "<td class='col-handout'><span id='occurence-text-handout-" + data[i].OccurrenceId + "' class='webinar-edit-field'>" + data[i].Handout + "</span><input type='text' id='occurence-handout-" + data[i].OccurrenceId + "' name='occurence-handout-" + data[i].OccurrenceId + "' value='" + data[i].Handout + "' class='webinar-edit-field hide'/></td>" +
+                "<td class='col-edit'><span class='edit-webinar-entry text-blue pointer-cursor'><i class='fa fa-pencil fa-fw webinar-edit-field'></i><button onclick='SaveOccurrenceDetails(" + data[i].OccurrenceId + ") ' class='expanded button webinar-edit-field hide' type='button'>Save</button></span></td></tr>";
+        }
+        $('#occurrence-list').append(webinarHtml);
+        $(".edit-webinar-entry").on('click', function () {
+            $(this).parents('tr').find('.webinar-edit-field').toggleClass('hide');
+        });
+    }
+
+    function SaveOccurrenceDetails(id) {
+        var videoUrl = $("#occurence-videourl-" + id).val();
+        var handout = $("#occurence-handout-" + id).val();
+         $.ajax({
+            url: "@Url.Action("AddOrEditWebinarOccurrences", "Webinar")",
+            data: { occurrenceId: id, videoUrl: videoUrl, handout: handout },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data.Status) {
+                    $("#occurence-text-videourl-" + id).html(videoUrl);
+                    $("#occurence-text-handout-" + id).html(handout);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function GetAssignedWebinarList(){
+        $('#AssignedWebinars').html('');
+        $.ajax({
+            url: "@Url.Action("ListAssignedWebinars", "Webinar")",
+            type: "POST",
+            data: { webinarId:$("#hiddenWebinarId").val() },
+            dataType: 'json',
+            success: function (data) {
+                if (data != null && data.Records.length > 0) {
+                    var webinarHtml = "";
+					webinarHtml += "<table class='table basic-table2'>";
+					webinarHtml += "<thead><tr><th><span>Organization</span></th><th><span></span></th></tr></thead>"
+                    for (var i = 0; i < data.Records.length; i++) {
+						webinarHtml += "<tr><td>" + data.Records[i].OrganizationName + "</td><td><a class='anchor-blue' onclick='RemoveAssignedWebinars(" + data.Records[i].Id + ")'><i class='fa fa-times'></i></a></td></tr>";
+                    }
+                    webinarHtml += "</table>";
+                    $('#AssignedWebinars').append(webinarHtml);
+                    $('#organizations-list-div').removeClass('hide');
+                } else {
+                    $('#organizations-list-div').addClass('hide');
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function RemoveAssignedWebinars(Id) {
+        $.ajax({
+            url: "@Url.Action("RemoveAssignedWebinars", "Webinar")",
+            data: { Id: Id},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    GetAssignedWebinarList();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListWebinars();
+    }
+</script>

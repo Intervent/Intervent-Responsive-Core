@@ -1,0 +1,210 @@
+﻿@model InterventWebApp.ParticipantDashboardModel
+@using InterventWebApp
+@using System.Globalization
+@{
+    ViewBag.Title = "Initial Dashboard";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    ViewBag.Details = "InitialDashboard";
+}
+<section class="main">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x" data-equalizer data-equalizer-mq="medium-up">
+            <div class="main-column medium-12 cell" data-equalizer-watch>
+                <div class="grid-x grid-margin-x tile-item">
+                    <div class="cell">
+                        @{string assessmentText = Translate.Message(Model.AssessmentName).ToLower();}
+                        @if (Model.PreviousPortalAvailable)
+                        {
+                            <div class="tiles cell small-12">
+                                <h4>@Translate.Message("L2478"), @Model.ParticipantFirstName!</h4>
+                                <p>
+                                    @String.Format(Translate.Message("L2479"), assessmentText)
+                                </p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="tiles cell small-12">
+                                <h4>@Translate.Message("L1688"), @Model.ParticipantFirstName!</h4>
+                                <p>
+                                    @String.Format(Translate.Message("L1689"), assessmentText)
+                                    @Translate.Message("L1690")
+                                    @Translate.Message("L1691").
+                                </p>
+                            </div>
+                        }
+                        <div class="tiles cell small-12">
+                            <div class="survey-item grid-x grid-margin-x pointer-cursor" id="userProfile" data-equalizer>
+                                <div class="cell" data-equalizer-watch>
+                                    <h3>
+                                        <a>@Translate.Message("L877")</a>
+                                        <span id="percentText" class="right"></span>
+                                    </h3>
+
+                                    <div class="progress survey-progress mini-inline dashboard success radius">
+                                        <span class="progress-meter" id="progressmeter"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="tiles cell small-12" data-tooltip title="@Translate.Message("L3878")">
+                            <div class="survey-item grid-x grid-margin-x pointer-cursor" onclick="LoadHRA()" data-equalizer>
+                                <div class="cell" data-equalizer-watch>
+                                    <h3>
+                                        @{TextInfo Ti = CultureInfo.CurrentCulture.TextInfo; }
+                                        <a>@Ti.ToTitleCase(assessmentText)</a>
+                                        <span class="right">@Model.hraPercent%</span>
+                                    </h3>
+
+                                    <div class="progress survey-progress mini-inline dashboard success radius">
+                                        <span class="progress-meter" style="width: @Model.hraPercent%"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @{string buttonText = Translate.Message("L537"), buttonClass = "hide";}
+                        @if (Model.hraPercent == 0)
+                        {
+                            buttonText = Translate.Message("L1673");
+                        }
+                        @if (Model.profileComplete.HasValue && Model.profileComplete.Value == true)
+                        {
+                            buttonClass = "";
+                        }
+                        <div class="tiles cell text-center @buttonClass" id="assessmentButton">
+                            <button class="button" type="button" onclick="LoadHRA()">@buttonText @Ti.ToTitleCase(assessmentText)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*@Html.Partial("_UserSidebar")*@
+        </div>
+    </div>
+</section>
+<div id="user-profile" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+<div id="wellness-survey" class="reveal medium" data-reveal>
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <h2>@assessmentText</h2>
+            <p>
+                @string.Format(Translate.Message("L1692"), Translate.Message(Model.AssessmentName).ToLower())
+            </p>
+            <input type="checkbox" id="dont-show-again" value="">
+            <label for="dont-show-again">@Translate.Message("L1693")</label>
+            <button onclick="$('#wellness-survey').foundation('close');" class="expand">
+                @Translate.Message("L537")
+            </button>
+        </div>
+    </div>
+    <a class="close-button" data-close>&#215;</a>
+</div>
+
+<div id="wellness-report" class="reveal medium" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <h2>@assessmentText</h2>
+            <p>
+                Do you prefer to receive your wellness report and accompanying materials online (recommended method) or via the mail?
+            </p>
+            <div class="cell small-12">
+                <input type="checkbox" id="online-report"> Online (preferred method; immediately available on completion of HRA)
+            </div>
+            <div class="cell small-12">
+                <input type="checkbox" id="mail-report"> Mail (may take up to 2 weeks)
+            </div>
+            <button onclick="UpdateReportPreference()" class="expand">
+                @Translate.Message("L537")
+            </button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        @if (Model.profileComplete.HasValue && Model.profileComplete.Value == true)
+        {
+            @: $("#percentText").text("100%");
+            @: $("#progressmeter").width("100%");
+        }
+        else if (Model.UserinProgramId.HasValue)
+        {
+            @: $("#percentText").text("80%");
+            @: $("#progressmeter").width("80%");
+        }
+        else
+        {
+            @: $("#percentText").text("10%");
+            @: $("#progressmeter").width("10%");
+        }
+        @if (Model.openProfile)
+        {
+            @: $('#userProfile').trigger("click");
+        }
+        });
+    function UpdateProfileStatus() {
+        $("#percentText").text("100%");
+        $("#progressmeter").width("100%");
+        $("#assessmentButton").removeClass("hide");
+        $("html, body").animate({
+            scrollTop: 0
+        }, "fast");
+    }
+    function LoadHRA() {
+        if ($("#percentText").text() == "100%") {
+            @if (Model.AdminId.HasValue && Model.AdminId != Model.ParticipantId &&
+                Model.ParticipantEmail.IndexOf("noemail.myintervent.com") >= 0 && Model.hraPercent <= 0
+                && Model.MailScoreCard)
+            {
+                @: $.ajax({
+                @: url: "@Url.Action("ReadTask", "Admin")",
+                @: data: { userId: @Convert.ToInt32(Model.ParticipantId), taskType : 15 },
+                @: type: 'POST',
+                @: dataType: "json",
+                @: success: function (data) {
+                @: if (data != null && data.Result == "None") {
+                    @: $('#wellness-report').foundation('open');
+                @: } else {
+                @: window.location.href = "@Url.Action("HRADashboard", "HRA")";
+                @: }}}).fail(function (jqXHR, textStatus, errorThrown) {
+                @:    RedirectToErrorPage(jqXHR.status);});
+            }
+            else
+            {
+                @: window.location.href = "@Url.Action("HRADashboard", "HRA")";
+            }
+        }
+        else
+            $('#wellness-survey').foundation('open');
+    }
+
+    function UpdateReportPreference() {
+        if($("#mail-report").prop('checked') == true){
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "../Admin/AddEditTask",
+                async: false,
+                data: { id: null, taskTypeId: 15, status: "N", user: @Model.ParticipantId, owner: @Model.UserId, comment: "Send HRA Report" },
+                success: function (data) {
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+        $('#wellness-report').foundation('close');
+        window.location.href = "@Url.Action("HRADashboard", "HRA")";
+    }
+
+    $(document).on('click', '#userProfile', function () {
+        $.ajax({
+            url: '@Url.Action("UserProfile", "Account")',
+            success: function (data) {
+                $("#user-profile").html(data);
+                $('#user-profile').foundation('open');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    });
+</script>

@@ -1,0 +1,55 @@
+﻿@using InterventWebApp
+@model InterventWebApp.UpdateUserProgram
+
+<div class="grid-x grid-margin-x">
+    <div class="cell"><h2>Update Program</h2></div>
+    <div class="cell">
+        <label for="PrograminPortalId">Programs</label>
+        @Html.DropDownListFor(x => x.PrograminPortalId, Model.ProgramsinPortals, "--Select--")
+    </div>
+    <div class="cell">
+        <label for="CoachId">Coach Name</label>
+        @Html.DropDownListFor(x => x.CoachId, Model.Coaches, "--Select--")
+    </div>
+    <div class="cell">
+        <label for="Language">Change Language</label>
+        @Html.DropDownListFor(x => x.LanguagePreference, Model.Language, "--Select--")
+    </div>
+    <div class="cell">
+        <label for="InactiveReasonId">@Translate.Message("L281")</label>
+        @Html.DropDownListFor(x => x.InactiveReasonId, Model.InactiveReason, "--Select Reason--")
+    </div>
+</div>
+<div class="grid-x grid-margin-x button-set">
+    <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="UpdateProgram">@Translate.Message("L968")</button></div>
+    <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeProgram">@Translate.Message("L967")</button></div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        @if(Model.disableProgramChange){
+            @: $("[name='PrograminPortalId']").prop("disabled", true);
+            @: $("#CoachId").prop("disabled", true);
+        }
+        $('#closeProgram').on('click', function () {
+            $('#add-program').foundation('close');
+        });
+        $("#UpdateProgram").on('click', function () {
+            var InactiveReasonId = $("#InactiveReasonId").val();
+            var PrograminPortalId = $("#PrograminPortalId").val();
+            var language = $("#LanguagePreference").val();
+            var CoachId = $("#CoachId").val();
+            $.ajax({
+                url: "@Url.Action("UpdateUserinProgram", "Program")",
+                type: 'POST',
+                dataType: "json",
+                data: { PrograminPortalId: PrograminPortalId, CoachId: CoachId, InactiveReasonId: InactiveReasonId, Language: language, AssignedFollowUp: false, UpdateSubscriptionRenewal : false },
+                success: function (data) {
+                    $('#add-program').foundation('close');
+                    GetUserProgramHistory();
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        })
+    });
+</script>

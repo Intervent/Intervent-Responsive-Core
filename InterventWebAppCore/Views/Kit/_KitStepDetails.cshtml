@@ -1,0 +1,913 @@
+﻿@model Intervent.Web.DTO.ReadPageResponse
+@using InterventWebApp
+
+@{
+    if (ViewData["isPdf"] != null)
+    {
+        Layout = "~/Views/Shared/_UserLayout.cshtml";
+    }
+}
+
+@if (Model.Step != null)
+{
+    if (Model.Step.Id != 0)
+    {
+        <div class="@(ViewData["isPdf"] != null ? "kits-pdf pdf-print" : "") @ViewData["kitColor"]">
+            @if (!Model.Step.IsSubStep)
+            {
+                if (Model.Step.IsAppendix)
+                {
+                    <div class="text-right">
+                        <button type="button" class="button kit-print" onclick="doPrint();">@Translate.Message("L205")</button>
+                    </div>
+                }
+                <p>
+                    @if (!Model.Step.IsAppendix && !Model.Step.IsGoal)
+                    {
+                        <h2 class="course-section step">Section @Model.Step.StepNo: @Model.Step.Name</h2>
+                    }
+                    else
+                    {
+                        <h2 class="course-section step">@Model.Step.Name</h2>
+                    }
+                    @if (Model.Prompts != null && Model.Prompts.Count > 0)
+                    {
+                        var promptData = Model.Prompts.Where(p => p.RefId == Model.Step.Id && p.RefType == 1 && p.IsBottom == false).ToList();
+                        if (promptData != null)
+                        {
+                            <div class="prompt-container">
+                                @foreach (var prompt in promptData)
+                                {
+                                    if (Model.PromptsinKitsCompleted != null && Model.PromptsinKitsCompleted.Count > 0 && (Model.PromptsinKitsCompleted.ToList().Find(d => d.PromptId == prompt.Id) != null))
+                                    {
+                                        <input class="prompt-complete" type="checkbox" id="@prompt.Id" name="@string.Format("prompt_{0}", prompt.Id)" onclick="CompletePromptinKit(this);" checked>
+                                    }
+                                    else
+                                    {
+                                        <input class="prompt-incomplete" type="checkbox" id="@prompt.Id" name="@string.Format("prompt_{0}", prompt.Id)" onclick="CompletePromptinKit(this);">
+                                    }
+                                    <span class="prompt-description">@prompt.Description</span>
+                                    <br>
+                                }
+                            </div>
+                        }
+                    }
+                </p>
+            }
+            @Html.Raw(Model.Step.Text)
+        </div>
+    }
+    if (Model.Step.ActivitiesinSteps != null && Model.Step.ActivitiesinSteps.Count > 0)
+    {
+        string radioClass = "radio" + Model.Step.ActivitiesinSteps[0].Id;
+        foreach (var activity in Model.Step.ActivitiesinSteps)
+        {
+            var allowUpdate = !CommonUtility.HasAdminRole(User.RoleCode()) ? activity.AllowUpdate : true;
+            string expression = null;
+            string expressionId = null;
+            <div id="@string.Format("activity{0}",activity.Id)">
+                @if (activity.TopText != null)
+                {
+                    @Html.Raw(activity.TopText)
+                }
+
+                @if (Model.Prompts != null && Model.Prompts.Count > 0)
+                {
+                    var promptData = Model.Prompts.Where(p => p.RefId == activity.Id && p.IsBottom == false && p.RefType == 2).ToList();
+                    if (promptData != null)
+                    {
+                        foreach (var prompt in promptData)
+                        {
+                            <div class="prompt-container">
+                                @if (Model.PromptsinKitsCompleted != null && Model.PromptsinKitsCompleted.Count > 0 && (Model.PromptsinKitsCompleted.ToList().Find(d => d.PromptId == prompt.Id) != null))
+                                {
+                                    <input class="prompt-complete" type="checkbox" id="@prompt.Id" name="@string.Format("prompt_{0}", prompt.Id)" onclick="CompletePromptinKit(this);" checked>
+                                }
+                                else
+                                {
+                                    <input class="prompt-incomplete" type="checkbox" id="@prompt.Id" name="@string.Format("prompt_{0}", prompt.Id)" onclick="CompletePromptinKit(this);">
+                                }
+                                <span class="prompt-description">@prompt.Description</span>
+                            </div>
+                        }
+                    }
+                }
+                @foreach (var question in activity.QuestionsinActivities.Where(x => x.ParentId == null))
+                {
+                    string required = question.IsRequired ? "required" : "";
+                    <div class="qBody" name="Question+@question.ParentId" id="@question.Id">
+                        <div class="qOption">
+                            @if (question.IsPassive)
+                            {
+
+                                var value = "";
+                                if (!string.IsNullOrEmpty(question.Value))
+                                {
+                                    value = question.Value;
+                                }
+                                <label>
+                                    @Html.Raw(question.QuestionText)
+                                    <input type="text" class="kittext" id="@string.Format("textbox_{0}", question.Id)" value="@value" disabled @required />
+                                    <small class="form-error" id="@string.Format("Error_textbox_{0}", question.Id)" hidden>@Translate.Message("L480")</small>
+                                </label>
+                            }
+                            else if (question.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.expression)
+                            {
+                                var name = "";
+                                var expId = "";
+                                expId = string.Format("textbox_{0}", question.Id);
+                                if (string.IsNullOrEmpty(expressionId))
+                                {
+                                    expressionId = expId;
+                                }
+                                else
+                                {
+                                    expressionId = expressionId + "," + expId;
+                                }
+                                if (question.OptionsforActivityQuestions != null && question.OptionsforActivityQuestions.Count > 0)
+                                {
+                                    name = question.OptionsforActivityQuestions[0].OptionText;
+                                    if (string.IsNullOrEmpty(expression))
+                                    {
+                                        expression = name;
+                                    }
+                                    else
+                                    {
+                                        expression = expression + "," + name;
+                                    }
+                                    var value = "";
+                                    if (!string.IsNullOrEmpty(question.Value))
+                                    {
+                                        value = question.Value;
+                                    }
+                                    <label>
+                                        @Html.Raw(question.QuestionText)
+                                        <input type="text" class="expression" id="@expId" name="@name" value="@value" disabled />
+                                    </label>
+                                }
+
+                            }
+                            else if (question.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.table)
+                            {
+                                var options = question.OptionsforActivityQuestions.OrderBy(x => x.SequenceNo).ThenBy(x => x.Id).ToList();
+                                <label>@Html.Raw(question.QuestionText)</label>
+
+                                <table class="kitTable" style="border:1px !important">
+                                    <tbody style="border:1px solid black !important">
+                                        @foreach (var option in options)
+                                        {
+                                            <tr>
+                                                @foreach (var subQuestion in activity.QuestionsinActivities.Where(x => x.ParentId == option.Id).ToList())
+                                                {
+                                                    if (subQuestion.QuestionText.StartsWith(Intervent.Web.DataLayer.CommonConstants.TableOptionText))
+                                                    {
+                                                        var value = "";
+                                                        if (!string.IsNullOrEmpty(subQuestion.Value))
+                                                        {
+                                                            value = subQuestion.Value;
+                                                        }
+                                                        string subRequired = subQuestion.IsRequired ? "required" : "";
+                                                        <td style="border:1px solid black !important">
+                                                            @if (subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.textbox || subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.number || subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.floatnumber)
+                                                            {
+                                                                var readOnly = (!allowUpdate && value != "") ? "disabled='disabled'" : "";
+                                                                var type = "text";
+                                                                var extra = "";
+                                                                if (subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.number)
+                                                                {
+                                                                    type = "number";
+                                                                    extra = "step=1";
+                                                                }
+                                                                else if (subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.floatnumber)
+                                                                {
+                                                                    type = "number";
+                                                                    extra = "step=.1";
+                                                                }
+
+                                                                <input type="@type" @extra class="kittext" id="@string.Format("textbox_{0}", subQuestion.Id)" value="@value" @subRequired @readOnly onblur="textChange(@string.Format("textbox_{0}", subQuestion.Id), @subQuestion.QuestionType)" />
+                                                            }
+                                                            else
+                                                            {
+                                                                var isChecked = "";
+                                                                var readOnly = "";
+                                                                if (value.Contains(subQuestion.Id.ToString()))
+                                                                {
+                                                                    readOnly = !allowUpdate ? "disabled='disabled'" : "";
+                                                                    isChecked = "checked";
+                                                                }
+                                                                <input id="@string.Format("checkbox_{0}", subQuestion.Id)" name="@string.Format("checkbox_{0}", subQuestion.Id)" type="checkbox" @isChecked @subRequired @readOnly />
+                                                            }
+                                                        </td>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        short rowSpan, colSpan;
+                                                        rowSpan = colSpan = 1;
+                                                        var style = "";
+                                                        foreach (var subOption in subQuestion.OptionsforActivityQuestions)
+                                                        {
+                                                            if (subOption.SequenceNo.HasValue && subOption.SequenceNo.Value == Intervent.Web.DataLayer.CommonConstants.RowSpanOption)
+                                                            {
+                                                                rowSpan = short.Parse(subOption.OptionText);
+                                                            }
+                                                            else if (subOption.SequenceNo.HasValue && subOption.SequenceNo.Value == Intervent.Web.DataLayer.CommonConstants.ColSpanOption)
+                                                            {
+                                                                colSpan = short.Parse(subOption.OptionText);
+                                                            }
+                                                            else if (subOption.SequenceNo.HasValue && subOption.SequenceNo.Value == Intervent.Web.DataLayer.CommonConstants.StyleOption)
+                                                            {
+                                                                style = subOption.OptionText;
+                                                            }
+                                                        }
+                                                        <td style="border:1px solid black !important;@style" rowspan="@rowSpan" colspan="@colSpan">@subQuestion.QuestionText</td>
+                                                    }
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                            }
+                            else if (question.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.tablecheckbox)
+                            {
+                                var options = question.OptionsforActivityQuestions.OrderBy(x => x.SequenceNo).ToList();
+                                int hColSpan = 1;
+                                var nonOption = options.Where(x => x.OptionText != Intervent.Web.DataLayer.CommonConstants.TableOptionText).OrderBy(o => o.SequenceNo).ToList();
+
+                                var tbloption = options.Where(x => x.OptionText == Intervent.Web.DataLayer.CommonConstants.TableOptionText).FirstOrDefault();
+                                if (tbloption != null)
+                                {
+                                    hColSpan = tbloption.SequenceNo.Value;
+                                }
+                                <label>@Html.Raw(question.QuestionText)</label>
+                                <table class="kitChkTable kit-table">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1">&nbsp;</td>
+                                            @if (tbloption != null)
+                                            {
+                                                var tblChoices = activity.QuestionsinActivities.Where(x => x.ParentId == tbloption.Id).OrderBy(o => o.SequenceNo).ToList();
+                                                foreach (var ques in tblChoices)
+                                                {
+                                                    <td>@Html.Raw(ques.QuestionText)</td>
+                                                }
+                                            }
+                                        </tr>
+                                        @{ foreach (var option in nonOption)
+                                            {
+                                                var chkIndex = 0;
+                                                var subQuestion = activity.QuestionsinActivities.Where(x => x.ParentId == option.Id).FirstOrDefault();
+                                                string[] answerIds = new string[0];
+                                                if (!string.IsNullOrEmpty(subQuestion.Value))
+                                                {
+                                                    answerIds = subQuestion.Value.Split(',');
+                                                }
+                                                var readOnly = "";
+                                                <tr>
+                                                    <td colspan="1"><p><span>@Html.Raw(option.OptionText) @Html.Raw(subQuestion.QuestionText)</span></p></td>
+                                                    @if (subQuestion.OptionsforActivityQuestions.Any(x => answerIds.Contains(x.Id.ToString())) && !allowUpdate)
+                                                    {
+                                                        readOnly = "disabled='disabled'";
+                                                    }
+                                                    @foreach (var subOption in subQuestion.OptionsforActivityQuestions.OrderBy(o => o.SequenceNo))
+                                                    {
+                                                        chkIndex++;
+                                                        var isChecked = "";
+                                                        if (answerIds.Contains(subOption.Id.ToString()))
+                                                        {
+                                                            isChecked = "checked";
+                                                        }
+                                                        <td><p><span><input id="@string.Format("checkbox_{0}", subOption.Id)" name="@string.Format("checkbox_{0}", subOption.QuestionId)" type="checkbox" @isChecked onchange='tableCheckBox(this)' @readOnly @required /> @chkIndex</span></p></td>
+                                                    }
+                                                </tr>
+                                                <tr><td colspan="@(subQuestion.OptionsforActivityQuestions.Count + 1)"><small class="form-error" id="@string.Format("Error_checkbox_{0}", subQuestion.Id)">@Translate.Message("L480")</small></td></tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+
+
+                            }
+                            else if (question.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.checkbox)
+                            {
+                                var isVertical = "";
+                                var isVerticalClass = "";
+                                int index = 0;
+                                var readOnly = "";
+                                if (!allowUpdate && !string.IsNullOrEmpty(question.Value))
+                                {
+                                    readOnly = "disabled='disabled'";
+                                }
+
+                                if (!question.ShowVertical)
+                                {
+                                    isVertical = "style=float:left";
+                                    isVerticalClass = "arrow-kit-options";
+                                }
+                                string[] answerIds = new string[0];
+                                if (!string.IsNullOrEmpty(question.Value))
+                                {
+                                    answerIds = question.Value.Split(',');
+                                }
+                                <fieldset>
+                                    <legend>@Html.Raw(question.QuestionText)</legend>
+                                    <ul id="@string.Format("question{0}", question.Id)">
+                                        @foreach (var option in question.OptionsforActivityQuestions.OrderBy(x => x.SequenceNo))
+                                        {
+                                            var isChecked = "";
+                                            index++;
+                                            if (answerIds.Contains(option.Id.ToString()))
+                                            {
+                                                isChecked = "checked";
+                                            }
+                                            <li class="kit-options @isVerticalClass" @isVertical>
+                                                @if (!question.ShowVertical)
+                                                {
+                                                    <label for="@string.Format("checkbox_{0}", option.Id)">@Html.Raw(option.OptionText)</label>
+                                                    <div class="input-rated">
+                                                        <input id="@string.Format("checkbox_{0}", option.Id)" name="@string.Format("checkbox_{0}", question.Id)" type="checkbox" @isChecked onchange="showSubQuestions(@option.Id, '@string.Format("checkbox_{0}", option.Id)', 'checkbox', @question.Id)" @required @readOnly /> @index
+                                                    </div>
+
+                                                }
+                                                else
+                                                {
+                                                    <div>
+                                                        <input id="@string.Format("checkbox_{0}", option.Id)" name="@string.Format("checkbox_{0}", question.Id)" type="checkbox" @isChecked onchange="showSubQuestions(@option.Id, '@string.Format("checkbox_{0}", option.Id)', 'checkbox', @question.Id)" @required @readOnly />
+                                                    </div>
+                                                    <div>
+                                                        <label for="@string.Format("checkbox_{0}", option.Id)">@Html.Raw(option.OptionText)</label>
+                                                    </div>
+                                                }
+                                            </li>
+                                            foreach (var subQuestion in activity.QuestionsinActivities.Where(x => x.ParentId == option.Id).ToList())
+                                            {
+                                                var value = "";
+
+                                                string hideClass = string.IsNullOrEmpty(isChecked) ? "hide" : "";
+                                                if (!string.IsNullOrEmpty(subQuestion.Value))
+                                                {
+                                                    value = subQuestion.Value;
+                                                }
+                                                var type = "text";
+                                                var extra = "";
+                                                if (subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.number)
+                                                {
+                                                    type = "number";
+                                                    extra = "step=1";
+                                                }
+                                                else if (subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.floatnumber)
+                                                {
+                                                    type = "number";
+                                                    extra = "step=.1";
+                                                }
+                                                string subRequired = subQuestion.IsRequired ? "required" : "";
+                                                <div class="qBody @hideClass" name="Question+@subQuestion.ParentId" id="@subQuestion.Id">
+                                                    <div class="qOption">
+                                                        <label>
+                                                            @Html.Raw(subQuestion.QuestionText)
+                                                            @if (subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.textarea)
+                                                            {
+                                                                <textarea @extra class="kittext" id="@string.Format("textbox_{0}", subQuestion.Id)" @subRequired @readOnly onblur="textChange(@string.Format("textbox_{0}", subQuestion.Id), @subQuestion.QuestionType)">@value</textarea> }
+                                                            else
+                                                            {
+                                                                <input type="@type" @extra class="kittext" id="@string.Format("textbox_{0}", subQuestion.Id)" value="@value" @subRequired @readOnly onblur="textChange(@string.Format("textbox_{0}", subQuestion.Id), @subQuestion.QuestionType)" />
+                                                            }
+                                                            <small class="form-error" id="@string.Format("Error_textbox_{0}", subQuestion.Id)" hidden>@Translate.Message("L480")</small>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        <small class="form-error" id="@string.Format("Error_checkbox_{0}", question.Id)" hidden>@Translate.Message("L480")</small>
+
+                                    </ul>
+                                </fieldset>
+                            }
+                            else if (question.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.radiobutton)
+                            {
+                                var isVertical = "";
+                                var answerText = "";
+                                var initialCount = 0;
+                                if (!activity.AllowUpdate)
+                                {
+                                    initialCount = 1;
+                                }
+                                if (!question.ShowVertical)
+                                {
+                                    isVertical = "style=display:inline-block";
+                                }
+                                <fieldset>
+                                    <legend>@Html.Raw(question.QuestionText)</legend>
+                                    <ul id="@string.Format("question{0}", question.Id)">
+
+                                        @foreach (var option in question.OptionsforActivityQuestions.OrderBy(x => x.SequenceNo))
+                                        {
+                                            var isChecked = "";
+                                            var readOnly = "";
+                                            if (!string.IsNullOrEmpty(question.Value) && question.Value.Equals(option.Id.ToString()))
+                                            {
+                                                isChecked = "checked";
+                                            }
+                                            if (!allowUpdate && !string.IsNullOrEmpty(question.Value))
+                                            {
+                                                readOnly = "disabled='disabled'";
+                                            }
+                                            var value = false;
+
+                                            if (option.IsAnswer.HasValue && option.IsAnswer.Value)
+                                            {
+                                                value = option.IsAnswer.Value;
+                                                answerText = string.Format(Translate.Message("L3820"), option.OptionText);
+                                            }
+                                            var optValue = option.OptionText;
+                                            if (option.Points.HasValue)
+                                            {
+                                                optValue = option.Points.Value.ToString();
+                                            }
+                                            if (string.IsNullOrEmpty(isVertical))
+                                            {
+                                                <li class="kit-options">
+                                                    <div><input type="radio" class="@radioClass" name="@string.Format("radio_{0}", question.Id)" id="@string.Format("option_{0}", option.Id)" @isChecked value="@value.ToString().ToLowerInvariant()" optvalue="@optValue" onchange="showSubQuestions(@option.Id, '@string.Format("option_{0}", option.Id)', 'radio', @question.Id)" @readOnly @required /></div>
+                                                    <div><label for="@string.Format("option_{0}", option.Id)">@Html.Raw(option.OptionText)</label></div>
+                                                </li>
+                                            }
+                                            else
+                                            {
+                                                <li @isVertical>
+                                                    <input type="radio" class="@radioClass" name="@string.Format("radio_{0}", question.Id)" id="@string.Format("option_{0}", option.Id)" @isChecked value="@value.ToString().ToLowerInvariant()" optvalue="@optValue" onchange="showSubQuestions(@option.Id, '@string.Format("option_{0}", option.Id)', 'radio', @question.Id)" @readOnly @required />
+                                                    <label for="@string.Format("option_{0}", option.Id)">@Html.Raw(option.OptionText)</label>
+                                                </li>
+                                            }
+                                            foreach (var subQuestion in activity.QuestionsinActivities.Where(x => x.ParentId == option.Id).ToList())
+                                            {
+                                                var value1 = "";
+                                                string hideClass = string.IsNullOrEmpty(isChecked) ? "hide" : "";
+                                                if (!string.IsNullOrEmpty(subQuestion.Value))
+                                                {
+                                                    value1 = subQuestion.Value;
+                                                }
+                                                var type = "text";
+                                                var extra = "";
+                                                if (subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.number)
+                                                {
+                                                    type = "number";
+                                                    extra = "step=1";
+                                                }
+                                                else if (subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.floatnumber)
+                                                {
+                                                    type = "number";
+                                                    extra = "step=.1";
+                                                }
+                                                string subRequired = subQuestion.IsRequired ? "required" : "";
+                                                <div class="qBody @hideClass" name="Question+@subQuestion.ParentId" id="@subQuestion.Id">
+                                                    <div class="qOption">
+                                                        <label>
+                                                            @Html.Raw(subQuestion.QuestionText)
+                                                            <input type="@type" @extra class="kittext" id="@string.Format("textbox_{0}", subQuestion.Id)" value="@value1" @subRequired @readOnly onblur="textChange(@string.Format("textbox_{0}", subQuestion.Id), @subQuestion.QuestionType)" />
+                                                            <small class="form-error" id="@string.Format("Error_textbox_{0}", subQuestion.Id)" hidden>@Translate.Message("L480")</small>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        @if (!string.IsNullOrEmpty(answerText))
+                                        {
+                                            <li>
+                                                <div class="hide correct" id="@string.Format("answer_{0}", question.Id)">@answerText</div>
+                                                <div class="hide wrong" id="@string.Format("wrong_{0}", question.Id)">Wrong!</div>
+                                            </li>
+                                        }
+                                        <small class="form-error" id="@string.Format("Error_radio_{0}", question.Id)" hidden>@Translate.Message("L480")</small>
+                                        <input id="HValidationInCount" value="@initialCount" hidden>
+                                    </ul>
+                                </fieldset>
+                            }
+                            else if (question.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.dropdown)
+                            {
+                                var readOnly = "";
+                                <label>
+                                    @Html.Raw(question.QuestionText)
+                                </label>
+                                if (question.OptionsforActivityQuestions.Any(x => x.Id.ToString() == question.Value) && !allowUpdate)
+                                {
+                                    readOnly = "disabled='disabled'";
+                                }
+                                <select id="@string.Format("select_{0}", question.Id)" onchange="showSubQuestions(@question.Id, '@string.Format("select_{0}", question.Id)', 'dropdown', @question.Value)" @required @readOnly>
+                                    <option value="0">
+                                        Select One...
+                                    </option>
+                                    @foreach (var option in question.OptionsforActivityQuestions.OrderBy(x => x.SequenceNo))
+                                    {
+                                        var isSelected = "";
+                                        if (!string.IsNullOrEmpty(question.Value) && question.Value.Equals(option.Id.ToString()))
+                                        {
+                                            isSelected = "selected";
+                                        }
+                                        <option value="@option.Id" @isSelected>@Html.Raw(option.OptionText)</option>
+                                    }
+                                </select>
+                                <small class="form-error" id="@string.Format("Error_select_{0}", question.Id)" hidden>@Translate.Message("L480")</small>
+                                foreach (var subQuestion in activity.QuestionsinActivities.Where(x => x.ParentId.HasValue && question.OptionsforActivityQuestions.Select(y => y.Id).ToList().Contains(x.ParentId.Value)).ToList())
+                                {
+                                    var value = "";
+                                    string hideClass = !string.IsNullOrEmpty(subQuestion.Value) && subQuestion.ParentId == Convert.ToInt32(question.Value) ? "" : "hide";
+                                    if (!string.IsNullOrEmpty(subQuestion.Value))
+                                    {
+                                        value = subQuestion.Value;
+                                    }
+                                    var type = "text";
+                                    var extra = "";
+                                    if (subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.number)
+                                    {
+                                        type = "number";
+                                        extra = "step=1";
+                                    }
+                                    else if (subQuestion.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.floatnumber)
+                                    {
+                                        type = "number";
+                                        extra = "step=.1";
+                                    }
+                                    string subRequired = subQuestion.IsRequired ? "required" : "";
+                                    <div class="qBody @hideClass" name="Question+@subQuestion.ParentId" id="@subQuestion.Id">
+                                        <div class="qOption">
+                                            <label>
+                                                @Html.Raw(subQuestion.QuestionText)
+                                                <input type="@type" @extra class="kittext" id="@string.Format("textbox_{0}", subQuestion.Id)" value="@value" @subRequired @readOnly onblur="textChange(@string.Format("textbox_{0}", subQuestion.Id), @subQuestion.QuestionType)" />
+                                                <small class="form-error" id="@string.Format("Error_textbox_{0}", subQuestion.Id)" hidden>@Translate.Message("L480")</small>
+                                            </label>
+                                        </div>
+                                    </div> }
+                            }
+                            else if (question.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.textarea)
+                            {
+                                var value = "";
+                                var readOnly = "";
+                                //var type = "text";
+                                var extra = "";
+                                if (!string.IsNullOrEmpty(question.Value))
+                                {
+                                    value = question.Value;
+                                    readOnly = !allowUpdate ? "disabled='disabled'" : "";
+                                }
+                                var actionGoals = "";
+                                <label>
+                                    @if (Model.Step.IsGoal && Model.Step.ActivitiesinSteps[0].QuestionsinActivities[0].Id == question.Id)
+                                    {
+                                        actionGoals = "addActionGoals";
+                                        if (Model.KitsinUserProgramGoal != null && Model.KitsinUserProgramGoal.GoalsAchieved)
+                                        {
+                                            readOnly = "disabled='disabled'";
+                                        }
+                                        <input type="hidden" id="kitGoalsId" value="" />
+                                    }
+                                    @Html.Raw(question.QuestionText)
+
+                                    <textarea @extra class="kittext" id="@string.Format("textbox_{0}", question.Id)" @required @readOnly onblur="textChange(@string.Format("textbox_{0}", question.Id), @question.QuestionType)" onchange="@(actionGoals)(@string.Format("textbox_{0}", question.Id), @question.QuestionType)">@value</textarea>
+
+                                    <small class="form-error" id="@string.Format("Error_textbox_{0}", question.Id)" hidden>@Translate.Message("L480")</small>
+
+                                </label>
+                            }
+                            else
+                            {
+                                var value = "";
+                                var readOnly = "";
+                                var type = "text";
+                                var extra = "";
+                                if (!string.IsNullOrEmpty(question.Value))
+                                {
+                                    value = question.Value;
+                                    readOnly = !allowUpdate ? "disabled='disabled'" : "";
+                                }
+                                var actionGoals = "";
+                                <label>
+                                    @if (Model.Step.IsGoal && Model.Step.ActivitiesinSteps[0].QuestionsinActivities[0].Id == question.Id)
+                                    {
+                                        actionGoals = "addActionGoals";
+                                        if (Model.KitsinUserProgramGoal != null && Model.KitsinUserProgramGoal.GoalsAchieved)
+                                        {
+                                            readOnly = "disabled='disabled'";
+                                        }
+                                        <input type="hidden" id="kitGoalsId" value="" />
+                                    }
+                                    @Html.Raw(question.QuestionText)
+                                    @if (question.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.number)
+                                    {
+                                        type = "number";
+                                        extra = "step=1";
+                                    }
+                                    else if (question.QuestionType == (int)Intervent.Web.DataLayer.QuestionType.floatnumber)
+                                    {
+                                        type = "number";
+                                        extra = "step=.01";
+                                    }
+
+                                    <input type="@type" @extra class="kittext" id="@string.Format("textbox_{0}", question.Id)" value="@value" @required @readOnly onblur="textChange(@string.Format("textbox_{0}", question.Id), @question.QuestionType)" onchange="@(actionGoals)(@string.Format("textbox_{0}", question.Id), @question.QuestionType)" />
+
+                                    <small class="form-error" id="@string.Format("Error_textbox_{0}", question.Id)" hidden>@Translate.Message("L480")</small>
+
+                                </label>
+                            }
+                        </div>
+
+                    </div>
+                }
+                @if (activity.BottomText != null)
+                {
+                    @Html.Raw(activity.BottomText)
+                }
+
+
+                @if (!string.IsNullOrEmpty(expression) && expression.StartsWith("T"))
+                {
+                    string[] Expression = expression.Split(',');
+                    string[] ExpressionId = expressionId.Split(',');
+                    for (int i = 0; i < Expression.Length; i++)
+                    {
+                        <script>
+                        $(".kittext").on('change', function () {
+                        var expression = "@Expression[i].Substring(1)"
+                            var result = expression.split(/[-\\+\\*\\/]+/);
+                        var exp = expression;
+                        for (var i = 0 ; i < result.length; i++) {
+                            var currentExp = result[i];
+                            if (currentExp.indexOf("C") > -1) {
+                                //Do nothing. To avoid subsequent Constant replacement
+                            }
+                            else if (currentExp != "") {
+                                var num = currentExp.match(/\d+/)[0];
+                                var value = $("#textbox_" + num).val();
+                                if (!(parseInt(value) > 0)) value = 0;
+                                currentExp = currentExp.replace(num, value);
+                                exp = exp.replace(result[i], currentExp);
+                            }
+                        }
+                        exp = exp.replace(new RegExp("C", 'g'), "");
+                        var expResult = eval(exp);
+                            $('#@ExpressionId[i]').val(expResult);
+                    });
+                        </script>
+                    }
+                }
+                else if (!string.IsNullOrEmpty(expression))
+                {
+                    <script>
+                        $(".@radioClass").on('click', function () {
+                        var expression = "@expression"
+                            var result = expression.split(/[-\\+\\*\\/]+/);
+                        var exp = expression;
+                        for (var i = 0 ; i < result.length; i++) {
+                            exp = exp.replace(result[i], (parseInt($("input[name='radio_" + result[i] + "']:checked").attr("optvalue")) || 0));
+                        }
+                        var expResult = eval(exp);
+                            $('#@expressionId').val(expResult);
+                    });
+                    </script>
+                }
+                @if (Model.Prompts != null && Model.Prompts.Count > 0)
+                {
+                    var promptBtmData = Model.Prompts.Where(b => b.RefId == activity.Id && b.IsBottom && b.RefType == 2).ToList();
+                    if (promptBtmData != null)
+                    {
+                        foreach (var prompt in promptBtmData)
+                        {
+                            <div class="prompt-container">
+                                @if (Model.PromptsinKitsCompleted != null && Model.PromptsinKitsCompleted.Count > 0 && (Model.PromptsinKitsCompleted.ToList().Find(d => d.PromptId == prompt.Id) != null))
+                                {
+                                    <input class="prompt-complete" type="checkbox" id="@prompt.Id" name="@string.Format("prompt_{0}", prompt.Id)" onclick="CompletePromptinKit(this);" checked>
+                                }
+                                else
+                                {
+                                    <input class=" prompt-incomplete" type="checkbox" id="@prompt.Id" name="@string.Format("prompt_{0}", prompt.Id)" onclick="CompletePromptinKit(this);">
+                                }
+                                <span class="prompt-description">@prompt.Description</span>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        }
+    }
+    <div id="FirstCorrect" class="hide">@Translate.Message("L2842")</div>
+    <div id="SecondCorrect" class="hide">@Translate.Message("L2846")</div>
+    <div class="wrong hide" id="FirstWrong">@Translate.Message("L2839")</div>
+    <div class="wrong hide" id="SecondWrong">@Translate.Message("L2840")</div>
+}
+else if (Model.KeyConcepts != null)
+{
+    <div class="text-right">
+        <button type="button" class="button kit-print" onclick="doPrint();">@Translate.Message("L205")</button>
+    </div>
+
+    <div class="@(ViewData["isPdf"] != null ? "kits-pdf pdf-print" : "") @ViewData["kitColor"]">
+        <h2 class="course-section key-concepts">@Html.Raw(Translate.Message("L3816"))</h2>
+        @Html.Raw(Model.KeyConcepts)
+    </div>
+}
+else if (Model.Quiz != null)
+{
+    <h2 class="course-section quiz">@Translate.Message("L4380")</h2>
+    <div class="quiz-content">
+        @for (int i = 0; i < Model.Quiz.Count; i++)
+        {
+            var answerText = "";
+            <div id="@string.Format("question_{0}", @Model.Quiz[i].Id)" class="question">
+                <div class="qHeader">
+                    <div class="qNumber">@(i + 1).</div>
+                    <div class="qText">
+                        @Html.Raw(Model.Quiz[i].QuizText)
+                    </div>
+                </div>
+                <div class="qBody">
+                    @foreach (var option in @Model.Quiz[i].optionsforQuiz)
+                    {
+                        if (option.IsActive)
+                        {
+                            var isChecked = "";
+
+                            if (!string.IsNullOrEmpty(@Model.Quiz[i].Value) && @Model.Quiz[i].Value.Equals(option.Id.ToString()))
+                            {
+                                isChecked = "checked";
+                            }
+                            <div class="qOption">
+                                <input type="radio" name="@string.Format("radio_{0}", @Model.Quiz[i].Id)" id="@string.Format("option_{0}", option.Id)" value="@option.IsDefault.ToString().ToLowerInvariant()" @isChecked>
+                                <label for="@string.Format("option_{0}", option.Id)">@Html.Raw(option.OptionText)</label>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <div class="incorrect-summary hide" id="QuizIncorrect_@Model.Quiz.FirstOrDefault().Id">@Html.Raw(string.Format(Translate.Message("L2841"), "<span class='total'></span>"))</div>
+    <div id="FirstCorrect" class="hide">@Translate.Message("L2842")</div>
+    <div id="SecondCorrect" class="hide">@Translate.Message("L2846")</div>
+    <div class="wrong hide" id="FirstWrong">@Translate.Message("L2839")</div>
+}
+@if (Model.Prompts != null && Model.Prompts.Count > 0)
+{
+    //var promptBtmData = Model.Prompts.ToList().Find(b => b.RefId == Model.Step.Id && b.IsBottom);
+    var promptBtmData = Model.Prompts.Where(b => b.RefId == Model.Step.Id && b.RefType == 1 && b.IsBottom).ToList();
+    if (promptBtmData != null)
+    {
+        <div class="prompt-container">
+            @foreach (var prompt in promptBtmData)
+            {
+                if (Model.PromptsinKitsCompleted != null && Model.PromptsinKitsCompleted.Count > 0 && (Model.PromptsinKitsCompleted.ToList().Find(d => d.PromptId == prompt.Id) != null))
+                {
+                    <input class="prompt-complete" type="checkbox" id="@prompt.Id" name="@string.Format("prompt_{0}", prompt.Id)" onclick="CompletePromptinKit(this);" checked>
+                }
+                else
+                {
+                    <input class="prompt-incomplete" type="checkbox" id="@prompt.Id" name="@string.Format("prompt_{0}", prompt.Id)" onclick="CompletePromptinKit(this);">
+                }
+                <span class="prompt-description">@prompt.Description</span>
+                <br />
+
+            }
+        </div>
+    }
+}
+<script>
+    $(document).ready(function () {
+
+    });
+    var KitsInUserProgramId = @Model.KitsInUserProgramId;
+
+    function textChange(id, type) {
+
+        var val = id.value;
+        var decimal = /^\d+$/
+        if (type == 8 && (val != 0 && !val.match(decimal))) {
+            var nval = parseInt(Math.round(val));
+            id.value = nval;
+        } else if (type == 9) {
+            var nval = parseFloat(val).toFixed(2);
+            id.value = nval
+        }
+    }
+    function addActionGoals(id, type) {
+        var goal = id.value;
+        var goalsId = $("#kitGoalsId").val();
+        $.ajax({
+            url: "@Url.Action("AddEditActionGoals", "Kit")",
+            data: { kitsInUserProgramId: KitsInUserProgramId, goal: goal, goalsId: goalsId },
+            type: 'POST',
+            //contentType: 'application/json, charset=utf-8',
+            dataType: "json",
+            success: function (data) {
+                $("#kitGoalsId").val(data.Record.kitsGoalsId);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function CompletePromptinKit(currentChkbox) {
+        var isChecked = $('input[name="' + currentChkbox.name +'"]:checked').length > 0;
+        var model = {};
+        var details = {
+            'KitsInUserProgramId': KitsInUserProgramId,
+            'PromptId': currentChkbox.id,
+            'IsActive': isChecked
+        };
+        model.CompletePromptsinKit = (details);
+        var strModelData = JSON.stringify(model);
+        if (isChecked) {
+            $("#" + currentChkbox.name).removeClass('incomplete');
+            $("#" + currentChkbox.name).addClass('complete');
+            $('input[name="' + currentChkbox.name +'"]').removeClass('prompt-incomplete');
+            $('input[name="' + currentChkbox.name +'"]').addClass('prompt-complete');
+        }
+        else {
+            $("#" + currentChkbox.name).removeClass('complete');
+            $("#" + currentChkbox.name).addClass('incomplete');
+            $('input[name="' + currentChkbox.name +'"]').removeClass('prompt-complete');
+            $('input[name="' + currentChkbox.name +'"]').addClass('prompt-incomplete');
+        }
+        $.ajax({
+            url: "@Url.Action("CompletePrompt", "Kit")",
+            data: strModelData,
+            type: 'POST',
+            contentType: 'application/json, charset=utf-8',
+            dataType: "json",
+            success: function (data) {
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    if (typeof (model) != "undefined") {
+        var visPageIndex = $(".page").index($('.page:visible'));
+        var rootId = model.PageIdentifier[visPageIndex - 1].RootIdentifier;
+        var stepId = model.PageIdentifier[visPageIndex - 1].PageId;
+        for (var index = 0; index < model.StepNames.length ; index++) {
+            if (model.StepNames[index].PageIdentifier == rootId)
+                $("#" + stepId + ' #FirstWrong').html("@Html.Raw(Translate.Message("L3817")) <a href='#' onclick='moveToPage(" + model.StepNames[index].Index + ', "' + model.StepNames[index].PageIdentifier + '" ' + ")'>" + model.StepNames[index].StepName + "</a> @Translate.Message("L3818")")
+        }
+    }
+    function showSubQuestions(optionId, id, type, questionId) {
+        if (type == 'checkbox') {
+            if (document.getElementById(id).checked == true) {
+                var els = document.getElementsByName("Question+" + optionId);
+                for (var i = 0; i < els.length; i++) {
+                    els[i].classList.remove("hide");;
+                }
+            }
+            else {
+                var els = document.getElementsByName("Question+" + optionId);
+                for (var i = 0; i < els.length; i++) {
+                    els[i].classList.add("hide");
+                    var node = document.getElementById(els[i].id).getElementsByTagName('input');
+                    node[0].value = null;
+                }
+            }
+        }
+        else if (type == 'radio') {
+            var x = document.getElementById(questionId).querySelectorAll(".qBody");
+            for (var i = 0; i < x.length; i++) {
+                if (!x[i].classList.contains('hide')) {
+                    x[i].classList.add("hide");
+                    var node = document.getElementById(x[i].id).getElementsByTagName('input');
+                    node[0].value = null;
+                }
+            }
+            if (document.getElementById(id).checked == true) {
+                var els = document.getElementsByName("Question+" + optionId);
+                for (var i = 0; i < els.length; i++) {
+                    els[i].classList.remove("hide");;
+                }
+            }
+        }
+        else {
+            var x = document.getElementById(optionId).querySelectorAll(".qBody");
+            for (var i = 0; i < x.length; i++) {
+                if (!x[i].classList.contains('hide')) {
+                    x[i].classList.add("hide");
+                    if (questionId != $('#' + id).val()) {
+                        var node = document.getElementById(x[i].id).getElementsByTagName('input');
+                        node[0].value = null;
+                    }
+                }
+                var els = document.getElementsByName("Question+" + $('#' + id).val());
+                for (var j = 0; j < els.length; j++) {
+                    els[j].classList.remove("hide");;
+                }
+            }
+        }
+    }
+
+    function tableCheckBox(ele) {
+        var checked = ele.checked;
+        $('input:checkbox[name=' + ele.name + ']').prop('checked', false);
+        if (checked) {
+            $('#' + ele.id + '').prop('checked', true);
+        }
+	}
+
+	function doPrint() {
+        window.open("@Url.Action("PrintableReports", "Reports")" + '?view=KitStepDetails&generatePDF=false&kitId=' + @Model.kitId +'&pageIdentifier='+'@Model.pageIdentifier'+'&kitsInUserProgramsId=' + @Model.KitsInUserProgramId +'&languageCode='+'@Model.languageCode'+'&kitColor='+ kitColor +'');
+    }
+</script>

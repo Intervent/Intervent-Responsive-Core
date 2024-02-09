@@ -1,0 +1,58 @@
+﻿@using InterventWebApp
+@model InterventWebApp.FollowUpModuleModel
+
+<div class="grid-x grid-margin-x show-for-small-only">
+    <div class="small-12 cell">
+        <h2>@Translate.Message("L490")</h2>
+    </div>
+</div>
+<div class="control-bar">
+    <div class="grid-x action-container">
+        <div class="small-12 cell hra-view-toggles">
+            <button class="icon-button small secondary" onclick="ChangeMenu('FollowUp', @Model.FollowUpId)" id="followup-assessment-toggle-button">@Translate.Message("L2450")</button>
+            <button class="icon-button small secondary" onclick="ChangeMenu('FollowupReport', @Model.FollowUpId)" id="followup-summary-toggle-button">@Translate.Message("L491")</button>
+        </div>
+    </div>
+</div>
+<div class="content-assessment" id="followup-assessment"></div>
+<div class="content-summary" id="followup-summary">
+    @Html.Partial("_FollowUpReport", Model.FollowUpSummary)
+</div>
+<script>
+    @if (Model.FollowUpSummary != null && Model.FollowUpSummary.hasSummary)
+    {
+        @: toggleFollowupView('followup-summary');
+    }
+    else
+    {
+        @: toggleFollowupView('followup-assessment');
+        @: var link = "@Url.Action("FollowUp", "FollowUp", new { followupid = "-1" })"
+        @: link = link.replace("-1", @Model.FollowUpId);
+        @: $("#followup-assessment").load(link);
+    }
+
+    function ChangeMenu(item, id) {
+        if (item == "FollowUp") {
+            var link = "@Url.Action("FollowUp", "FollowUp", new { followupid = "-1" })"
+            link = link.replace("-1", id);
+            $("#followup-assessment").load(link);
+            toggleFollowupView('followup-assessment');
+        }
+        else {
+            var link = "@Url.Action("FollowUpReport", "FollowUp", new { followupid = "-1" })";
+            link = link.replace("-1", id);
+            $("#followup-summary").load(link);
+            toggleFollowupView('followup-summary');
+        }
+    }
+
+    function toggleFollowupView(showItem) {
+        var hideItem = showItem === 'followup-summary' ? 'followup-assessment' : 'followup-summary';
+        $('#' + hideItem + '-toggle-button').removeClass('active');
+        $('#' + showItem + '-toggle-button').addClass('active');
+        showItem = showItem.replace("followup-", "");
+        hideItem = hideItem.replace("followup-", "");
+        $('.content-' + showItem).removeClass('hide');
+        $('.content-' + hideItem).addClass('hide');
+    }
+</script>

@@ -1,0 +1,48 @@
+﻿@Html.Hidden("NoShowId")
+@Html.Hidden("Call")
+<div id="revert-noshow" class="reveal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-x grid-margin-x">
+        <div class="cell"><h2>Do you want revert the no show?</h2></div>
+    </div>
+    <div class="grid-x grid-margin-x button-set">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="RevertNoShow">Yes</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary" type="reset" id="closeNoShow">Cancel</button></div>
+    </div>
+</div>
+<script>
+    $("#RevertNoShow").on('click', function () {
+        var noCall = $("#Call").val();
+        $.ajax({
+            url: "@Url.Action("RevertNoshow", "Scheduler")",
+            data: { id: $("#NoShowId").val() },
+            type: 'POST',
+            success: function (data) {
+                $('#revert-noshow').foundation('close');
+                if (noCall == "true") {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Appointments", "Scheduler")',
+                        success: function (data) {
+                            $("#profile-content").html(data);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                }
+                UpdateAppointmentUI();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    })
+
+    function RevertNoShow(appointmentId, call) {
+        $('#revert-noshow').foundation('open');
+        $("#NoShowId").val(appointmentId);
+        $("#Call").val(call);
+    }
+
+    $('#closeNoShow').on('click', function () {
+        $('#revert-noshow').foundation('close');
+    });
+</script>

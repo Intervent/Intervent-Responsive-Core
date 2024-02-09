@@ -1,0 +1,64 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass chi-memorial">
+    @Html.Partial("CHIGlenwood/_CHIGlenwoodHeader", new ViewDataDictionary(ViewData) { { "headerStyle", "transparent" }, { "OrgId", ViewData["OrgId"]}  })
+     <div class="grid-container">
+        <div class="intro-body grid-x grid-margin-x">
+            <div class="intro-text small-12 cell">
+                <h2>Your Journey to Optimal Health and Well-Being Starts Here… and Now</h2>
+            </div>
+            <div class="small-12 cell intro-buttons chi-main-buttons">
+                <button class="intro-button pink" onclick="$('#sign-up-modal').foundation('open'); return false;">
+                    @Translate.Message("L2437")
+                </button>
+                <button class="intro-button pink" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</button>
+            </div>
+        </div>
+    </div>
+</section>
+@Html.Partial("CHIGlenwood/_CHIGlenwoodFooter")
+<div id="sign-up-modal" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">  
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-12">
+                <h2 class="text-center">@Translate.Message("L431")</h2>                
+            </div>
+            <div class="cell">
+                @Html.Partial("_SignUp")
+            </div>
+            <div class="cell text-center">
+                <a href="#" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</a>
+            </div>
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_ResetPassword")
+
+<div class="nav-to-top">
+    <a href="#" class="button"><i class="fa fa-chevron-up"></i></a>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        //Homepage Scroll function
+        function scrollDown() {
+            $('html, body').animate({
+                scrollTop: $(".parallax-wrapper").offset().top
+            }, 1000);
+        }
+
+        $(document).on('click', '#close', function () {
+            document.getElementById("sign-up-form").reset();
+        });
+    </script>
+}
+

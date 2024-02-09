@@ -1,0 +1,923 @@
+<!--USER VIEW-->
+@model InterventWebApp.RecipeModel
+@using InterventWebApp
+@{
+    ViewBag.Title = "RecipeList";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main recipes">
+    <div class="grid-container">
+        <div class="grid-x">
+			<div class="cell">
+				<div class="recipe-dashboard">
+					<div class="grid-x">
+						<div class="cell large-3 medium-4">
+							<div class="recipe-filters-section">
+								<div class="recipe-tab-btn hide-for-small-only">
+									<div class="switch slider-switch">
+										<input type="checkbox" name="my-recipe-switch" id="my-recipe-switch" class="switch-input" value="">
+										<label class="switch-paddle" for="my-recipe-switch">
+											<span class="switch-inactive" aria-hidden="true">My Recipes</span>
+											<span class="switch-active" aria-hidden="true">All Recipes</span>
+										</label>
+									</div>
+								</div>
+
+								<div class="recipe-main-ingredient">
+									<h3>Main ingredient <span class="active"><a href="#">Reset</a></span></h3>
+									<div class="ingredient-list">
+										<ul>
+											<li>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" value="1" />
+														Fruits
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" value="1" />
+														Non Starchy Vegies
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" value="1" />
+														Starchy Vegies
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" value="1" />
+														Whole Grains
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" value="1" />
+														Milk and Yogurt
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" value="1" />
+														Meats
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" value="1" />
+														Cheese
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" value="1" />
+														Nuts and seeds
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" value="1" />
+														Meats
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="tick-buttons">
+													<label>
+														<input type="checkbox" value="1" />
+														Nuts and seeds
+														<span class="checkmark"></span>
+													</label>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div>
+
+								<div class="recipe-tags-section">
+									<h3>Tags</h3>
+
+									<div class="search-bar">
+										<input type="text" name="name" placeholder="All Challenges" />
+										<button type="submit" class="search-btn"></button>
+									</div>
+
+									<div class="tag-list">
+										<span>Served cold</span>
+										<span>Quick and Easy</span>
+										<span>Economical</span>
+										<span>International cuisine</span>
+										<span>Vegetarian</span>
+										<span>Vegan</span>
+										<span>Quick and Easy</span>
+										<span>Served hot</span>
+									</div>
+								</div>
+
+								<div class="recipe-filter-buttons show-for-small-only">
+									<button class="button expanded">Apply Filter</button>
+									<button class="button hollow expanded" id="cancel-filter">Cancel</button>
+								</div>
+							</div>
+						</div>
+						@*Recipe left section ends*@
+
+						<div class="cell large-9 medium-8">
+							<div class="main-recipe-container">
+								<h1 class="hide-for-small-only">Healthy Recipes</h1>
+
+								<div class="recipe-tab-btn show-for-small-only">
+									<div class="switch slider-switch">
+										<input type="checkbox" name="my-recipe-switch" id="my-recipe-switch" class="switch-input" value="">
+										<label class="switch-paddle" for="my-recipe-switch">
+											<span class="switch-inactive" aria-hidden="true">My Recipes</span>
+											<span class="switch-active" aria-hidden="true">All Recipes</span>
+										</label>
+									</div>
+								</div>
+
+								<div class="search-bar recipe-main-search">
+									<input type="text" name="name" placeholder="Search" />
+									<button class="search-btn" type="submit"></button>
+								</div>
+
+								<div class="recipe-slider">
+									<div class="recipe-slide-item">
+										<img src="~/Images/recipes/recipe-slider-img1.png" alt="">
+										<p>Top 10 recipes <br> for the summer</p>
+									</div>
+									<div class="recipe-slide-item">
+										<img src="~/Images/recipes/recipe-slider-img1.png" alt="">
+										<p>Easy to cook <br> vegan recipes</p>
+									</div>
+									<div class="recipe-slide-item">
+										<img src="~/Images/recipes/recipe-slider-img1.png" alt="">
+										<p>Weight loss <br> program recipes</p>
+									</div>
+									<div class="recipe-slide-item">
+										<img src="~/Images/recipes/recipe-slider-img1.png" alt="">
+										<p>Easy to cook <br> vegan recipes</p>
+									</div>
+									<div class="recipe-slide-item">
+										<img src="~/Images/recipes/recipe-slider-img1.png" alt="">
+										<p>Weight loss <br> program recipes</p>
+									</div>
+									<div class="recipe-slide-item">
+										<img src="~/Images/recipes/recipe-slider-img1.png" alt="">
+										<p>Top 10 recipes <br> for the summer</p>
+									</div>
+									<div class="recipe-slide-item">
+										<img src="~/Images/recipes/recipe-slider-img1.png" alt="">
+										<p>Easy to cook <br> vegan recipes</p>
+									</div>
+									<div class="recipe-slide-item">
+										<img src="~/Images/recipes/recipe-slider-img1.png" alt="">
+										<p>Weight loss <br> program recipes</p>
+									</div>
+								</div>
+
+								<div class="main-tabs recipe-tabs">
+									<ul class="tabs" data-tabs id="recipe-tabs">
+										<li class="tabs-title is-active"><a href="#all-recipes" aria-selected="true">All</a></li>
+										<li class="tabs-title"><a href="#breakfast-recipes">Breakfast</a></li>
+										<li class="tabs-title"><a href="#main-recipes">Main Course</a></li>
+										<li class="tabs-title"><a href="#snacks-recipes">Snacks</a></li>
+										<li class="tabs-title"><a href="#salads-recipes">Salads</a></li>
+										<li class="tabs-title"><a href="#side-dish-recipes">Side Dish</a></li>
+									</ul>
+
+									<div class="mobile-filter show-for-small-only">
+										<div class="flex-container align-middle align-justify">
+											<span>348 recipes</span>
+
+											<span class="mobile-filter-btn"><i class="fa fa-filter"></i> Filter</span>
+										</div>
+									</div>
+
+									<div class="tabs-content" data-tabs-content="recipe-tabs">
+										<!--Overview Tab Ends-->
+										<div class="tabs-panel is-active" id="all-recipes">
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Pumpkin-Pilaf.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>Stuffed Pumpkin Pilaf</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-low">Low</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Black-Beans.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>Black Bean Chilli</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-high">High</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+										</div>
+										<div class="tabs-panel" id="breakfast-recipes">
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Black-Beans.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>Black Bean Chilli</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-high">High</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Pumpkin-Pilaf.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>Stuffed Pumpkin Pilaf</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-low">Low</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+										</div>
+										<div class="tabs-panel" id="main-recipes">
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Black-Beans.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>Chili with Chunky Vegetables</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-high">High</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Pumpkin-Pilaf.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>No Fry Falafels</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-low">Low</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+										</div>
+										<div class="tabs-panel" id="snacks-recipes">
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Black-Beans.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>Veggie-Cheese Frittata</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-high">High</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Pumpkin-Pilaf.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>Avocado Egg Boats</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-low">Low</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+										</div>
+										<div class="tabs-panel" id="salads-recipes">
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Black-Beans.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>Summertime Shrimp Salad</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-high">High</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Pumpkin-Pilaf.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>Black-eyed Pea Salad</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-low">Low</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+										</div>
+										<div class="tabs-panel" id="side-dish-recipes">
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Black-Beans.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>Curried Couscous with Walnuts</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-high">High</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+
+											<div class="recipe-card">
+												<div class="recipe-img">
+													<img src="~/Images/recipes/new-recipe-images/Pumpkin-Pilaf.jpg" alt="">
+
+													<div class="recipe-fav-option">
+														<span>153</span>
+													</div>
+												</div>
+												<div class="recipe-title">
+													<h3>Baked Sweet Potato Chips</h3>
+													<p>Side dish</p>
+												</div>
+												<div class="recipe-meta-info">
+													<ul>
+														<li>
+															<img src="~/Images/recipes/calories-icon.png" alt="">
+															<p>12 calories <span class="cal-count-low">Low</span></p>
+														</li>
+														<li>
+															<img src="~/Images/recipes/serves-icon.png" alt="">
+															<p>Serves 4</p>
+														</li>
+													</ul>
+												</div>
+												<div class="recipe-card-tags tag-list">
+													<span>Vegetarian</span>
+													<span>Quick and Easy</span>
+													<span>3+</span>
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						@*Recipe right section ends*@
+
+						<div class="cell">
+							<div class="recipe-details-container hide">
+								<div class="mobile-recipe-img show-for-small-only"></div>
+								<div class="recipe-back">
+									<a href="#" class="back-btn">Back</a>									
+
+                        			<div class="recipe-fav-option">
+                        				<span>153</span>
+                        			</div>
+								</div>
+								<div class="recipe-title">
+									<h2>Stuffed Pumpkin Pilaf</h2>
+									<div class="tag-list">
+										<span>Vegetarian</span>
+										<span>Quick and Easy</span>
+									</div>
+								</div>
+
+								<div class="recipe-detail-overview">
+									<div class="grid-x">
+										<div class="cell medium-8">
+											<div class="overview-wrapper">
+												<div class="grid-x grid-margin-x grid-margin-y">
+													<div class="cell medium-3 small-6">
+														<span>Serves</span>
+														<p>4 People</p>
+													</div>
+													<div class="cell medium-3 small-6">
+														<span>Time to cook</span>
+														<p>4 Hours</p>
+													</div>
+												</div>
+												<div class="grid-x grid-margin-x grid-margin-y">
+													<div class="cell medium-3 small-3">
+														<span>Calories </span>
+														<p>224</p>
+													</div>
+													<div class="cell medium-3 small-3">
+														<span>Carbs </span>
+														<p>31 g</p>
+													</div>
+													<div class="cell medium-3 small-3">
+														<span>Total Fat</span>
+														<p>10 g</p>
+													</div>
+													<div class="cell medium-3 small-3">
+														<span>Proteins</span>
+														<p>8 g</p>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="cell medium-4 hide-for-small-only">
+											<img src="~/Images/recipes/new-recipe-images/Pumpkin-Pilaf.jpg" alt="" />
+											<p class="disclaimer-text">Images are for representation purpose only actual product may differ</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="ingredients-list">
+									<h4>Ingredients you will need</h4>
+									<ul>
+										<li>3 cups (720 mL) cooked brown rice</li>
+										<li>3 carrots, diced</li>
+										<li>2 small pie pumpkins</li>
+										<li>½ tsp salt substitute</li>
+										<li>1 Tbsp olive oil</li>
+										<li>½ cup (120 mL) water</li>
+										<li>3 onions, minced</li>
+										<li>1 tsp dried rosemary, crushed</li>
+										<li>3 celery stalks, diced</li>
+										<li>½ cup (120 mL) roasted pumpkin seeds (or packaged roasted seeds) </li>
+									</ul>
+									<div class="show-for-small-only text-center">
+										<a href="#" class="anchor-blue" id="toggle-list">See All</a>
+									</div>
+								</div>
+
+								<div class="recipe-steps">
+									<h4>Directions to get started</h4>
+									<p class="steps-counts"><span>10</span> steps to prepare</p>
+
+									<div class="steps-slider">
+										<div class="step-slide">
+											<span>1</span>
+											<p>To roast seeds, brush 1 tsp olive oil on a cookie sheet. Spread out clean, dry seeds in a single layer. Bake at 350°F for 10 minutes or until lightly brown.</p>
+										</div>
+										<div class="step-slide">
+											<span>2</span>
+											<p>Wash and cut tops off pumpkins and scoop out all seeds and membranes.</p>
+										</div>
+										<div class="step-slide">
+											<span>3</span>
+											<p>Heat oil in a large skillet on range top. Sauté onions until lightly brown. Add celery and carrots. Sauté a few minutes more.</p>
+										</div>
+										<div class="step-slide">
+											<span>4</span>
+											<p>Wash and cut tops off pumpkins and scoop out all seeds and membranes.</p>
+										</div>
+										<div class="step-slide">
+											<span>5</span>
+											<p>To roast seeds, brush 1 tsp olive oil on a cookie sheet. Spread out clean, dry seeds in a single layer. Bake at 350°F for 10 minutes or until lightly brown.</p>
+										</div>
+									</div>
+
+									<div class="recipe-steps-button flex-container align-center-middle grid-x grid-margin-x" style="position: relative;">
+										@*<button class="button hollow">Start Over</button>*@
+										<div class="cell medium-2">
+			<button class="button hollow" id="first-step">Start Over</button>
+		</div>
+		<div class="cell medium-2">
+			<button class="button" id="next-step">Next Step</button>
+		</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						@*Recipe detail section ends*@
+					</div>
+				</div>
+			</div>
+        </div>
+    </div>
+</section>
+<div id="recipe-data" class="reveal large recipe-modal-container" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+
+<!-- <script src="@Url.Content("../Scripts/Pager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 12;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    //Activate the detailed info
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+    //display any datepickers
+    $(document).ready(function () {
+        SearchRecipes();
+        Recipemodel();
+    });
+
+    function Recipemodel() {
+        var recipeId = window.location.search.substring(1);
+        if (recipeId > 0) {
+            $('#recipe-data').load("Recipe/" + recipeId + "/");
+            $('#recipe-data').foundation('open');
+        }
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        SearchRecipes();
+    }
+
+	$('#search').on('keyup', function () {
+        //if (this.value.length < 3)
+        //    return;
+        Search();
+    });
+
+    function Search() {
+        startIndex = 1;
+        pageSize = 12;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        SearchRecipes();
+    }
+
+    function SearchRecipes() {
+        var recipeName = $("#search").val();
+        var foodGroup = $("#foodGroup").val();
+        var course = $("#course").val();
+        var feature = $("#feature").val();
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: 'SearchRecipes',
+            async: true,
+            cache: true,
+            data: {
+                recipeName: recipeName, foodGroup: foodGroup, course: course, feature: feature, page: currentPage, pageSize: pageSize, totalRecords: totalRecords
+            },
+            success: function (data) {
+                totalRecords = data.Record.totalRecords;
+                totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                if (data.Record.translatedrecipes != null) {
+                    displayrecipes(data.Record.translatedrecipes);
+                }
+                else if (data.Record.recipes != null) {
+                    displayrecipes(data.Record.recipes);
+                }
+                else {
+                    $('#recipe-results').html('');
+                }
+                AddPager();
+
+                /**/
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function displayrecipes(data) {
+        var recipesHtml = [];
+        recipesHtml.push("<ul class='grid-x grid-margin-x grid-padding-y small-up-1 medium-up-2 large-up-3'>");
+        for (i in data) {
+            var recipe = data[i];
+            recipesHtml.push("<li class='cell'><div class='recipe' data-open='recipe-data' data-modal-path='Recipe/" + recipe.Id + "/'>" +
+                            "<div class='recipe-thumbnail'><img src='" + recipe.ImageURL + "'></div><div class='recipe-title'>" + recipe.Name + "</div>" +
+                            "<div class='recipe-footer'><div class='preparation-time'><i class='fa fa-heartbeat'></i>" +
+                            "<span class='time'>" + recipe.Calories + "</span> @Translate.Message("L398")</div><div class='ingredients'>" +
+                            "<i class='fa fa-spoon'></i><span class='ingredients-count'>" + recipe.Yield + "</span> @Translate.Message("L1889")</div></div></div>" +
+                            "</li>");
+
+        }
+        recipesHtml.push("</ul>");
+        $('#recipe-results').html(recipesHtml.join(''));
+
+        $("[data-open]").on('click', function(e){
+            var attr_val = $(this).data("open");
+            var attr_path = $(this).data("modal-path");
+            if(attr_val && attr_path){
+                e.preventDefault();
+                var $modal1 = $('#'+attr_val);
+                $.ajax(attr_path).done(function (resp) {
+                    $modal1.html(resp).foundation('open');
+                });
+            }
+        });
+    }
+</script> -->
+<!-- Old Script ends -->
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/slick.min.js")"></script>
+<script>
+	$(document).ready(function() {
+		$(".recipe-slider").slick({
+	        dots: false,
+	        infinite: false,
+	        slidesToShow: 3,
+			slidesToScroll: 1,
+			responsive: [
+				{
+					breakpoint: 639,
+					settings: {
+						slidesToShow: 1
+					}
+				}
+			]
+	    });
+
+	    $("h3 a").on('click', function(e) {
+	    	e.preventDefault();
+	    	$('.ingredient-list input').prop('checked', false);
+	    });
+
+		$(".steps-slider").slick({
+			dots: false,
+			infinite: false,
+			slidesToShow: 1,
+			slidesToScroll: 1,
+			vertical: true,
+			//appendArrows: ".recipe-steps-button",
+			arrows: false,
+			centerMode: true
+		});
+
+		$("button#next-step").on("click", function () {
+			$(".steps-slider").slick("slickNext");
+		});
+
+		$("button#first-step").on("click", function () {
+			$(".steps-slider").slick("slickGoTo", 0, false);
+		});
+
+		$(".recipe-card, .recipe-back .back-btn").on('click', function (e) {
+			e.preventDefault();
+			$(".recipe-filters-section, .main-recipe-container, .recipe-details-container").toggleClass("hide");
+
+			if (!$(".recipe-details-container").hasClass("hide")) {
+				setTimeout(function () {
+					$(".steps-slider").slick("refresh");
+				}, 200);
+			}
+		});
+
+		$(".mobile-filter-btn").on("click", function () {
+			$(".recipe-filters-section").show();
+		});
+
+		$("#cancel-filter").on("click", function () {
+			$(".recipe-filters-section").hide();
+		});
+
+		$("#toggle-list").on("click", function (e) {
+			e.preventDefault();
+			$(this).parents(".ingredients-list").find("ul").toggleClass("show-all");
+			$(this).text($(this).text() == 'See All' ? 'Hide' : 'See All');
+		});
+	});
+</script>

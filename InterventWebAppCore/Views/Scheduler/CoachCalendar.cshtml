@@ -1,0 +1,51 @@
+﻿<!--ADMIN VIEW-->
+@{
+    ViewBag.Title = "SetCoachAvailability";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main coach-calendar admin-main-body">
+    <div class="control-bar">
+         <div class="grid-container">
+            <div class="grid-x grid-margin-x scheduler-offset-small-only">
+                <div class="small-12 large-6 left cell">
+                    @Html.Partial("_SchedulerSelect",
+                    new ViewDataDictionary(ViewData) {
+                    { "Kind", "coach-calendar" }
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <div class="panel">
+                    <fieldset>
+                        <legend>Select Coach</legend>
+                        <div class="grid-x grid-margin-x">
+                            <div class="cell medium-12">
+                                <label for="coach">Coach</label>
+                                <select id="coach" onchange="CoachChange()" class="primary-select"></select>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <div class="panel">
+                    <div id='calendar'>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    var coachUrl = '@Html.Raw(Url.Action("GetCoachCalendar", "Scheduler"))';
+    var showAppointment = true;
+    var bookUrl = '';
+    var userTimeZone = false;
+</script>
+@Html.Partial("_CoachCalendar")

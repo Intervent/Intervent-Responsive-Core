@@ -1,0 +1,160 @@
+﻿@using InterventWebApp
+@model InterventWebApp.LoginModel
+
+@{
+    ViewBag.Title = "LandingPages";
+    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+    ViewBag.Details = "LandingPage";
+}
+<div data-sticky-container class="header-blue">
+    @*<div class="contain-to-grid sticky" data-sticky data-stick-to="top" data-margin-top="0" data-sticky-on="small">*@
+    <div class="contain-to-grid">
+        <div class="menu-white-bg"></div>
+        <nav class="top-bar lmc-nav-bar" data-topbar role="navigation">
+            <div class="title-bar" data-responsive-toggle="lmc-mobile-menu" data-hide-for="large">
+                <button class="menu-icon" type="button" data-toggle="lmc-mobile-menu"></button>
+            </div>
+            <h1 class="menu-text"><a href="#"><img src="~/Images/lmc/lmc-logo.png" /></a></h1>
+            <div class="lmc-menu-items" id="lmc-mobile-menu">
+                <ul class="menu vertical large-horizontal main-menu" data-responsive-menu="accordion large-dropdown">
+                    <li class="curve-bg small-order-1"><a href=""><img src="~/Images/footer-call-icon.png" alt="" /> 1-855-494-1093</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<section class="lmc-index lmc-wrapper title-casing">
+    <section class="lmc-login">
+        <div class="grid-container">
+            <div class="grid-x">
+                <div class="cell large-11">
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-6">
+                            <h1>@Translate.Message("L427")</h1>
+                            <p>
+                                @Translate.Message("L428")
+                            </p>
+                            <img src="~/Images/lmc/bicycle-girl.svg" alt="" class="bicycle-girl hide-for-small-only" />
+                        </div>
+                        <div class="cell medium-6 large-5 large-offset-1">
+                            <form id="inline-login-user-form" class="hide-for-small-only" data-abide novalidate>
+                                <!--Login Form-->
+                                <div class="form-white-bg form-login-box">
+                                    <div data-alert="" id="inline-login-error" class="callout alert alert-box hide"></div>
+                                    <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="info@myintervent.com" />
+                                    <div>
+                                        <label>@Translate.Message("L572")</label>
+                                        @Html.TextBoxFor(m => m.UserName, new Dictionary<string, object> { { "placeholder", Translate.Message("L986") }, { "required", "required" }, { "id", "loginUserName" } })
+                                        <small class="form-error">@Translate.Message("L463")</small>
+                                    </div>
+
+                                    <div class="password-field-box">
+                                        <label>@Translate.Message("L466")</label>
+                                        @Html.PasswordFor(m => m.Password, new Dictionary<string, object> { { "placeholder", Translate.Message("L466") }, { "required", "required" } })
+                                        <span class="toggle-password fa fa-fw fa-eye"></span>
+                                        <small class="form-error">@Translate.Message("L464")</small>
+                                    </div>
+
+                                    <input class="DeviceId" type="hidden" id="DeviceId" name="DeviceId" value="" />
+
+                                    <p><a href="#" data-open="forgot-password-modal">@Translate.Message("L465")</a></p>
+
+                                    <div class="lmc-login-container">
+                                        <button type="submit" class="button expanded">
+                                            <div class="loading-spinner hide" show-if-submitting></div>
+                                            @Translate.Message("L426")
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div id="device-verification-inline-login-form"></div>
+
+                            <div class="show-for-small-only lmc-mobile-form">
+                                <button class="button expanded" data-open="login-modal">@Translate.Message("L2084")</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Login section ends-->
+
+</section>
+
+
+@Html.Partial("_NewLogin", new ViewDataDictionary(ViewData) { { "ShowSignUp", "False" } })
+@Html.Partial("_ForgotPassword", new ViewDataDictionary(ViewData) { { "LMCClass", "lmc-forgot-password" } })
+@Html.Partial("_ResendConfirmEmail")
+@section scripts
+{
+    <script type="text/javascript">
+        //gapi.hangout.render('placeholder-div', { 'render': 'createhangout' });
+        $(".intro-header").sticky({ topSpacing: 0 });
+        $(document).on('click', '#register-modal-close', function () {
+            $('#register-modal').foundation('close');
+        });
+        $('#inline-login-user-form').foundation();
+        $('#inline-login-user-form')
+            //When Not Valid
+            .on("forminvalid.zf.abide", function(ev,frm) {
+                console.log("Form id "+ev.target.id+" is invalid");
+            })
+            //When Valid
+            .on('formvalid.zf.abide', function () {
+                $("#loader-wrapper").removeClass("hide");
+                $("#loader-wrapper").fadeIn();
+                $("#inline-login-user-form").find('input[id="Password"]').val(window.btoa(Math.random().toString(36).substring(2, 8) + $("#inline-login-user-form").find('input[id="Password"]').val()));
+                $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+                $('[show-if-submitting]').removeClass('hide');
+                $.ajax({
+                    url: "@Url.Action("Login", "Account")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#inline-login-user-form").serialize(),
+                    success: function (data) {
+                        $("#inline-login-user-form").find('input[id="Password"]').val("");
+                        if (data == "success") {
+                            window.location.href = "@Url.Action("Stream", "Participant")";
+                        }
+                        else if (data.hasOwnProperty("verifyDevice")) {
+                            $("#device-verification-inline-login-form").html(deviceVerificationSection);
+                            $("#inline-login-user-form").addClass("hide");
+                            $("#device-security-verify-container").removeClass("hide");
+                            $('.login-switch-paddle').css({ 'pointer-events': 'none', 'cursor': 'not-allowed' });
+                            $("#verify-device-email").html(data.emailId);
+                            $("#verify-device-userid").val(data.userId);
+                            if (data.phoneNo != null) {
+                                $("#verify-device-phone").html(data.phoneNo);
+                                $("#device-phoneno").removeClass("hide");
+                            }
+                        }
+                        else if (data == "confirmEmail") {
+                            var email = $("#loginUserName").val();
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                            $('#resend-email-modal').find("#email").text(email);
+                            $('#resend-email-modal').find("#emailId").val(email)
+                            $('#resend-email-modal').foundation('open');
+                            $("#loader-wrapper").addClass("hide");
+                        }
+                        else {
+                            $("#inline-login-error").html(data);
+                            $('#inline-login-error').removeClass('hide');
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                            $("#loader-wrapper").addClass("hide");
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        DisplayError(jqXHR.status);
+                    });
+            })
+            // to prevent form from submitting upon successful validation
+            .on("submit", function (ev) {
+                ev.preventDefault();
+            });
+    </script>
+}

@@ -1,0 +1,990 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+@using System.Collections.Generic
+@using System.Linq
+@using Intervent.Web.DTO
+@model ChallengesModel
+
+
+<div class="dashboard-content challenges-content challenges-section cell">
+	<!-- admin challenge head start -->
+	<div class="admin-challenge-head">
+		<div class="grid-container">
+			<div class="grid-x grid-margin-x grid-margin-y align-bottom">
+				<div class="cell medium-6">
+					<h4>Activites and Rewards</h4>
+				</div>
+
+				<div class="cell medium-6">
+					<div class="grid-x grid-margin-x align-bottom">
+						<div class="cell small-6 medium-text-right"><a class="button hollow" data-open="all-reward-modal">All Rewards</a></div>
+                        @if (Model.challenges.Where(x => x.IncentiveTypeId == 9).FirstOrDefault() != null && Model.HasActivePortal)
+                        {
+						<div class="cell small-6 medium-text-right"><a id="rewardBonus" class="button" data-open="reward-bonus-points" data-modal-path="@Html.Raw(Url.Action("CustomIncentives", "Challenge", new { PortalIncentiveId = Model.challenges.Where(x => x.IncentiveTypeId == 9).FirstOrDefault().PortalIncentiveId }))">Add Bonus Points</a></div>
+                        }
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- admin challenge head ends -->
+	<!-- challenges-user start -->
+	<div class="challenges-user">
+		<div class="grid-container">
+			<!-- challenges-user-inner start -->
+			<div class="challenges-user-inner">
+				<div class="user-content">
+					<div class="grid-x grid-margin-x">
+						<div class="cell medium-4">
+							<div class="user-info">
+                                <p class="date">@Translate.Message("L2897") :@Model.MemberSince</p>
+								<p class="rank">@Translate.Message("L2898"):<span id="rank"></span></p>
+							</div>
+						</div>
+						<div class="cell medium-8">
+							<div class="challenges-level grid-x small-up-3 medium-up-3">
+								<div class="cell progress-bar easy-level">
+									<div class="progress">
+										<div id="250" class="progress-meter"></div>
+									</div>
+									<div class="level-range">
+										<p>250</p>
+									</div>
+								</div>
+
+								<div class="cell progress-bar medium-level">
+									<div class="progress">
+										<div id="500" class="progress-meter"></div>
+									</div>
+									<div class="level-range">
+										<p>500</p>
+									</div>
+								</div>
+								<div class="cell progress-bar advance-level">
+									<div class="progress">
+										<div id="1000" class="progress-meter"></div>
+									</div>
+									<div class="level-range">
+										1000
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- challenges-point-inner start -->
+				<div class="challenges-point-inner">
+					<div class="grid-x grid-margin-x grid-margin-y align-bottom">
+						<div class="cell large-9">
+                            <div class="grid-x grid-margin-x">
+                                @if (!CommonUtility.IsIntegratedWithLMC(Context.Session.GetInt32(SessionContext.IntegrationWith).HasValue ? (byte)Context.Session.GetInt32(SessionContext.IntegrationWith).Value : null))
+                                {
+                                    <div class="cell small-4">
+                                        <div class="challenges-point-content border-right">
+                                            <div class="point-icon">
+                                                <img src="../../Images/challenge/icon1.png" width="40" />
+                                            </div>
+                                            <div class="point-info">
+                                                <h4>@Model.Keys</h4>
+                                                <p>@Translate.Message("L2900")<span class="info" data-tooltip tabindex="1" title="@Translate.Message("L2929")"><img src="../../Images/challenge/icon9.png" width="13" />   </span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.challenges.Any(x => x.IsCompanyIncentive == true))
+                                {
+                                    <div class="cell small-5">
+                                        <div class="challenges-point-content border-right">
+                                            <div class="point-icon">
+                                                <img src="../../Images/challenge/icon4.png" width="35" />
+                                            </div>
+                                            <div class="point-info">
+                                                <h4>$@Model.Currency</h4>
+                                                <p>@Translate.Message("L2901")
+                                                @if(!string.IsNullOrEmpty(Model.employerIncentiveText))
+                                                {
+                                                    <span class="info" data-tooltip tabindex="1" title="@Translate.Message(Model.employerIncentiveText)"><img src="../../Images/challenge/icon9.png" width="13" />   </span>
+                                                }
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="cell small-3">
+                                    <div class="challenges-point-content">
+                                        <div class="point-icon">
+                                            <img src="../../Images/challenge/icon10.png" width="22" />
+                                        </div>
+                                        <div class="point-info">
+                                            <h4>@Model.Points</h4>
+                                            <p>@Translate.Message("L1716")<span class="info" data-tooltip tabindex="1" title="@Translate.Message("L2956")"><img src="../../Images/challenge/icon9.png" width="13" />   </span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+						</div>
+						<div class="cell large-3 text-right">
+							<div class="track-btn">
+								See Progress Track
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- challenges-point-inner end -->
+				<!-- challenges-track start -->
+				<div class="challenges-track">
+					<div class="grid-x grid-margin-x">
+						<div class="cell">
+                            <div class="title-content">
+                                <h3>Your track towards INTERVENT rewards</h3>
+                                @if (!CommonUtility.IsIntegratedWithLMC(Context.Session.GetInt32(SessionContext.IntegrationWith).HasValue ? (byte)Context.Session.GetInt32(SessionContext.IntegrationWith).Value : null))
+                                {
+                                    <p>Earn points toward valuable gift cards from INTERVENT as you travel on the pathway over the years to optimal health. INTERVENT automatically awards points for completing specific program activities and holds monthly, quarterly, semi-annual and annual raffles to select winners.<br />The more points you earn, the more chances you have to win. </p>
+                                }
+                                else
+                                {
+                                    <p>Earn points toward valuable gift cards from INTERVENT as you travel on the pathway over the years to optimal health. INTERVENT automatically awards points for completing specific program activities and holds quarterly raffles to select winners.<br />The more points you earn, the more chances you have to win. </p>
+                                }
+                            </div>
+							<!-- track-detail Start -->
+							<div class="track-detail">
+								<table>
+									<thead>
+										<tr class="user-row">
+											<td></td>
+											<td id="member"></td>
+											<td id="prime"></td>
+											<td id="elite"></td>
+											<td id="eliteplus"></td>
+										</tr>
+										<tr class="level-row">
+											<td></td>
+											<td><img src="../../Images/challenge/icon11.png" width="17" /> Member</td>
+											<td><img src="../../Images/challenge/icon6.png" width="22" /> VIP </td>
+											<td><img src="../../Images/challenge/icon5.png" width="22" /> Elite</td>
+											<td><img src="../../Images/challenge/icon1.png" width="40" /> Elite Plus</td>
+										</tr>
+										<tr class="heading-row">
+											<td>Total Points</td>
+											<td><div class="headingicon"><img src="../../Images/challenge/icon10.png" width="15" /> 0-249</div></td>
+											<td><div class="headingicon"><img src="../../Images/challenge/icon10.png" width="15" /> 250-499</div></td>
+											<td><div class="headingicon"><img src="../../Images/challenge/icon10.png" width="15" /> 500-999</div></td>
+											<td><div class="headingicon"><img src="../../Images/challenge/icon10.png" width="15" /> 1,000 or more</div></td>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var raffle in Model.raffles)
+										{
+                                        <tr>
+                                            <td>
+                                                <div class="track-content">
+                                                    <p>@raffle.Name</p>
+                                                    <p><span></span> <span>Next on: @raffle.RaffleDate</span></p>
+                                                </div>
+                                            </td>
+                                            @if (raffle.Points == 1000)
+                                            {
+                                                <td name="rafflemember"></td>
+                                                <td name="raffleprime"></td>
+                                                <td name="raffleelite"></td>
+                                                <td name="raffleeliteplus"><div class="icon"><img src="../../Images/challenge/icon13.png" width="24" /></div></td>
+                                            }
+                                            else if (raffle.Points == 500)
+                                            {
+                                                <td name="rafflemember"></td>
+                                                <td name="raffleprime"></td>
+                                                <td name="raffleelite"><div class="icon"><img src="../../Images/challenge/icon13.png" width="24" /></div></td>
+                                                <td name="raffleeliteplus"><div class="icon"><img src="../../Images/challenge/icon13.png" width="24" /></div></td>
+                                            }
+                                            else if (raffle.Points == 250)
+                                            {
+                                                <td name="rafflemember"></td>
+                                                <td name="raffleprime"><div class="icon"><img src="../../Images/challenge/icon13.png" width="24" /></div></td>
+                                                <td name="raffleelite"><div class="icon"><img src="../../Images/challenge/icon13.png" width="24" /></div></td>
+                                                <td name="raffleeliteplus"><div class="icon"><img src="../../Images/challenge/icon13.png" width="24" /></div></td>
+                                            }
+                                            else
+                                            {
+                                                <td name="rafflemember"><div class="icon"><img src="../../Images/challenge/icon13.png" width="24" /></div></td>
+                                                <td name="raffleprime"><div class="icon"><img src="../../Images/challenge/icon13.png" width="24" /></div></td>
+                                                <td name="raffleelite"><div class="icon"><img src="../../Images/challenge/icon13.png" width="24" /></div></td>
+                                                <td name="raffleeliteplus"><div class="icon"><img src="../../Images/challenge/icon13.png" width="24" /></div></td>
+                                            }
+                                        </tr>
+										}
+
+									</tbody>
+								</table>
+							</div>
+							<!-- track-detail End -->
+						</div>
+					</div>
+				</div>
+				<!-- challenges-track end -->
+			</div>
+			<!-- challenges-user-inner end -->
+
+		</div>
+	</div>
+	<!-- challenges-top End -->
+	<!-- challenges admin filters start -->
+	<div class="challenge-admin-filter">
+		<div class="grid-container">
+			<div class="challenge-filters-inner">
+				<div class="grid-x grid-margin-x grid-margin-y">
+					<div class="cell medium-4 large-4">
+						<input type="search" placeholder="All Rewards" class="animated-search-form" id="search-id" />
+					</div>
+					<div class="cell medium-5 large-6">
+						<ul class="dropdown menu menu-cust" data-dropdown-menu>
+                            <li class="filter-tabs">
+                                <a href="#0" class="main-link">Rewards &amp; Points</a>
+                                <ul class="menu">
+                                    <li><a href="#" onclick="FilterList('rewards','all');">All Rewards</a></li>
+                                    <li><a href="#" onclick="FilterList('rewards','intervent');">INTERVENT Rewards</a></li>
+                                    <li><a href="#" onclick="FilterList('rewards','company');">@Model.OrganizationName Rewards</a></li>
+                                </ul>
+                            </li>
+						</ul>
+					</div>
+					<div class="cell medium-3 large-2">
+						<ul class="dropdown menu menu-cust" data-dropdown-menu>
+                            <li class="filter-tabs">
+                                <a href="#0" class="main-link">Status</a>
+                                <ul class="menu">
+                                    <li><a href="#" onclick="FilterList('status','');">All</a></li>
+                                    <li><a href="#" onclick="FilterList('status','pending');">Pending</a></li>
+                                    <li><a href="#" onclick="FilterList('status','awarded');">Awarded</a></li>
+                                </ul>
+                            </li>
+						</ul>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- challenges admin filters end -->
+	<!-- challenges-point start -->
+	<div class="challenges-details">
+		<div class="grid-container">
+			<div class="challenges-details-inner">
+
+				<div class="tabs-content" data-tabs-content="deeplinked-tabs">
+					<div class="tabs-panel is-active" id="upcoming-challenges">
+						<!-- challenge-content start -->
+						<div class="challenge-content">
+							<ul class="accordion" data-accordion data-allow-all-closed="true" id="deeplinked-accordion">
+								@foreach (var incentive in Model.challenges)
+								{
+                                    string completed = (incentive.completed || incentive.employerComplete) ? "True" : "False"; 
+									<li class="accordion-item" data-accordion-item name="@incentive.IsCompanyIncentive.ToString(),@completed">
+										<a href="#list1" class="accordion-title">
+											<div class="grid-x grid-margin-x grid-margin-y">
+												<div class="cell medium-4 large-4">
+													<h4>@incentive.Name</h4>
+												</div>
+												<div class="cell medium-5 large-6">
+                                                    <div class="challenges-list-info">
+                                                        @if (!incentive.IsCompanyIncentive)
+                                                        {
+                                                            <div>
+                                                                <span class="icon"><img src="../../Images/challenge/icon10.png" width="14" /></span>
+                                                                @if (incentive.IncentiveTypeId == 9)
+                                                                {
+                                                                    <span class="info"><strong>@incentive.PointsText Points</strong> - INTERVENT Rewards</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="info"><strong>@incentive.PointsText Points</strong> - INTERVENT Rewards</span>
+                                                                }
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div>
+                                                                <span class="icon"><img src="../../Images/challenge/icon4.png" width="25" /></span>
+                                                                <span class="info"><strong>$@incentive.CompanyPointsText - @Model.OrganizationName Rewards</strong></span>
+                                                            </div>
+                                                        }
+                                                        </div>
+												</div>
+                                                <div class="cell medium-3 large-2">
+                                                    @if (incentive.completed || incentive.employerComplete)
+                                                    {
+                                                        <select class="edit-incentive" onchange='editIncentive(@incentive.PortalIncentiveId, @incentive.userIncentiveId, true, @incentive.IncentiveTypeId, "@incentive.Reference", "@incentive.isGiftCard")' id="awarded">
+                                                            <option value="Awarded" selected>Awarded</option>
+                                                            <option value="In Progress">Pending</option>
+                                                        </select>
+                                                    }
+                                                    else
+                                                    {
+                                                        <select class="edit-incentive" onchange='editIncentive(@incentive.PortalIncentiveId, @incentive.userIncentiveId, true, @incentive.IncentiveTypeId, "@incentive.Reference", "@incentive.isGiftCard")' id="progress">
+                                                            @if (incentive.IncentiveTypeId != 5 || (string.IsNullOrEmpty(incentive.Reference) && incentive.IsActive)) {
+                                                            <option value="Awarded">Awarded</option>
+                                                            }
+                                                            <option value="In Progress" selected>Pending</option>
+                                                        </select>
+
+                                                    }
+                                                </div>
+											</div>
+										</a>
+										<div class="accordion-content" data-tab-content id="list1">
+											<div class="inner-content">
+												<div class="grid-x grid-margin-x">
+													<div class="cell medium-8">
+                                                        <div class="left-content">
+                                                            <p>@Html.Raw(incentive.MoreInfo)</p>
+                                                            @if (incentive.supportTobaccoUpload && !string.IsNullOrWhiteSpace(incentive.Reference))
+                                                            {
+                                                                <div class="form-submitted-details">
+                                                                    <div class="form-submitted-title">Submitted form:</div>
+                                                                    <div class="form-submitted-name">@incentive.Reference <span><a href="~/IncentiveUploads/@incentive.Reference" target="_blank">View</a></span></div>
+                                                                    <div class="form-submitted-action">
+                                                                        <button class="button secondary edit-incentive" onclick='editIncentive(@incentive.PortalIncentiveId, @incentive.userIncentiveId, @incentive.IsActive, @incentive.IncentiveTypeId, "@incentive.Reference", "@incentive.isGiftCard")'>Approve</button>
+                                                                        <button class="button secondary hollow" onclick='removeReference(@incentive.userIncentiveId, "@incentive.Reference")'>Reject</button>
+                                                                    </div><!-- Name of pdf file uploaded will come in this span -->
+                                                                </div>
+                                                            }
+                                                            else if (incentive.IncentiveTypeId == 5 && !string.IsNullOrWhiteSpace(incentive.Reference))
+                                                            {
+                                                                <div class="form-submitted-details">
+                                                                    <div class="form-submitted-title">Submitted form:</div>
+                                                                    <div class="form-submitted-name">@incentive.Reference <span><a href="~/IncentiveUploads/@incentive.Reference" target="_blank">View</a></span></div>
+                                                                </div>
+                                                            }
+                                                        </div>
+													</div>
+
+												</div>
+											</div>
+										</div>
+									</li>
+								}
+							</ul>
+						</div>
+						<!-- challenge-content End -->
+						<!-- rewards-card start -->
+						<div class="rewards-card">
+							<!-- rewards-card-inner Start -->
+							<!-- <div class="rewards-card-inner">
+								<h3>My Gift Cards / Rewards</h3>
+								<div class="grid-x grid-margin-x small-up-1 medium-up-3">
+									<div class="cell">
+										<div class="rewards-card-info">
+											<div class="icon">
+												<img src="../../Images/challenge/icon3.png" width="23" />
+											</div>
+											<h3 class="price">$2500</h3>
+											<p class="info"><strong>Grand Sweepstakes </strong>You are eligible to stand a chance for the grand sweepstakes 2018 </p>
+											<p class="date"><span>Draw</span> on 21 Oct 2018</p>
+										</div>
+									</div>
+									<div class="cell">
+										<div class="rewards-card-info">
+											<div class="icon">
+												<img src="../../Images/challenge/icon2.png" width="32" />
+											</div>
+											<h3 class="price">$250</h3>
+											<p class="info"><strong>Target Shopping Card</strong>Awarded on 12 Jan 2018 for winning the Quaterly Raffle</p>
+											<p class="date"><span>Draw</span> on 21 Oct 2018</p>
+										</div>
+									</div>
+									<div class="cell">
+										<div class="rewards-card-info new">
+											<div class="icon">
+												<img src="../../Images/challenge/icon8.png" width="40" />
+											</div>
+											<h3 class="price">$100</h3>
+											<p class="info"><strong>Gym Coupon </strong>Voucher has been sent to your email : myers@gmail.com</p>
+											<p class="date"><span>Draw</span> on 21 Oct 2018</p>
+										</div>
+									</div>
+									<div class="cell">
+										<div class="rewards-card-info">
+											<div class="icon">
+												<img src="../../Images/challenge/icon3.png" width="23" />
+											</div>
+											<h3 class="price">$2500</h3>
+											<p class="info"><strong>Grand Sweepstakes </strong>You are eligible to stand a chance for the grand sweepstakes 2018 </p>
+											<p class="date"><span>Draw</span> on 21 Oct 2018</p>
+										</div>
+									</div>
+									<div class="cell">
+										<div class="rewards-card-info">
+											<div class="icon">
+												<img src="../../Images/challenge/icon2.png" width="32" />
+											</div>
+											<h3 class="price">$250</h3>
+											<p class="info"><strong>Target Shopping Card</strong>Awarded on 12 Jan 2018 for winning the Quaterly Raffle</p>
+											<p class="date"><span>Draw</span> on 21 Oct 2018</p>
+										</div>
+									</div>
+								</div>
+							</div> -->
+							<!-- rewards-card-inner end -->
+						</div>							<!-- rewards-card End -->
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- challenges-point End -->
+</div>
+
+<div id="custom-incentives" class="reveal large" data-reveal>
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+
+<div id="approve-form-modal" class="reveal small form-action-modal" data-reveal>
+	<h5>Remove The Tobacco Surcharge</h5>
+	<p class="form-approved"><span></span>Approved</p>
+
+	<div>
+		<button class="button secondary" data-close>Done</button>
+		<button class="button secondary hollow" data-close>Undo</button>
+	</div>
+</div>
+
+<div id="reject-form-modal" class="reveal small form-action-modal" data-reveal>
+	<h5>Remove The Tobacco Surcharge</h5>
+	<p class="form-rejected"><span></span>Rejected</p>
+	<textarea placeholder="Reason for rejecting (optional)"></textarea>
+	<div>
+		<button class="button secondary" data-close>Done</button>
+		<button class="button secondary hollow" data-close>Undo</button>
+	</div>
+</div>
+
+<div id="all-reward-modal" class="reveal large all-rewards-modal" data-reveal>
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+		<span aria-hidden="true">&times;</span>
+	</button>
+
+	<div class="modal-header"><h3>All Rewards</h3></div>
+
+	<div class="rewards-modal-filter">
+		<div class="grid-x grid-margin-x">
+			<div class="cell medium-4">
+				<select onchange="setFilters();" id="rewards">
+					<option value="" selected>Rewards &amp; Points</option>
+					<option value="intervent">INTERVENT Rewards</option>
+					@*<option value="Gift Cards">Gift Cards</option>*@
+					<option value="company">@Model.OrganizationName Rewards</option>
+				</select>
+			</div>
+
+            <div class="cell medium-4">
+                @Html.DropDownListFor(m=>m.IncentiveType, PortalUtility.GetIncentiveTypes(), "---Incentive Type---", new { @onchange = "setFilters()" })
+            </div>
+
+			<div class="cell medium-4">
+				<!-- <input type="text" value="Reward Date" id="reward-date" /> -->
+
+				<div class="reward-filter-container" id="reward-filter-container">
+					<span data-toggle="reward-date-filter" data-value="reward-date">Reward Date</span>
+					<div class="reward-selector dropdown-pane" id="reward-date-filter" data-dropdown data-close-on-click="true">
+						<ul>
+							<li data-value="week-data">Past 7 Days</li>
+							<li data-value="month-data">Past 30 Days</li>
+							<li data-value="90days-data">Past 90 Days</li>
+							<li data-value="date-range">Date Range</li>
+						</ul>
+					</div>
+
+					<div class="reward-date-range hide">
+	                    <form id="date-search">
+	                        <div class="input-container">
+                                <label for="reward-start-date">
+                                    <input type="text" name="reward-start-date" placeholder="Start Date" id="reward-start-date" autocomplete="off" />
+                                    <input id="HStartDate" type="hidden" />
+                                </label>
+                                <label for="reward-end-date">
+                                    <input type="text" name="reward-end-date" placeholder="End Date" id="reward-end-date" autocomplete="off" />
+                                    <input id="HEndDate" type="hidden" />
+                                </label>
+	                        </div>
+	                        <div class="button-group align-center">
+	                            <button type="reset" class="button hollow" id="reset-date">Reset</button>
+	                            <button type="submit" class="button" id="submit-date">Search</button>
+	                        </div>
+	                    </form>
+	                </div>
+				</div>
+                
+                
+			</div>
+		</div>
+	</div>
+
+	<div class="rewards-modal-details">
+        <ul>
+            @foreach (var incentive in Model.challenges.Where(x => x.completed || x.employerComplete))
+            {
+                foreach (var inc in incentive.userIncentives)
+                {
+                    <li class="all-rewards-li" name="@incentive.employerComplete.ToString(),@incentive.IncentiveTypeId">
+                        <div class="grid-x grid-margin-x">
+                            <div class="cell medium-4">
+                                <div class="challenges-list-info">
+                                    <input id=@inc.Id value="@inc.DateCreated" type="hidden"/>
+                                    @if (incentive.IsCompanyIncentive)
+                                    {
+                                        <div>
+                                            <span class="icon"><img src="../../Images/challenge/icon4.png" width="25" /></span>
+                                            <span class="info"><strong>$@incentive.CompanyPointsText</strong> - @Model.OrganizationName Rewards</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div>
+                                            <span class="icon"><img src="../../Images/challenge/icon10.png" width="14" /></span>
+                                            <span class="info"><strong>@incentive.PointsText Points</strong> - INTERVENT Rewards</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            @{
+                                if (incentive.IncentiveTypeId == 9)
+                                {
+                                    <div class="cell medium-4">
+                                        <span>@Model.customIncentives.Where(x => x.Id.ToString() == inc.Reference).FirstOrDefault().Type</span>
+                                        @if (inc.Comments != "")
+                                        {
+                                            <span>(@inc.Comments)</span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="cell medium-4">@incentive.Name</div>
+                                }
+                            }
+                            <div class="cell medium-4">@inc.DateCreated.ToString(Model.DateFormat)</div>
+                        </div>
+                    </li>
+                    }
+                }
+        </ul>
+	</div>
+</div>
+
+<div id="reward-bonus-points" class="reveal large" data-reveal>  
+</div>
+
+<div id="giftcard" class="reveal medium" data-reveal>
+    <div class="add-bonus-form">
+        <div class="cell medium-2">
+            <label>Gift Card</label>
+            <select id="GiftCards" required></select>
+        </div>
+        <div class="cell text-right button-set">
+            <button class="button secondary" type="submit" onclick="AddGiftCard();">Add Gift Card</button>
+            <button class="button secondary hollow" data-close>Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#reward-start-date").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#reward-start-date').val()));
+    });
+    $("#reward-end-date").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#reward-end-date').val()));
+    });
+
+    $("a.accordion-title select").on('click', function (ev) {
+        ev.stopPropagation();
+    });
+
+    $(document).ready(function () {
+        $(".reward-selector ul li").on("click", function () {
+            var showData = $(this).data("value");
+            var showText = $(this).text();
+            $(".reward-filter-container span").text(showText);
+            $(".reward-filter-container span").data('value', showData);
+            $("#reward-date-filter").foundation("close");
+            filterReward();
+        });
+
+        $("#submit-date").on("click", function () {
+            $("#reward-date-filter").foundation("close");
+            filterReward();
+            $("#reward-start-date").val("");
+            $("#reward-end-date").val("");
+        });
+
+        //$("#reward-date").fdatepicker();
+        //Date range picker for graphs
+        $('#reward-start-date').fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        }).on('change', function (selected)
+        {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#reward-end-date').fdatepicker('setDate', minDate);
+            }
+            $('#reward-end-date').fdatepicker('setStartDate', minDate);
+            $("#reward-end-date").trigger("change");
+        }).on('show', function () {
+            $(".datepicker").css("position", "fixed");
+        });
+
+        $("#reward-start-date").fdatepicker().on('hide', function () {
+            $(".datepicker").css("position", "absolute");
+        });
+
+        $('#reward-end-date').fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+		}).on('show', function () {
+			$(".datepicker").css("position", "fixed");
+		});
+
+		$("#reward-end-date").fdatepicker().on('hide', function () {
+			$(".datepicker").css("position", "absolute");
+		});
+
+        $("#date-search").on('submit', function (ev) {
+            ev.preventDefault();
+            $(".reward-date-range").addClass("hide");
+        });
+
+        $(document).on('click', function () {
+            $('.reward-date-range').addClass("hide");
+        });
+        $('.reward-date-range, .reward-selector').on('click', function (e) {
+            e.stopPropagation();
+        });
+    });
+
+    $('.close-button').on('click', function (e) {
+        $(".reward-filter-container span").text("Reward Date");
+        $(".reward-filter-container span").data('value', "Reward Date");
+        $("#rewards").prop("selectedIndex", 0)
+    });
+
+    function filterReward() {
+        if ($(".reward-filter-container span").data('value').includes("week-data")) {
+            $(".reward-date-range").addClass("hide");
+            //Filter function goes here
+            ShowIncentiveForDateFilter("week");
+        }
+        else if ($(".reward-filter-container span").data('value').includes("month-data")) {
+            $(".reward-date-range").addClass("hide");
+            //Filter function goes here
+            ShowIncentiveForDateFilter("month");
+        }
+        else if ($(".reward-filter-container span").data('value').includes("90days-data")) {
+            $(".reward-date-range").addClass("hide");
+            //Filter function goes here
+            ShowIncentiveForDateFilter("90days");
+        }
+        else if ($(".reward-filter-container span").data('value').includes("date-range")) {
+            $(".reward-date-range").removeClass("hide");
+            ShowIncentiveForDateFilter("daterange");
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    var status = "", rewards = "";
+    $(document).foundation();
+     $(document).ready(function(){
+        var points = parseInt('@Model.Points');
+        var element = document.getElementsByClassName("progress-meter");
+        if ('@Model.HasActivePortal' != "True")
+        {
+            $(".edit-incentive").prop("disabled", true);
+        }
+        if(points >= 1000){
+            $("#eliteplus").addClass('active');
+            $("[name = 'raffleeliteplus']").addClass('active');
+            $("#eliteplus").text('You are here');
+            for(var e=0; e < element.length; e++){
+                element[e].style.width='100%';
+            }
+            $("#rank").text('Elite Plus');
+        }
+        else if(points >= 500){
+            $("#elite").addClass('active');
+            $("[name='raffleelite']").addClass('active');
+            $("#elite").text('You are here');
+            var percent = (points-500)/500 * 100;
+            element[0].style.width='100%';
+            element[1].style.width='100%';
+            element[2].style.width= percent +'%';
+            $("#rank").text('Elite');
+        }
+        else if(points >= 250){
+            $("[name='raffleprime']").addClass('active');
+            $("#prime").addClass('active');
+            $("#prime").text('You are here');
+            var percent =(points-250)/250 * 100;
+            element[0].style.width='100%';
+            element[1].style.width= percent +'%';
+            $("#rank").text('VIP');
+        }
+        else{
+            $("#member").addClass('active');
+            $("[name='rafflemember']").addClass('active');
+            $("#member").text('You are here');
+            $("#rank").text('Member');
+            var percent = points/250 * 100;
+            element[0].style.width= percent +'%';
+        }
+        $(".track-btn").on('click', function(){
+            $(this).toggleClass("active");
+            $(".challenges-track").slideToggle("slow");
+        })
+        $("[data-open]").on('click', function (e) {
+            showmodal($(this), e);
+        });
+    });
+
+     function editIncentive(portalIncentiveid, userIncentiveId, active, typeId, fileName, isGiftCard) {
+        if (typeId == 9)
+            customIncentives(portalIncentiveid);
+        else {
+            var message = "@Translate.Message("L2123")";
+            var type = "Add";
+            var tobacco = false;
+            if (userIncentiveId > 0 && active == true) {
+                message = "@Translate.Message("L2124")";
+                type = "Delete";
+            }
+            if(isGiftCard && type == "Add"){
+                GetGiftCards(typeId);
+                return;
+            }
+            if (typeId == 5) {
+                tobacco = true;
+            }
+            if (confirm(message)) {
+                addEditIncentive(portalIncentiveid, userIncentiveId, tobacco, type, fileName);
+            }
+            else{
+                if(type== "Add")
+                    $("#progress").val("In Progress");
+                else
+                    $("#awarded").val("Awarded");
+            }
+        }
+     }
+
+     function customIncentives(PortalIncentiveId) {
+         $("#rewardBonus").trigger("click");
+    }
+
+    function addEditIncentive(portalIncentiveid, userIncentiveId, tobacco, type, fileName) {
+        var model = {};
+        model.portalIncentiveId = portalIncentiveid;
+        model.userIncentiveId = userIncentiveId;
+        model.isTobacco = tobacco;
+        model.type = type;
+        model.fileName = fileName;
+        var strData = JSON.stringify(model);
+        $.ajax({
+            url: "@Url.Action("AddEditUserIncentive", "Challenge")",
+            type: 'POST',
+            dataType: "json",
+            contentType: 'application/json, charset=utf-8',
+            data: strData,
+            success: function (data) {
+            if (data != null && data.Result == true) {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Challenges", "Challenge")',
+                    success: function (data) {
+                        $("#profile-content").html(data);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function removeReference(userIncentiveId, tobaccoAffidavit) {
+        $.ajax({
+            url: "@Url.Action("RemoveIncentiveReference", "Challenge")",
+            data: { userIncentiveId: userIncentiveId, fileName: tobaccoAffidavit },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null && data.Result == true) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Challenges", "Challenge")',
+                        success: function (data) {
+                            $("#profile-content").html(data);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    $('#all-reward-modal').on('closed.zf.reveal', function () {
+        HideShowIncentive("", "");
+    });
+
+    $('#all-reward-modal').on('open.zf.reveal', function () {
+        HideShowIncentive("", "");
+    });
+
+    function FilterList(id, value) {
+        if (id == "status")
+            status = value;
+        else
+            rewards = value;
+        HideShowIncentive(status, rewards, );
+    }
+
+    function setFilters() {
+        rewards = $("#rewards").val();
+        HideShowIncentive(null, rewards, $("#IncentiveType").val());
+    }
+
+    function HideShowIncentive(statusFilter, rewardsFilter, type, dateFrom, dateTo) {
+        var filterRewards;
+        var element;
+        element = document.querySelectorAll("li");
+        for (var e = 0; e < element.length; e++) {
+            element[e].style.display = 'block';
+        }
+        if (type) {
+            element = document.querySelectorAll(".rewards-modal-details li[style='display: block;']");
+            for (var e = 0; e < element.length; e++) {
+                element[e].style.display = 'none';
+            }
+            element = document.querySelectorAll("[name$='," + type + "']");
+            for (var e = 0; e < element.length; e++) {
+                    element[e].style.display = 'block';
+            }
+        }
+        if (rewardsFilter) {
+            if (rewardsFilter == "company") {
+                 element = document.querySelectorAll("[name^='False,']");
+                for (var e = 0; e < element.length; e++) {
+                    element[e].style.display = 'none';
+                }
+                filterRewards = false;
+            }
+            else if (rewardsFilter == "intervent") {
+                element = document.querySelectorAll("[name^='True,']");
+                for (var e = 0; e < element.length; e++) {
+                    element[e].style.display = 'none';
+                }
+                filterRewards = true;
+            }
+        }
+        if (statusFilter){
+            if (statusFilter == "awarded") {
+                element = document.querySelectorAll("[name$=',False']");
+                for (var e = 0; e < element.length; e++) {
+                    element[e].style.display = 'none';
+                }
+            }
+            else if (statusFilter == "pending") {
+                element = document.querySelectorAll("[name$=',True']");
+                for (var e = 0; e < element.length; e++) {
+                    element[e].style.display = 'none';
+                }
+            }
+        }
+        var hiddenElements = $(".challenges-list-info").find(":hidden").not("script");
+        for (var e = 0; e < hiddenElements.length; e++) {
+            var completedDate = new Date(hiddenElements[e].value);
+            if (dateFrom != null) {
+                if (dateTo == null) {
+                    if (dateFrom > completedDate) {
+                        // Hide row
+                        $(hiddenElements[e].closest("li")).hide();
+                    }
+                }
+                else {
+                    if (dateFrom > completedDate || completedDate > dateTo) {
+                        // Hide row
+                        $(hiddenElements[e].closest("li")).hide();
+                    }
+                }
+            }
+            if (dateTo != null) {
+                if (dateFrom == null) {
+                    if (completedDate > dateTo) {
+                        // Hide row
+                        $(hiddenElements[e].closest("li")).hide();
+                    }
+                }
+            }
+        }
+
+    }
+
+    function GetGiftCards(type){
+        $("#GiftCards").empty();
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "@Url.Action("GetGiftCards", "Common")",
+            data: { incentiveType : type },
+            success: function (data) {
+                $("#GiftCards").append("<option value=''></option>");
+                for (i = 0; i < data.giftCards.length; i++) {
+                    $("#GiftCards").append("<option value=" + data.giftCards[i].Id + ">" + data.giftCards[i].Points + "</option>");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $('#giftcard').foundation('open');
+    }
+
+    function AddGiftCard(){
+        var portalIncentiveId = $("#GiftCards").val();
+        if(portalIncentiveId){
+            addEditIncentive(portalIncentiveId, null, false, "Add", null);
+            $('#giftcard').foundation('close');
+        }
+    }
+
+    function ShowIncentiveForDateFilter(filter) {
+        var dateFilterValue = new Date();
+        var dateFilterToValue = new Date();
+        switch (filter) {
+            case "week":
+                dateFilterValue = dateFilterValue.setDate(dateFilterValue.getDate() - 7);
+                HideShowIncentive(null, null, null, new Date(dateFilterValue));
+                break;
+            case "month":
+                dateFilterValue = dateFilterValue.setDate(dateFilterValue.getDate() - 30) ;
+                HideShowIncentive(null, null, null, new Date(dateFilterValue));
+                break;
+            case "90days":
+                dateFilterValue = dateFilterValue.setDate(dateFilterValue.getDate() - 90) ;
+                HideShowIncentive(null, null, null, new Date(dateFilterValue));
+                break;
+            case "daterange":
+                dateFilterValue = $('#HStartDate').val();
+                dateFilterToValue = $('#HEndDate').val();
+                HideShowIncentive(null, null, null, new Date(dateFilterValue), new Date(dateFilterToValue));
+                break;
+        }
+    }
+
+</script>

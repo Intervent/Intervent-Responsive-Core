@@ -1,0 +1,50 @@
+﻿@using InterventWebApp;
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<section class="main coach-calendar">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <div class="panel">
+                    <fieldset>
+                        <legend>Select Coach</legend>
+                        <div class="grid-x grid-margin-x">
+                            <div class="cell medium-12">
+                                <label for="coach">Coach</label>
+                                <select id="coach" onchange="CoachChange()"></select>
+                            </div>
+                        </div>
+                        Please note: All appointment times are shown in @ViewBag.TimeZone
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <div class="panel">
+                    <div id='calendar'>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<button class="close-button" data-close aria-label="Close modal" type="button">
+  <span aria-hidden="true">&times;</span>
+</button>
+<script>
+    var coachUrl = '@Html.Raw(Url.Action("GetCoachCalendar", "Scheduler"))';
+    var bookUrl = '@Html.Raw(Url.Action("ScheduleAppointmentByAdmin", "Scheduler"))';
+    var showAppointment = false;
+    var userTimeZone = true;
+    var timeZone = "";
+    @if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.ParticipantTimeZone)))
+    {
+        @:timeZone = '@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.ParticipantTimeZone)';
+    }
+</script>
+@Html.Partial("_CoachCalendar")

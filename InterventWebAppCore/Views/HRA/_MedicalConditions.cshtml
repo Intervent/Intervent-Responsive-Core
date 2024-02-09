@@ -1,0 +1,1669 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp;
+@model InterventWebApp.MedicalConditionModel
+
+<div class="inner-survey-modal">
+<h2 class="text-center">@Translate.Message("L483") </h2>
+<form data-abide novalidate id="medicalconditions-form" hidden>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                @{
+                    int i = 0;
+                    if (Model.Gender == 2)
+                    {
+                        if (Model.Age < 60)
+                        {
+                            <div data-alert class="callout secondary hide" id="PregPopup">
+                                @string.Format(Translate.Message("L2102"), Translate.Message(Model.AssessmentName).ToLower())
+                            </div>
+                            <div class="question" id="PregnantDiv">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(++i).</div>
+                                    <div class="qText">
+                                        @Translate.Message("L592")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.medicalConditions.Pregnant, 1, new Dictionary<string, object> { { "id", "PregnantYes" }, { "Name", "medicalConditions.Pregnant" }, { "data-validator", "validatePregnant" } })
+                                        <label for="PregnantYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.medicalConditions.Pregnant, 2, new Dictionary<string, object> { { "id", "PregnantNo" }, { "Name", "medicalConditions.Pregnant" }, { "data-validator", "validatePregnant" } })
+                                        <label for="PregnantNo">@Translate.Message("L3")</label>
+                                        <small id="PregnantError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default" id="PregnantPopup">
+                                <div class="grid-x">
+                                    <div class="panel-body">
+                                        @Translate.Message("L1978")
+                                    </div>
+                                </div>
+                                <div class="grid-x">
+                                    <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" id="cancelpopup">@Translate.Message("L478")</button></div>
+                                </div>
+                            </div>
+                            <div class="question" id="PregDueDateDiv">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(i).1</div>
+                                    <div class="qText">
+                                        @Translate.Message("L591")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.TextBoxFor(m => m.medicalConditions.PregDueDate, new Dictionary<string, object> { { "data-validator", "validatePregDueDate" }, { "class", "fdatepicker" }, { "placeholder", Model.DateFormat.ToUpper() } })
+                                        <small class="form-error" id="pregDueError">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                                <input id="medicalConditionsPregDueDate" type="hidden">
+                            </div>
+                        }
+                        if (Model.Age < 45)
+                        {
+                            <div class="question" id="BreastFeedDiv">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(i).1</div>
+                                    <div class="qText">
+                                        @Translate.Message("L590")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.medicalConditions.BreastFeed, 1, new Dictionary<string, object> { { "id", "BreastFeedYes" }, { "Name", "medicalConditions.BreastFeed" }, { "data-validator", "validateBreastFeed" } })
+                                        <label for="BreastFeedYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.medicalConditions.BreastFeed, 2, new Dictionary<string, object> { { "id", "BreastFeedNo" }, { "Name", "medicalConditions.BreastFeed" }, { "data-validator", "validateBreastFeed" } })
+                                        <label for="BreastFeedNo">@Translate.Message("L3")</label>
+                                        <small id="BreastFeedError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        if (Model.Age < 60)
+                        {
+                            <div class="question" id="PlanBecPregDiv">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(i).2</div>
+                                    <div class="qText">
+                                        @Translate.Message("L1926")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.medicalConditions.PlanBecPreg, 1, new Dictionary<string, object> { { "id", "PlanBecPregYes" }, { "Name", "medicalConditions.PlanBecPreg" }, { "data-validator", "validatePlanBecPreg" } })
+                                        <label for="PlanBecPregYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.medicalConditions.PlanBecPreg, 2, new Dictionary<string, object> { { "id", "PlanBecPregNo" }, { "Name", "medicalConditions.PlanBecPreg" }, { "data-validator", "validatePlanBecPreg" } })
+                                        <label for="PlanBecPregNo">@Translate.Message("L3")</label>
+                                        @*<small id="PlanBecPregError" class="form-error">@Translate.Message("L480")</small>*@
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.medicalConditions.PlanBecPreg, 3, new Dictionary<string, object> { { "id", "PlanBecPregDontKnow" }, { "Name", "medicalConditions.PlanBecPreg" }, { "data-validator", "validatePlanBecPreg" } })
+                                        <label for="PlanBecPregDontKnow">@Translate.Message("L122")</label>
+                                        <small class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        if(Model.Age < 45 && Model.ShowPostmenopausal){
+                            <div class="question" id="HysterectomyDiv">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(i).3</div>
+                                    <div class="qText">
+                                        @Translate.Message("L4279")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.medicalConditions.Hysterectomy, 1, new Dictionary<string, object> { { "id", "HysterectomyYes" }, { "Name", "medicalConditions.Hysterectomy" }, { "data-validator", "validateHysterectomy" } })
+                                        <label for="HysterectomyYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.medicalConditions.Hysterectomy, 2, new Dictionary<string, object> { { "id", "HysterectomyNo" }, { "Name", "medicalConditions.Hysterectomy" }, { "data-validator", "validateHysterectomy" } })
+                                        <label for="HysterectomyNo">@Translate.Message("L3")</label>
+                                        <small id="HysterectomyError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="question" id="OvariesRemovedDiv">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(i).4</div>
+                                    <div class="qText">
+                                        @Translate.Message("L4280")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.medicalConditions.OvariesRemoved, 1, new Dictionary<string, object> { { "id", "OvariesRemovedYes" }, { "Name", "medicalConditions.OvariesRemoved" }, { "data-validator", "validateOvariesRemoved" } })
+                                        <label for="OvariesRemovedYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.medicalConditions.OvariesRemoved, 2, new Dictionary<string, object> { { "id", "OvariesRemovedNo" }, { "Name", "medicalConditions.OvariesRemoved" }, { "data-validator", "validateOvariesRemoved" } })
+                                        <label for="OvariesRemovedNo">@Translate.Message("L3")</label>
+                                        <small id="OvariesRemovedError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L13")
+                                <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2401")"><i class="fa fa-question-circle" aria-hidden="true"></i></span>
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.Stroke, 1, new Dictionary<string, object> { { "id", "StrokeYes" }, { "Name", "medicalConditions.Stroke" }, { "data-validator", "validateStroke" } })
+                                <label for="StrokeYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.Stroke, 2, new Dictionary<string, object> { { "id", "StrokeNo" }, { "Name", "medicalConditions.Stroke" }, { "data-validator", "validateStroke" } })
+                                <label for="StrokeNo">@Translate.Message("L3")</label>
+                                <small id="StrokeError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L14")
+                                <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2402")"><i class="fa fa-question-circle"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.HeartAttack, 1, new Dictionary<string, object> { { "id", "HeartAttackYes" }, { "Name", "medicalConditions.HeartAttack" }, { "data-validator", "validateHeartAttack" } })
+                                <label for="HeartAttackYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.HeartAttack, 2, new Dictionary<string, object> { { "id", "HeartAttackNo" }, { "Name", "medicalConditions.HeartAttack" }, { "data-validator", "validateHeartAttack" } })
+                                <label for="HeartAttackNo">@Translate.Message("L3")</label>
+                                <small id="HeartAttackError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L15")
+                                <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2403")"><i class="fa fa-question-circle"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.Angina, 1, new Dictionary<string, object> { { "id", "AnginaYes" }, { "Name", "medicalConditions.Angina" }, { "data-validator", "validateAngina" } })
+                                <label for="AnginaYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.Angina, 2, new Dictionary<string, object> { { "id", "AnginaNo" }, { "Name", "medicalConditions.Angina" }, { "data-validator", "validateAngina" } })
+                                <label for="AnginaNo">@Translate.Message("L3")</label>
+                                <small id="AnginaError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="subtitle side-by-side">
+                        <h5>@Translate.Message("L16")</h5>
+                        <div class="options">
+                            <h5>@Translate.Message("L2")</h5>
+                            <h5>@Translate.Message("L3")</h5>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L1339")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldHeartBlock, 1, new Dictionary<string, object> { { "id", "ToldHeartBlockYes" }, { "Name", "medicalConditions.ToldHeartBlock" }, { "data-validator", "validateToldHeartBlock" } })
+                                <label for="ToldHeartBlockYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldHeartBlock, 2, new Dictionary<string, object> { { "id", "ToldHeartBlockNo" }, { "Name", "medicalConditions.ToldHeartBlock" }, { "data-validator", "validateToldHeartBlock" } })
+                                <label for="ToldHeartBlockNo">&nbsp;</label>
+                                <small id="ToldHeartBlockError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L18")
+                                <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2404")"><i class="fa fa-question-circle"></i></span>
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldBlock, 1, new Dictionary<string, object> { { "id", "ToldBlockYes" }, { "Name", "medicalConditions.ToldBlock" }, { "data-validator", "validateToldBlock" } })
+                                <label for="ToldBlockYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldBlock, 2, new Dictionary<string, object> { { "id", "ToldBlockNo" }, { "Name", "medicalConditions.ToldBlock" }, { "data-validator", "validateToldBlock" } })
+                                <label for="ToldBlockNo">&nbsp;</label>
+                                <small id="ToldBlockError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L19")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldHighBP, 1, new Dictionary<string, object> { { "id", "ToldHighBPYes" }, { "Name", "medicalConditions.ToldHighBP" }, { "data-validator", "validateToldHighBP" } })
+                                <label for="ToldHighBPYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldHighBP, 2, new Dictionary<string, object> { { "id", "ToldHighBPNo" }, { "Name", "medicalConditions.ToldHighBP" }, { "data-validator", "validateToldHighBP" } })
+                                <label for="ToldHighBPNo">&nbsp;</label>
+                                <small id="ToldHighBPError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L20")
+                                <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2405")"><i class="fa fa-question-circle"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldHighChol, 1, new Dictionary<string, object> { { "id", "ToldHighCholYes" }, { "Name", "medicalConditions.ToldHighChol" }, { "data-validator", "validateToldHighChol" } })
+                                <label for="ToldHighCholYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldHighChol, 2, new Dictionary<string, object> { { "id", "ToldHighCholNo" }, { "Name", "medicalConditions.ToldHighChol" }, { "data-validator", "validateToldHighChol" } })
+                                <label for="ToldHighCholNo">&nbsp;</label>
+                                <small id="ToldHighCholError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L1382")
+                                <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2406")"><i class="fa fa-question-circle"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldDiabetes, 1, new Dictionary<string, object> { { "id", "ToldDiabetesYes" }, { "Name", "medicalConditions.ToldDiabetes" }, { "data-validator", "validateToldDiabetes" } })
+                                <label for="ToldDiabetesYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldDiabetes, 2, new Dictionary<string, object> { { "id", "ToldDiabetesNo" }, { "Name", "medicalConditions.ToldDiabetes" }, { "data-validator", "validateToldDiabetes" } })
+                                <label for="ToldDiabetesNo">&nbsp;</label>
+                                <small id="ToldDiabetesError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    if (Model.Gender == 2)
+                    {
+                        <div id="ToldGestDiabdiv" class="question side-by-side">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++i).</div>
+                                <div class="qText">
+                                    @Translate.Message("L22")
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.ToldGestDiab, 1, new Dictionary<string, object> { { "id", "ToldGestDiabYes" }, { "Name", "medicalConditions.ToldGestDiab" }, { "data-validator", "validateToldGestDiab" } })
+                                    <label for="ToldGestDiabYes">&nbsp;</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.ToldGestDiab, 2, new Dictionary<string, object> { { "id", "ToldGestDiabNo" }, { "Name", "medicalConditions.ToldGestDiab" }, { "data-validator", "validateToldGestDiab" } })
+                                    <label for="ToldGestDiabNo">&nbsp;</label>
+                                    <small id="ToldGestDiabError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="ToldPolycystdiv" class="question side-by-side">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++i).</div>
+                                <div class="qText">
+                                    @Translate.Message("L23")
+                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2407")"><i class="fa fa-question-circle"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.ToldPolycyst, 1, new Dictionary<string, object> { { "id", "ToldPolycystYes" }, { "Name", "medicalConditions.ToldPolycyst" }, { "data-validator", "validateToldPolycyst" } })
+                                    <label for="ToldPolycystYes">&nbsp;</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.ToldPolycyst, 2, new Dictionary<string, object> { { "id", "ToldPolycystNo" }, { "Name", "medicalConditions.ToldPolycyst" }, { "data-validator", "validateToldPolycyst" } })
+                                    <label for="ToldPolycystNo">&nbsp;</label>
+                                    <small id="ToldPolycystError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L24")
+                            </div>
+                            <div>
+                                <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2408")"><i class="fa fa-question-circle"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldAsthma, 1, new Dictionary<string, object> { { "id", "ToldAsthmaYes" }, { "Name", "medicalConditions.ToldAsthma" }, { "data-validator", "validateToldAsthma" } })
+                                <label for="ToldAsthmaYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldAsthma, 2, new Dictionary<string, object> { { "id", "ToldAsthmaNo" }, { "Name", "medicalConditions.ToldAsthma" }, { "data-validator", "validateToldAsthma" } })
+                                <label for="ToldAsthmaNo">&nbsp;</label>
+                                <small id="ToldAsthmaError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L25")
+                                <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2409")"><i class="fa fa-question-circle"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldBronchitis, 1, new Dictionary<string, object> { { "id", "ToldBronchitisYes" }, { "Name", "medicalConditions.ToldBronchitis" }, { "data-validator", "validateToldBronchitis" } })
+                                <label for="ToldBronchitisYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldBronchitis, 2, new Dictionary<string, object> { { "id", "ToldBronchitisNo" }, { "Name", "medicalConditions.ToldBronchitis" }, { "data-validator", "validateToldBronchitis" } })
+                                <label for="ToldBronchitisNo">&nbsp;</label>
+                                <small id="ToldBronchitisError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L1383")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldCancer, 1, new Dictionary<string, object> { { "id", "ToldCancerYes" }, { "Name", "medicalConditions.ToldCancer" }, { "data-validator", "validateToldCancer" } })
+                                <label for="ToldCancerYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldCancer, 2, new Dictionary<string, object> { { "id", "ToldCancerNo" }, { "Name", "medicalConditions.ToldCancer" }, { "data-validator", "validateToldCancer" } })
+                                <label for="ToldCancerNo">&nbsp;</label>
+                                <small id="ToldCancerError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L1384")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldKidneyDisease, 1, new Dictionary<string, object> { { "id", "ToldKidneyDiseaseYes" }, { "Name", "medicalConditions.ToldKidneyDisease" }, { "data-validator", "validateToldKidneyDisease" } })
+                                <label for="ToldKidneyDiseaseYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ToldKidneyDisease, 2, new Dictionary<string, object> { { "id", "ToldKidneyDiseaseNo" }, { "Name", "medicalConditions.ToldKidneyDisease" }, { "data-validator", "validateToldKidneyDisease" } })
+                                <label for="ToldKidneyDiseaseNo">&nbsp;</label>
+                                <small id="ToldKidneyDiseaseError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L28")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.OtherChronic, 1, new Dictionary<string, object> { { "id", "OtherChronicYes" }, { "Name", "medicalConditions.OtherChronic" }, { "data-validator", "validateOtherChronic" } })
+                                <label for="OtherChronicYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.OtherChronic, 2, new Dictionary<string, object> { { "id", "OtherChronicNo" }, { "Name", "medicalConditions.OtherChronic" }, { "data-validator", "validateOtherChronic" } })
+                                <label for="OtherChronicNo">&nbsp;</label>
+                                <small id="OtherChronicError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="OtherChronicProbdiv" class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1.</div>
+                            <div class="qText">
+                                @Translate.Message("L29")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.OtherChronicProb, 1, new Dictionary<string, object> { { "id", "OtherChronicProbYes" }, { "Name", "medicalConditions.OtherChronicProb" }, { "data-validator", "validateOtherChronicProb" } })
+                                <label for="OtherChronicProbYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.OtherChronicProb, 2, new Dictionary<string, object> { { "id", "OtherChronicProbNo" }, { "Name", "medicalConditions.OtherChronicProb" }, { "data-validator", "validateOtherChronicProb" } })
+                                <label for="OtherChronicProbNo">&nbsp;</label>
+                                <small id="OtherChronicProbError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="subtitle side-by-side">
+                        <h5>@Translate.Message("L12")</h5>
+                        <div class="options">
+                            <h5>@Translate.Message("L2")</h5>
+                            <h5>@Translate.Message("L3")</h5>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L19")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.HighBPMed, 1, new Dictionary<string, object> { { "id", "HighBPMedYes" }, { "Name", "medicalConditions.HighBPMed" }, { "data-validator", "validateHighBPMed" } })
+                                <label for="HighBPMedYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.HighBPMed, 2, new Dictionary<string, object> { { "id", "HighBPMedNo" }, { "Name", "medicalConditions.HighBPMed" }, { "data-validator", "validateHighBPMed" } })
+                                <label for="HighBPMedNo">&nbsp;</label>
+                                <small id="HighBPMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L30")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.HighCholMed, 1, new Dictionary<string, object> { { "id", "HighCholMedYes" }, { "Name", "medicalConditions.HighCholMed" }, { "data-validator", "validateHighCholMed" } })
+                                <label for="HighCholMedYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.HighCholMed, 2, new Dictionary<string, object> { { "id", "HighCholMedNo" }, { "Name", "medicalConditions.HighCholMed" }, { "data-validator", "validateHighCholMed" } })
+                                <label for="HighCholMedNo">&nbsp;</label>
+                                <small id="HighCholMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L31")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.DiabetesMed, 1, new Dictionary<string, object> { { "id", "DiabetesMedYes" }, { "Name", "medicalConditions.DiabetesMed" }, { "data-validator", "validateDiabetesMed" } })
+                                <label for="DiabetesMedYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.DiabetesMed, 2, new Dictionary<string, object> { { "id", "DiabetesMedNo" }, { "Name", "medicalConditions.DiabetesMed" }, { "data-validator", "validateDiabetesMed" } })
+                                <label for="DiabetesMedNo">&nbsp;</label>
+                                <small id="DiabetesMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Insulindiv" class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1.</div>
+                            <div class="qText">
+                                @Translate.Message("L32")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.Insulin, 1, new Dictionary<string, object> { { "id", "InsulinYes" }, { "Name", "medicalConditions.Insulin" }, { "data-validator", "validateInsulin" } })
+                                <label for="InsulinYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.Insulin, 2, new Dictionary<string, object> { { "id", "InsulinNo" }, { "Name", "medicalConditions.Insulin" }, { "data-validator", "validateInsulin" } })
+                                <label for="InsulinNo">&nbsp;</label>
+                                <small id="InsulinError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L33")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.AnginaMed, 1, new Dictionary<string, object> { { "id", "AnginaMedYes" }, { "Name", "medicalConditions.AnginaMed" }, { "data-validator", "validateAnginaMed" } })
+                                <label for="AnginaMedYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.AnginaMed, 2, new Dictionary<string, object> { { "id", "AnginaMedNo" }, { "Name", "medicalConditions.AnginaMed" }, { "data-validator", "validateAnginaMed" } })
+                                <label for="AnginaMedNo">&nbsp;</label>
+                                <small id="AnginaMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L34")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.HeartFailMed, 1, new Dictionary<string, object> { { "id", "HeartFailMedYes" }, { "Name", "medicalConditions.HeartFailMed" }, { "data-validator", "validateHeartFailMed" } })
+                                <label for="HeartFailMedYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.HeartFailMed, 2, new Dictionary<string, object> { { "id", "HeartFailMedNo" }, { "Name", "medicalConditions.HeartFailMed" }, { "data-validator", "validateHeartFailMed" } })
+                                <label for="HeartFailMedNo">&nbsp;</label>
+                                <small id="HeartFailMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L35")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.HeartCondMed, 1, new Dictionary<string, object> { { "id", "HeartCondMedYes" }, { "Name", "medicalConditions.HeartCondMed" }, { "data-validator", "validateHeartCondMed" } })
+                                <label for="HeartCondMedYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.HeartCondMed, 2, new Dictionary<string, object> { { "id", "HeartCondMedNo" }, { "Name", "medicalConditions.HeartCondMed" }, { "data-validator", "validateHeartCondMed" } })
+                                <label for="HeartCondMedNo">&nbsp;</label>
+                                <small id="HeartCondMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L24")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.AsthmaMed, 1, new Dictionary<string, object> { { "id", "AsthmaMedYes" }, { "Name", "medicalConditions.AsthmaMed" }, { "data-validator", "validateAsthmaMed" } })
+                                <label for="AsthmaMedYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.AsthmaMed, 2, new Dictionary<string, object> { { "id", "AsthmaMedNo" }, { "Name", "medicalConditions.AsthmaMed" }, { "data-validator", "validateAsthmaMed" } })
+                                <label for="AsthmaMedNo">&nbsp;</label>
+                                <small id="AsthmaMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L25")
+                                <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2412")"><i class="fa fa-question-circle"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.BronchitisMed, 1, new Dictionary<string, object> { { "id", "BronchitisMedYes" }, { "Name", "medicalConditions.BronchitisMed" }, { "data-validator", "validateBronchitisMed" } })
+                                <label for="BronchitisMedYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.BronchitisMed, 2, new Dictionary<string, object> { { "id", "BronchitisMedNo" }, { "Name", "medicalConditions.BronchitisMed" }, { "data-validator", "validateBronchitisMed" } })
+                                <label for="BronchitisMedNo">&nbsp;</label>
+                                <small id="BronchitisMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L1385")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ArthritisMed, 1, new Dictionary<string, object> { { "id", "ArthritisMedYes" }, { "Name", "medicalConditions.ArthritisMed" }, { "data-validator", "validateArthritisMed" } })
+                                <label for="ArthritisMedYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.ArthritisMed, 2, new Dictionary<string, object> { { "id", "ArthritisMedNo" }, { "Name", "medicalConditions.ArthritisMed" }, { "data-validator", "validateArthritisMed" } })
+                                <label for="ArthritisMedNo">&nbsp;</label>
+                                <small id="ArthritisMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="Arthritisdiv">
+                        <div class="question side-by-side">
+                            <div class="qHeader">
+                                <div class="qNumber">@(i).1.</div>
+                                <div class="qText">
+                                    @Translate.Message("L2459")?
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Osteoarthritis, 1, new Dictionary<string, object> { { "id", "OsteoarthritisYes" }, { "Name", "medicalConditions.Osteoarthritis" }, { "data-validator", "validateOsteoarthritis" } })
+                                    <label for="OsteoarthritisYes">&nbsp;</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Osteoarthritis, 2, new Dictionary<string, object> { { "id", "OsteoarthritisNo" }, { "Name", "medicalConditions.Osteoarthritis" }, { "data-validator", "validateOsteoarthritis" } })
+                                    <label for="OsteoarthritisNo">&nbsp;</label>
+                                    <small id="OsteoarthritisError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question side-by-side">
+                            <div class="qHeader">
+                                <div class="qNumber">@(i).2.</div>
+                                <div class="qText">
+                                    @Translate.Message("L2460")?
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Rheumatoid, 1, new Dictionary<string, object> { { "id", "RheumatoidYes" }, { "Name", "medicalConditions.Rheumatoid" }, { "data-validator", "validateRheumatoid" } })
+                                    <label for="RheumatoidYes">&nbsp;</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Rheumatoid, 2, new Dictionary<string, object> { { "id", "RheumatoidNo" }, { "Name", "medicalConditions.Rheumatoid" }, { "data-validator", "validateRheumatoid" } })
+                                    <label for="RheumatoidNo">&nbsp;</label>
+                                    <small id="RheumatoidError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question side-by-side">
+                            <div class="qHeader">
+                                <div class="qNumber">@(i).3.</div>
+                                <div class="qText">
+                                    @Translate.Message("L2461")?
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Psoriatic, 1, new Dictionary<string, object> { { "id", "PsoriaticYes" }, { "Name", "medicalConditions.Psoriatic" }, { "data-validator", "validatePsoriatic" } })
+                                    <label for="PsoriaticYes">&nbsp;</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Psoriatic, 2, new Dictionary<string, object> { { "id", "PsoriaticNo" }, { "Name", "medicalConditions.Psoriatic" }, { "data-validator", "validatePsoriatic" } })
+                                    <label for="PsoriaticNo">&nbsp;</label>
+                                    <small id="PsoriaticError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question side-by-side">
+                            <div class="qHeader">
+                                <div class="qNumber">@(i).4.</div>
+                                <div class="qText">
+                                    @Translate.Message("L2154")?
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Spondylitis, 1, new Dictionary<string, object> { { "id", "SpondylitisYes" }, { "Name", "medicalConditions.Spondylitis" }, { "data-validator", "validateSpondylitis" } })
+                                    <label for="SpondylitisYes">&nbsp;</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Spondylitis, 2, new Dictionary<string, object> { { "id", "SpondylitisNo" }, { "Name", "medicalConditions.Spondylitis" }, { "data-validator", "validateSpondylitis" } })
+                                    <label for="SpondylitisNo">&nbsp;</label>
+                                    <small id="SpondylitisError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question side-by-side">
+                            <div class="qHeader">
+                                <div class="qNumber">@(i).5.</div>
+                                <div class="qText">
+                                    @Translate.Message("L2462")?
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.OtherOrthritis, 1, new Dictionary<string, object> { { "id", "OtherOrthritisYes" }, { "Name", "medicalConditions.OtherOrthritis" }, { "data-validator", "validateOtherOrthritis" } })
+                                    <label for="OtherOrthritisYes">&nbsp;</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.OtherOrthritis, 2, new Dictionary<string, object> { { "id", "OtherOrthritisNo" }, { "Name", "medicalConditions.OtherOrthritis" }, { "data-validator", "validateOtherOrthritis" } })
+                                    <label for="OtherOrthritisNo">&nbsp;</label>
+                                    <small id="OtherOrthritisError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    if (Model.AutoImmune)
+                    {
+                        <div class="question side-by-side">
+                            <div class="qHeader">
+                                <div class="qNumber" id="CRQuestion">@(++i).</div>
+                                <div class="qText">
+                                    @Translate.Message("L2463")
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Crohns, 1, new Dictionary<string, object> { { "id", "CrohnsYes" }, { "Name", "medicalConditions.Crohns" }, { "data-validator", "validateCrohns" } })
+                                    <label for="CrohnsYes">&nbsp;</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Crohns, 2, new Dictionary<string, object> { { "id", "CrohnsNo" }, { "Name", "medicalConditions.Crohns" }, { "data-validator", "validateCrohns" } })
+                                    <label for="CrohnsNo">&nbsp;</label>
+                                    <small id="CrohnsError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="Psoriaticdiv" class="question side-by-side">
+                            <div class="qHeader">
+                                <div class="qNumber" id="PSQuestion">@(++i).</div>
+                                <div class="qText">
+                                    @Translate.Message("L2464")?
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Psoriasis, 1, new Dictionary<string, object> { { "id", "PsoriasisYes" }, { "Name", "medicalConditions.Psoriasis" }, { "data-validator", "validatePsoriasis" } })
+                                    <label for="PsoriasisYes">&nbsp;</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.medicalConditions.Psoriasis, 2, new Dictionary<string, object> { { "id", "PsoriasisNo" }, { "Name", "medicalConditions.Psoriasis" }, { "data-validator", "validatePsoriasis" } })
+                                    <label for="PsoriasisNo">&nbsp;</label>
+                                    <small id="PsoriasisError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="question side-by-side">
+                        <div class="qHeader">
+                            <div class="qNumber" id="OCQuestion">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L28")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.OtherChronicMed, 1, new Dictionary<string, object> { { "id", "OtherChronicMedYes" }, { "Name", "medicalConditions.OtherChronicMed" }, { "data-validator", "validateOtherChronicMed" } })
+                                <label for="OtherChronicMedYes">&nbsp;</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.OtherChronicMed, 2, new Dictionary<string, object> { { "id", "OtherChronicMedNo" }, { "Name", "medicalConditions.OtherChronicMed" }, { "data-validator", "validateOtherChronicMed" } })
+                                <label for="OtherChronicMedNo">&nbsp;</label>
+                                <small id="OtherChronicMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber" id="BTQuestion">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L37")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.BloodThinMed, 1, new Dictionary<string, object> { { "id", "BloodThinMedYes" }, { "Name", "medicalConditions.BloodThinMed" }, { "data-validator", "validateBloodThinMed" } })
+                                <label for="BloodThinMedYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.medicalConditions.BloodThinMed, 2, new Dictionary<string, object> { { "id", "BloodThinMedNo" }, { "Name", "medicalConditions.BloodThinMed" }, { "data-validator", "validateBloodThinMed" } })
+                                <label for="BloodThinMedNo">@Translate.Message("L3")</label>
+                                <small id="BloodThinMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber" id="PMQuestion">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L38")
+                            </div>
+                        </div>
+                        <div class="checkbox-group" data-validator-limit="1,8">
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.AllergyMedBool, new Dictionary<string, object> { { "id", "AllergyMedBool" }, { "class", "prescmed" }, { "data-validator", "validatePrescMed" } })
+                                    <label for="AllergyMedBool">@Translate.Message("L39")</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.RefluxMedBool, new Dictionary<string, object> { { "id", "RefluxMedBool" }, { "class", "prescmed" }, { "data-validator", "validatePrescMed" } })
+                                    <label for="RefluxMedBool">@Translate.Message("L40")</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.UlcerMedBool, new Dictionary<string, object> { { "id", "UlcerMedBool" }, { "class", "prescmed" }, { "data-validator", "validatePrescMed" } })
+                                    <label for="UlcerMedBool">@Translate.Message("L41")</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.MigraineMedBool, new Dictionary<string, object> { { "id", "MigraineMedBool" }, { "class", "prescmed" }, { "data-validator", "validatePrescMed" } })
+                                    <label for="MigraineMedBool">@Translate.Message("L42")</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption with-tooltip">
+                                    @Html.CheckBoxFor(M => M.OsteoporosisMedBool, new Dictionary<string, object> { { "id", "OsteoporosisMedBool" }, { "class", "prescmed" }, { "data-validator", "validatePrescMed" } })
+                                    <label for="OsteoporosisMedBool">@Translate.Message("L43")</label>
+                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2416")"><i class="fa fa-question-circle"></i></span>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.AnxietyMedBool, new Dictionary<string, object> { { "id", "AnxietyMedBool" }, { "class", "prescmed" }, { "data-validator", "validatePrescMed" } })
+                                    <label for="AnxietyMedBool">@Translate.Message("L44")</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.DepressionMedBool, new Dictionary<string, object> { { "id", "DepressionMedBool" }, { "class", "prescmed" }, { "data-validator", "validatePrescMed" } })
+                                    <label for="DepressionMedBool">@Translate.Message("L45")</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.BackPainMedBool, new Dictionary<string, object> { { "id", "BackPainMedBool" }, { "class", "prescmed" }, { "data-validator", "validatePrescMed" } })
+                                    <label for="BackPainMedBool">@Translate.Message("L46")</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.NoPrescMedBool, new Dictionary<string, object> { { "id", "NoPrescMedBool" }, { "class", "noprescmed" }, { "data-validator", "validatePrescMed" } })
+                                    <label for="NoPrescMedBool">@Translate.Message("L47")</label>
+                                    <small class="form-error" id="medError">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x button-set">
+                        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small button" type="submit">@Translate.Message("L481")</button></div>
+                        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary button" type="reset" id="closeMedical">@Translate.Message("L967")</button></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</form>
+<div id="wellness-report" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <h2>@Translate.Message("L535")</h2>
+                <p>
+                    Do you prefer to receive your wellness report and accompanying materials online (recommended method) or via the mail?
+                </p>
+                <div class="grid-x">
+                    <div class="cell small-12">
+                        <input type="checkbox" id="online-report"> Online (preferred method; immediately available on completion of HRA)
+                    </div>
+                    <div class="cell small-12">
+                        <input type="checkbox" id="mail-report"> Mail (may take up to 2 weeks)
+                    </div>
+                </div>
+                <button onclick="UpdateReportPreference()" class="expand">
+                    @Translate.Message("L537")
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a class="close-button" data-close>&#215;</a>
+</div>
+<script type="text/javascript">
+    var formsubmit = true;
+    Foundation.Abide.defaults.validators['validatePregnant'] = function ($el, required, parent) {
+        if ($("input[name='medicalConditions.Pregnant']:checked").length == 0)
+            return false;
+        else
+            $('#PregnantError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateBreastFeed'] = function ($el, required, parent) {
+	    if ($('#PregnantNo').is(":checked")) {
+		    if ($("input[name='medicalConditions.BreastFeed']:checked").length == 0)
+			    return false;
+		    else
+			    $('#BreastFeedError').hide();
+		    return true;
+	    }
+	    else
+		    return true;
+    };
+    Foundation.Abide.defaults.validators['validatePlanBecPreg'] = function ($el, required, parent) {
+	    if ($('#PregnantNo').is(":checked")) {
+		    if ($("input[name='medicalConditions.PlanBecPreg']:checked").length == 0)
+			    return false;
+		    else
+			    $('#PlanBecPregError').hide();
+		    return true;
+	    }
+	    else
+		    return true;
+    };
+    Foundation.Abide.defaults.validators['validateHysterectomy'] = function ($el, required, parent) {
+        if ($('#PlanBecPregNo').is(":checked") || $('#PlanBecPregDontKnow').is(":checked")) {
+            if ($("input[name='medicalConditions.Hysterectomy']:checked").length == 0)
+                return false;
+            else
+                $('#HysterectomyError').hide();
+            return true;
+        }
+        else
+            return true;
+    };
+    Foundation.Abide.defaults.validators['validateOvariesRemoved'] = function ($el, required, parent) {
+        if ($('#HysterectomyYes').is(":checked")) {
+            if ($("input[name='medicalConditions.OvariesRemoved']:checked").length == 0)
+                return false;
+            else
+                $('#OvariesRemovedError').hide();
+            return true;
+        }
+        else
+            return true;
+    };
+    Foundation.Abide.defaults.validators['validatePregDueDate'] = function ($el, required, parent) {
+	    if ($('#PregnantYes').is(":checked")) {
+            if ($('#medicalConditions_PregDueDate').val() == "")
+                return false;
+            else
+                $('#medicalConditionsPregDueDate').val(toSystemDateFormat($('#medicalConditions_PregDueDate').val()));
+            if (new Date($('#medicalConditionsPregDueDate').val()) < new Date()) {
+			    $("#pregDueError").text('@Translate.Message("L2087")');
+			    return false;
+		    }
+		    else
+			    return true;
+	    }
+	    else
+		    return true;
+    };
+    Foundation.Abide.defaults.validators['validateOtherChronicProb'] = function ($el, required, parent) {
+	    if ($('#OtherChronicYes').is(":checked")) {
+		    if ($("input[name='medicalConditions.OtherChronicProb']:checked").length == 0)
+			    return false;
+		    else
+			    $('#OtherChronicProbError').hide();
+		    return true;
+	    }
+	    else
+		    return true;
+    };
+    Foundation.Abide.defaults.validators['validateInsulin'] = function ($el, required, parent) {
+	    if ($('#DiabetesMedYes').is(":checked")) {
+		    if ($("input[name='medicalConditions.Insulin']:checked").length == 0)
+			    return false;
+		    else
+			    return true;
+	    }
+	    else
+		    $('#InsulinError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateStroke'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.Stroke']:checked").length == 0)
+		    return false;
+	    else
+		    $('#StrokeError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateHeartAttack'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.HeartAttack']:checked").length == 0)
+		    return false;
+	    else
+		    $('#HeartAttackError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateAngina'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.Angina']:checked").length == 0)
+		    return false;
+	    else
+		    $('#AnginaError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldBabyNine'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldBabyNine']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldBabyNineError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldBlock'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldBlock']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldBlockError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldHeartBlock'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldHeartBlock']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldHeartBlockError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldHighBP'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldHighBP']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldHighBPError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldHighChol'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldHighChol']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldHighCholError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldDiabetes'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldDiabetes']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldDiabetesError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldGestDiab'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldGestDiab']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldGestDiabError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldPolycyst'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldPolycyst']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldPolycystError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldAsthma'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldAsthma']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldAsthmaError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldBronchitis'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldBronchitis']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldBronchitisError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldCancer'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldCancer']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldCancerError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateToldKidneyDisease'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ToldKidneyDisease']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ToldKidneyDiseaseError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateOtherChronic'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.OtherChronic']:checked").length == 0)
+		    return false;
+	    else
+		    $('#OtherChronicError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateHighBPMed'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.HighBPMed']:checked").length == 0)
+		    return false;
+	    else
+		    $('#HighBPMedError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateHighCholMed'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.HighCholMed']:checked").length == 0)
+		    return false;
+	    else
+		    $('#HighCholMedError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateDiabetesMed'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.DiabetesMed']:checked").length == 0)
+		    return false;
+	    else
+		    $('#DiabetesMedError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateAnginaMed'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.AnginaMed']:checked").length == 0)
+		    return false;
+	    else
+		    $('#AnginaMedError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateHeartFailMed'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.HeartFailMed']:checked").length == 0)
+		    return false;
+	    else
+		    $('#HeartFailMedError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateHeartCondMed'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.HeartCondMed']:checked").length == 0)
+		    return false;
+	    else
+		    $('#HeartCondMedError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateAsthmaMed'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.AsthmaMed']:checked").length == 0)
+		    return false;
+	    else
+		    $('#AsthmaMedError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateBronchitisMed'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.BronchitisMed']:checked").length == 0)
+		    return false;
+	    else
+		    $('#BronchitisMedError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateArthritisMed'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.ArthritisMed']:checked").length == 0)
+		    return false;
+	    else
+		    $('#ArthritisMedError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateOtherChronicMed'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.OtherChronicMed']:checked").length == 0)
+		    return false;
+	    else
+		    $('#OtherChronicMedError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateBloodThinMed'] = function ($el, required, parent) {
+	    if ($("input[name='medicalConditions.BloodThinMed']:checked").length == 0)
+		    return false;
+	    else
+		    $('#BloodThinMedError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validatePrescMed'] = function ($el, required, parent) {
+	    var group = parent.closest('.checkbox-group');
+	    var limit = group.attr('data-validator-limit').split(',');
+	    var countC = group.find(':checked').length;
+	    if (countC >= limit[0] && countC <= limit[1]) {
+            group.find('small.form-error').hide();
+            group.find('small.form-error').removeClass('is-visible');
+		    //return true so abide can clear any invalid flags on this element
+		    return true;
+	    } else {
+		    group.find('small.form-error').css({ display: 'block' });
+		    //return false and let abide do its thing to make sure the form doesn't submit
+		    return false;
+	    }
+    };
+    Foundation.Abide.defaults.validators['validateOsteoarthritis'] = function ($el, required, parent) {
+	    if ($('#ArthritisMedYes').is(":checked") && '@Model.AutoImmune' == 'True') {
+		    if ($("input[name='medicalConditions.Osteoarthritis']:checked").length == 0)
+			    return false;
+		    else
+			    return true;
+	    }
+	    else
+		    $('#OsteoarthritisError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateRheumatoid'] = function ($el, required, parent) {
+	    if ($('#ArthritisMedYes').is(":checked") && '@Model.AutoImmune' == 'True') {
+		    if ($("input[name='medicalConditions.Rheumatoid']:checked").length == 0)
+			    return false;
+		    else
+			    return true;
+	    }
+	    else
+		    $('#RheumatoidError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validatePsoriatic'] = function ($el, required, parent) {
+	    if ($('#ArthritisMedYes').is(":checked") && '@Model.AutoImmune' == 'True') {
+		    if ($("input[name='medicalConditions.Psoriatic']:checked").length == 0)
+			    return false;
+		    else
+			    return true;
+	    }
+	    else
+		    $('#PsoriaticError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateSpondylitis'] = function ($el, required, parent) {
+	    if ($('#ArthritisMedYes').is(":checked") && '@Model.AutoImmune' == 'True') {
+		    if ($("input[name='medicalConditions.Spondylitis']:checked").length == 0)
+			    return false;
+		    else
+			    return true;
+	    }
+	    else
+		    $('#SpondylitisError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateOtherOrthritis'] = function ($el, required, parent) {
+	    if ($('#ArthritisMedYes').is(":checked") && '@Model.AutoImmune' == 'True') {
+		    if ($("input[name='medicalConditions.OtherOrthritis']:checked").length == 0)
+			    return false;
+		    else
+			    return true;
+	    }
+	    else
+		    $('#OtherOrthritisError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validatePsoriasis'] = function ($el, required, parent) {
+	    if ($('#PsoriaticNo').is(":checked") && '@Model.AutoImmune' == 'True') {
+		    if ($("input[name='medicalConditions.Psoriasis']:checked").length == 0)
+			    return false;
+		    else
+			    return true;
+	    }
+	    else
+		    $('#PsoriasisError').hide();
+	    return true;
+    };
+    Foundation.Abide.defaults.validators['validateCrohns'] = function ($el, required, parent) {
+	    if ($('#OtherChronicMedYes').is(":checked") && '@Model.AutoImmune' == 'True') {
+		    if ($("input[name='medicalConditions.Crohns']:checked").length == 0)
+			    return false;
+		    else
+			    return true;
+	    }
+	    else
+		    $('#CrohnsError').hide();
+	    return true;
+    };
+    $(document).foundation();
+    $(document).ready(function () {
+    @if (Model.AdminId != null && Model.AdminId != Model.participantId && Model.ParticipantEmail.ToString().IndexOf("noemail.myintervent.com") >= 0 && Model.hracompletion <= 0
+                            && Convert.ToBoolean(Model.MailScoreCard) == true && Model.IsAdminView == true)
+    {
+                @: $.ajax({
+                @: url: "@Url.Action("ReadTask", "Admin")",
+                @: data: { userId: @Convert.ToInt32(Model.participantId.ToString()), taskType : 15 },
+                @: type: 'POST',
+                @: dataType: "json",
+                @: success: function (data) {
+                @: if (data != null && data.Result == "None") {
+                    @: $('#wellness-report').foundation('open');
+                @: }
+                @: else { $('#medicalconditions-form').show(); }}}).fail(function(jqXHR, textStatus, errorThrown) {
+                @:                                                      RedirectToErrorPage(jqXHR.status);});
+    }
+    else
+    {
+
+         @: $('#medicalconditions-form').removeAttr('hidden');
+         @: $('#medicalconditions-form').show();
+    }
+        @if (Model.readOnly)
+        {
+            @: $("#medicalconditions-form :input").prop("disabled", true);
+            @: $('#closeMedical').attr('disabled', false);
+        }
+        $('#cancelpopup').on('click', function () {
+            $("#PregnantPopup").hide();
+        });
+        $('#closeMedical').on('click', function () {
+            $('#survey-modal').foundation('close');
+            $('#survey-modal h2.text-center').foundation('close');
+            RealignPage();
+            //removeForm('medicalconditions-form');
+        });
+
+        $("#medicalconditions-form").foundation();
+        $('#medicalconditions-form')
+            .on('forminvalid.zf.abide', function (ev, frm) {
+                var invalid_fields = $(this).find('[data-invalid]');
+                if (invalid_fields) {
+                    var scrollTo = $('#' + invalid_fields[0].id).parent('div').position().top;
+                    $('.reveal-overlay').animate({
+                        scrollTop: scrollTo
+                    }, 400);
+                }
+            })
+            .on('formvalid.zf.abide', function (ev, frm) {
+                $('#medicalConditions_PregDueDate').val($('#medicalConditionsPregDueDate').val());
+                if (formsubmit == true) {
+                    $.ajax({
+                        url: "@Url.Action("MedicalConditions", "HRA")",
+                        type: 'POST',
+                        dataType: "json",
+                        data: $("#medicalconditions-form").serialize(),
+                        success: function (data) {
+                            if (data == "success") {
+                                $(document).on('closed.zf.reveal', '[data-reveal]', function () {
+                                    UpdateHRAStatus("MC");
+                                });
+                                $('#survey-modal').foundation('close');
+                                //removeForm('medicalconditions-form');
+                            }
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+                    formsubmit = false;
+                }
+            }).on("submit", function(ev) {
+                ev.preventDefault();
+            })
+
+        $('input[type=radio][name="medicalConditions.Pregnant"]').on('click', function () {
+
+            if (this.value == 1) {
+                $("#PregDueDateDiv").show();
+                $("#PregnantPopup").show();
+                $("#BreastFeedDiv").hide();
+                $("#PlanBecPregDiv").hide();
+                $("#HysterectomyDiv").hide();
+                $("#OvariesRemovedDiv").hide();
+                $('input[name="medicalConditions.BreastFeed"]').prop('checked', false);
+                $('input[name="medicalConditions.PlanBecPreg"]').prop('checked', false);
+                $('input[name="medicalConditions.Hysterectomy"]').prop('checked', false);
+                $('input[name="medicalConditions.OvariesRemoved"]').prop('checked', false);
+                @if(Model.hasInterest)
+                {
+                    @: RevisitInterest();
+                }
+            }
+            else {
+                @if(Model.Age < 45)
+                {
+                    @: $("#BreastFeedDiv").show();
+                }
+                $("#PlanBecPregDiv").show();
+                $("#PregDueDateDiv").hide();
+                $("#PregnantPopup").hide();
+                $("#medicalConditions_PregDueDate").val('');
+                $("#medicalConditionsPregDueDate").val('');
+            }
+        });
+    });
+    //Hide questions on ifad
+    @if (Model.medicalConditions == null || (Model.medicalConditions.Pregnant == null || (Model.medicalConditions.Pregnant.HasValue && Model.medicalConditions.Pregnant.Value == 1)))
+    {
+        <text>
+        $("#BreastFeedDiv").hide();
+        $("#PlanBecPregDiv").hide();
+        $("#HysterectomyDiv").hide();
+        $("#OvariesRemovedDiv").hide();
+        </text>
+    }
+    @if (Model.medicalConditions == null || (Model.medicalConditions.Pregnant == null || (Model.medicalConditions.Pregnant.HasValue && Model.medicalConditions.Pregnant.Value == 2)))
+    {
+        <text>
+        $("#PregDueDateDiv").hide();
+        $("#PregnantPopup").hide();
+        </text>
+    }
+    @if (Model.medicalConditions != null && Model.medicalConditions.PlanBecPreg != null && Model.medicalConditions.PlanBecPreg.HasValue && (Model.medicalConditions.PlanBecPreg.Value == 2 || Model.medicalConditions.PlanBecPreg.Value == 3))
+    {
+        <text>
+        $("#HysterectomyDiv").show();
+        $("#OvariesRemovedDiv").hide();
+        </text>
+    }
+    @if (Model.medicalConditions == null || (Model.medicalConditions.PlanBecPreg == null || (Model.medicalConditions.PlanBecPreg.HasValue && Model.medicalConditions.PlanBecPreg.Value == 1)))
+    {
+        <text>
+        $("#HysterectomyDiv").hide();
+        $("#OvariesRemovedDiv").hide();
+        </text>
+    }
+    @if (Model.medicalConditions != null && Model.medicalConditions.Hysterectomy != null && Model.medicalConditions.Hysterectomy.HasValue && Model.medicalConditions.Hysterectomy.Value == 1)
+    {
+        <text>
+        $("#OvariesRemovedDiv").show();
+        </text>
+    }
+    @if (Model.medicalConditions == null || (Model.medicalConditions.OtherChronic == null || (Model.medicalConditions.OtherChronic.HasValue && Model.medicalConditions.OtherChronic.Value == 2)))
+    {
+        <text>
+        $("#OtherChronicProbdiv").hide();
+        </text>
+    }
+    @if (Model.medicalConditions == null || (Model.medicalConditions.DiabetesMed == null || (Model.medicalConditions.DiabetesMed.HasValue && Model.medicalConditions.DiabetesMed.Value == 2)))
+    {
+        <text>
+    $("#Insulindiv").hide();
+    </text>
+    }
+    @if (Model.medicalConditions == null || (Model.medicalConditions.ArthritisMed == null || (Model.medicalConditions.ArthritisMed.HasValue && Model.medicalConditions.ArthritisMed.Value == 2)) || Model.AutoImmune == false)
+    {
+        <text>
+    $("#Arthritisdiv").hide();
+    </text>
+    }
+    @if (Model.medicalConditions != null && Model.medicalConditions.Psoriatic != null && (Model.medicalConditions.Psoriatic.HasValue && Model.medicalConditions.Psoriatic.Value == 1))
+    {
+        <text>
+    $("#Psoriaticdiv").hide();
+    </text>
+    }
+
+
+    //Hide/Show questions based on parent question response
+    $('input[name="medicalConditions.OtherChronic"]').on('change', function () {
+        if (this.value == 1) {
+            $("#OtherChronicProbdiv").show();
+        }
+        else {
+            $("#OtherChronicProbdiv").hide();
+            $('input[name="medicalConditions.OtherChronicProb"]').prop('checked', false);
+        }
+    });
+    $('input[name="medicalConditions.PlanBecPreg"]').on('change', function () {
+        if (this.value == 2 || this.value == 3) {
+            $("#HysterectomyDiv").show();
+        }
+        else {
+            $("#HysterectomyDiv").hide();
+            $("#OvariesRemovedDiv").hide();
+            $('input[name="medicalConditions.Hysterectomy"]').prop('checked', false);
+            $('input[name="medicalConditions.OvariesRemoved"]').prop('checked', false);
+        }
+    });
+    $('input[name="medicalConditions.Hysterectomy"]').on('change', function () {
+        if (this.value == 1) {
+            $("#OvariesRemovedDiv").show();
+        }
+        else {
+            $("#OvariesRemovedDiv").hide();
+            $('input[name="medicalConditions.OvariesRemoved"]').prop('checked', false);
+        }
+    });
+    $('input[name="medicalConditions.DiabetesMed"]').on('change', function () {
+        if (this.value == 1) {
+            $("#Insulindiv").show();
+        }
+        else {
+            $("#Insulindiv").hide();
+            $('input[name="medicalConditions.Insulin"]').prop('checked', false);
+        }
+    });
+
+    $('.prescmed').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.noprescmed').prop("checked", false);
+        }
+    });
+    $('.noprescmed').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.prescmed').prop("checked", false);
+        }
+    });
+    //display any datepickers
+    $(document).ready(function () {
+        $('.fdatepicker').fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            onRender: function (date) {
+                return date.valueOf() < Date.now() ? 'disabled' : '';
+            }
+        });
+
+        @if (Model.medicalConditions!=null && Model.medicalConditions.PregDueDate.HasValue)
+        {
+            @: $('#medicalConditions_PregDueDate').val(toLocalDateFormat('@Model.medicalConditions.PregDueDate'));
+        }
+    });
+
+    $('input[name="medicalConditions.ArthritisMed"]').on('change', function () {
+        if (this.value == 1) {
+            if ('@Model.AutoImmune' == 'True') {
+                $("#Arthritisdiv").show();
+            }
+        }
+        else {
+            $("#Arthritisdiv").hide();
+            $('input[name="medicalConditions.Osteoarthritis"]').prop('checked', false);
+            $('input[name="medicalConditions.Rheumatoid"]').prop('checked', false);
+            $('input[name="medicalConditions.Psoriatic"]').prop('checked', false);
+            $('input[name="medicalConditions.OtherOrthritis"]').prop('checked', false);
+            $('input[name="medicalConditions.Psoriasis"]').prop('checked', false);
+        }
+    });
+    $('input[name="medicalConditions.Psoriatic"]').on('change', function () {
+        if (this.value == 2) {
+            if ('@Model.AutoImmune' == 'True') {
+                $("#Psoriaticdiv").show();
+                CalculateId("add");
+            }
+        }
+        else {
+            $("#Psoriaticdiv").hide();
+            $('input[name="medicalConditions.Psoriasis"]').prop('checked', false);
+            CalculateId("subtract");
+        }
+    });
+
+    function CalculateId(type) {
+        var id = parseInt($("#CRQuestion").text());
+        if (type == "subtract") {
+            $("#OCQuestion").text(id + 1);
+            $("#BTQuestion").text(id + 2);
+            $("#PMQuestion").text(id + 3);
+        }
+        else {
+            $("#PSQuestion").text(id + 1);
+            $("#OCQuestion").text(id + 2);
+            $("#BTQuestion").text(id + 3);
+            $("#PMQuestion").text(id + 4);
+        }
+    }
+    function UpdateReportPreference() {
+        if($("#mail-report").prop('checked') == true){
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "@Url.Action("AddEditTask", "Admin")",
+                async: false,
+                data: { id: null, taskTypeId: 15, status: "N", user: @Convert.ToInt32(Model.participantId), owner: @Convert.ToInt32(Model.userId), comment: "Send HRA Report" },
+                success: function (data) {
+                } 
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+        $('#wellness-report').foundation('close');
+        if (Model.IsAdminView == false) {
+            $('#survey-modal').foundation('open');
+        }
+        $('#medicalconditions-form').show();
+    }
+
+    function RevisitInterest() {
+        $("#PregPopup").removeClass('hide');
+        $("#PregPopup").show();
+    }
+</script>

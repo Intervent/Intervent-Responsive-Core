@@ -1,0 +1,171 @@
+﻿@using InterventWebApp
+
+
+<div id="signup-error" class="callout alert-box alert hide" data-closable>
+  @Translate.Message("L1931")
+  <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<form id="sign-up-form" class="compass" data-abide novalidate>
+    <!--replace with compass organization id-->
+    <input type="hidden" id="organizationId" name="OrganizationId" value="@ViewData["OrgId"]" />
+    <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+    <div class="grid-x grid-margin-x login-form">
+        <div class="small-6 cell">
+            <input type="text" id="firstName" name="FirstName" placeholder="@Translate.Message("L938")" required pattern="[a-zA-Z]+">
+            <small class="form-error">@Translate.Message("L432")</small>
+        </div>
+        <div class="small-6 cell">
+            <input type="text" id="lastName" name="LastName" placeholder="@Translate.Message("L939")" required pattern="[a-zA-Z]+">
+            <small class="form-error">@Translate.Message("L433")</small>
+        </div>
+        <div class="small-12 cell">
+            <input type="text" id="DOB" name="DOB" placeholder="@string.Format(Translate.Message("L1362"), ViewData["DateFormat"])" class="fdatepicker" data-validator="validateAGE" required>
+            <small id="ageError" class="form-error">@Translate.Message("L1903")</small>
+        </div>
+        <div class="small-12 cell position-relative">
+            <input type="text" id="CouponCode" name="UniqueID" placeholder="@Translate.Message("L2458")" required>
+            <small class="form-error">@Translate.Message("L2465")</small>
+            <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip data-allow-html="true" aria-haspopup="true" title="@Translate.Message("L2457")"></i>
+        </div>
+        <div class="small-12 cell email position-relative">
+            <input type="email" id="eligemail" name="EmailAddress" placeholder="Email Address" required>
+            <small class="form-error">@Translate.Message("L434")</small>
+            <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip data-allow-html="true" aria-haspopup="true" title="@Translate.Message("L1988")"></i>
+        </div>
+        <div class="cell small-12">
+            <input type="email" placeholder="@Translate.Message("L2468")" data-equalto="eligemail">
+            <small class="form-error">@Translate.Message("L2469")</small>
+        </div>
+        <div class="cell small-12">
+            <input type="password" id="password" name="Password" placeholder="@Translate.Message("L466")" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+                   required data-tooltip aria-haspopup="true" class="has-tip tip-top" title="@Translate.Message("L1929")">
+            <small class="form-error" data-error-message>@Translate.Message("L1929")</small>
+        </div>
+        <div class="cell small-12">
+            <input type="password" id="confirmpassword" placeholder="@Translate.Message("L1628")" data-equalto="password">
+            <small class="form-error">@Translate.Message("L438")</small>
+        </div>
+        <div class="small-12 cell">
+            <input type="checkbox" id="serviceagreement" required> @Translate.Message("L441") <a href="#" onclick="ServiceAgreement(true);">@Translate.Message("L440")</a>
+            <small class="form-error">@Translate.Message("L442")</small>
+        </div>
+        <div class="small-12 cell">
+            <button type="submit" value="" class="expand pink">@Translate.Message("L443")</button>
+        </div>
+        <input type="hidden" id="SignUpDate" name="SignUpDate" value="" />
+    </div>
+</form>
+
+<!--Email Confirmation Modal-->
+<div id="confirmation-modal" class="reveal small" data-reveal>
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <p>
+                @Translate.Message("L1932")
+            </p>
+        </div>
+        <div class="small-12 cell">
+            <button class="expand pink middle" href="" onclick="$('#login-modal').foundation('open'); return false;">
+                @Translate.Message("L426")
+            </button>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<!-- Error Modal-->
+<div id="error-modal" class="reveal small" data-reveal>
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <h2 class="text-center"></h2>
+            <p>
+                <span id="error-message-genericmodal"></span>
+            </p>
+        </div>
+    </div>
+    <a class="close-reveal"></a><button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/AgeValidation.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/DateFormatter.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="~/Scripts/RegistrationSignIn.js"></script>
+<script>
+    Foundation.Abide.defaults.validators['validateAGE'] = function ($el, required, parent) {
+        var DOB = $("#inDOB").val();
+        var valid = validateage(DOB);
+        if (valid == false) {
+            $("#AgeError").text('@InterventWebApp.Translate.Message("L1986")');
+            return valid;
+        }
+        else
+            return valid;
+    };
+    $(document).ready(function () {
+        DateFormatter("DOB", "@ViewData["DateFormat"]");
+        var startDOB = new Date();
+        startDOB.setFullYear(startDOB.getFullYear() - 100);
+        $('.fdatepicker').fdatepicker({
+            format: 'mm/dd/yyyy',
+            disableDblClickSelection: true,
+            pickTime: false,
+            startDate: startDOB,
+            onRender: function (date) {
+                return date.valueOf() > Date.now() ? 'disabled' : '';
+            }
+        });
+
+        $('#sign-up-form').foundation();
+        $('#sign-up-form')
+        //When Not Valid
+        .on('forminvalid.zf.abide', function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+            console.log(invalid_fields);
+        })
+        //When Valid
+            .on('formvalid.zf.abide', function () {
+                if (document.getElementById('serviceagreement').checked) {
+                    $("#sign-up-form").find('input[id="password"]').val(window.btoa(Math.random().toString(36).substring(2, 8) + $("#sign-up-form").find('input[id="password"]').val()));
+                    $('#SignUpDate').val(toSystemDateFormat(new Date().toLocaleDateString()));
+                    $.ajax({
+                        url: "@Url.Action("RegisterUsingEligibility", "Account")",
+                        type: 'POST',
+                        dataType: "json",
+                        data: $("#sign-up-form").serialize(),
+                        success: function (data) {
+                            var password = $('#password').val();
+                            $("#sign-up-form").find('input[id="password"]').val("");
+                            $("#sign-up-form").find('input[id="password"]').trigger('keypress');
+                            $("#sign-up-form").find('input[id="password"]').trigger('keyup');
+                            $("#sign-up-form").find('input[id="confirmpassword"]').val("");
+                            if (data.Success) {
+                                var username = $('#eligemail').val();
+                                var organizationEmail = $('#supportEmail').val();
+                                var loginURL = "@Url.Action("Login", "Account")";
+                                var streamURL = "@Url.Action("Stream", "Participant")";
+                                validateSignIn(data, username, password, organizationEmail, loginURL, streamURL);
+                                $('.register-modal-email').text($('#eligemail').val());
+                                document.getElementById("sign-up-form").reset();
+                            }
+                            else {
+                                if (data.Action == undefined) {
+                                    $('#error-modal').foundation('open');
+                                    $("#error-message-genericmodal").text(data.ErrorMessage);
+                                    $('#primaryVerificationRegisterInfo').val(data.RegisterData);
+                                }
+                            }
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                            DisplayError(jqXHR.status);
+                        });
+                }
+            }).on('submit', function (e) {
+                e.preventDefault();
+            });
+        });
+</script>

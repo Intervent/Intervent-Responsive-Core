@@ -1,0 +1,11 @@
+﻿<!--USER VIEW with out resource-->
+@using InterventWebApp
+@model InterventWebApp.CheckRiskModel
+@{
+    ViewBag.Title = "CheckRisk";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+@Html.Partial("_WhatIf", Model)
+<script>
+    $("#checkrisk-breadcrumbs").show();
+</script>

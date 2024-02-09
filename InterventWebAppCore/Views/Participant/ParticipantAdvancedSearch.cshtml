@@ -1,0 +1,370 @@
+﻿@model InterventWebApp.ParticipantAdvancedSearchModel
+@using InterventWebApp
+<!--ADMIN PAGE-->
+@{
+    ViewBag.Title = "ParticipantSearch";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div id="loader-wrapper"><div id="loader"></div></div>
+<section class="main search-participants org-main-body participant-advance-search">
+    <div class="grid-container">
+        <div class="grid-x food-diary-main-wrapper">
+            <div class="cell">
+                <div class="diary-top-section">
+                    <div class="diary-top-left">
+                        <h2>Participants <span id="userTotal"> </span></h2>
+                        <div class="search-bar secondary">
+                            <div class="input-group">
+                                <input type="text" id="search-org" placeholder="Search by participant name, email ID, phone number, user ID, unique ID, etc." maxlength="200" />
+                                <div class="input-group-button">
+                                    <button id="search" class="button"><i class="fa fa-search"></i>Search</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="show-for-small-only filter-button">
+                            <button class="button hollow" data-toggle="filter-dropdown"><i class="fa fa-filter"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Top section ends -->
+
+                <div class="diary-body-section">
+                    <div class="food-calender-section org-list-section">
+                        <div class="grid-x">
+                            <div class="cell">
+                                <div class="search-filters">
+                                    <div class="grid-x grid-margin-x" id="filter-dropdown" data-dropdown data-close-on-click="true">
+                                        <div class="cell medium-10 filter-list-box">
+                                            <label for="">
+                                                Organization
+                                                <select name="org-list" id="org-list">
+                                                    <option value="null">--Select--</option>
+                                                    @foreach (var org in Model.OrganizationList)
+                                                    {
+                                                        <option value="@org.Value">@org.Text</option>
+                                                    }
+                                                </select>
+                                            </label>
+											<div class="hra-filter-list-item">
+												<label for="">
+													HRA Complete Date
+													<select name="hra-date" id="hra-date">
+														<option value="null">--Select--</option>
+														<option value="7">@Translate.Message("L2741")</option>
+														<option value="30">@Translate.Message("L2740")</option>
+														<option value="90">@Translate.Message("L2739")</option>
+														<option value="date-range">@Translate.Message("L2744")</option>
+													</select>
+												</label>
+
+												<div class="date-range hide main-chart-header">
+													<form id="hra-date-search" class="graph-date-range">
+														<div class="input-container">
+															<label for="hra-start-date">
+																<input type="text" name="hra-start-date" placeholder="@Translate.Message("L1445")" id="hra-start-date" autocomplete="off" />
+																<input id="HStartDate" type="hidden" />
+															</label>
+															<label for="hra-end-date">
+																<input type="text" name="hra-end-date" placeholder="@Translate.Message("L4001")" id="hra-end-date" autocomplete="off" />
+																<input id="HEndDate" type="hidden" />
+															</label>
+														</div>
+														<div class="button-group align-center">
+															<button type="reset" class="button hollow" id="reset-date">@Translate.Message("L3967")</button>
+															<button type="submit" class="button" id="submit-date">@Translate.Message("L963")</button>
+														</div>
+													</form>
+												</div>
+											</div>
+                                            <label for="">
+                                                Program
+                                                <select name="prg-list" id="prg-list">
+                                                    <option value="null">--Select--</option>
+                                                    @foreach (var prg in Model.ProgramList)
+                                                    {
+                                                        <option value="@prg.Value">@prg.Text</option>
+                                                    }
+                                                </select>
+                                            </label>
+                                            <label for="">
+                                                Coach
+                                                @Html.DropDownListFor(x => x.Coach, Model.Coaches, "--Select--")
+                                            </label>
+                                            <label for="">
+                                                Contact Requirement
+                                                <select name="contact-list" id="contact-list">
+                                                    <option value="null">--Select--</option>
+                                                    @foreach (var msg in Model.ContactRequirements)
+                                                    {
+                                                        <option value="@msg.Value">@msg.Text</option>
+                                                    }
+                                                </select>
+                                            </label>
+                                        </div>
+                                        <div class="cell medium-2 flex-container align-right align-bottom">
+                                            <button id="clear-all" class="button hollow" type="button">Clear All</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cell">
+                                <div class="org-search-results" id="participant-result"></div>
+                                <div class="cell small-12">
+                                    <!-- pagination Start -->
+                                    <div class="pagination-area hide" id="pagination-centered">
+                                        <ul>
+                                            <li id="numeric"></li>
+                                        </ul>
+                                        <!-- page-link Start -->
+                                        <div class="page-link">
+                                            <label>@Translate.Message("L4041")</label>
+                                            <div class="grid-x">
+                                                <input type="text" id="jumptoPageNo">
+                                                <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                                            </div>
+                                        </div>
+                                        <!-- page-link End -->
+                                    </div>
+                                    <!-- pagination End -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="admin-profile" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+                <!-- Body section ends -->
+            </div>
+        </div>
+    </div>
+</section>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 10;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var page = 0;
+    var totalPages = 0;
+    var SearchText = "";
+    var OrganizationId = 0;
+    var CoachId = 0;
+    var ProgramType = 0;
+    var ContactType = 0;
+    var HraStartDate = null;
+    var HraEndDate = null;
+    $(document).ready(function () {
+        SearchUser();
+
+        $("#search").on("click", function () {
+            currentPage = 0;
+            SearchText = $("#search-org").val();
+            SearchUser();
+        });
+
+        $("#org-list").on("change", function () {
+            currentPage = 0;
+            OrganizationId = parseInt($("#org-list").val());
+            SearchUser();
+        });
+
+        $("#Coach").on("change", function () {
+            currentPage = 0;
+            CoachId = parseInt($("#Coach").val());
+            SearchUser();
+        });
+
+        $("#prg-list").on("change", function () {
+            currentPage = 0;
+            ProgramType = parseInt($("#prg-list").val());
+            SearchUser();
+        });
+
+        $("#hra-start-date").on("change", function () {
+            $('#HStartDate').val(toSystemDateFormat($('#hra-start-date').val()));
+        });
+
+        $("#hra-end-date").on("change", function () {
+            $('#HEndDate').val(toSystemDateFormat($('#hra-end-date').val()));
+        });
+
+        $("#hra-date-search").on('submit', function (ev) {
+            ev.preventDefault();
+            currentPage = 0;
+            HraEndDate = new Date($("#HEndDate").val());
+            HraStartDate = new Date($("#HStartDate").val());
+            $('.hra-filter-list-item .date-range').addClass("hide");
+            SearchUser();
+        });
+
+        $("#hra-date").on("change", function () {
+            currentPage = 0;
+            var hra = $("#hra-date").val();
+            if (hra == "null") {
+                HraEndDate = null;
+                HraStartDate = null;
+                SearchUser();
+            } else if (hra == "7") {
+                HraEndDate = new Date();
+                HraStartDate = new Date();
+                HraStartDate = new Date(HraStartDate.setDate(HraEndDate.getDate() - 7));
+                SearchUser();
+            } else if (hra == "30") {
+                HraEndDate = new Date();
+                HraStartDate = new Date();
+                HraStartDate = new Date(HraStartDate.setDate(HraEndDate.getDate() - 30));
+                SearchUser();
+            } else if (hra == "90") {
+                HraEndDate = new Date();
+                HraStartDate = new Date();
+                HraStartDate = new Date(HraStartDate.setDate(HraEndDate.getDate() - 90));
+                SearchUser();
+            } else if (hra == "date-range") {
+                $('.hra-filter-list-item .date-range').removeClass("hide");
+            }
+        });
+
+        $("#hra-start-date").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()}).on('change', function (selected) {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#hra-end-date').fdatepicker('setDate', minDate);
+            }
+            $('#hra-end-date').fdatepicker('setStartDate', minDate);
+            $("#hra-end-date").trigger("change");
+        });
+        $("#hra-end-date").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        });
+
+        $("#contact-list").on("change", function () {
+            currentPage = 0;
+            ContactType = parseInt($("#contact-list").val());
+            SearchUser();
+        });
+
+        $("#clear-all-mobile").on("click", function () {
+            $("#clear-all").tigger('click');
+        });
+
+        $("#clear-all").on("click", function () {
+            startIndex = 1;
+            totalRecords = 0;
+            currentPage = 0;
+            totalPages = 0;
+            pageSize = 10;
+            page = 0;
+            HraEndDate = null;
+            HraStartDate = null;
+            SearchText = "";
+            $("#Coach").val("");
+            $("#org-list").val("null");
+            $("#prg-list").val("null");
+            $("#hra-date").val("null");
+            $("#contact-list").val("null");
+            OrganizationId = 0;
+            CoachId = 0;
+            ProgramType = 0;
+            ContactType = 0;
+            $("#search-org").val("");
+            SearchUser();
+        });
+
+        $("#search-org").on("keyup", function (event) {
+            if (event.keyCode === 13) {
+                currentPage = 0;
+                SearchText = $("#search-org").val();
+                SearchUser();
+            }
+        });
+
+        //Closing custom date select div
+		$(document).on('click', function () {
+			$('.hra-filter-list-item .date-range').addClass("hide");
+		});
+		$('.hra-filter-list-item, .graph-date-range, .datepicker, .graph-selector').on('click', function (e) {
+			e.stopPropagation();
+		});
+
+    });
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        SearchUser();
+    }
+
+    function SearchUser()
+    {
+        $("#loader-wrapper").fadeIn();
+        var request = {};
+        var search = {
+            'SearchText': SearchText,
+            'OrganizationId': OrganizationId,
+            'HraStartDate': HraStartDate != null ? HraStartDate.toISOString() : null,
+            'HraEndDate': HraEndDate != null ? HraEndDate.toISOString() : null,
+            'CoachId' : CoachId,
+            'ProgramType': ProgramType,
+            'ContactRequirement': ContactType,
+            'Page': currentPage,
+            'PageSize': pageSize
+        };
+        request = (search);
+        var strData = JSON.stringify(request);
+        $.ajax({
+            url: "@Url.Action("AdvancedSearch", "Participant")",
+            data: strData,
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#participant-result').html(data);
+            },
+            complete: function () {
+                totalRecords = parseInt($("#TotalUser").val());
+                totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                AddPager();
+                if (totalRecords > 0) {
+                    $('#pagination-centered').removeClass("hide");
+                }
+                else {
+                    $('#pagination-centered').addClass("hide");
+                }
+                if ($("#userTotal").html() == ' ')
+                    $("#userTotal").html($("#TotalUser").val() + " participants");
+
+                $('.sorting-list p').on('click', function () {
+                    var sortListName = $(this).parents('.cell').attr('id');
+                    $(this).parents('ul.custom-table').addClass(sortListName);
+                    if ($(this).data("sort-value") == "none") {
+                        $(this).parents('ul.custom-table').removeClass(sortListName);
+                    }
+                });
+
+                $("[data-dropdown]").foundation();
+
+                $(".list-trigger i.acc-trigger").on("click", function () {
+                    $(this).parents("li").toggleClass("is-active");
+                });
+                $("#loader-wrapper").fadeOut();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+            $("#loader-wrapper").fadeOut();
+        });
+    }
+
+    function ViewParticipant(Id) {
+        var link = '@Url.Action("ParticipantProfile", "Participant", new { Id = "PId" })';
+        window.location.href = link.replace("PId", Id)
+    }
+
+    function Reschedule(Id) {
+        var link = '@Url.Action("ParticipantProfile", "Participant", new { Id = "PId" , openAppointment = true})';
+        window.location.href = link.replace("PId", Id)
+    }
+
+</script>

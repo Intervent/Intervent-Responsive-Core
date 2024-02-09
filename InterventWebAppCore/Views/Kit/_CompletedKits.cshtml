@@ -1,0 +1,31 @@
+﻿
+@using InterventWebApp
+@model InterventWebApp.CompletedKitsModel
+<section class="msg-board-container">
+    <h2>@Translate.Message("L3939")</h2>
+    <div class="msg-list-container">
+        <div class="msg-list-inner">
+            @if (Model.KitsinUserPrograms.Count > 0)
+            {
+                <ul>
+                    @foreach (var kit in Model.KitsinUserPrograms)
+                    {
+                        <li>
+                            <div class="msg-contact-detail">@kit.Kit.Name</div>
+                        </li>
+                    }
+                </ul>
+            }
+            else {
+                <div class="empty-kits">
+                    <div class="no-kits-msg text-center">
+                        <br>
+                        <img src="~/Images/program/empty-completed-kits-img.png" alt="" />
+                        <p>@Translate.Message("L3949")</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+

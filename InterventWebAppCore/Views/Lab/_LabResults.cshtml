@@ -1,0 +1,1079 @@
+﻿@using InterventWebApp;
+@using Intervent.Web.DataLayer;
+@model InterventWebApp.LabResults
+
+<div class="grid-x">
+    <div class="main recommendations lab-results cell">
+        <div class="callout">
+            <div class="grid-x labs-heading align-bottom">
+                <div class="cell medium-9">
+                    <h4>@Translate.Message("L2957")</h4>
+                    @if (Model != null && Model.LabsForCurrentPortal == 0 && Model.LabIntegration == true)
+                    {
+                        if (Model.Labs.Count() == 0)
+                        {
+                            <p>@Model.UserName, @Translate.Message("L2895")</p>
+                        }
+                        else if (Model.hasRecentLabs)
+                        {
+                            <p> @Model.UserName, @Translate.Message("L2963") </p>
+                        }
+                    }
+                    else if (Model != null && Model.LabsForCurrentPortal > 0 && Model.incompleteLab == null)
+                    {
+                        <p>@Model.UserName, @Html.Raw(Translate.Message("L2896"))</p>
+                    }
+                </div>
+                <div class="cell medium-3 medium-text-right">
+                    <p><a href="#" data-open="why-to-test">@Translate.Message("L2869")</a></p>
+                </div>
+            </div>
+            <!-- Labs Heading section ends -->
+            <!-- Post report uploaded message ends -->
+            @{bool hasLabRecord = false; }
+            @if (Model.LabIntegration == true || Model.incompleteLab != null || (Model.OrganizationId == 90 && (CommonUtility.HasAdminRole(User.RoleCode()) && !Model.IsParticipantView)))
+            {
+                if (Model.incompleteLab != null && Model.incompleteLab.LabSelection.HasValue && Model.incompleteLab.LabSelection.Value == 1 && Model.HasActivePortal)
+                {
+                    hasLabRecord = true;
+                    if (Model.incompleteLab.LabOrder == null)
+                    {
+                        <div class="grid-x order-test-local text-center">
+                            <div class="cell large-8 medium-12 large-offset-2">
+                                <div class="card">
+                                    <div class="order-test-heading"><h4>@Translate.Message("L2870")</h4></div>
+                                    <div class="card-section">
+                                        <div class="order-notification">
+                                            <h4>@Translate.Message("L3854")</h4>
+                                            @if (!CommonUtility.IsIntegratedWithLMC(Model.IntegrationWith))
+                                            {
+                                                <p>@Translate.Message("L2872")</p>
+                                                <p><a href="#" onclick="ResendEmail(@Model.incompleteLab.Id, null);">@Translate.Message("L2873")</a></p>
+                                            }
+                                            <hr />
+											<label for="imageUpload" class="button">
+												@Translate.Message("L2874")
+												<input type="file" id="imageUpload" class="show-for-sr" name="files" onchange="upload_files();">
+																					</label>
+                                            @if (!String.IsNullOrEmpty(Model.ValidLabs))
+                                            {
+                                                <p>@String.Format(Translate.Message("L2962"), Model.ValidLabs)</p>
+                                            }
+                                            <p>@Translate.Message("L2221") @Translate.Message("L3142")</p>
+                                        </div>
+                                        @if (CommonUtility.HasAdminRole(User.RoleCode()) && !Model.IsParticipantView && Model.HasActivePortal)
+                                        {
+                                            <p><strong>@Translate.Message("L1605")</strong></p>
+                                            <div>
+                                                <button class="button secondary" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("AddLabValues", "Lab", new { id = Model.incompleteLab.Id }))">@Translate.Message("L1935")</button>
+                                            </div>
+                                        }
+                                        <div class="order-suggestion">
+                                            <p><strong>@string.Format(Translate.Message("L2876"), CommonUtility.IsIntegratedWithLMC(Model.IntegrationWith) ? "833-874-8635" : "912-349-2254")</strong>.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                @if ((Model.SwitchCount == 0 || (CommonUtility.HasAdminRole(User.RoleCode()) && !Model.IsParticipantView)) && !Model.incompleteLab.AdditionalLab)
+                                {
+                                    <div class="visit-doctor">
+                                        <p>@Translate.Message("L2877")</p>
+                                        <button class="button test-order-button" id="lab-corp-btn" data-order-show="order-test-online">@Translate.Message("L2878")</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="grid-x test-result-upload text-center">
+                            <div class="cell large-8 medium-12 large-offset-2">
+                                <div class="card">
+                                    <div class="order-test-heading"><h4>@Translate.Message("L2870")</h4></div>
+                                    <div class="card-section">
+                                        <div class="order-notification">
+                                            <h4>@Translate.Message("L2881")</h4>
+
+                                            <div class="show-uploaded-report">
+                                                <div class="cancel-icon" data-open="remove-attachment"><img src="~/Images/labs/cancel.svg" /></div>
+                                                <span class="report-name">@Model.incompleteLab.LabOrder.Substring(0, 10)</span> <!-- Name of pdf file uploaded will come in this span -->
+                                                <p><a href="~/Lab/@Model.incompleteLab.LabOrder" target="_blank">@Translate.Message("L2125")</a></p>
+                                            </div>
+
+                                            <div class="approval-waiting">@Translate.Message("L2882")</div>
+
+                                            <div>
+                                                @if (CommonUtility.HasAdminRole(User.RoleCode()) && !Model.IsParticipantView && Model.HasActivePortal)
+                                                {
+                                                    <button class="button secondary" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("AddLabValues", "Lab", new { id = Model.incompleteLab.Id }))">@Translate.Message("L1935")</button>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="order-suggestion">
+                                            <p><strong>@string.Format(Translate.Message("L2876"), CommonUtility.IsIntegratedWithLMC(Model.IntegrationWith) ? "833-874-8635" : "912-349-2254")</strong>.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else if (Model.incompleteLab != null && Model.incompleteLab.LabSelection.HasValue && Model.incompleteLab.LabSelection.Value == 2)
+                {
+                    hasLabRecord = true;
+                    <div class="grid-x order-test-online text-center">
+                        <div class="cell large-8 medium-12 large-offset-2">
+                            @if (CommonUtility.IsIntegratedWithLMC(Model.IntegrationWith))
+                            {
+                                if (Model.incompleteLab.DiagnosticLabId == null)
+                                {
+                                    <div id="laboratoryOption" class="card">
+                                        <div class="card-image text-center">
+                                            <img src="~/Images/labs/lmc-lab-icon.svg" />
+                                        </div>
+                                        <div class="card-section">
+                                            <div class="order-notification">
+                                                <h4>@Translate.Message("L3854")</h4>
+                                            </div>
+                                        </div>
+
+                                        <div class="order-suggestion">
+                                            <p>@Translate.Message("L3855")</p>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div id="laboratoryOption" class="card">
+                                        <div class="card-image text-center">
+                                            <img src="~/Images/labs/lmc-lab-icon.svg" />
+                                        </div>
+                                        <div class="card-section">
+                                            <div class="order-notification">
+                                                <h4>@Translate.Message("L3856")</h4>
+                                            </div>
+                                        </div>
+                                        <div class="order-suggestion">
+                                            <p>@Translate.Message("L3857")</p>
+                                        </div>
+                                    </div>
+                                    if (CommonUtility.HasAdminRole(User.RoleCode()) && !Model.IsParticipantView && Model.HasActivePortal)
+                                    {
+                                        <button class="button secondary" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("AddLabValues", "Lab", new { id = Model.incompleteLab.Id }))">@Translate.Message("L1935")</button>
+                                        <p>@Translate.Message("L3895")</p>
+                                    }
+                                }
+                                if (CommonUtility.HasAdminRole(User.RoleCode()) && !Model.IsParticipantView)
+                                {
+                                    <div id="lmclabselection" class="lmclabselection">
+                                        Lab Selection:
+                                        <select id="LMCLabs">
+                                            <option id="0">Select</option>
+                                            @foreach (var lab in Model.LabList)
+                                            {
+                                                <option id="@lab.Value">@lab.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="card">
+                                    <div class="card-image text-center">
+                                        <img src="~/Images/labs/lab-corp-icon.png" />
+                                    </div>
+                                    <div class="card-section">
+                                        <div class="order-notification">
+                                            <h4>@Translate.Message("L2884")</h4>
+                                            <p>@Translate.Message("L2886"):</p>
+                                            <div class="booking-id">@Model.incompleteLab.OrderNo</div>
+                                        </div>
+                                        @Html.Raw(Translate.Message("L2933"))
+
+                                        <p><a href="#" onclick="ResendEmail(@Model.incompleteLab.Id, '@Model.incompleteLab.OrderNo')">@Translate.Message("L2873")</a></p>
+
+                                        <div class="order-suggestion">
+                                            <p>@Translate.Message("L2887")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                if (CommonUtility.HasAdminRole(User.RoleCode()) && !Model.IsParticipantView && Model.HasActivePortal)
+                                {
+                                    <button class="button secondary" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("AddLabValues", "Lab", new { id = Model.incompleteLab.Id }))">@Translate.Message("L1935")</button>
+                                    <p>@Translate.Message("L3895")</p>
+                                }
+                            }
+                            @if (Model.SwitchCount == 0 || (CommonUtility.HasAdminRole(User.RoleCode()) && !Model.IsParticipantView))
+                            {
+                                <div class="visit-doctor">
+                                    <p>@Translate.Message("L2888")</p>
+                                    <button class="button test-order-button" id="doctors-btn" data-order-show="order-test-local">@Translate.Message("L2889")</button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (Model.LabsForCurrentPortal == 0 || Model.OrganizationId == 90)
+                {
+                    hasLabRecord = true;
+                    <div class="grid-x lab-no-report show">
+                        <div class="text-center cell"><h5>@Translate.Message("L2890")</h5></div>
+                        <div class="cell">
+                            <div class="grid-x grid-margin-x grid-margin-y large-up-2">
+                                <div class="cell">
+                                    <div class="card">
+                                        <div class="card-image text-center">
+                                            @if (CommonUtility.IsIntegratedWithLMC(Model.IntegrationWith))
+                                            {
+                                                <img src="~/Images/labs/lmc-lab-icon.svg" />
+                                            }
+                                            else
+                                            {
+                                                <img src="~/Images/labs/lab-corp-icon.png" />
+                                            }
+                                        </div>
+                                        <div class="card-section">
+                                            <h4 class="text-center">@Translate.Message("L2891")</h4>
+                                            @if (CommonUtility.IsIntegratedWithLMC(Model.IntegrationWith))
+                                            {
+                                                <p>@Translate.Message("L3858")</p>
+                                            }
+                                            else
+                                            {
+                                                <p>@Translate.Message("L2892").</p>
+                                            }
+                                        @if (Model.OrganizationId == Model.southUniversityOrgId)
+                                        {
+                                            <p>
+                                               @Html.Raw(Translate.Message("L4414"))
+                                            </p>
+                                        }
+                                        <div class="button-set text-center">
+                                            <button class="button test-order-button" id="lab-corp-btn" data-order-show="order-test-online">@Translate.Message("L2878")</button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="cell">
+                                    <div class="card">
+                                        <div class="card-image text-center">
+                                            <img src="~/Images/labs/doctor-office-icon.svg" />
+                                        </div>
+                                        <div class="card-section">
+                                            <h4 class="text-center">@Translate.Message("L2894")</h4>
+                                            @if (CommonUtility.IsIntegratedWithLMC(Model.IntegrationWith))
+                                            {
+                                                <p>@Translate.Message("L3859")</p>
+                                                <br /> <br />
+                                                <p>@Translate.Message("L3860")</p>
+                                            }
+                                            else
+                                            {
+                                                <p>
+                                                    @Translate.Message("L2893")
+                                                    @if (!String.IsNullOrEmpty(Model.ValidLabs))
+                                                    {
+                                                        @String.Format(Translate.Message("L2962"), Model.ValidLabs)
+                                                    }
+                                                    <br /> <br />
+                                                    @Translate.Message("L3741")
+                                                </p>
+                                            }
+                                            <div class="button-set text-center">
+                                                <button class="button test-order-button" id="doctors-btn" data-order-show="order-test-local">@Translate.Message("L2889")</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            @if (!hasLabRecord && Model.HasActivePortal)
+            {
+                var IsAdmin = CommonUtility.HasAdminRole(User.RoleCode());
+                var IsParticipantView = Model.IsParticipantView;
+                <div class="grid-x lab-no-report show">
+                    @if (IsAdmin && !IsParticipantView)
+                    {
+                        <div class="text-center cell"><h6>@Translate.Message("L3894")</h6></div>
+                    }
+                    else
+                    {
+                        <div class="text-center cell"><h6>@Translate.Message("L3846")</h6></div>
+                    }
+                    <div class="cell text-center cell">
+                        <div class="grid-x grid-margin-x grid-margin-y large-up-12">
+                            <div class="cell">
+                                <div class="card">
+                                    <div class="card-image text-center">
+                                        <div class="button-set text-center">
+						    				<label for="imageUpload" class="button">
+						    					@Translate.Message("L2874")
+						    					<input type="file" id="imageUpload" class="show-for-sr" name="files" onchange="upload_files();">
+						    														</label>
+                                        </div>
+                            
+                                    </div>
+                                </div>
+                            </div>
+                            @if (IsAdmin && !IsParticipantView && Model.HasActivePortal)
+                            {
+                                <p class="cell text-center"><strong>@Translate.Message("L1605")</strong></p>
+                                <div class="cell text-center">
+                                    <button class="button add-labs" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("AddLabValues", "Lab"))">@Translate.Message("L1935")</button>
+                                </div>
+                            }
+                            
+                        </div>
+                    </div>
+                </div>
+            }
+            <!-- Labs No Report section ends-->
+
+            <div class="grid-x lab-with-report">
+                @if (Model.Labs.Count() > 0)
+                {
+                    <div class="cell report-date">
+                        <span>@Translate.Message("L4476")</span>
+                        <select id="labDates" class="lab-dates" onchange="HideShowLabs();">
+                            @foreach (var lab in Model.Labs.OrderByDescending(x => x.BloodTestDate))
+                            {
+                                String additionalLab = lab.AdditionalLab == true ? "&ordf;" : "";
+                                <option id="@lab.BloodTestDate.Value.ToString(Model.DateFormat.ToString())"><span>@(lab.BloodTestDate.Value.ToString(Model.DateFormat) + " (" + lab.LabSource + ")" )</span>  @Html.Raw(@additionalLab) </option>
+                            }
+                        </select>
+                        @if ((CommonUtility.HasAdminRole(User.RoleCode()) && !Model.IsParticipantView) && Model.Labs != null && Model.LabsForCurrentPortal >= 1 && Model.ParticipantPortalId.HasValue && Model.ParticipantPortalId.Value == Model.Labs.FirstOrDefault().PortalId)
+                        {
+                            <span id="hidebydate_@Model.Labs.FirstOrDefault().BloodTestDate.Value.ToString(Model.DateFormat.ToString())">&nbsp;&nbsp;&nbsp;<i class="fa fa fa-pencil-square-o" data-open="survey-modal" data-modal-path="@Html.Raw(Url.Action("AddLabValues", "Lab", new { id = Model.Labs.FirstOrDefault().Id, update = true }))"></i></span>
+                        }
+                    </div>
+                }
+                @foreach (var lab in Model.Labs)
+                {
+                    string redclass = "";
+                    bool outofrange = false;
+                    string asterisk = "";
+                    <div class="cell lab-report" id="@lab.BloodTestDate.Value.ToString(Model.DateFormat)">
+                        <div class="grid-x grid-padding-x">
+                            <div class="cell medium-7 small-12 report-type">
+                                <p>@Translate.Message("L2219") : <strong id="labDate">@(lab.DidYouFast == 1 ? @Translate.Message("L2550") : @Translate.Message("L2551"))</strong>@(Model.Gender == 2 ? " (" + Translate.Message("L2220") + ")" : "")</p>
+                            </div>
+                            <div class="cell medium-5 small-12 medium-text-right">
+                                @if (lab.CoachAlert != null && (CommonUtility.HasAdminRole(User.RoleCode()) && !Model.IsParticipantView))
+                                {
+                                    if (lab.ReviewedOn.HasValue)
+                                    {
+                                        <span> Action Taken by @lab.User1.FirstName @lab.User1.LastName</span>
+                                    }
+                                    else
+                                    {
+                                        <button id="action-@lab.Id" onclick="TakeAction(@lab.Id);" class="button hollow take-action">@Translate.Message("L2548")</button>
+                                    }
+                                }
+                            </div>
+                            <div class="cell report-details">
+                                <div class="medium-up-2 grid-x grid-margin-x grid-margin-y">
+                                    <div class="cell">
+                                        <div class="report-table-bg">
+                                            <h4 class="report-name">@Translate.Message("L2954")</h4>
+                                            <table class="text-center">
+                                                <tr>
+                                                    <th></th>
+                                                    <th>@Translate.Message("L2552")</th>
+                                                    <th>@Translate.Message("L2553")</th>
+                                                </tr>
+                                                @{
+                                                    redclass = "red";
+                                                    asterisk = "";
+                                                    if (lab.TotalChol < Model.LabReferences[LabReference.TotalCholesterol].NormalMax)
+                                                    {
+                                                        redclass = "";
+                                                    }
+                                                    if (lab.TotalChol < Model.Measurements[BioLookup.Cholesterol].Min || lab.TotalChol > Model.Measurements[BioLookup.Cholesterol].Max)
+                                                    {
+                                                        asterisk = "*";
+                                                        outofrange = true;
+                                                    }
+                                                }
+                                                <tr>
+                                                    <td>@Translate.Message("L161")<span> (@Model.Measurements[BioLookup.Cholesterol].MeasurementUnit)</span></td>
+                                                    <td><span class="result-level @redclass" id="cholValue">@lab.TotalChol @asterisk</span></td>
+                                                    <td>&lt; @(Math.Round(Model.LabReferences[LabReference.TotalCholesterol].NormalMax.Value, 1))</td>
+                                                </tr>
+                                                @{
+                                                    redclass = "red";
+                                                    asterisk = "";
+                                                    if (lab.LDL < Model.LabReferences[LabReference.LDL].NormalMax)
+                                                    {
+                                                        redclass = "";
+                                                    }
+                                                    if (lab.LDL < Model.Measurements[BioLookup.LDL].Min || lab.LDL > Model.Measurements[BioLookup.LDL].Max)
+                                                    {
+                                                        asterisk = "*";
+                                                        outofrange = true;
+                                                    }
+                                                }
+                                                <tr>
+                                                    <td>@Translate.Message("L163") <span>(@Model.Measurements[BioLookup.LDL].MeasurementUnit)</span></td>
+                                                    <td><span class="result-level @redclass" id="ldlValue">@lab.LDL @asterisk</span></td>
+                                                    <td>&lt; @(Math.Round(Model.LabReferences[LabReference.LDL].NormalMax.Value, 1))</td>
+                                                </tr>
+                                                @{
+                                                    asterisk = "";
+                                                    if (lab.HDL < Model.Measurements[BioLookup.HDL].Min || lab.HDL > Model.Measurements[BioLookup.HDL].Max)
+                                                    {
+                                                        asterisk = "*";
+                                                        outofrange = true;
+                                                    }
+                                                }
+                                                @if (Model.Gender == 1)
+                                                {
+                                                    redclass = "red";
+                                                    if (lab.HDL >= Model.LabReferences[LabReference.HDL].NormalforMale)
+                                                    {
+                                                        redclass = "";
+                                                    }
+                                                    <tr>
+                                                        <td>@Translate.Message("L164") <span>(@Model.Measurements[BioLookup.HDL].MeasurementUnit)</span></td>
+                                                        <td><span class="result-level @redclass" id="hdlValue">@lab.HDL @asterisk</span></td>
+                                                        <td>&gt;= @Math.Round(Model.LabReferences[LabReference.HDL].NormalforMale.Value, 1)</td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    redclass = "red";
+                                                    if (lab.HDL >= Model.LabReferences[LabReference.HDL].NormalforFemale)
+                                                    {
+                                                        redclass = "";
+                                                    }
+                                                    <tr>
+                                                        <td>@Translate.Message("L164") <span>(@Model.Measurements[BioLookup.HDL].MeasurementUnit)</span></td>
+                                                        <td><span class="result-level @redclass" id="hdlVaule">@lab.HDL @asterisk</span></td>
+                                                        <td>&gt;= @Math.Round(Model.LabReferences[LabReference.HDL].NormalforFemale.Value, 1)</td>
+                                                    </tr>
+                                                }
+                                                @{
+                                                    redclass = "red";
+                                                    asterisk = "";
+                                                    if (lab.Trig < Model.LabReferences[LabReference.Triglycerides].NormalMax)
+                                                    {
+                                                        redclass = "";
+                                                    }
+                                                    if (lab.Trig < Model.Measurements[BioLookup.Triglycerides].Min || lab.Trig > Model.Measurements[BioLookup.Triglycerides].Max)
+                                                    {
+                                                        asterisk = "*";
+                                                        outofrange = true;
+                                                    }
+                                                }
+                                                <tr>
+                                                    <td>@Translate.Message("L162") <span>(@Model.Measurements[BioLookup.Triglycerides].MeasurementUnit)</span></td>
+                                                    <td><span class="result-level @redclass" id="trigValue">@lab.Trig @asterisk</span></td>
+                                                    <td>&lt; @Math.Round(Model.LabReferences[LabReference.Triglycerides].NormalMax.Value, 1)</td>
+                                                </tr>
+                                                @{
+                                                    asterisk = "";
+                                                    if (lab.Glucose < Model.Measurements[BioLookup.Glucose].Min || lab.Glucose > Model.Measurements[BioLookup.Glucose].Max)
+                                                    {
+                                                        asterisk = "*";
+                                                        outofrange = true;
+                                                    }
+                                                }
+                                                @if (lab.DidYouFast == 1)
+                                                {
+                                                    redclass = "red";
+                                                    if (Model.LabReferences[LabReference.GlucoseFasting].NormalMin <= lab.Glucose && lab.Glucose <= Model.LabReferences[LabReference.GlucoseFasting].NormalMax)
+                                                    {
+                                                        redclass = "";
+                                                    }
+                                                    <tr>
+                                                        <td>@Translate.Message("L165") <span>(@Model.Measurements[BioLookup.Glucose].MeasurementUnit)</span></td>
+                                                        <td><span class="result-level @redclass" id="glucValue">@lab.Glucose</span></td>
+                                                        <td id="glucoserange">@Math.Round(Model.LabReferences[LabReference.GlucoseFasting].NormalMin.Value, 1) - @Math.Round(Model.LabReferences[LabReference.GlucoseFasting].NormalMax.Value, 1)</td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    redclass = "red";
+                                                    if (Model.LabReferences[LabReference.GlucoseNonFasting].NormalMin <= lab.Glucose && lab.Glucose <= Model.LabReferences[LabReference.GlucoseNonFasting].NormalMax)
+                                                    {
+                                                        redclass = "";
+                                                    }
+                                                    <tr>
+                                                        <td>@Translate.Message("L165") <span>(@Model.Measurements[BioLookup.Glucose].MeasurementUnit)</span></td>
+                                                        <td><span class="result-level @redclass" id="glucValue">@lab.Glucose @asterisk</span></td>
+                                                        <td id="glucoserange">@Math.Round(Model.LabReferences[LabReference.GlucoseNonFasting].NormalMin.Value, 1) - @Math.Round(Model.LabReferences[LabReference.GlucoseNonFasting].NormalMax.Value, 1)</td>
+                                                    </tr>
+                                                }
+                                                @{
+                                                    redclass = "red";
+                                                    asterisk = "";
+                                                    if (lab.A1C <= Model.LabReferences[LabReference.HbA1c].NormalMax)
+                                                    {
+                                                        redclass = "";
+                                                    }
+                                                    if (lab.A1C < Model.Measurements[BioLookup.A1c].Min || lab.A1C >= Model.Measurements[BioLookup.A1c].Max)
+                                                    {
+                                                        asterisk = "*";
+                                                        outofrange = true;
+                                                    }
+                                                }
+                                                <tr>
+                                                    <td>@Translate.Message("L1515") (%)</td>
+                                                    <td><span class="result-level @redclass" id="a1cValue">@lab.A1C @asterisk</span></td>
+                                                    <td>&lt; @(Model.LabReferences[LabReference.HbA1c].NormalMax + .1F)</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="cell">
+                                        <div class="grid-x grid-margin-y">
+                                            <div class="cell">
+                                                <div class="report-table-bg">
+                                                    <h4 class="report-name">@Translate.Message("L189")</h4>
+                                                    <table class="text-center">
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>@Translate.Message("L2552")</th>
+                                                            <th>@Translate.Message("L2553")</th>
+                                                        </tr>
+                                                        @{
+                                                            redclass = "red";
+                                                            asterisk = "";
+                                                            if (lab.SBP <= Model.LabReferences[LabReference.SystolicBloodPressure].NormalMax)
+                                                            {
+                                                                redclass = "";
+                                                            }
+                                                            if (lab.SBP < Model.Measurements[BioLookup.SBP].Min || lab.SBP > Model.Measurements[BioLookup.SBP].Max)
+                                                            {
+                                                                asterisk = "*";
+                                                                outofrange = true;
+                                                            }
+                                                        }
+                                                        <tr>
+                                                            <td>@Translate.Message("L674").Substring(0, @Translate.Message("L674").IndexOf('('))<span>(mmHg)</span></td>
+                                                            <td><span class="result-level @redclass" id="sbpValue">@lab.SBP @asterisk</span></td>
+                                                            <td>&lt;@(Model.LabReferences[LabReference.SystolicBloodPressure].NormalMax + 1)</td>
+                                                        </tr>
+                                                        @{
+                                                            redclass = "red";
+                                                            asterisk = "";
+                                                            if (lab.DBP <= Model.LabReferences[LabReference.DiastolicBloodPressure].NormalMax)
+                                                            {
+                                                                redclass = "";
+                                                            }
+                                                            if (lab.DBP < Model.Measurements[BioLookup.DBP].Min || lab.DBP > Model.Measurements[BioLookup.DBP].Max)
+                                                            {
+                                                                asterisk = "*";
+                                                                outofrange = true;
+                                                            }
+                                                        }
+                                                        <tr>
+                                                            <td>@Translate.Message("L675").Substring(0, @Translate.Message("L675").IndexOf('('))<span>(mmHg)</span></td>
+                                                            <td><span class="result-level @redclass" id="dbpValue">@lab.DBP</span></td>
+                                                            <td>&lt;@(Model.LabReferences[LabReference.DiastolicBloodPressure].NormalMax + 1)</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="cell">
+                                                <div class="report-table-bg">
+                                                    <h4 class="report-name">@Translate.Message("L167")</h4>
+                                                    <table class="text-center">
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>@Translate.Message("L2552")</th>
+                                                            <th>@Translate.Message("L2553")</th>
+                                                        </tr>
+                                                        @if (lab.HeightCM.HasValue && Model.Unit.Value == (int)Unit.Metric)
+                                                        {
+                                                            asterisk = "";
+                                                            redclass = "";
+                                                            if (lab.HeightCM < Model.Measurements[BioLookup.Height].Min || lab.HeightCM > Model.Measurements[BioLookup.Height].Max)
+                                                            {
+                                                                asterisk = "*";
+                                                                outofrange = true;
+                                                                redclass = "red";
+                                                            }
+                                                            <tr>
+                                                                <td>@Translate.Message("L2556") <span>(@Translate.Message(Model.Measurements[BioLookup.Height].MeasurementUnit))</span></td>
+                                                                <td><span class="result-level @redclass" id="heightValue">@lab.HeightCM</span></td>
+                                                                <td>-</td>
+                                                            </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            asterisk = "";
+                                                            redclass = "";
+                                                            if (lab.HeightFt < Model.Measurements[BioLookup.Height].Min || lab.HeightFt > Model.Measurements[BioLookup.Height].Max)
+                                                            {
+                                                                asterisk = "*";
+                                                                outofrange = true;
+                                                                redclass = "red";
+                                                            }
+                                                            <tr>
+                                                                <td>@Translate.Message("L2556") <span>(@Translate.Message(Model.Measurements[BioLookup.Height].MeasurementUnit))</span></td>
+                                                                <td><span class="result-level @redclass" id="heightValue">@lab.HeightFt’ @lab.HeightInch”</span></td>
+                                                                <td>-</td>
+                                                            </tr>
+                                                        }
+                                                        @{
+                                                            asterisk = "";
+                                                            if (lab.Waist < Model.Measurements[BioLookup.Waist].Min || lab.Waist > Model.Measurements[BioLookup.Waist].Max)
+                                                            {
+                                                                asterisk = "*";
+                                                                outofrange = true;
+                                                            }
+                                                        }
+                                                        @if (Model.Gender == 1)
+                                                        {
+                                                            redclass = "red";
+                                                            if (lab.Waist <= Model.LabReferences[LabReference.WaistCircumference].NormalforMale)
+                                                            {
+                                                                redclass = "";
+                                                            }
+                                                            <tr>
+                                                                <td>@Translate.Message("L170") <span>(@Translate.Message(@Model.Measurements[BioLookup.Waist].MeasurementUnit))</span></td>
+                                                                <td><span class="result-level @redclass" id="waistValue">@lab.Waist @asterisk</span></td>
+                                                                <td>&lt;= @Math.Round(Model.LabReferences[LabReference.WaistCircumference].NormalforMale.Value, 1)</td>
+                                                            </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            redclass = "red";
+                                                            if (lab.Waist <= Model.LabReferences[LabReference.WaistCircumference].NormalforFemale)
+                                                            {
+                                                                redclass = "";
+                                                            }
+                                                            <tr>
+                                                                <td>@Translate.Message("L170") <span>(@Translate.Message(@Model.Measurements[BioLookup.Waist].MeasurementUnit))</td>
+                                                                <td><span class="result-level @redclass" id="waistValue">@lab.Waist @asterisk</span></td>
+                                                                <td>&lt;= @Math.Round(Model.LabReferences[LabReference.WaistCircumference].NormalforFemale.Value, 1)</td>
+                                                            </tr>
+                                                        }
+                                                        @{
+                                                            redclass = "red";
+                                                            asterisk = "";
+                                                            if (lab.WeightMin <= lab.Weight && lab.Weight <= lab.WeightMax)
+                                                            {
+                                                                redclass = "";
+                                                            }
+                                                            if (lab.Weight < Model.Measurements[BioLookup.Weight].Min || lab.Weight > Model.Measurements[BioLookup.Weight].Max)
+                                                            {
+                                                                asterisk = "*";
+                                                                outofrange = true;
+                                                            }
+                                                        }
+                                                        <tr>
+                                                            <td>@Translate.Message("L275") <span>(@Translate.Message(@Model.Measurements[BioLookup.Weight].MeasurementUnit))</span></td>
+                                                            <td><span class="result-level @redclass" id="weightValue">@lab.Weight</span></td>
+                                                            <td>@lab.WeightMin - @lab.WeightMax <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2558") @Model.LabReferences[LabReference.Weight].NormalMin-@Model.LabReferences[LabReference.Weight].NormalMax"><i class="fa fa-question-circle"></i>&nbsp;</span></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cell report-bottom-summary">
+                                <div class="grid-x grid-margin-x align-top">
+                                    <div class="cell medium-order-2 medium-8">
+                                        @if (String.IsNullOrEmpty(lab.HL7) && !String.IsNullOrEmpty(lab.LabOrder))
+                                        {
+                                            <div class="report-download medium-text-right text-center">
+                                                <a href="~/Lab/@lab.LabOrder" target="_blank">@Translate.Message("L2125")</a>
+                                            </div>
+                                        }
+                                        else if (!String.IsNullOrEmpty(lab.HL7))
+                                        {
+                                            <div class="report-download medium-text-right text-center"><a href="@Url.Action("PullLabReport", "Lab" , new { id=lab.Id })" target="_blank">@Translate.Message("L2547")</a></div>
+
+                                        }
+                                    </div>
+
+                                    @if (lab.LetterofAction == Constants.NORMAL)
+                                    {
+                                        <div class="cell medium-order-1 medium-4">
+                                            <div class="level-indicator">@Translate.Message("L2958")</div>
+                                        </div>
+
+                                        <div class="cell medium-8 medium-order-3">
+                                            <div class="report-analysis">
+                                                <p id="reportText">@Translate.Message("L2521")</p>
+                                                @if (outofrange)
+                                                {
+                                                    <p>@Translate.Message("L2812")</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+
+                                    else if (lab.LetterofAction == Constants.OUTOFRANGE)
+                                    {
+                                        <div class="cell medium-order-1 medium-4">
+                                            <div class="level-indicator red"> @Translate.Message("L2959")</div>
+                                        </div>
+
+                                        <div class="cell medium-8 medium-order-3">
+                                            <div class="report-analysis">
+                                                <p id="reportText">@Translate.Message("L2522")</p>
+                                                @if (outofrange)
+                                                {
+                                                    <p>@Translate.Message("L2812")</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+
+                                    else if (lab.LetterofAction == Constants.ABNORMAL)
+                                    {
+                                        <div class="cell medium-order-1 medium-4">
+                                            <div class="level-indicator red"> @Translate.Message("L2960")</div>
+                                        </div>
+
+                                        <div class="cell medium-8 medium-order-3">
+                                            <div class="report-analysis">
+                                                <p id="reportText">@Translate.Message("L2523")</p>
+                                                @if (outofrange)
+                                                {
+                                                    <p>@Translate.Message("L2812")</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+
+                                    else if (lab.LetterofAction == Constants.CRITICAL)
+                                    {
+                                        <div class="cell medium-order-1 medium-4">
+                                            <div class="level-indicator red"> @Translate.Message("L2961")</div>
+                                        </div>
+
+                                        <div class="cell medium-8 medium-order-3">
+                                            <div class="report-analysis">
+                                                <p id="reportText">@Translate.Message("L2524")</p>
+                                                @if (outofrange)
+                                                {
+                                                    <p>@Translate.Message("L2812")</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                                            }
+            </div>
+            <!-- Labs With Report section ends -->
+        </div>
+    </div>
+</div>
+
+<div class="reveal large" id="why-to-test" data-reveal>
+    <div class="fasting-test-desc">
+        <h5>@Translate.Message("L2869")</h5>
+        @if (CommonUtility.IsIntegratedWithLMC(Model.IntegrationWith))
+        {
+            <p>@Translate.Message("L3464")</p>
+            <p>@Translate.Message("L3465")</p>
+            <p>@Translate.Message("L3861")</p>
+            <p>@Html.Raw(Translate.Message("L3862"))</p>
+            <p>@Translate.Message("L3863")</p>
+            <p>@Translate.Message("L3864")</p>
+            <p>
+                @Translate.Message("L3865")
+            </p>
+            <ul>
+                <li>@Translate.Message("L3866")</li>
+                <li>@Translate.Message("L3867")</li>
+                <li>@Translate.Message("L3868")</li>
+            </ul>
+            <p>@Translate.Message("L3869")</p>
+        }
+        else
+        {
+            <p>@Translate.Message("L2952")</p>
+            <p>@Translate.Message("L2953")</p>
+            <p>@Translate.Message("L3049")</p>
+        }
+    </div>
+
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div id="lab-order-error" class="reveal small" data-reveal data-options="close_on_background_click: true; close_on_esc: true">
+    <div class="row">
+        <div class="medium-12 columns">
+            <span id="labError">@Translate.Message("L2731")</span>
+        </div>
+    </div>
+    <a class="close-button" id="labErrorClose" data-close>&#215;</a>
+</div>
+
+<div id="survey-modal" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div class="alert-box success hide" id="resend-email-message" data-closable>
+    <div id="email-alert"></div>
+</div>
+
+
+@if (Model.incompleteLab != null)
+{
+    <div id="remove-attachment" class="reveal small" data-reveal data-options="close_on_background_click: false; close_on_esc: false">
+        @if (CommonUtility.HasAdminRole(User.RoleCode()) && !Model.IsParticipantView)
+        {
+            <div data-alert id="reasonpopup" class="callout hide">
+                Reason for rejection is required.
+            </div>
+            <div class="row">
+                <h2>Send rejection e-mail?</h2>
+            </div>
+            <div class="question">
+                <div class="qHeader">
+                    <div class="qNumber"></div>
+                    <div class="qText">
+                        Reason for rejection:
+                    </div>
+                </div>
+                <div class="qBody">
+                    @Html.DropDownList("rejectionReason", Model.LabRejectionReasons, "--" + Translate.Message("L421") + "--", new Dictionary<string, object> { { "id", "rejectionReason" } })
+                </div>
+            </div>
+            <div class="grid-x grid-margin-x button-set">
+                <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" onclick='removeAttachment(@Model.incompleteLab.Id, true)'>@Translate.Message("L2")</button></div>
+                <div class="cell medium-6 medium-order-2 medium-text-left"><button class="small secondary" type="reset" onclick='removeAttachment(@Model.incompleteLab.Id, false)'>@Translate.Message("L3")</button></div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <span>@Translate.Message("L2940")</span>
+            </div>
+            <div class="grid-x grid-margin-x button-set">
+                <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="button" onclick='removeAttachment(@Model.incompleteLab.Id)'>@Translate.Message("L2")</button></div>
+                <div class="cell medium-6 medium-order-2 medium-text-left"><button class="small secondary" type="reset" id="CloseRemoveAttachment">@Translate.Message("L967")</button></div>
+            </div>
+        }
+
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).foundation();
+    var filename = '';
+    var DiagnosticLab = '';
+    @if(Model.incompleteLab != null && Model.incompleteLab.LabOrder != null)
+    {
+        @: filename = '@Model.incompleteLab.LabOrder';
+    }
+    @if (Model.DiagnosticLabId != null)
+    {
+        @: DiagnosticLab = '@Model.LabList.ElementAt(@Model.DiagnosticLabId.Value - 1).Text';
+    }
+
+    $(document).ready(function () {
+        $("#doctors-btn").on("click", function () {
+            $("#doctors-btn").attr("disabled", true);
+            $("#lab-corp-btn").attr("disabled", true);
+            labselection(@Model.LabsForCurrentPortal, 1);
+        });
+        $("#lab-corp-btn").on("click", function () {
+            $("#lab-corp-btn").attr("disabled", true);
+            $("#doctors-btn").attr("disabled", true);
+            labselection(@Model.LabsForCurrentPortal, 2);
+        });
+        $("#CloseRemoveAttachment").on("click", function () {
+            $('#remove-attachment').foundation('close');
+        });
+
+        HideShowLabs();
+        $("[data-open]").on('click', function (e) {
+            showmodal($(this), e);
+        });
+        $("#LMCLabs").on('change', function () {
+            var selectedLab = $(this).children(":selected").attr("id");
+            if (selectedLab > 0)
+                labselection(@Model.LabsForCurrentPortal, 2, selectedLab);
+        });
+        if (DiagnosticLab.length > 0) {
+            $("#LMCLabs").val(DiagnosticLab);
+        }
+
+        });
+
+    function upload_files() {
+        $("#lab-corp-btn").attr("disabled", true);
+        var formData = new FormData();
+        var file = document.getElementById("imageUpload").files[0];
+        formData.append("FileUpload", file);
+        formData.append("id", @Model.incompleteLabId);
+        formData.append("action", 'lab');
+        var extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+
+        if (!(extension && /^(jpg|png|jpeg|gif|pdf)$/.test(extension.toLowerCase()))) {
+            alert("@Translate.Message("L2221")");
+            $("#lab-corp-btn").attr("disabled", false);
+            return;
+        }
+        if (parseFloat(file.size / 1024).toFixed(2) > 4096) {
+            alert("@Translate.Message("L3142")");
+            $("#lab-corp-btn").attr("disabled", false);
+            return;
+        }
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("UploadFile", "Common")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                filename = response.data;
+                GetLabs(response.AdminView);
+            },
+            error: function (error) {
+                alert("@Translate.Message("L2221")");
+                $("#lab-corp-btn").attr("disabled", false);
+            }
+        });
+    }
+
+    function OpenOrderConfFile(dummyConfNo) {
+        var confNo = ''
+        @if (Model.incompleteLab != null)
+        {
+            @: confNo = '@Model.incompleteLab.OrderNo'
+                                                        }
+        var link = '@Url.Action("PullLabOrderConfirmation", "Lab", new { id = "Id" })';
+        window.open(link.replace("Id", confNo), '_blank');
+    }
+
+    function labselection(count, selection, selectedLab) {
+        if (count > 0) {
+            var incompleteLabId = 0;
+            if ('@Model.incompleteLabId.HasValue' == 'True') {
+                incompleteLabId = @Model.incompleteLabId.Value;
+            }
+            if (incompleteLabId == 0)
+                AddLabSelection(selection);
+            else
+                updateLabChoice(selection, selectedLab);
+        }
+        else {
+            AddLabSelection(selection);
+        }
+    }
+
+    function updateLabChoice(selection, selectedLab) {
+        $.ajax({
+            url: "@Url.Action("UpdateLabSelection", "Lab")",
+            data: { id: @Model.incompleteLabId, selection: selection, labId: selectedLab },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (!data.LabOrder) {
+                    $('#lab-order-error').foundation('open');
+                }
+                else {
+                    GetLabs(data.AdminView);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function removeAttachment(id, sendEmail) {
+        var reason = $('#rejectionReason').val();
+        if((sendEmail && reason) || !sendEmail){
+            $('#reasonpopup').addClass('hide');
+            $.ajax({
+                url: "@Url.Action("RemovePicture", "Account")",
+                data: { id: id, picture: filename, source: "Lab", sendEmail: sendEmail, reason: reason},
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.AdminView == "True") {
+                        $('#remove-attachment').foundation('close');
+                    }
+                    GetLabs(data.AdminView);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+        else{
+            $('#reasonpopup').removeClass('hide');
+        }
+    }
+
+
+    function ResendEmail(id, orderno) {
+        $.ajax({
+            url: "@Url.Action("ResendLabRequisitionEmail", "Lab")",
+            data: { Id: id, labOrderNo: orderno },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#resend-email-message').removeClass('hide');
+                $('#email-alert').html("@Translate.Message("L2950")");
+                setTimeout(function () {
+                    $('#resend-email-message').addClass('hide');
+                }, 1000);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function HideShowLabs() {
+        if (document.getElementById('labDates') != null) {
+            var editControl = document.getElementById('labDates').value.split(" ");
+            var element = document.getElementsByClassName("lab-report");
+            $('[id^="hidebydate_"]').addClass("hide");
+            for (var e = 0; e < element.length; e++) {
+                if (!document.getElementById('labDates').value.includes(element[e].id)) {
+                    element[e].style.display = 'none';
+                }
+                else {
+                    element[e].style.display = 'block';
+                }
+                $('[id^="hidebydate_' + editControl[0] + '"]').removeClass("hide");
+            }
+        }
+    }
+
+    $("#labErrorClose").on('click', function () {
+        GetLabs("@TempData.Peek("AdminView")");
+    });
+
+    function GetLabs(AdminView) {
+        if (AdminView == "True") {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("AdminView", "Lab")',
+                success: function (data) {
+                    $("#profile-content").html("");
+                    $("#profile-content").html(data);
+                    setTimeout(function () {
+                        $(document).foundation();
+                    }, 500);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+        else {
+            window.location.reload();
+        }
+    }
+</script>

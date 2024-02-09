@@ -1,0 +1,142 @@
+﻿@using InterventWebApp
+@model InterventWebApp.LoginModel
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass chi-memorial">
+    @Html.Partial("Emirates/_EmiratesHeader", new ViewDataDictionary(ViewData) { { "headerStyle", "transparent" } })
+    <div class="grid-container">
+        <div class="intro-body grid-x grid-margin-x">
+            <div class="intro-text small-12 cell">
+                <h2>@Translate.Message("L2025")</h2>
+                <div class="cell">
+                    <div class="grid-x grid-margin-x">
+                        <div class="medium-6 show-for-medium medium-offset-3 cell">
+                            <div class="login-form intro-box">
+                                <form id="inline-login-form" data-abide novalidate>
+                                    <div data-alert id="inline-login-error" class="callout hide">
+                                        <a href="#" class="close">&times;</a>
+                                    </div>
+                                    <input type="hidden" id="organizationEmail" name="OrganizationEmail" value="@TempData.Peek("OrgContactEmail").ToString()" />
+                                    @*<div id="placeholder-div"></div>*@
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="small-12 cell">
+                                            @Html.TextBoxFor(m => m.UserName, new Dictionary<string, object> { { "placeholder", @Translate.Message("L986") }, { "required", "required" }, { "id", "loginUserName" } })
+                                            <small class="form-error">@Translate.Message("L463")</small>
+                                        </div>
+                                        <div class="small-12 cell">
+                                            @Html.PasswordFor(m => m.Password, new Dictionary<string, object> { { "placeholder", @Translate.Message("L466") }, { "required", "required" } })
+                                            <small class="form-error">@Translate.Message("L464")</small>
+                                        </div>
+
+                                        <input class="DeviceId" type="hidden" id="DeviceId" name="DeviceId" value="" />
+
+                                        <div class="small-12 cell">
+                                            <button type="submit" class="expanded button pink">
+                                                <div class="loading-spinner hide" show-if-submitting></div>
+                                                @Translate.Message("L426")
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <div id="device-verification-inline-login-form"></div>
+
+                                <div class="grid-x grid-margin-x">
+                                    <div class="small-12 cell forgot-password">
+                                        <a href="#" data-open="forgot-password-modal" return false;">
+                                            @Translate.Message("L465")?
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="small-12 cell show-for-small-only intro-buttons">
+                    <button class="intro-button pink expand" data-open="login-modal" return false;">
+                        @Translate.Message("L426")
+                    </button>
+                </div>
+            </div>
+            <div class="small-1"></div>
+        </div>
+    </div>
+</section>
+
+
+<div class="nav-to-top">
+    <a href="#" class="button"><i class="fa fa-chevron-up"></i></a>
+</div>
+
+@Html.Partial("Emirates/_EmiratesFooter")
+@Html.Partial("_ForgotPassword")
+@Html.Partial("_ResetPassword")
+
+<div class="nav-to-top">
+    <a href="#" class="button"><i class="fa fa-chevron-up"></i></a>
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/AgeValidation.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/RegistrationSignIn.js")?v=@CommonUtility.GetRandom()"></script>
+@section scripts
+{
+    <script type="text/javascript">
+        //gapi.hangout.render('placeholder-div', { 'render': 'createhangout' });
+
+        $(".intro-header").sticky({ topSpacing: 0 });
+        $(document).on('click', '#register-modal-close', function () {
+            $('#register-modal').foundation('close');
+        });
+        $('#inline-login-form').foundation();
+        $('#inline-login-form')
+            //When Not Valid
+            .on("forminvalid.zf.abide", function(ev,frm) {
+                console.log("Form id "+ev.target.id+" is invalid");
+            })
+            //When Valid
+            .on('formvalid.zf.abide', function () {
+                $("#loader-wrapper").removeClass("hide");
+                $("#loader-wrapper").fadeIn();
+                $("#inline-login-form").find('input[id="Password"]').val(window.btoa(Math.random().toString(36).substring(2, 8) + $("#inline-login-form").find('input[id="Password"]').val()));
+                $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+                $('[show-if-submitting]').removeClass('hide');
+                $.ajax({
+                    url: "@Url.Action("Login", "Account")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: $("#inline-login-form").serialize(),
+                    success: function (data) {
+                        $("#inline-login-form").find('input[id="Password"]').val("");
+                        if (data == "success") {
+                            window.location.href = "@Url.Action("Stream", "Participant")";
+                        }
+                        else if (data == "confirmEmail") {
+                            var email = $("#loginUserName").val();
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                            $('#resend-email-modal').find("#email").text(email);
+                            $('#resend-email-modal').find("#emailId").val(email)
+                            $('#resend-email-modal').foundation('open');
+                            $("#loader-wrapper").addClass("hide");
+                        }
+                        else {
+                            $("#inline-login-error").html(data);
+                            $('#inline-login-error').removeClass('hide');
+                            $('[show-if-submitting]').parent().prop('disabled', '');
+                            $('[show-if-submitting]').addClass('hide');
+                            $("#loader-wrapper").addClass("hide");
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        DisplayError(jqXHR.status);
+                    });
+            })
+            // to prevent form from submitting upon successful validation
+            .on("submit", function (ev) {
+                ev.preventDefault();
+            });
+</script>
+}

@@ -1,0 +1,264 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+@model InterventWebApp.ReportSelectModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x scheduler-offset-small-only">
+                <div class="small-12 large-6 left cell">
+                    @Html.Partial("_ReportSelect", Model, new ViewDataDictionary(ViewData) { { "Kind", "LogReport" } })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="panel filters">
+            <fieldset>
+                <legend>Report Criteria</legend>
+                <div class="grid-x grid-padding-x">
+                    <div class="small-12 medium-6 cell">
+                        <input id="LogStartDate" type="text" placeholder="Log Start Date..." />
+                        <input id="HStartDate" type="hidden" />
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <input id="LogEndDate" type="text" placeholder="Log End Date..." />
+                        <input id="HEndDate" type="hidden" />
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <input id="textsearch" type="text" placeholder="Enter text to search" />
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <select id="Level" autocomplete="off" class="primary-select">
+                            <option id="1" value="" selected>All</option>
+                            <option id="8" value="TRACE">TRACE</option>
+                            <option id="2" value="DEBUG">DEBUG</option>
+                            <option id="3" value="INFO">INFO</option>
+                            <option id="4" value="WARN">WARN</option>
+                            <option id="5" value="ERROR">ERROR</option>
+                            <option id="6" value="FATAL">FATAL</option>
+                            <option id="7" value="OFF">OFF</option>
+                        </select>
+                    </div>
+                    <div class="small-12 medium-6 medium medium-offset-6 cell text-right">
+                        <button class="button" id="filter-log-data">
+                            <div class="loading-spinner hide"></div>
+                            <i class="fa fa-filter"></i>
+                            Search
+                        </button>
+                        <button class="secondary-color small" id="download-log-data" onclick="Downloaddata()">
+                            <div class="loading-spinner hide" id="download-spinner"></div>
+                            <i class="fa fa-download"></i>
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="small-12 cell">
+			<div class="table-container">
+				<table class='table basic-table1' id="log-report"></table>
+			</div>
+        </div>
+        <div class="cell small-12">
+            <!-- pagination Start -->
+            <div class="pagination-area hide" id="pagination-centered">
+                <ul>
+                    <li id="numeric"></li>
+                </ul>
+                <!-- page-link Start -->
+                <div class="page-link">
+                    <label>@Translate.Message("L4041")</label>
+                    <div class="grid-x">
+                        <input type="text" id="jumptoPageNo">
+                        <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                    </div>
+                </div>
+                <!-- page-link End -->
+            </div>
+            <!-- pagination End -->
+        </div>
+    </div>
+
+    <div id="log-details" class="reveal large" data-reveal>
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <h3>Message:</h3>
+                <p id="message" style="word-wrap: break-word;"></p>
+            </div>
+            <div class="small-12 cell">
+                <h3>Stack Trace:</h3>
+                <p id="stacktrace" style="word-wrap: break-word;"></p>
+            </div>
+            <div class="small-12 cell">
+                <h3>Exception:</h3>
+                <p id="exception" style="word-wrap: break-word;"></p>
+            </div>
+            <div class="small-12 cell">
+                <h3>Exception Message:</h3>
+                <p id="exceptionmessage" style="word-wrap: break-word;"></p>
+            </div>
+            <div class="small-12 cell">
+                <h3>Operation:</h3>
+                <p id="operation" style="word-wrap: break-word;"></p>
+            </div>
+        </div>
+    </div>
+
+</section>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/downloadcsv.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    var download = false;
+    $("#LogStartDate").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#LogStartDate').val()));
+    });
+    $("#LogEndDate").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#LogEndDate').val()));
+    });
+    $(document).ready(function () {
+        $("#LogStartDate").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        }).on('change', function (selected) {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#LogEndDate').fdatepicker('setDate', minDate);
+            }
+            $('#LogEndDate').fdatepicker('setStartDate', minDate);
+            $("#LogEndDate").trigger("change");
+        });
+        $("#LogEndDate").fdatepicker({
+            format: "@Model.DateFormat.ToLower()",
+            endDate: new Date()
+        });
+    });
+
+    $('#filter-log-data').on('click', function () {
+        $('#filter-spinner').parent().prop('disabled', 'disabled');
+        $('#filter-spinner').removeClass('hide');
+        startIndex = 0;
+        pageSize = 10;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        download =false;
+        ListlogReport();
+    });
+
+    function Downloaddata() {
+        var StartDate = $('#HStartDate').val();
+        var EndDate = $('#HEndDate').val();
+        if (StartDate == "" && EndDate == "" && download) {
+            var date = new Date();
+            date.setDate(date.getDate() - 30);
+            var day = date.getDate();
+            var mon = date.getMonth() + 1;
+            var year = date.getFullYear();
+            var todayDate = mon + "/" + day + "/" + year;
+            StartDate = todayDate;
+        }
+        var level = $('#Level').val();
+        var textsearch = $('#textsearch').val();
+        window.location = "../AdminReports/DownloadLogReport?StartDate=" + StartDate + "&EndDate=" + EndDate + "&level=" + level + "&textsearch=" + textsearch;
+
+    }
+
+    function ListlogReport() {
+    var StartDate = $('#HStartDate').val();
+    var EndDate = $('#HEndDate').val();
+    if (StartDate == "" && EndDate == "" && download) {
+        var date = new Date();
+        date.setDate(date.getDate() - 30);
+        var day = date.getDate();
+        var mon = date.getMonth() + 1;
+        var year = date.getFullYear();
+        var todayDate = mon + "/" + day + "/" + year;
+        StartDate = todayDate;
+    }
+    var level = $('#Level').val();
+    var textsearch = $('#textsearch').val();
+    $.ajax({
+        url: "@Url.Action("ListLogReport", "AdminReports")",
+        data: { startDate: StartDate, endDate: EndDate, page: currentPage, pageSize: pageSize, totalRecords: totalRecords, level: level, textsearch: textsearch, download: download },
+        type: 'POST',
+        dataType: "json",
+        success: function (data) {
+            totalRecords = data.TotalRecords;
+            totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+            displaylogReport(data.Records);
+            if (totalRecords > 0) {
+                //$('#pagination-centered').show();
+            }
+            else {
+                $('#log-report').html("<center>No data were found.</center>");
+                //$('#pagination-centered').hide();
+            }
+            AddPager();
+            $('#filter-spinner').parent().prop('disabled', '');
+            $('#filter-spinner').addClass('hide');
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function displaylogReport(logdata) {
+        $('#log-report').html("");
+        var logHtml = "";
+        logHtml += "<thead><tr><th>Level</th>";
+        logHtml += "<th>Message</th>";
+        logHtml += "<th>Time Stamp</th>";
+        logHtml += "<th>Logger</th>";
+        logHtml += "<th>Details</th></tr></thead>";
+        for (i in logdata) {
+            var log = logdata[i];
+            var operation = log.Operation != null ? log.Operation.replace(/'/g, '') : null;
+            if (operation != null) {
+                operation = operation.replace(/\r\n/g, '\\r\\n');
+            }
+            var message = log.Message != null ? log.Message.replace(/'/g, '') : null;
+            if (message != null) {
+                message = message.replace(/\r\n/g, '\\r\\n');
+                message = message.replace(/"/g, '\\"');
+            }
+            var stacktrace = log.StackTrace != null ? log.StackTrace.replace(/'/g, '') : null;
+            if (stacktrace != null) {
+                stacktrace = stacktrace.replace(/\r\n/g, '\\r\\n');
+            }
+            var exception = log.Exception != null ? log.Exception : null;
+            var exceptionmessage = log.ExceptionMessage != null ? log.ExceptionMessage.replace(/'/g, '') : null;
+            if (exceptionmessage != null) {
+                exceptionmessage = exceptionmessage.replace(/\r\n/g, '\\r\\n');
+            }
+            logHtml += "<tr><td>" + log.Level + "</td>";
+            logHtml += "<td>" + log.Message.substring(0, 30) + "</td>";
+			logHtml += "<td class='no-wrap'>" + log.TimeStamp + "</td>";
+            logHtml += "<td>" + log.Logger + "</td>";
+            logHtml += "<td><a data-open='log-details' onClick='log(\"" + message + "\",\"" + stacktrace + "\",\"" + exception + "\",\"" + operation + "\",\"" + exceptionmessage + "\"); return false'><i class='fa fa-file-o'></i></a></td></tr>";
+        }
+        $('#log-report').append(logHtml);
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListlogReport();
+    }
+
+    function log(message, stacktrace, exception, operation, exceptionmessage) {
+        document.getElementById('message').innerHTML = message;
+        document.getElementById('stacktrace').innerHTML = stacktrace;
+        document.getElementById('exception').innerHTML = exception;
+        document.getElementById('operation').innerHTML = operation;
+        document.getElementById('exceptionmessage').innerHTML = exceptionmessage;
+    }
+</script>

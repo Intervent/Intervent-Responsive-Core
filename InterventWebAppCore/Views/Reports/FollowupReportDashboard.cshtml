@@ -1,0 +1,577 @@
+﻿@model InterventWebApp.FollowupReport
+@using Intervent.Web.DTO
+@using InterventWebApp
+
+@{
+	ViewBag.Title = "Stream";
+	Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<script src="@Url.Content("~/Scripts/FollowUpChart.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+<section class="main follow-up follow-up-grid report-dashboard @*  @(Request.QueryString["isPdf"] != null ? "pdf-print" : "") *@">
+	<div id="loader-wrapper" class="hide-for-print" style="display: none;"><div id="loader"></div></div>
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x hide-for-print ">
+			<div class="nav-to-top">
+				<a href="#" class="button clear"><i class="fa fa-chevron-up"></i></a>
+			</div>
+		</div>
+		<div class="grid-x grid-margin-x">
+			<div class="cell hide-for-print report-heading-container">
+				<h1>@Translate.Message("L2103")</h1>
+
+				<div class="title-button">
+					<button class="small hide-for-small-only" onclick="doPrint();"><i class="fa fa-print"></i>@Translate.Message("L205")</button>
+					@if (Model.hasAdminRole && Model.needCareplanApproval)
+					{
+						<div class="tick-buttons check-btn">
+							@Html.CheckBoxFor(m => m.reportGenerated, new Dictionary<string, object> { { "Name", "reportGenerated" } })
+							<label for="reportGenerated">
+								@if (!Model.reportGenerated)
+								{
+									<span id="report-generatedby">@Translate.Message("L4299")</span>
+								}
+								else
+								{
+									<span>@Model.reportGeneratedBy @String.Format(Translate.Message("L4366"), Model.reportGeneratedOn)</span>
+								}
+								<span class="checkmark"></span>
+							</label>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+		<div class="grid-x grid-margin-x report-item">
+			<div class="bg-wrapper short-margin small-12 cell">
+				<div class="grid-x grid-margin-x">
+					<div class="small-12 medium-4 large-4 cell profile-card text-center clearfix hide-for-print">
+						@{
+							string className = "", gender = "";
+
+							if (Model.gender.HasValue && Model.gender.Value == 2)
+							{
+								className = "anonymous-female";
+								gender = Translate.Message("L929");
+							}
+							else
+							{
+								className = "anonymous-male";
+								gender = Translate.Message("L928");
+							}
+						}
+
+						<a id="profilepic" class="photo-frame @className" href="" data-open="user-profile" data-modal-path="@Html.Raw(Url.Action("userprofile", "Account" ))"></a>
+						<div class="info name hide-for-print">@Model.UserName</div>
+					</div>
+					<div class="small-12 medium-8 cell hide-for-print">
+						<div class="grid-x grid-margin-x report-data">
+							<div class="small-12 medium-6 cell">
+								<div class="subtitle">@Translate.Message("L228")</div>
+								<div>
+									<div>@Model.UserName</div>
+								</div>
+								@if (Model.ProgramStartDate.HasValue)
+								{
+									<div class="subtitle">@Translate.Message("L2843")</div>
+									<div>
+										<div>@Model.programStartDateFormat</div>
+									</div>
+								}
+
+								@if (!string.IsNullOrEmpty(Model.FollowupLabSource))
+								{
+									<div class="subtitle">@Translate.Message("L3154")</div>
+									<div>
+										<div>@Translate.Message(Model.FollowupLabSource)</div>
+									</div>
+								}
+							</div>
+							<div class="small-12 medium-6 cell">
+								<div class="subtitle">@Translate.Message("L226")</div>
+								<div>
+									<div>@Model.DOB.Value.ToString(Model.dateFormat)</div>
+								</div>
+								<div class="subtitle">@Translate.Message("L2844")</div>
+								<div>
+									<div>@Model.AssessmentDate.Value.ToString(Model.dateFormat)</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="grid-x grid-margin-x show-for-print print-text">
+					<div class="cell first-page">
+						<h1 class="header-title">@Translate.Message("L2845")</h1>
+						<div class="grid-x grid-margin-x">
+							<div class="cell small-12">
+								<div class="grid-x grid-margin-x tile-item remove-margin">
+									<div class="cell bg-wrapper print-text">
+										<div class="grid-x grid-margin-x grid-margin-y">
+											<div class="cell small-only-text-center">
+												<div>@Model.UserName</div><br />
+												<div>@Model.Address</div>
+												<div>@Model.Address2</div>
+												<div>@Model.City @Model.State @Model.Zip</div>
+											</div>
+											<div class="cell small-only-text-center dates">
+												@Translate.Message("L226")
+												<div>@Model.DOB.Value.ToShortDateString()</div><br />
+												@if (Model.ProgramStartDate.HasValue)
+												{
+													@Translate.Message("L2843")
+													<div>@Model.ProgramStartDate.Value.ToShortDateString()</div>
+												}
+												@Translate.Message("L2844")
+												<br />
+												<div>@Model.AssessmentDate.Value.ToShortDateString()</div>
+											</div>
+											<div class="cell confidential show-for-print">
+												<p>@string.Format(Translate.Message("L2017"), Model.orgContactEmail)</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			@if (!string.IsNullOrEmpty(Model.labDataAlertNote) || CommonUtility.GetAge(Convert.ToDateTime(Model.dob)) < 18)
+			{
+				<div class="small-12 cell">
+					<div class="grid-x grid-margin-x tile-item with-padding force-new-page remove-margin">
+						@if (!string.IsNullOrEmpty(Model.labDataAlertNote))
+						{
+							<div class="small-12 large-12 cell bg-wrapper report-note">
+								@Model.labDataAlertNote
+							</div>
+						}
+						@if (CommonUtility.GetAge(Convert.ToDateTime(Model.dob)) < 18)
+						{
+							<div class="small-12 large-12 cell bg-wrapper report-note">
+								@Translate.Message("L3688")
+							</div>
+						}
+					</div>
+				</div>
+			}
+		</div>
+
+		@if (ViewBag.ProgramType != 1)
+		{
+			<div class="grid-x grid-margin-x tile-item report-item report-item-other force-new-page">
+				<div class="cell small-12 tile-header">
+					<h2 class="left blue">@Translate.Message("L2108")</h2>
+				</div>
+				<div class="cell bg-wrapper tabular">
+					<div class="grid-x grid-margin-x">
+						<div class="small-12 cell data-content">
+							<div class="simple-bar-container">
+								<p>@Translate.Message("L2110")</p>
+								<h4>
+									@Translate.Message("L2109") : @if (Model.NoOfWeeks.HasValue && Model.NoOfWeeks > 0)
+									{
+										@Model.NoOfWeeks
+									}
+									else
+									{
+										<span>@Translate.Message("L1149")</span>
+									}
+								</h4>
+								<span>@Translate.Message("L2111")</span>
+								<div id="age-chart" class="simple-bar-chart blue">
+									<div class="bar progress-@Model.ScheduledCoachingSession"></div>
+									<div class="dial">@Model.ScheduledCoachingSession</div>
+								</div>
+								<span>@Translate.Message("L2112")</span>
+								<div id="age-chart" class="simple-bar-chart blue">
+									<div class="bar progress-@Model.CompletedCoachingSession"></div>
+									<div class="dial">@Model.CompletedCoachingSession</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+		<div class="grid-x grid-margin-x tile-item report-item force-new-page">
+			<div class="cell small-12 tile-header">
+				<h2 class="left green">@Translate.Message("L2113")</h2>
+			</div>
+			<div class="cell bg-wrapper tabular">
+				<div class="grid-x">
+					<div class="small-12 cell">
+						<div class="simple-bar-container data-content">
+							<span>@Translate.Message("L2418")</span>
+							<br />
+							<div class="key-topics-table">
+								<table class="auto-page-break-inside">
+									<thead>
+										<tr>
+											<th>@Translate.Message("L2114")</th>
+											<th>@Translate.Message("L2115")</th>
+											<th>Completed</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var data in Model.AssignedKitsmodel)
+										{
+											<tr>
+												<td>@String.Format("{0:" + Model.dateFormat + "}", data.DateAssigned.Value)</td>
+												<td>@data.EducationalTopic</td>
+												<td align="center">
+													@if (data.PercentCompleted == 100)
+													{
+														<i class="fa fa-check-square"></i>
+													}
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		@if (Model.hdsRisks.chdRiskChart != null || Model.hdsRisks.tenYearRiskChart != null || Model.hdsRisks.lifetimeRiskChart != null)
+		{
+			<div class="grid-x report-item force-new-page">
+				<div class="cell bg-wrapper">
+					<h2>@Translate.Message("L1228")</h2>
+					<div id="ctriskdiv" class="grid-x grid-margin-x report-item">
+						<div class="cell">
+							<div class="grid-x grid-margin-x align-center report-graph">
+								@if (!string.IsNullOrEmpty(Model.hdsRisks.chdRiskText))
+								{
+									<p>@Html.Raw(Model.hdsRisks.chdRiskText)</p>
+								}
+								<div class="cell medium-6">
+									@if (Model.hdsRisks.chdRiskChart != null)
+									{
+										<div class="report-chart" id="chart-chd"></div>
+										@Html.Partial("_ChartsforFollowupReport", Model.hdsRisks.chdRiskChart)
+									}
+								</div>
+								@if (!string.IsNullOrEmpty(Model.hdsRisks.tenYearRiskText))
+								{
+									<p>@Html.Raw(Model.hdsRisks.tenYearRiskText)</p>
+								}
+								@if (Model.hdsRisks.tenYearRiskChart != null)
+								{
+									<div class="cell medium-6">
+										<div class="report-chart" id="chart-tenyear"></div>
+										@Html.Partial("_ChartsforFollowupReport", Model.hdsRisks.tenYearRiskChart)
+									</div>
+								}
+								@if (!string.IsNullOrEmpty(Model.hdsRisks.lifetimeRiskText))
+								{
+									<p>@Html.Raw(Model.hdsRisks.lifetimeRiskText)</p>
+								}
+								@if (Model.hdsRisks.lifetimeRiskChart != null)
+								{
+									<div class="cell medium-6">
+										<div class="report-chart" id="chart-lifetime"></div>
+										@Html.Partial("_ChartsforFollowupReport", Model.hdsRisks.lifetimeRiskChart)
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+		@if (Model.bpRisk != null)
+		{
+			<div class="grid-x report-item force-new-page">
+				<div class="cell bg-wrapper">
+					<h2>@Translate.Message("L1233")</h2>
+					<div id="bpriskdiv" class="grid-x grid-margin-x report-item">
+						<div class="small-12 cell">
+							<p>@Model.bpRisk.riskText</p>
+							<div class="grid-x grid-margin-x report-graph">
+								<div class="cell large-5 medium-6 large-offset-1">
+									@if (Model.bpRisk.sbpRiskChart != null)
+									{
+										<div class="report-chart" id="chart-sbp"></div>
+										@Html.Partial("_ChartsforFollowupReport", Model.bpRisk.sbpRiskChart)
+									}
+								</div>
+								<div class="cell large-5 medium-6">
+									@if (Model.bpRisk.dbpRiskChart != null)
+									{
+										<div class="report-chart" id="chart-dbp"></div>
+										@Html.Partial("_ChartsforFollowupReport", Model.bpRisk.dbpRiskChart)
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+		@if (Model.ctRisk != null)
+		{
+			<div class="report-item force-new-page">
+				<div class="cell bg-wrapper">
+					<h2>@Translate.Message("L1231")</h2>
+					<div id="ctriskdiv" class="grid-x grid-margin-x report-item">
+						@if (!string.IsNullOrEmpty(Model.ctRisk.riskText))
+						{
+							<p>@Html.Raw(Model.ctRisk.riskText)</p>
+						}
+						<div class="small-12 cell">
+							<div class="grid-x grid-margin-x report-graph">
+								<div class="cell large-5 medium-6 large-offset-1">
+									@if (Model.ctRisk.tcRiskChart != null)
+									{
+										<div class="report-chart" id="chart-tc"></div>
+										@Html.Partial("_ChartsforFollowupReport", Model.ctRisk.tcRiskChart)
+									}
+								</div>
+								<div class="cell large-5 medium-6">
+									@if (Model.ctRisk.ldlRiskChart != null)
+									{
+										<div class="report-chart" id="chart-ldl"></div>
+										@Html.Partial("_ChartsforFollowupReport", Model.ctRisk.ldlRiskChart)
+									}
+								</div>
+								<div class="cell large-5 medium-6 large-offset-1">
+									@if (Model.ctRisk.hdlRiskChart != null)
+									{
+										<div class="report-chart" id="chart-hdl"></div>
+										@Html.Partial("_ChartsforFollowupReport", Model.ctRisk.hdlRiskChart)
+									}
+								</div>
+								<div class="cell large-5 medium-6">
+									@if (Model.ctRisk.trigRiskChart != null)
+									{
+										<div class="report-chart" id="chart-trig"></div>
+										@Html.Partial("_ChartsforFollowupReport", Model.ctRisk.trigRiskChart)
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+		@if (Model.overweightRisk != null)
+		{
+			<div class="grid-x report-item force-new-page">
+				<div class="cell bg-wrapper">
+					<h2>@Translate.Message("L275")</h2>
+					<div id="overweightriskdiv" class="grid-x grid-margin-x report-item">
+						<div class="cell">
+							<p>@Translate.Message("L2117")</p>
+							<div class="grid-x grid-margin-x align-center report-graph">
+								@if (Model.overweightRisk.riskChart != null)
+								{
+									<div class="cell medium-8">
+										<div class="report-chart" id="chart-overweight"></div>
+									</div>
+									@Html.Partial("_ChartsforFollowupReport", Model.overweightRisk.riskChart)
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+		@if (Model.diabetesRisk != null)
+		{
+			<div class="report-item force-new-page">
+				<div class="cell bg-wrapper">
+					<h2>@Translate.Message("L1592")</h2>
+					<div id="diabetesriskdiv" class="grid-x grid-margin-x report-item">
+						<div class="cell">
+							<p>@Translate.Message("L1513")</p>
+							<div class="grid-x grid-margin-x report-graph">
+								<div class="cell large-5 medium-6 large-offset-1">
+									@if (Model.diabetesRisk.glucChart != null)
+									{
+										<div class="report-chart" id="chart-glucose"></div>
+										@Html.Partial("_ChartsforFollowupReport", Model.diabetesRisk.glucChart)
+									}
+								</div>
+								<div class="cell large-5 medium-6">
+									@if (Model.diabetesRisk.a1cChart != null)
+									{
+										<div class="report-chart" id="chart-a1c"></div>
+										@Html.Partial("_ChartsforFollowupReport", Model.diabetesRisk.a1cChart)
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+		@if (Model.tobaccoRisk != null && Model.tobaccoRisk.riskChart != null)
+		{
+			<div class="grid-x report-item force-new-page">
+				<div class="cell bg-wrapper">
+					<h2>@Translate.Message("L1060")</h2>
+					<div id="diabetesriskdiv" class="grid-x grid-margin-x report-item">
+						<div class="cell">
+							<p>
+								@Model.tobaccoRisk.riskText
+							</p>
+							<div class="grid-x grid-margin-x align-center report-graph">
+								@if (Model.tobaccoRisk.riskChart != null)
+								{
+									<div class="cell medium-6">
+										<div class="report-chart" id="chart-tob"></div>
+									</div>
+									@Html.Partial("_ChartsforFollowupReport", Model.tobaccoRisk.riskChart)
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+		<!--Doctor Referrals-->
+		@if (Model.referrals.Count > 0)
+		{
+			<div class="grid-x grid-margin-x tile-item with-padding force-new-page">
+				<div class="cell small-12 tile-header">
+					<h3 class="left pink">@Translate.Message("L209")</h3>
+				</div>
+				<div class="cell bg-wrapper tabular">
+					<div class="grid-x">
+						<div class="cell tabular-row">
+							<div class="grid-x">
+								<div class="cell">
+									<ul class="tabular-list pink">
+										@for (int i = 0; i < Model.referrals.Count; i++)
+										{
+											<li>@Html.Raw(Model.referrals[i])</li>
+										}
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</section>
+
+<div id="satisfaction-survey" class="reveal large hide brief-summary" data-reveal data-close-on-click="false" data-close-on-esc="false">
+	@Html.Partial("_SatisfactionSurvey", new ReadSurveyResponse { SurveyQuestions = Model.SurveyQuestions })
+</div>
+<script>
+	function doPrint() {
+		window.open("@Url.Action("PrintableReports", "Reports")" + '?view=FollowupReportDashboard&generatePDF=false');
+	}
+
+	$(document).ready(function () {
+		var isPdf = false;
+		if ('@Model.reportGenerated' == 'True') {
+			$('#reportGenerated').prop('disabled', true);
+		}
+
+	@if (ViewData["isPdf"] != null)
+	{
+		@:isPdf = true;
+	}
+
+			if (isPdf) {
+			$('.hide-for-print').hide();
+			$('.show-for-print').removeClass('show-for-print');
+			$('.user-layout').addClass('user-layout-print')
+		}
+		$(function () {
+	@if (!string.IsNullOrEmpty(Model.Picture))
+	{
+		@:showHideImage();
+	}
+			});
+		var count = 0;
+	@if (Model.ctRisk != null)
+	{
+		if (Model.ctRisk.tcRiskChart != null)
+		{
+			@:count++;
+		}
+		if (Model.ctRisk.ldlRiskChart != null)
+		{
+			@:count++;
+		}
+		if (Model.ctRisk.hdlRiskChart != null)
+		{
+			@: if (count == 2) {
+			@:$("#chart-hdl").addClass("force-new-page");
+			@: }
+			@:count++;
+		}
+		if (Model.ctRisk.trigRiskChart != null)
+		{
+			@: if (count == 2) {
+			@:$("#chart-lifetime").addClass("force-new-page");
+			@: }
+			@:count = 0;
+		}
+	}
+
+	@if (Model.hdsRisks.chdRiskChart != null)
+	{
+		@:count++;
+	}
+	@if (Model.hdsRisks.tenYearRiskChart != null)
+	{
+		@:count++;
+	}
+	@if (Model.hdsRisks.lifetimeRiskChart != null)
+	{
+		@: if (count == 2) {
+		@:$("#chart-hdl").addClass("force-new-page");
+		@: }
+	}
+
+			function showHideImage(imageName, type) {
+				var cols;
+				cols = document.getElementsByClassName("anonymous-female");
+				if (cols.length == 0)
+					cols = document.getElementsByClassName("anonymous-male");
+				if (cols.length == 0)
+					cols = document.getElementsByClassName("user");
+
+				for (i = 0; i < cols.length; i++) {
+					cols[i].style.backgroundImage = "url('../ProfilePictures/@Model.Picture')";
+					$("#removelink").show();
+				}
+			}
+
+		if ('@Model.IsSurveyCompleted' != 'True' && !isPdf) {
+			$("#satisfaction-survey").removeClass("hide");
+			$('#satisfaction-survey').foundation('open');
+		}
+		$("#loader-wrapper").fadeOut();
+	});
+
+	$("#reportGenerated").on('click', function () {
+		$('#reportGenerated').prop('disabled', true);
+		$("#loader-wrapper").fadeIn();
+		$.ajax({
+			url: "@Url.Action("PrintableReports", "Reports")",
+			async: true,
+			type: 'POST',
+			dataType: "json",
+			data: { view: "FollowupReportDashboard", generatePDF: true },
+			success: function (data) {
+				$("#report-generatedby").html(data.confMessage);
+				$("#loader-wrapper").fadeOut();
+			}
+		}).fail(function (jqXHR, textStatus, errorThrown) {
+			RedirectToErrorPage(jqXHR.status);
+		});
+	});
+</script>

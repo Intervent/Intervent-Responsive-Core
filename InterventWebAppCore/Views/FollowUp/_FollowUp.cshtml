@@ -1,0 +1,126 @@
+﻿@using InterventWebApp
+@using Intervent.Web.DTO
+@model FollowUpDto
+<section class="main health-assessment">
+    <!--NEW-->
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x">
+            <div class="small-12 cell">
+                <div class="tiles">
+                    <ul class="grid-x grid-padding-x small-up-1 large-up-2">
+                        @{string status = string.Empty;}
+                        <li id="medicalList" class="cell tile">
+                            <a href="#" data-open="survey-medical-conditions" data-modal-path="@Html.Raw(Url.Action("MedicalConditions", "FollowUp",new { followupid = Model.Id }))">
+                                <h6>1. Health History</h6>
+                                <span class="status"></span>
+                            </a>
+                        </li>
+                        <li id="otherRisksList" class="cell tile">
+                            <a href="#" data-open="survey-risk-factors" data-modal-path="@Html.Raw(Url.Action("OtherRiskFactors", "FollowUp",new { followupid = Model.Id }))" class="inactive-link">
+                                <h6>2. Lifestyle Habits and Risk Factors</h6>
+                                <span class="status"></span>
+                            </a>
+                        </li>
+                        <li id="hspList" class="cell tile">
+                            <a href="#" data-open="survey-hsp" data-modal-path="@Html.Raw(Url.Action("HSP", "FollowUp",new { followupid = Model.Id }))" class="inactive-link">
+                                <h6>3. Health and Productivity</h6>
+                                <span class="status"></span>
+                            </a>
+                        </li>
+                        <li id="yournumbersList" class="cell tile">
+                            <a href="#" data-open="survey-health-numbers" data-modal-path="@Html.Raw(Url.Action("HealthNumbers", "FollowUp",new { followupid = Model.Id }))" class="inactive-link">
+                                <h6>4. Health Measurements</h6>
+                                <span class="status"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<div id="survey-medical-conditions" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div id="survey-risk-factors" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div id="survey-hsp" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<div id="survey-health-numbers" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+<input id="PageSeqDone" type="hidden" value="@Model.PageSeqDone"/>
+<script src="@Url.Content("~/Scripts/app.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+    //update status
+    var pages = "";
+    pages = $("#PageSeqDone").val();
+    function UpdateFollowUpStatus() {
+        if (pages.length > 0) {
+            var pageList = pages.split('.');
+            for (var i = 0; i < pageList.length; i++) {
+                var page = pageList[i];
+                if (page == "@PageName.MC.ToString()") {
+                    if (!$("#medicalList").hasClass("complete")) {
+                        $("#medicalList").addClass("complete green");
+                    }
+                    if ($('#otherRisksList a').hasClass("inactive-link")) {
+                        $("#otherRisksList a").removeClass("inactive-link");
+                    }
+                }
+                else if (page == "@PageName.OR.ToString()") {
+                    if (!$("#otherRisksList").hasClass("complete")) {
+                        $("#otherRisksList").addClass("complete green");
+                    }
+                    if ($('#hspList a').hasClass("inactive-link")) {
+                        $("#hspList a").removeClass("inactive-link");
+                    }
+                }
+                else if (page == "@PageName.YL.ToString()") {
+                    if (!$("#hspList").hasClass("complete")) {
+                        $("#hspList").addClass("complete green");
+                    }
+                    if ($('#yournumbersList a').hasClass("inactive-link")) {
+                        $("#yournumbersList a").removeClass("inactive-link");
+                    }
+                }
+                else if (page == "@PageName.YN.ToString()") {
+                    if (!$("#yournumbersList").hasClass("complete")) {
+                        $("#yournumbersList").addClass("complete green");
+                    }
+                }
+            }
+        }
+
+        $("html, body").animate({
+            scrollTop: 0
+        }, "fast");
+    }
+
+    $(document).ready(function () {
+        $("[data-open]").on('click', function (e) {
+            showmodal($(this), e)
+        });
+        @if (Model.PageSeqDone != null && Model.PageSeqDone.Contains(PageName.MC.ToString()))
+        {
+            @: $("#medicalList").addClass("complete green");
+            @: $("#otherRisksList a").removeClass("inactive-link");
+        }
+        @if (Model.PageSeqDone != null && Model.PageSeqDone.Contains(PageName.OR.ToString()))
+        {
+            @: $("#otherRisksList").addClass("complete green");
+            @: $("#hspList a").removeClass("inactive-link");
+        }
+        @if (Model.PageSeqDone != null && Model.PageSeqDone.Contains(PageName.YL.ToString()))
+        {
+            @: $("#hspList").addClass("complete green");
+            @: $("#yournumbersList a").removeClass("inactive-link");
+        }
+        @if (Model.PageSeqDone != null && Model.PageSeqDone.Contains(PageName.YN.ToString()))
+        {
+            @: $("#yournumbersList").addClass("complete green");
+        }
+    });
+</script>

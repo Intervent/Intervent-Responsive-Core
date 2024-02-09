@@ -1,0 +1,254 @@
+﻿@using System.Web;
+@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<script>
+        var exerciseurl = "@Html.Raw(Url.Action("ExerciseRecommendation", "Reports", new { fromKit = true }))";
+        var mealurl = "@Html.Raw(Url.Action("NutritionRecommendation", "Reports", new { onlymeal = true }))";
+        var dieturl = "@Html.Raw(Url.Action("NutritionRecommendation", "Reports", new { onlydiet = true }))";
+        var wellnessVisionURL = "@Html.Raw(Url.Action("GetWellnessVision", "Program", new { editWellnessVision = true }))";
+        var completedKitsUrl = "@Html.Raw(Url.Action("GetCompletedKits", "Kit"))";
+        var bpurl = "@Url.Action("BPInfo", "Kit")";
+        var weighturl = "@Url.Action("WeightInfo", "Kit")";
+        var cholurl = "@Url.Action("CholInfo", "Kit")";
+        var glucurl = "@Url.Action("GlucoseInfo", "Kit")";
+        var tenyearurl = "@Url.Action("TenYearCHDRisk", "Kit")";
+        var bptext = "@Translate.Message("L503")";
+        var weighttext="@Translate.Message("L504")";
+        var choltext= "@Translate.Message("L1231")";
+        var gluctext = "@Translate.Message("L506")";
+        var tenyeartext = "@Translate.Message("L1486")";
+        var asof = "@Translate.Message("L3821")";
+        var wellnessVision= "@Translate.Message("L3969")";
+        function OpenModal(name) {
+        if ('@(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.HasHRA).HasValue && HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.HasHRA).Value == 2)' == 'True') {
+                $('#details-modal').html("");
+                $('#details-modal').append("This particular feature is not applicable to your program.");
+                $('#details-modal').foundation('open');
+        } else if ('@(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.HasHRA).HasValue && HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.HasHRA).Value == 3 && !HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue)' == 'True') {
+                $('#details-modal').html("");
+                $('#details-modal').append("To access this feature, please complete your <a style='color:deepskyblue' href='/HRA/HRADashboard'>health assessment</a>.");
+                $('#details-modal').foundation('open');
+            } else if (name == 'physicalactivity') {
+                $('#details-modal').html("");
+                var link = exerciseurl;
+                $('#details-modal').load(link);
+                $('#details-modal').foundation('open');
+            }
+            else if (name == 'mealplan') {
+                $('#details-modal').html("");
+                var link = mealurl;
+                $('#details-modal').load(link);
+                $('#details-modal').foundation('open');
+            }
+            else if (name == 'dietplan') {
+                $('#details-modal').html("");
+                var link = dieturl;
+                $('#details-modal').load(link);
+                $('#details-modal').foundation('open');
+            }
+            else if (name == 'bprisk') {
+                $('#details-modal').html("");
+                $.ajax({
+                    url: bpurl,
+                    type: 'POST',
+                    dataType: "json",
+                    success: function (data) {
+                        var cthtml = "";
+                        var sbpchartdiv = "chart-sbp";
+                        var dbpchartdiv = "chart-dbp";
+                        cthtml += "<h4>" + bptext + " " + asof.replace("{0}", data.HRADate) + "</h4>";
+                        if (data.riskText)
+                            cthtml += "<p>" + data.riskText + "</p>";
+                        cthtml += "<div class='grid-x grid-margin-x'><div class='small-12 medium-6 columns'><div style='width:100%;height:250px;' id='chart-sbp'></div></div>";
+                        cthtml += "<div class='small-12 medium-6 columns'><div style='width:100%;height:250px;' id='chart-dbp'></div></div></div>";
+                        cthtml += "<button class='close-button' data-close aria-label='Close modal' type='button'><span aria-hidden='true'>&times;</span></button>";
+                        $('#details-modal').append(cthtml);
+                        if (data.dbpRiskChart.startValue != null)
+                            CreateThreeChartAMChart(dbpchartdiv, data.dbpRiskChart.startValue, data.dbpRiskChart.startText, data.dbpRiskChart.color3, data.dbpRiskChart.startYear, data.dbpRiskChart.currentValue, data.dbpRiskChart.currentText, data.dbpRiskChart.color1, data.dbpRiskChart.currentYear, data.dbpRiskChart.goalValue1, data.dbpRiskChart.goalText1, data.dbpRiskChart.label, data.dbpRiskChart.includeChar);
+                        else
+                            CreateAMChart(dbpchartdiv, data.dbpRiskChart.currentValue, data.dbpRiskChart.currentText, data.dbpRiskChart.color1, data.dbpRiskChart.currentYear, data.dbpRiskChart.goalValue1, data.dbpRiskChart.goalText1, data.dbpRiskChart.label, data.dbpRiskChart.includeChar);
+                        if (data.sbpRiskChart.startValue != null)
+                            CreateThreeChartAMChart(sbpchartdiv, data.sbpRiskChart.startValue, data.sbpRiskChart.startText, data.sbpRiskChart.color3, data.sbpRiskChart.startYear, data.sbpRiskChart.currentValue, data.sbpRiskChart.currentText, data.sbpRiskChart.color1, data.sbpRiskChart.currentYear, data.sbpRiskChart.goalValue1, data.sbpRiskChart.goalText1, data.sbpRiskChart.label, data.sbpRiskChart.includeChar);
+                        else
+                            CreateAMChart(sbpchartdiv, data.sbpRiskChart.currentValue, data.sbpRiskChart.currentText, data.sbpRiskChart.color1, data.sbpRiskChart.currentYear, data.sbpRiskChart.goalValue1, data.sbpRiskChart.goalText1, data.sbpRiskChart.label, data.sbpRiskChart.includeChar);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                $('#details-modal').foundation('open');
+            }
+            else if (name == 'weightInfo') {
+                $('#details-modal').html("");
+                $.ajax({
+                    url: weighturl,
+                    type: 'POST',
+                    dataType: "json",
+                    success: function (data) {
+                        var cthtml = "";
+                        var weightchartdiv = "chart-overweight";
+                        cthtml += "<h4>" + weighttext + " " + asof.replace("{0}", data.HRADate) + "</h4>";
+                        if (data.weightRisk.riskText)
+                            cthtml += "<p>" + data.weightRisk.riskText + "</h4>";
+                        cthtml += "<div class='grid-x grid-margin-x'><div class='small-12 medium-6 columns'><div style='width:100%;height:250px;' id='chart-overweight'></div></div></div>";
+                        cthtml += "<button class='close-button' data-close aria-label='Close modal' type='button'><span aria-hidden='true'>&times;</span></button>";
+                        $('#details-modal').append(cthtml);
+                        if (data.weightRisk.riskChart.startValue != null)
+                            CreateFiveChartAMChart(weightchartdiv, data.weightRisk.riskChart.goalValue0, data.weightRisk.riskChart.goalText0, data.weightRisk.riskChart.startValue, data.weightRisk.riskChart.startText, data.weightRisk.riskChart.color3, data.weightRisk.riskChart.startYear, data.weightRisk.riskChart.currentValue, data.weightRisk.riskChart.currentText, data.weightRisk.riskChart.color1, data.weightRisk.riskChart.currentYear, data.weightRisk.riskChart.goalValue1, data.weightRisk.riskChart.goalText1, data.weightRisk.riskChart.goalValue2, data.weightRisk.riskChart.goalText2, data.weightRisk.riskChart.label);
+                        else
+                            CreateFourChartAMChart(weightchartdiv, data.weightRisk.riskChart.goalValue0, data.weightRisk.riskChart.goalText0, data.weightRisk.riskChart.currentValue, data.weightRisk.riskChart.currentText, data.weightRisk.riskChart.color1, data.weightRisk.riskChart.goalValue1, data.weightRisk.riskChart.goalText1, data.weightRisk.riskChart.goalValue2, data.weightRisk.riskChart.goalText2, data.weightRisk.riskChart.label);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                $('#details-modal').foundation('open');
+            }
+            else if (name == 'glucoseInfo') {
+                $('#details-modal').html("");
+                $.ajax({
+                    url: glucurl,
+                    type: 'POST',
+                    dataType: "json",
+                    success: function (data) {
+                        var cthtml = "";
+                        var glucChartdiv = "chart-glucose";
+                        cthtml += "<h4>" + gluctext + " " + asof.replace("{0}", data.HRADate) + "</h4>";
+                        if (data.glucoseRisk.riskText)
+                            cthtml += "<p>" + data.glucoseRisk.riskText + "</p>";
+                        cthtml += "<div class='grid-x grid-margin-x'><div class='small-12 medium-6 columns'><div style='width:100%;height:250px;' id='chart-glucose'></div></div></div>";
+                        cthtml += "<button class='close-button' data-close aria-label='Close modal' type='button'><span aria-hidden='true'>&times;</span></button>";
+                        $('#details-modal').append(cthtml);
+                        if (data.glucoseRisk.glucChart.startValue != null)
+                            CreateThreeChartAMChart(glucChartdiv, data.glucoseRisk.glucChart.startValue, data.glucoseRisk.glucChart.startText, data.glucoseRisk.glucChart.color3, data.glucoseRisk.glucChart.startYear, data.glucoseRisk.glucChart.currentValue, data.glucoseRisk.glucChart.currentText, data.glucoseRisk.glucChart.color1, data.glucoseRisk.glucChart.currentYear, data.glucoseRisk.glucChart.goalValue1, data.glucoseRisk.glucChart.goalText1, data.glucoseRisk.glucChart.label, data.glucoseRisk.glucChart.includeChar);
+                        else
+                            CreateAMChart(glucChartdiv, data.glucoseRisk.glucChart.currentValue, data.glucoseRisk.glucChart.currentText, data.glucoseRisk.glucChart.color1, data.glucoseRisk.glucChart.currentYear, data.glucoseRisk.glucChart.goalValue1, data.glucoseRisk.glucChart.goalText1, data.glucoseRisk.glucChart.label, data.glucoseRisk.glucChart.includeChar);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                $('#details-modal').foundation('open');
+            }
+            else if (name == '10YrCHD') {
+                $('#details-modal').html("");
+                $.ajax({
+                    url: tenyearurl,
+                    type: 'POST',
+                    dataType: "json",
+                    success: function (data) {
+                        var cthtml = "";
+                        var tenyearChartdiv = "chart-tenyear";
+                        var text = "";
+                        if (data.hDSRisks.riskText != null)
+                            text = data.hDSRisks.riskText.substring(0, data.hDSRisks.riskText.indexOf(".") + 1);
+                        else
+                            text = data.hDSRisks.chdRiskText;
+                        cthtml += "<h4>" + tenyeartext + " " + asof.replace("{0}", data.HRADate) + "</h4>";
+                        if (text)
+                            cthtml += "<p>" + text + "</p>";
+                        if (data.hDSRisks.chdRiskChart != null) {
+                            cthtml += "<div class='grid-x grid-margin-x'><div class='small-12 medium-6 columns'><div style='width:100%;height:250px;' id='chart-tenyear'></div></div></div>";
+                            if (data.hDSRisks.chdRiskChart.startValue != null)
+                                CreateThreeChartAMChart(tenyearChartdiv, data.hDSRisks.chdRiskChart.startValue, data.hDSRisks.chdRiskChart.startText, data.hDSRisks.chdRiskChart.color3, data.hDSRisks.chdRiskChart.startYear, data.hDSRisks.chdRiskChart.currentValue, data.hDSRisks.chdRiskChart.color1, data.hDSRisks.chdRiskChart.currentYear, data.hDSRisks.chdRiskChart.goalValue1, data.hDSRisks.chdRiskChart.goalText1, data.hDSRisks.chdRiskChart.label, data.hDSRisks.chdRiskChart.includeChar);
+                            else
+                                CreateAMChart(tenyearChartdiv, data.hDSRisks.chdRiskChart.currentValue, data.hDSRisks.chdRiskChart.currentText, data.hDSRisks.chdRiskChart.color1, data.hDSRisks.chdRiskChart.currentYear, data.hDSRisks.chdRiskChart.goalValue1, data.hDSRisks.chdRiskChart.goalText1, data.hDSRisks.chdRiskChart.label, data.hDSRisks.chdRiskChart.includeChar);
+                        }
+                        cthtml += "<button class='close-button' data-close aria-label='Close modal' type='button'><span aria-hidden='true'>&times;</span></button>";
+                        $('#details-modal').append(cthtml);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                $('#details-modal').foundation('open');
+            }
+            else if (name == 'cholInfo') {
+                $('#details-modal').html("");
+                $.ajax({
+                    url: cholurl,
+                    type: 'POST',
+                    dataType: "json",
+                    success: function (data) {
+                        var cthtml = "";
+                        var ldlChartdiv = "chart-ldl";
+                        var hdlChartdiv = "chart-hdl";
+                        var TrigChartdiv = "chart-trig";
+                        var tcChartdiv = "chart-tc";
+                        cthtml += "<h4>" + choltext + " " + asof.replace("{0}", data.HRADate) + "</h4>";
+                        if (data.CTRisk.riskText)
+                            cthtml += "<p>" + data.CTRisk.riskText + "</p>";
+                        cthtml += "<div class='grid-x grid-margin-x'><div class='small-12 medium-6 columns'><div style='width:100%;height:250px;' id='chart-ldl'></div></div>";
+                        cthtml += "<div class='small-12 medium-6 columns'><div style='width:100%;height:250px;' id='chart-hdl'></div></div>";
+                        cthtml += "<div class='small-12 medium-6 columns'><div style='width:100%;height:250px;' id='chart-trig'></div></div>";
+                        cthtml += "<div class='small-12 medium-6 columns'><div style='width:100%;height:250px;' id='chart-tc'></div></div></div>";
+                        cthtml += "<button class='close-button' data-close aria-label='Close modal' type='button'><span aria-hidden='true'>&times;</span></button>";
+                        $('#details-modal').append(cthtml);
+                        if (data.CTRisk.ldlRiskChart != null) {
+                            if (data.CTRisk.ldlRiskChart.startValue != null)
+                                CreateThreeChartAMChart(ldlChartdiv, data.CTRisk.ldlRiskChart.startValue, data.CTRisk.ldlRiskChart.startText, data.CTRisk.ldlRiskChart.color3, data.CTRisk.ldlRiskChart.startYear, data.CTRisk.ldlRiskChart.currentValue, data.CTRisk.ldlRiskChart.currentText, data.CTRisk.ldlRiskChart.color1, data.CTRisk.ldlRiskChart.currentYear, data.CTRisk.ldlRiskChart.goalValue1, data.CTRisk.ldlRiskChart.goalText1, data.CTRisk.ldlRiskChart.label, data.CTRisk.ldlRiskChart.includeChar);
+                            else
+                                CreateAMChart(ldlChartdiv, data.CTRisk.ldlRiskChart.currentValue, data.CTRisk.ldlRiskChart.currentText, data.CTRisk.ldlRiskChart.color1, data.CTRisk.ldlRiskChart.currentYear, data.CTRisk.ldlRiskChart.goalValue1, data.CTRisk.ldlRiskChart.goalText1, data.CTRisk.ldlRiskChart.label, data.CTRisk.ldlRiskChart.includeChar);
+                        }
+                        if (data.CTRisk.hdlRiskChart != null) {
+                            if (data.CTRisk.hdlRiskChart.startValue != null)
+                                CreateThreeChartAMChart(hdlChartdiv, data.CTRisk.hdlRiskChart.startValue, data.CTRisk.hdlRiskChart.startText, data.CTRisk.hdlRiskChart.color3, data.CTRisk.hdlRiskChart.startYear, data.CTRisk.hdlRiskChart.currentValue, data.CTRisk.hdlRiskChart.currentText, data.CTRisk.hdlRiskChart.color1, data.CTRisk.hdlRiskChart.currentYear, data.CTRisk.hdlRiskChart.goalValue1, data.CTRisk.hdlRiskChart.goalText1, data.CTRisk.hdlRiskChart.label, data.CTRisk.hdlRiskChart.includeChar);
+                            else
+                                CreateAMChart(hdlChartdiv, data.CTRisk.hdlRiskChart.currentValue, data.CTRisk.hdlRiskChart.currentText, data.CTRisk.hdlRiskChart.color1, data.CTRisk.hdlRiskChart.currentYear, data.CTRisk.hdlRiskChart.goalValue1, data.CTRisk.hdlRiskChart.goalText1, data.CTRisk.hdlRiskChart.label, data.CTRisk.hdlRiskChart.includeChar);
+                        }
+                        if (data.CTRisk.trigRiskChart != null) {
+                            if (data.CTRisk.trigRiskChart.startValue != null)
+                                CreateThreeChartAMChart(TrigChartdiv, data.CTRisk.trigRiskChart.startValue, data.CTRisk.trigRiskChart.startText, data.CTRisk.trigRiskChart.color3, data.CTRisk.trigRiskChart.startYear, data.CTRisk.trigRiskChart.currentValue, data.CTRisk.trigRiskChart.currentText, data.CTRisk.trigRiskChart.color1, data.CTRisk.trigRiskChart.currentYear, data.CTRisk.trigRiskChart.goalValue1, data.CTRisk.trigRiskChart.goalText1, data.CTRisk.trigRiskChart.label, data.CTRisk.trigRiskChart.includeChar);
+                            else
+                                CreateAMChart(TrigChartdiv, data.CTRisk.trigRiskChart.currentValue, data.CTRisk.trigRiskChart.currentText, data.CTRisk.trigRiskChart.color1, data.CTRisk.trigRiskChart.currentYear, data.CTRisk.trigRiskChart.goalValue1, data.CTRisk.trigRiskChart.goalText1, data.CTRisk.trigRiskChart.label, data.CTRisk.trigRiskChart.includeChar);
+                        }
+                        if (data.CTRisk.tcRiskChart != null) {
+                            if (data.CTRisk.tcRiskChart.startValue != null)
+                                CreateThreeChartAMChart(tcChartdiv, data.CTRisk.tcRiskChart.startValue, data.CTRisk.tcRiskChart.startText, data.CTRisk.tcRiskChart.color3, data.CTRisk.tcRiskChart.startYear, data.CTRisk.tcRiskChart.currentValue, data.CTRisk.tcRiskChart.currentText, data.CTRisk.tcRiskChart.color1, data.CTRisk.tcRiskChart.currentYear, data.CTRisk.tcRiskChart.goalValue1, data.CTRisk.tcRiskChart.goalText1, data.CTRisk.tcRiskChart.label, data.CTRisk.tcRiskChart.includeChar);
+                            else
+                                CreateAMChart(tcChartdiv, data.CTRisk.tcRiskChart.currentValue, data.CTRisk.tcRiskChart.currentText, data.CTRisk.tcRiskChart.color1, data.CTRisk.tcRiskChart.currentYear, data.CTRisk.tcRiskChart.goalValue1, data.CTRisk.tcRiskChart.goalText1, data.CTRisk.tcRiskChart.label, data.CTRisk.tcRiskChart.includeChar);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                $('#details-modal').foundation('open');
+            }
+            else if (name == 'wellnessVision') {
+                $('#details-modal').html("");
+                $.ajax({
+                    url: wellnessVisionURL,
+                    type: 'POST',
+                    dataType: "json",
+                    success: function (data) {
+                        var wellnessHtml = "";
+                        if (data.WellnessVision != "") {
+							wellnessHtml += "<button class='close-button' data-close aria-label='Close modal' type='button'><span aria-hidden='true'>&times;</span></button><div class='vision-content'><div class='media'><img src='/Images/program/vision-icon.svg' alt=''></div><div class='content'><p class='title'>"+data.WellnessVision+"</p></div></div>"
+                            $('#details-modal').append(wellnessHtml);
+                        }
+                        else {
+							wellnessHtml += "<button class='close-button' data-close aria-label='Close modal' type='button'><span aria-hidden='true'>&times;</span></button><div class='vision-content'><div class='media'><img src='/Images/program/vision-icon.svg' alt=''></div><div class='content'><p class='title'>"+ wellnessVision +"</p></div></div>"
+                            $('#details-modal').append(wellnessHtml);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+                $('#details-modal').removeClass("large").foundation('open');
+                $('#details-modal').on("closed.zf.reveal", function(){
+                    $('#details-modal').addClass("large");
+                });
+            } else if (name == 'completedKits') {
+                $('#details-modal').html("");
+                var link = completedKitsUrl;
+                cthtml = "<button class='close-button' data-close aria-label='Close modal' type='button'><span aria-hidden='true'>&times;</span></button>";
+
+                $('#details-modal').load(link, function () {
+					$('#details-modal').append(cthtml);
+                });
+
+                $('#details-modal').foundation('open');
+            }
+            else if (name == 'kitVideo') {
+                $('#kit-video').foundation('open');
+            }
+        }
+</script>

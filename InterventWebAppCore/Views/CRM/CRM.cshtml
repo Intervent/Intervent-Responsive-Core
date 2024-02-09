@@ -1,0 +1,601 @@
+﻿@model InterventWebApp.CRMProfileModel
+@using InterventWebApp
+@{
+    ViewBag.Title = "AdminUsers";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Details = "CRM";
+}
+<section class="main crm-main">
+	<div class="grid-container">
+		<div class="notification-card text-center" hidden><span id="notificationCard">Call record saved successfully </span></div>
+
+		<div data-alert id="unhandled-form-alert" class="callout alert-box alert success" hidden>
+			<span>You have <em></em> unhandled webform(s)</span>
+			<a href="#" class="close">x</a>
+		</div>
+
+		<div class="grid-x crm-main-wrapper">
+			<div class="cell medium-3 large-2">
+
+				<div class="crm-device-back-btn show-for-small-only hide"><a href="#">Back</a></div>
+
+				<div class="crm-sidenav">
+					<div>
+						<span class="show-for-small-only">All Records</span>
+						<ul>
+							<li class="is-active" data-tab-target="all-records" onclick="">
+								<img src="~/Images/crm/records-list-icon.svg" width="25" height="26" alt="" />
+								<span>All Records</span>
+							</li>
+							<li data-tab-target="deleted-records">
+								<img src="~/Images/crm/delete-list-icon.svg" width="23" height="26" alt="" />
+								<span>Deleted</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="loader-wrapper">
+				<div id="loader"></div>
+			</div>
+			<div class="cell medium-9 large-10">
+				<div class="crm-content-wrap">
+					<div class="all-records-tab tab-panel" id="all-records">
+						<div class="search-records-container">
+							<p>Search Records</p>
+
+							<form data-aide="ajax" id="searchuser-form" class="form-component">
+								<div class="grid-x grid-margin-x">
+									<div class="cell medium-4">
+										<label for="">
+											First Name
+											<input id="FirstName" name="FirstName" type="text" placeholder="First Name">
+										</label>
+									</div>
+
+									<div class="cell medium-4">
+										<label for="">
+											Last Name
+											<input id="LastName" name="LastName" type="text" placeholder="Last Name">
+										</label>
+									</div>
+
+									<div class="cell medium-4">
+										<label for="">
+											Phone Number
+											<input id="Phone" name="Phone" type="number" placeholder="Phone Number">
+										</label>
+									</div>
+
+									<div class="cell medium-4">
+										<label for="">
+											Email Address
+											<input id="Email" name="Email" type="email" placeholder="Email Address">
+										</label>
+									</div>
+
+									<div class="cell medium-4">
+										<label for="">
+											CRM ID
+											<input id="crmID" name="crmID" type="number" placeholder="CRM ID">
+											@*@Html.DropDownListFor(x => x.ListOrganizations, Model.ListOrganizations, "--Select Organization--")*@
+										</label>
+									</div>
+
+									<div class="cell medium-4">
+										<label for="">
+											RMA/QAD Number
+											<input id="RMAandQADNumber" name="RMAandQADNumber" type="text" placeholder="RMA/QAD
+Number">
+										</label>
+									</div>
+
+									<div class="cell medium-4">
+										<label for="">
+											Complaint Number
+											<input id="MasterControlNo" name="MasterControlNo" type="text" placeholder="Complaint Number" maxlength="50">
+										</label>
+									</div>
+
+									<div class="cell medium-4">
+										<label for="">
+											CSR Name
+											@Html.DropDownList("CSRId", Model.CSRLists, "--Select CSR--")
+										</label>
+									</div>
+
+									<div class="cell medium-4">
+										<div class="flex-container align-justify">
+											<div class="records-filter">
+												<label class="options-main-label">See only complaints</label>
+												<div class="switch switch-primary">
+													<input class="switch-input" id="IsComplaintsSearch" type="checkbox" name="IsComplaintsSearch">
+													<label class="switch-paddle" for="IsComplaintsSearch">
+														<span class="show-for-sr">See only complaints</span>
+													</label>
+												</div>
+											</div>
+											<div class="records-filter">
+												<label class="options-main-label">Unhandled Webforms</label>
+												<div class="switch switch-primary">
+													<input class="switch-input" id="IsUnhandledWebforms" type="checkbox" name="IsUnhandledWebforms">
+													<label class="switch-paddle" for="IsUnhandledWebforms">
+														<span class="show-for-sr">Unhandled Webforms</span>
+													</label>
+												</div>
+											</div>
+										</div>
+									</div>
+									<hr>
+
+									<div class="cell new-button">
+										<div class="align-center align-middle medium-flex-container text-center">
+											<button class="button" id="search-record">Search</button>
+											<button type="button" class="button hollow" onclick="AddCRMContact();">Create New Profile</button>
+											<button type="button" id="clear-search" class="button hollow">Clear filter</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+						@* Search record container ends *@
+
+						<div class="records-list-container">
+
+							<div id="crm-search-results"></div>
+							<!-- pagination Start -->
+							<div class="pagination-area hide" id="pagination-centered">
+								<ul>
+									<li id="numeric"></li>
+								</ul>
+								<!-- page-link Start -->
+								<div class="page-link">
+									<label>@Translate.Message("L4041")</label>
+									<div class="grid-x">
+										<input type="text" id="jumptoPageNo">
+										<button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+									</div>
+								</div>
+								<!-- page-link End -->
+							</div>
+							<!-- pagination End -->
+						</div>
+						@* Records list ends *@
+						<div class="create-profile-container hide" id="crm-contact">
+						</div>
+						@* Create profile ends *@
+
+						<div class="add-new-records-container hide" id="new-record">
+						</div>
+						@* Add new records ends *@
+					</div>
+
+					<div class="deleted-records-tab tab-panel hide" id="deleted-records">
+						<div class='records-list-wrapper'>
+							<div class='records-list'>
+								<div class="text-center empty-data"><div><img src="../Images/crm/empty-data-image.svg" alt=""></div><p>No data were found.</p></div>
+							</div>
+						</div>
+					</div>
+					<!-- Deleted records container ends  -->
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<div id="create-profile-success" class="reveal large create-profile-success" data-reveal>
+    <div class="text-center">
+        <img src="~/Images/crm/success-tick-img.svg" alt="">
+        <h4>Contact saved successfully</h4>
+        <p>Would you like to add a record for this contact?</p>
+
+        <div class="align-center align-middle flex-container new-button">
+            <button class="button hollow" id="back-to-records" onclick="RefreshListNotes($('#newContactId').val(), 0);">Do this Later</button>
+            <button class="button" id="open-create-records" onclick="addNewRecord()">Add New Record</button>
+            <input type="hidden" id="newContactId" />
+        </div>
+    </div>
+
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div id="profile-change-log-modal" class="reveal large change-log-modal" data-reveal>
+    <h2>Profile Change Log</h2>
+
+    <div class="log-container">
+        <div class="log-title">
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>
+                                <span>Profile Name</span>
+                                <strong id="ContactName"></strong>
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="profile-change-log-table" class="log-table">
+        </div>
+    </div>
+
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/NoZipCountries.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+
+<script>
+    var startIndex = 1;
+    var pageSize = 10;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    var totalNotes = 10;
+    var noteComplaintSwitch = false;
+    var noteRequiresRMA = false;
+    var noteSearch = "";
+
+    function addNewRecord() {
+        $('#create-profile-success').foundation('close');
+        $(".search-records-container, .records-list-container, .add-new-records-container").toggleClass("hide");
+        AddEditNotes($('#newContactId').val(), null);
+    }
+
+    function AddCRMNotes(contactId) {
+        AddEditNotes(contactId, null);
+        $(".search-records-container, .records-list-container, .add-new-records-container").toggleClass("hide");
+		if($(window).width() < 640) {
+			$(".crm-sidenav, .crm-device-back-btn").toggleClass("hide");
+		}
+    }
+
+    function AddEditNotes(contactId, noteId) {
+        $("#loader-wrapper").fadeIn();
+        $('#create-profile-success').foundation('close');
+        $("#new-record").html("");
+        $.ajax({
+            data: { contactId: contactId, noteId: noteId },
+            url: '@Url.Action("AddEditNotes", "CRM")',
+            success: function (data) {
+                $("#new-record").html(data);
+                window.scrollTo(0, 0);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+        $("#loader-wrapper").fadeOut();
+		//if($(window).width() < 640) {
+		//	$(".crm-sidenav, .crm-device-back-btn").toggleClass("hide");
+		//}
+    }
+
+    function ListNotes(contactId, listClick) {
+        $("#unhandled-form-alert a").trigger("click");
+        $("#loader-wrapper").fadeIn();
+        noteComplaintSwitch = false;
+        noteRequiresRMA = false;
+        noteSearch = "";
+        totalNotes = 10;
+        $.ajax({
+            data: { contactId: contactId, totalNotes: totalNotes, isComplaint: false, isRequiresRMA: false, noteSearch: "", fromInfoPage: false  },
+            url: '@Url.Action("ListNotes", "CRM")',
+            success: function (data) {
+                $("#new-record").html(data);
+                if (listClick) {
+                    $(".search-records-container, .records-list-container, .add-new-records-container").toggleClass("hide");
+                }
+                window.scrollTo(0, 0);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+        $("#loader-wrapper").fadeOut();
+		if($(window).width() < 640) {
+			$(".crm-sidenav, .crm-device-back-btn").toggleClass("hide");
+		}
+    }
+
+    function RefreshListNotes(contactId, loadMorePage) {
+        $("#loader-wrapper").fadeIn();
+        $('#create-profile-success').foundation('close');
+        noteComplaintSwitch = $('#IsComplaintsNoteList').prop('checked') == undefined ? false : $('#IsComplaintsNoteList').prop('checked');
+        noteRequiresRMA = $('#IsRequiresRMA').prop('checked') == undefined ? false : $('#IsRequiresRMA').prop('checked');
+        noteSearch = $('#noteSearchField').val();
+        totalNotes += loadMorePage;
+        $.ajax({
+            data: { contactId: contactId, totalNotes: totalNotes, isComplaint: noteComplaintSwitch, isRequiresRMA: noteRequiresRMA, noteSearch: noteSearch, fromInfoPage: false  },
+            url: '@Url.Action("ListNotes", "CRM")',
+            success: function (data) {
+                $("#new-record").html(data);
+                window.scrollTo(0, 0);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    $("#table-create-new-contact").on('click', function (e) {
+        $("#crm-contact").html("");
+        AddEditCRMContact(null);
+        e.preventDefault();
+    });
+
+    function AddCRMContact() {
+        AddEditCRMContact(null);
+        $(".search-records-container, .records-list-container, .create-profile-container").toggleClass('hide');
+		if($(window).width() < 640) {
+			$(".search-records-container p").toggleClass("is-active");
+            $("form#searchuser-form").slideToggle();
+			$(".crm-sidenav, .crm-device-back-btn").toggleClass("hide");
+
+			$("html, body").animate({
+				scrollTop: 0
+			}, 200);
+		}
+    }
+
+    function AddEditCRMContact(contactId) {
+        $("#loader-wrapper").fadeIn();
+        $.ajax({
+            data: { contactId: contactId },
+            url: '@Url.Action("AddEditCRMContact", "CRM")',
+            success: function (data) {
+                $("#crm-contact").html(data);
+            }
+		}).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    $("#search-record").on('click', function (e) {
+        $('#crm-search-results').html('');
+        currentPage = 0;
+        SearchRecord();
+		if($(window).width() < 640) {
+			$(".search-records-container p").toggleClass("is-active");
+            $("form#searchuser-form").slideToggle();
+		}
+        e.preventDefault();
+    });
+
+    $("#clear-search").on('click', function (e) {
+        $('#crm-search-results').html('');
+        currentPage = 0;
+        pageSize = 10;
+        totalRecords = 0;
+        $(':input', '#searchuser-form')
+            .not(':button, :submit, :reset, :hidden')
+            .val('')
+            .prop('checked', false)
+            .prop('selected', false);
+        SearchRecord();
+        if ($(window).width() < 640) {
+            $(".search-records-container p").toggleClass("is-active");
+            $("form#searchuser-form").slideToggle();
+        }
+        e.preventDefault();
+    });
+
+    function checkUnhandled() {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("CheckUnhandledForm", "CRM")',
+            dataType: 'json',
+            success: function (data) {
+                if (data.result > 0) {
+					$("#unhandled-form-alert").find('em').html(data.result);
+                    showUnhandledNotification();
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+			RedirectToErrorPage(jqXHR.status);
+		});;
+    }
+
+    function SearchRecord() {
+        $("#loader-wrapper").fadeIn();
+        var complaints = $('#IsComplaintsSearch').prop('checked');
+        var unhandledWebforms = $('#IsUnhandledWebforms').prop('checked');
+        var formdata = $("#searchuser-form").serialize() + '&page=' + currentPage + '&pageSize=' + pageSize + '&totalRecords=' + totalRecords + '&ComplaintsSearch=' + complaints + '&UnhandledWebforms=' + unhandledWebforms;
+        $('#crm-search-results').html("");
+        $('#pagination-centered').addClass("hide");
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("CRMSearchRecord", "CRM")',
+            dataType: "json",
+            async: true,
+            cache: true,
+            data: formdata,
+            success: function (data) {
+                if (data != null) {
+                    totalRecords = data.TotalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    $("#jumptoPageNo").attr({ "max": totalPages });
+                    if (data.Records != null && totalRecords > 0) {
+                        AddSearchResult(data.Records);
+                        $("#crm-search-results").show();
+                        if (totalRecords > pageSize)
+                            $('#pagination-centered').removeClass("hide");
+                    }
+                    else {
+                        var header = '<div class="records-list-wrapper"><div class="records-list"><table><tbody><tr><td colspan="5"><div class="text-center empty-data"><div><img src="../Images/crm/empty-data-image.svg" alt=""></div><p>@Translate.Message("L2774")</p><div class="text-center new-button"><button onclick="AddCRMContact();" class="button hollow">Create New Profile</button></div></div></td></tr></tbody></table></div></div>';
+                        $('#crm-search-results').html(header);
+                        $("#crm-search-results").show();
+                        $('#pagination-centered').addClass("hide");
+                    }
+                }
+                AddPager();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    function AddSearchResult(userData) {
+        var header = "<div class='records-list-wrapper'><div class='records-list'><table id='crm-search-data'><thead><tr><th>Name &amp; CRM ID</th><th>Type</th><th>Contact</th><th>Date</th></tr></thead><tbody>";
+        var tbody = "";
+        for (i in userData) {
+            var isComplaint = userData[i].isComplaint ? "<span class='tag tag-red'>" : "<span class='tag tag-green'>";
+            tbody += "<tr><td><p><a class='add-call-record' onclick='ListNotes(" + userData[i].Id + ","+ true +");'>" + userData[i].Name + "</a></p><span>" + userData[i].Id + "</span></td>";
+            if (userData[i].Disposition != "")
+                tbody += userData[i].Note != "" ? "<td><p><strong>" + userData[i].Type + "</strong></p>" + isComplaint + userData[i].Disposition + "</span></td>" : "<td><p><a href='#' class='add-call-record' onclick='AddCRMNotes(" + userData[i].Id + ");'>+AddRecord</a></p></td>";
+            else
+                tbody += userData[i].Note != "" ? "<td><p><strong>" + userData[i].Type + "</strong></p></td>" : "<td><p><a href='#' class='add-call-record' onclick='AddCRMNotes(" + userData[i].Id + ");'>+AddRecord</a></p></td>";
+            tbody += "<td><p>" + userData[i].Phone + "</p><span>" + userData[i].Email + "</span></td>" +
+                "<td><p>" + userData[i].Date + "</p><span>" + userData[i].Time + "</span></td></tr>";
+        }
+        var tbodyend = "</tbody></table></div></div>";
+        $('#crm-search-results').html(header + tbody+ tbodyend);
+    }
+
+    $("#gotoPage_submit").on('click', function (e) {
+        var page = $('#jumptoPageNo').val();
+        GotoPage(page-1)
+        e.preventDefault();
+    });
+
+    function GotoPage(page) {
+        $('#crm-search-results').html('');
+        $('#pagination-centered').addClass("hide");
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        SearchRecord();
+        e.preventDefault();
+    }
+
+    function showAlertMessage(msg) {
+        $('#notificationCard').text(msg);
+        $(".notification-card").show('slow');
+        setTimeout(function () {
+            $('.notification-card').hide('slow');
+        }, 3000);
+    }
+
+    function showUnhandledNotification() {
+		$("#unhandled-form-alert").show('slow');
+    }
+
+    function ViewProfileChangeLog(contactId, firstName, lastName) {
+        $("#ContactName").html(firstName + "  " + lastName);
+        var isContactLog = true;
+        $.ajax({
+            data: { refId : contactId, isContactLog: isContactLog },
+            dataType: "json",
+            type: 'POST',
+            url: '@Url.Action("GetChangeLog", "CRM")',
+            success: function (data) {
+                var logHtml = ProcessLogData(data.changeLog);
+                $("#profile-change-log-table").html(logHtml);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function ProcessLogData(changeLog) {
+         var logHtml = "";
+         if (changeLog.length > 0) {
+                 logHtml = "<table><thead><tr><th>Change Date</th><th>Event</th><th>Original State</th><th>New state</th><th>Changed By</th></tr></thead><tbody>";
+                 for (var i = 0; i < changeLog.length; i++) {
+                     for (var j = 0; j < changeLog[i].Changes.length - 2; j++) {
+                         var changes = changeLog[i].Changes[j];
+                         logHtml += "<tr><td>" + changeLog[i].Changes[changeLog[i].Changes.length - 2].NewValue
+                             + "</p> </td><td><p>" + changes.PropertyName + "</p></td><td><p>" + changes.CurrentValue + "</p></td><td><p>" + changes.NewValue + "</p></td><td><p>" + changeLog[i].Changes[changeLog[i].Changes.length - 1].NewValue + "<span></span></p></td></tr>";
+                     }
+                 }
+                 logHtml += "</tbody></tbody ></table>";
+             } else {
+                    logHtml = '<div class="text-center empty-data"><div><img src="../Images/crm/empty-data-image.svg" alt=""></div><p>@Translate.Message("L2774")</p></div>';
+         }
+         return logHtml;
+    }
+
+    function EditCRMContact(contactId) {
+        AddEditCRMContact(contactId);
+        $(".create-profile-container, .add-new-records-container").toggleClass('hide');
+    }
+
+</script>
+
+<script>
+    function calWinWidth() {
+        var windowWt = $(window).width();
+        return windowWt;
+    }
+
+    var winWt;
+
+    $(window).resize(function() {
+        winWt = calWinWidth();
+    });
+
+    $(document).ready(function () {
+        winWt = calWinWidth();
+
+        if (winWt < 640) {
+            $(".search-records-container p").on("click", function () {
+                $(this).toggleClass("is-active");
+                $(this).siblings("form#searchuser-form").slideToggle();
+            });
+
+            $(".crm-sidenav span.show-for-small-only").on("click", function () {
+                $(this).toggleClass("is-active");
+                $(this).siblings("ul").slideToggle();
+            });
+        }
+
+        //Main tabs
+        //All scripts to manage the show/hide of page sections
+        $(".crm-sidenav li").on("click", function () {
+            var tabId = $(this).data("tab-target");
+            if (!$(this).hasClass("is-active")) {
+                $(".crm-sidenav li").removeClass("is-active");
+                $(this).addClass("is-active");
+                $(".tab-panel").addClass("hide");
+                $("#" + tabId).removeClass("hide");
+            }
+
+            if (tabId == 'all-records') {
+                $('#all-records > div').addClass('hide');
+                $('.search-records-container, .records-list-container').removeClass('hide');
+            }
+
+            if (winWt < 640) {
+                var tabText = $(this).find("span").text();
+                $(this).parents(".crm-sidenav").find("span.show-for-small-only").text(tabText).removeClass("is-active");
+                $(this).parents("ul").slideUp();
+            }
+        });
+        $('#crm-search-results').html('');
+        SearchRecord();
+        checkUnhandled();
+
+        $(".crm-device-back-btn a").on('click', function (e) {
+            e.preventDefault;
+            $('#all-records > div').addClass('hide');
+            $('.search-records-container, .records-list-container').removeClass('hide');
+            $(".crm-sidenav, .crm-device-back-btn").toggleClass("hide");
+        });
+        @if (Model.tempData != null && Model.tempData.contactId != null) {
+            @: currentPage = ListNotes(@Model.tempData.contactId, true);
+        }
+
+        $("#unhandled-form-alert a").on("click", function (e) {
+            e.preventDefault();
+			$("#unhandled-form-alert").hide('slow');
+        });
+    });
+
+</script>

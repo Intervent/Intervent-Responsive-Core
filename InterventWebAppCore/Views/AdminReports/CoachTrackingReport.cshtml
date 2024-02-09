@@ -1,0 +1,160 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+@model InterventWebApp.ReportSelectModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x scheduler-offset-small-only">
+                <div class="small-12 large-6 left cell">
+                    @Html.Partial("../AdminReports/_ReportSelect", Model, new ViewDataDictionary(ViewData) { { "Kind", "CoachTrackingReport" } })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="panel filters">
+            <fieldset>
+                <legend>Report Criteria</legend>
+                <div class="grid-x grid-padding-x">
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.coach, Model.CoachList, "--Select Coach--", new Dictionary<string, object> { { "class", "primary-select" } })
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        @Html.DropDownListFor(x => x.Organization, Model.OrganizationList, "--Select Organization--", new Dictionary<string, object> { { "class", "primary-select" } })
+                    </div>
+                    <div class="small-12 medium-6 medium-offset-6 cell text-right">
+                        <button class="button" id="filter-tracking-data">
+                            <div class="loading-spinner hide" show-if-submitting></div>
+                            <i class="fa fa-filter"></i>
+                            Search
+                        </button>
+                        <button class="secondary-color small" onclick="DownloadData()">
+                            <div></div>
+                            <i class="fa fa-download"></i>
+                            Download CSV
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="small-12 cell">
+			<div class="table-container">
+				<table class='table basic-table1' id="listReports"></table>
+			</div>
+        </div>
+        <div class="cell small-12">
+            <!-- pagination Start -->
+            <div class="pagination-area hide" id="pagination-centered">
+                <ul>
+                    <li id="numeric"></li>
+                </ul>
+                <!-- page-link Start -->
+                <div class="page-link">
+                    <label>@Translate.Message("L4041")</label>
+                    <div class="grid-x">
+                        <input type="text" id="jumptoPageNo">
+                        <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                    </div>
+                </div>
+                <!-- page-link End -->
+            </div>
+            <!-- pagination End -->
+        </div>
+    </div>
+</section>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+
+    @if (Model.tempData != null) {
+        @: currentPage = @Model.tempData.page;
+        @: totalRecords = @Model.tempData.totalRecords;
+        @: $("#coach").val(@Model.tempData.coach);
+        @: $("#Organization").val(@Model.tempData.organization);
+        @: ListCoachTrackingReport();
+        }
+    if (window.performance.navigation.type == 1) {
+        window.location = "../AdminReports/CoachTrackingReport";
+    }
+    $('#filter-tracking-data').on('click', function () {
+        $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+        $('[show-if-submitting]').removeClass('hide');
+        startIndex = 0;
+        pageSize = 10;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        ListCoachTrackingReport();
+    });
+
+    function ListCoachTrackingReport() {
+        var coach = $('#coach').val();
+        var organization = $('#Organization').val();
+        $.ajax({
+            url: "@Url.Action("ListCoachTrackingReport", "AdminReports")",
+            data: { page: currentPage, pageSize: pageSize, totalRecords: totalRecords, coach: coach, organization: organization},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                totalRecords = data.TotalRecords;
+                totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                displayReportsdata(data.Records);
+                if (totalRecords <= 0) {
+                    $('#listReports').html("<center>No data were found.</center>");
+                }
+                AddPager();
+                $('[show-if-submitting]').parent().prop('disabled', '');
+                $('[show-if-submitting]').addClass('hide');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListCoachTrackingReport();
+    }
+
+    function displayReportsdata(transactiondata) {
+        $('#listReports').html("");
+        var transactionhtml = "";
+        transactionhtml += "<thead><tr><th>Name</th>";
+        transactionhtml += "<th>Program</th>";
+        transactionhtml += "<th>Coach</th>";
+        transactionhtml += "<th>Comp. Calls</th>";
+        transactionhtml += "<th>Rem. Calls</th>";
+        transactionhtml += "<th>Follow up</th></tr></thead>";
+        for (i in transactiondata) {
+            var transaction = transactiondata[i];
+            var remCalls = (transaction.TotalCalls - transaction.CompletedCalls) < 0 ? 0 : (transaction.TotalCalls - transaction.CompletedCalls);
+            var followup = transaction.FollowUp == true ? "X" : "";
+            transactionhtml += "<tr><td><a style='text-decoration: underline;color:deepskyblue;' onclick='ViewParticipant(" + transaction.Id + ")'>" + transaction.Name + "</td>";
+            transactionhtml += "<td>" + transaction.ProgramName + "</td>";
+            transactionhtml += "<td>" + transaction.CoachName + "</td>";
+            transactionhtml += "<td>" + transaction.CompletedCalls + "</td>";
+            transactionhtml += "<td>" + remCalls + "</td>";
+            transactionhtml += "<td>" + followup + "</td></tr>";
+        }
+        $('#listReports').append(transactionhtml);
+    }
+
+    function ViewParticipant(Id) {
+        var link = '@Url.Action("ParticipantProfile", "Participant", new { Id = "PId", fromCoachReport = true })';
+        window.location.href = link.replace("PId", Id);
+    }
+
+    function DownloadData() {
+        var coach = $('#coach').val();
+        var organization = $('#Organization').val();
+        window.location = "../AdminReports/DownloadCoachTrackingReport?coach=" + coach + "&organization=" + organization;
+    }
+</script>

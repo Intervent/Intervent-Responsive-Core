@@ -1,0 +1,136 @@
+﻿@model InterventWebApp.SendReportsModel
+@using InterventWebApp
+<div class="dashboard-content participant-log cell">
+    <div class="notification-card text-center" hidden><span id="sendReportNotification"></span></div>
+
+    <div class="control-bar">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 medium-6 cell">
+                <h2>Send Report</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions send-report-wrapper">
+        <form id="form-report" class="form-component" data-abide novalidate>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6">
+                    <label>
+                        Select Report to send
+                        @Html.DropDownListFor(m => m.reportType, Model.reportTypes, "--Report Types--", new Dictionary<string, object> { { "class", "primary-select right-arrow" }, { "required", "required" } })
+                        <small class="form-error">@Translate.Message("L480")</small>
+                    </label>
+                </div>
+                <div class="cell medium-6">
+                    <label class="options-main-label">
+                        Fax Number
+                        <i class="fa fa-question-circle has-tip tip-left" aria-hidden="true" data-tooltip aria-haspopup="true" data-allow-html="true" title="Enter the fax number in the following format: 1 345 678 9012"></i>
+                    </label>
+                    <div class="search-bar">
+                        @Html.TextBoxFor(m => m.FaxNumber, new Dictionary<string, object> { { "placeholder", "Fax Number" }, { "required", "required" } })
+                        <button type="button" class="edit-btn hide" id="faxNumber"></button>
+                        <small class="form-error">@Translate.Message("L480")</small>
+                    </div>
+                </div>
+                <div class="cell text-right">
+                    <button class="button" type="submit">
+                        <div class="loading-spinner hide" show-if-submitting></div>
+                        Send Report
+                    </button>
+                </div>
+            </div>
+        </form>
+        @if (Model.faxedReports.Count > 0)
+        {
+            <div class="content-table table-overflow-container">
+                <h4>
+                    Previously Sent Reports
+                </h4>
+                <table id="search-results" class="send-reports-table table basic-table2">
+                    <thead>
+                        <tr>
+                            <th><span>Sent By</span></th>
+                            <th><span>Sent On</span></th>
+                            <th><span>Report Type</span></th>
+                            <th><span>Fax Number</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var faxedReport in Model.faxedReports)
+                        {
+                        <tr>
+                            <td>@faxedReport.User1.FirstName @faxedReport.User1.LastName</td>
+                            <td>@TimeZoneInfo.ConvertTimeFromUtc(faxedReport.SentOn.Value, TimeZoneInfo.FindSystemTimeZoneById(User.TimeZone()))</td>
+                            <td>@faxedReport.ReportType1.Type</td>
+                            <td>@faxedReport.FaxNumber</td>
+
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ('@Model.hasActivePortal' != "True")
+        {
+            $("#form-report").addClass("hide");
+        }
+        @if(!string.IsNullOrEmpty(Model.FaxNumber))
+        {
+          @: $('#FaxNumber').prop("readonly", true);
+          @: $('#faxNumber').removeClass("hide");
+        }
+    });
+    $("#form-report").foundation();
+    $('#form-report')
+        .on('forminvalid.zf.abide', function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+            console.log(invalid_fields);
+        })
+        .on('formvalid.zf.abide', function () {
+            $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+            $('[show-if-submitting]').removeClass('hide');
+            $.ajax({
+                url: "@Url.Action("PrintableReports", "Reports")",
+                async: true,
+                type: 'POST',
+                dataType: "json",
+                data: { view: $("#reportType").val(), sendFax: true, faxNumber: $("#FaxNumber").val(), generatePDF: false },
+				success: function (data) {
+					if (data) {
+                        if (data.response.isSuccess) {
+                            $('#sendReportNotification').text("Report sent successfully.");
+                            $(".notification-card").show('slow');
+                            setTimeout(function () {
+                                $('.notification-card').hide('slow');
+                            }, 3500);
+                            setTimeout(function() {
+                                $("#send-reports-link").trigger('click');
+                            }, 3000);
+						}
+                        else {
+                            $('#sendReportNotification').text(data.response.message);
+                            $(".notification-card").show('slow');
+                            setTimeout(function () {
+                                $('.notification-card').hide('slow');
+                            }, 3500);
+                    }
+                    }
+                    $('[show-if-submitting]').parent().prop('disabled', '');
+                    $('[show-if-submitting]').addClass('hide');
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+		    });
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        });
+    $('#faxNumber').on('click', function () {
+        $('#FaxNumber').prop("readonly", false);
+        $('#faxNumber').addClass("hide");
+    });
+</script>

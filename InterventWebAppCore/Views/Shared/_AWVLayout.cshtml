@@ -1,0 +1,47 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    @*Set the viewport width to device width for mobile *@
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+    <meta name="description" content="My Intervent Dashboard" />
+    <title>INTERVENT | Better Health for Life™</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="@Url.Content("~/Content/css/Site.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/css/font-awesome.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" ) />
+    <link href='https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,600,500,700,800,900' rel='stylesheet' type='text/css'>
+    <script src="@Url.Content("~/Scripts/modernizr-2.8.3.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/foundation/fastclick.js")?v=@CommonUtility.GetRandom()"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/ErrorHandler.js")?v=@CommonUtility.GetRandom()"></script>
+
+
+    @RenderSection("head", required: false)
+
+</head>
+<body class="user-layout">
+	<script src="@Url.Content("~/Scripts/jquery-3.6.1.min.js")?v=@CommonUtility.GetRandom()"></script>
+	<script src="https://code.jquery.com/jquery-migrate-3.4.0.js"></script>
+	<script src="@Url.Content("~/Scripts/foundation/foundation.min.js")?v=@CommonUtility.GetRandom()"></script>
+	<script src="@Url.Content("~/Scripts/foundation-datepicker.js")?v=@CommonUtility.GetRandom()"></script>
+	<script src="@Url.Content("~/Scripts/foundation-select.js")?v=@CommonUtility.GetRandom()"></script>
+	<script src="@Url.Content("~/Scripts/app.js")?v=@CommonUtility.GetRandom()"></script>
+	<script>
+		function UpdateProfileStatus() {
+		}
+	</script>
+	@RenderBody()
+
+	<script>
+		$('.override-select').foundationSelect();
+		$(document).foundation();
+	</script>
+
+	@*Use the Scripts section to define page specific scripts*@
+	@RenderSection("scripts", required: false)
+</body>
+
+</html>

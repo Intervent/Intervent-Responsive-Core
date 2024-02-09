@@ -1,0 +1,234 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+
+@Html.Partial("MetLifeGulf/_MetLifeGulfHeader", new ViewDataDictionary(ViewData) { { "MenuClass", "" } })
+
+<section class="lmc-prog-wrapper lmc-index title-casing">
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="cell large-3 medium-4" data-sticky-container>
+				<article class="lmc-sidebar sticky" data-sticky data-margin-top="3.75" data-btm-anchor="success-stories:bottom" data-sticky-on="small">
+					<div class="prog-sidebar-links">
+						<p>Welcome</p>
+						<ul>
+							<li class="is-active"><a href="#About" data-offset="70"><img src="~/Images/lmc/lmc-icon-reward-point.png" alt="">About</a></li>
+						</ul>
+					</div>
+					<div class="prog-sidebar-links">
+						<p>@Translate.Message("L3602")</p>
+
+						<ul>
+							<li><a href="#health-section" data-offset="70"><img src="~/Images/lmc/lmc-icon-health-assess.png" alt="">@Translate.Message("L3603")</a></li>
+						</ul>
+					</div>
+					<div class="prog-sidebar-links">
+						<p>@Translate.Message("L3598")</p>
+						<ul>
+							<li><a href="#coached-section" data-offset="70"><img src="~/Images/lmc/lmc-icon-coach-prog.png" alt="">@Translate.Message("L1912")</a></li>
+							<li><a href="#self-help-section" data-offset="70"><img src="~/Images/lmc/lmc-icon-self-help.png" alt="">@Translate.Message("L1913")</a></li>
+						</ul>
+					</div>
+					<div class="prog-sidebar-links">
+						<p>@Translate.Message("L1351")</p>
+						<ul>
+							<li><a href="#success-stories" data-offset="70"><img src="~/Images/assessment.svg" height="23" width="23" alt="">@Translate.Message("L1351")</a></li>
+						</ul>
+					</div>
+				</article>
+			</div>
+
+			<div class="cell large-9 medium-8">
+				<section class="prog-detail-section lmc-health-asses-sec" id="About">
+					<div class="title-section">
+						<div class="title-content">
+							<h3><span>Welcome</span>About</h3>
+							<p>
+								Everybody can benefit from making lifestyle changes to improve their overall health and well-being and prevent and/or better manage chronic health conditions. Participate in wellness services and programs* provided by MetLife Gulf and INTERVENT. All at no cost to you!<br /><br />
+								<span>*Available programs and services may vary. Please refer to your company-specific communications for details.</span><br /><br />
+							</p>
+						</div>
+						<div class="title-image"><img src="~/Images/lmc/lmc-health-assess.png" alt="" /></div>
+					</div>
+				</section>
+				<!--About section ends-->
+				<section class="prog-detail-section lmc-health-asses-sec" id="health-section">
+					<div class="title-section">
+						<div class="title-content">
+							<h3><span>@Translate.Message("L3602")</span>@Translate.Message("L3603")</h3>
+							<p>
+							<p>
+								@Translate.Message("L2470")<br /><br />
+								<span>@Translate.Message("L2471")</span><br /><br />
+								<span>Once you complete the assessment, you will immediately receive a great personal report, health roadmap and a wealth of useful information individually tailored for you.</span><br /><br />
+							</p>
+						</div>
+						<div class="title-image"><img src="~/Images/lmc/lmc-health-assess.png" alt="" /></div>
+					</div>
+				</section>
+				<!--Health Assessment section ends-->
+				<section class="prog-detail-section lmc-accordion-sec" id="coached-section">
+					<div class="title-section">
+						<div class="title-content">
+							<h3><span>@Translate.Message("L3598")</span>@Translate.Message("L3604")</h3>
+						</div>
+					</div>
+					<div class="content-section">
+						<ul class="accordion" data-accordion data-allow-all-closed="true">
+							<li class="accordion-item white-container prog-detail-section is-active" data-accordion-item>
+								<!-- Accordion tab title -->
+								<a href="#" class="accordion-title">@Translate.Message("L1912") (when applicable)</a>
+
+								<div class="accordion-content" data-tab-content>
+									<p>Enroll in our telephonic lifestyle health coaching program to be paired with a professional health coach who’ll help you make and sustain important lifestyle changes - to get healthier, stay healthier and feel better.</p>
+									<p>No matter what your goals are - losing weight and keeping it off, exercising more, quitting smoking, reducing your risk for a chronic medical condition, living healthier with a chronic medical condition - our lifestyle health coaching program can benefit you.</p>
+								</div>
+							</li>
+							<li class="accordion-item white-container prog-detail-section" data-accordion-item id="self-help-section">
+								<!-- Accordion tab title -->
+								<a href="#" class="accordion-title">@Translate.Message("L1913") (when applicable)</a>
+
+								<div class="accordion-content" data-tab-content>
+									<p>This version of our lifestyle management program is designed especially for people who desire to manage their own program. The self-help programs focus on a specific topic (for example, nutrition, exercise, weight management or stress management).</p>
+									<p>You will participate at your own pace via the Internet, so you will have the convenience of completing assessments and accessing and printing materials at times that work for you. While this program is not a quick solution, it’s a safe, proven way to help you get started toward achieving lasting results. And, you receive the same high quality educational materials and tools as our other scientifically proven programs.</p>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<!--Programs accordion section ends-->
+				<section class="prog-detail-section lmc-success-stories" id="success-stories">
+					<div class="grid-container">
+						<div class="grid-x grid-margin-x align-middle">
+							<div class="cell medium-5">
+								<h2>@Translate.Message("L3676")</h2>
+							</div>
+
+							<div class="cell medium-6 medium-offset-1">
+								<p>@Translate.Message("L2729")</p>
+								<div class="orbit" role="region" aria-label="Success stories" data-orbit data-use-m-u-i="false">
+									<div class="orbit-wrapper">
+										<ul class="orbit-container">
+											<li class="is-active orbit-slide">
+												<div class="slider-content">
+													<ul class="checkmark green listinside">
+														<li>“My company offered all employees an opportunity to complete a free health risk assessment as part of a new wellness initiative. I almost didn’t do it because I thought I was healthy and doing everything right. I was surprised that I have several risk factors for heart disease and type 2 diabetes. I now realize I need to make some changes in my lifestyle.”</li>
+													</ul>
+												</div>
+											</li>
+											<li class="orbit-slide">
+												<div class="slider-content">
+													<ul class="checkmark green listinside">
+														<li>“The “what if” scenarios were really motivational to me. I could see objective data about how my health risks would improve if I made changes. I had no idea that getting my blood pressure into a normal range could make so much difference.”</li>
+													</ul>
+												</div>
+											</li>
+											<li class="orbit-slide">
+												<div class="slider-content">
+													<ul class="checkmark green listinside">
+														<li>“I have lost 22 pounds with the help of my coach. As a result, my blood pressure and glucose level are within the normal range. My coach is always upbeat and positive. I got a 'high five' at my doctor’s office today! I love my coach and this program.”</li>
+													</ul>
+												</div>
+											</li>
+										</ul>
+
+									</div>
+									<div class="orbit-controls">
+										<nav class="orbit-bullets">
+											<button class="is-active" data-slide="0"></button>
+											<button data-slide="1"></button>
+											<button data-slide="2"></button>
+										</nav>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!--Success Stories section ends-->
+			</div>
+		</div>
+	</div>
+
+	<section class="take-step-section text-center">
+		<h2>@Translate.Message("L3651")</h2>
+		<div class="button-group align-center">
+			<button onclick="window.location.href = '../Home/MetLifeGulf?signup='+ true;" class="button hide-for-small-only">@Translate.Message("L3652")</button>
+			<button data-open="lmc-mobile-signup" class="button show-for-small-only">@Translate.Message("L3652")</button>
+			<button onclick="window.location.href = '../Home/MetLifeGulf';" class="button hollow hide-for-small-only">@Translate.Message("L2084")</button>
+			<button data-open="login-modal" class="button hollow show-for-small-only">@Translate.Message("L2084")</button>
+		</div>
+	</section>
+</section>
+
+<div id="lmc-mobile-signup" class="reveal lmc-form" data-reveal data-close-on-click="false" data-close-on-esc="false">
+	@Html.Partial("_MobEligSignUp")
+	<a class="close-button" data-close id="close">&#215;</a>
+</div>
+
+@Html.Partial("_ResetPassword", new ViewDataDictionary(ViewData) { { "LMCClass", "lmc-forgot-password" }, { "DateFormat", "" + ViewData["DateFormat"] + "" } })
+
+@Html.Partial("_EmailConfirmation", new ViewDataDictionary(ViewData) { { "LMCClass", "lmc-forgot-password" } })
+
+@Html.Partial("_ForgotPassword", new ViewDataDictionary(ViewData) { { "LMCClass", "lmc-forgot-password" } })
+
+@Html.Partial("_NewLogin", new ViewDataDictionary(ViewData) { { "ShowSignUp", "True" } })
+
+@Html.Partial("_ResendConfirmEmail", new ViewDataDictionary(ViewData) { { "LMCClass", "lmc-forgot-password" } })
+
+<script>
+	$(document).ready(function () {
+		$(".prog-sidebar-links li a").on('click', function (e) {
+			e.preventDefault();
+
+			//Scroll to respective section
+			var hash = $(this).attr("href");
+			var topMargin = parseInt($(this).attr("data-offset"));
+
+			$('html, body').animate({
+				scrollTop: $(hash).position().top - topMargin
+			}, 800);
+
+			//Highlighting the active menu item
+			if (!$(this).parent("li").hasClass("is-active")) {
+				$(".prog-sidebar-links li").removeClass("is-active");
+				$(this).parent("li").addClass("is-active");
+			}
+
+			if ($(window).width() < 641) {
+				$("p.mobile-dropdown").toggleClass("is-active");
+				$(this).parents("article.lmc-sidebar").toggleClass("is-active");
+			}
+		});
+
+		$(window).on('scroll', function () {
+			$('.prog-detail-section').each(function () {
+				if ($(window).scrollTop() >= $(this).offset().top - 180) {
+					var id = $(this).attr('id');
+					$('.prog-sidebar-links ul li').removeClass('is-active');
+					$('.prog-sidebar-links ul li a[href="#' + id + '"]').parent('li').addClass('is-active');
+				}
+			});
+		});
+
+		$(".prog-sidebar-links p").on('click', function () {
+			if ($(window).width() < 641) {
+				$(this).toggleClass("is-active");
+				$(this).parents("article.lmc-sidebar").toggleClass("is-active");
+			}
+		});
+
+		$("ul.accordion li a.accordion-title").on("click", function () {
+			$("[data-accordion]").on("down.zf.accordion", function () {
+				var titleId = $("ul.accordion li.is-active").attr("id");
+				$('html, body').animate({
+					scrollTop: $("#" + titleId).position().top - 70
+				}, 800);
+			});
+
+		});
+	});
+</script>

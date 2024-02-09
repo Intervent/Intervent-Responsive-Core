@@ -1,0 +1,173 @@
+﻿@model InterventWebApp.AdminUsersModel
+@using InterventWebApp
+@{
+    ViewBag.Title = "AdminUsers";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants admin-main-body">
+	<div class="control-bar">
+		<div class="grid-container">
+			<div class="grid-x grid-margin-x">
+				<div class="cell small-8 left">
+					<h2>@Translate.Message("L290")</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x">
+			<div class="cell small-12">
+				<div class="panel filters">
+					<div class="grid-x grid-margin-x">
+						<div class="cell small-12 medium-6">
+							<input type="text" placeholder="First Name..." id="FirstName">
+						</div>
+						<div class="cell small-12 medium-6 end">
+							<input type="text" placeholder="Last Name..." id="LastName">
+						</div>
+					</div>
+					<div class="grid-x grid-margin-x">
+						<div class="cell small-12 medium-6">
+							@Html.DropDownListFor(x => x.Organization, Model.OrganizationList, "--Select Organization--", new Dictionary<string, object> { { "class", "primary-select" } })
+						</div>
+						<div class="cell small-12 medium-5 end">
+							<div class="tick-buttons">
+								<label>
+									<input type="checkbox" value="1" id="adminOnly" title="Current Admin Users Only" checked="checked" />
+									<span class="checkmark"></span>
+									@Translate.Message("L292")
+								</label>
+							</div>							
+						</div>
+					</div>
+					<div class="grid-x grid-margin-x">
+						<div class="cell small-12 medium-5 end">
+							<button class="button" id="filter">
+								<div class="loading-spinner hide" show-if-submitting></div>
+								<i class="fa fa-filter"></i>
+								Filter
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="grid-x grid-margin-x">
+			<div class="cell small-12">
+				<div id="search-results" class="table-container manage-user-table"></div>
+			</div>
+			<div class="cell small-12">
+				<!-- pagination Start -->
+				<div class="pagination-area hide" id="pagination-centered">
+					<ul>
+						<li id="numeric"></li>
+					</ul>
+					<!-- page-link Start -->
+					<div class="page-link">
+						<label>@Translate.Message("L4041")</label>
+						<div class="grid-x">
+							<input type="text" id="jumptoPageNo">
+							<button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+						</div>
+					</div>
+					<!-- page-link End -->
+				</div>
+				<!-- pagination End -->
+			</div>
+		</div>
+	</div>
+</section>
+<div id="admin-profile" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    //Activate the detailed info
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+    $(document).ready(function () {
+        $('#closeNumbers').on('click', function () {
+            $('#add-organization-data').foundation('close');
+        });
+    });
+
+    $("#filter").on('click', function () {
+        $('[show-if-submitting]').parent().prop('disabled', 'disabled');
+        $('[show-if-submitting]').removeClass('hide');
+        startIndex = 0;
+        pageSize = 15;
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        ListUsers();
+    });
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListUsers();
+    }
+    function ListUsers() {
+        var checkBoxValue = $('#adminOnly').is(':checked');
+        var organization = $('#Organization').val();
+        var firstName = $('#FirstName').val();
+        var lastName = $('#LastName').val();
+        $('#search-results').html("");
+        $.ajax({
+            url: "@Url.Action("GetUsersByRole", "Admin")",
+            data: { allUserswithRole: checkBoxValue, organization: organization, firstName: firstName, lastName: lastName, page: currentPage, pageSize: pageSize, totalRecords: totalRecords },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null && data.Records.length > 0) {
+                    totalRecords = data.TotalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+					var usersHtml = "<table class='table basic-table1'>";
+					usersHtml += "<thead><tr><th>Id</th><th>Name</th><th>Date of Birth</th><th>Email</th><th></th></tr></thead>"
+                    for (var i = 0; i < data.Records.length; i++) {
+                        var user = data.Records[i];
+                        usersHtml += "<tr><td>" + user.Id + "</td>" + "<td>" + user.Name + "</td>" + "<td>" + user.DOB + "</td>" + "<td>" + user.Email + "</td>" +
+                                                "<td><a href='#' data-open='admin-profile' data-modal-path='../Admin/AdminProfile/" + user.Id + "'><i class='fa fa-file-o'></i></a></td>" +
+                                                "</tr>";
+                    }
+                    usersHtml += "</table>";
+                    $('#search-results').append(usersHtml);
+                    $('#pagination-centered').removeClass("hide");
+                }
+                else {
+                    $('#search-results').append("<center>@Translate.Message("L2774")</center>");
+                    $('#pagination-centered').addClass("hide");
+                }
+                AddPager();
+                $('[show-if-submitting]').parent().prop('disabled', '');
+                $('[show-if-submitting]').addClass('hide');
+
+                $("[data-open]").on('click', function(e){
+                    var attr_val = $(this).data("open");
+                    var attr_path = $(this).data("modal-path");
+                    if(attr_val && attr_path){
+                        e.preventDefault();
+                        var $modal1 = $('#'+attr_val);
+                        $.ajax(attr_path).done(function (resp) {
+                            $modal1.html(resp).foundation('open');
+                        });
+                    }
+                });
+            }
+
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+</script>

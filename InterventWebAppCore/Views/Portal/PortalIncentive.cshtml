@@ -1,0 +1,43 @@
+﻿<!--ADMIN VIEW-->
+@{
+    ViewBag.Title = "Organizations";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main search-participants">
+    <div class="control-bar">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="small-6 cell">
+                <h2>Incentive</h2>
+            </div>
+            <div class="small-6 text-right cell">
+                <button id="add-portalincentive-button" data-open="add-portalincentive-data" class="secondary-color small right">Add</button>
+            </div>               
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <div class="panel filters">                
+                    <div class="grid-x grid-margin-x">
+                        <div class="small-12 medium-6 cell">
+                            @Html.DropDownListFor(x=> 0, ViewData[InterventWebApp.Constants.PortalList] as SelectList, "--Select Portal--", new { @class = "form-control" })
+                        </div>
+                        <div class="small-12 medium-5 end cell">
+                            <button class="secondary-color small" id="search">
+                                <i class="fa fa-filter"></i>
+                                Filter
+                            </button>
+                        </div>
+                    </div>                
+                </div>
+            </div>
+        </div>
+        <div class="search-results-container" id="search-results-container">
+            <div class="search-results" id="search-results">
+            </div>
+        </div>
+    </div>
+</section>

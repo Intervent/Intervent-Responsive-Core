@@ -1,0 +1,55 @@
+﻿@using InterventWebApp
+@model InterventWebApp.HRAModuleModel
+
+<div class="grid-x grid-margin-x show-for-small-only">
+    <div class="small-12 cell">
+        <h2>@Translate.Message("L490")</h2>
+    </div>
+</div>
+<div class="control-bar">
+    <div class="grid-x grid-margin-x collapse action-container">
+        <div class="small-12 cell hra-view-toggles">
+            <button class="icon-button small secondary" onclick="ChangeMenu('HRA', @Model.hraid)" id="assessment-toggle-button">@Translate.Message("L535")</button>
+            <button class="icon-button small secondary" onclick="ChangeMenu('Report', @Model.hraid)" id="summary-toggle-button">@Translate.Message("L491")</button>
+        </div>
+    </div>
+</div>
+<div class="content-assessment" id="assessment"></div>
+<div class="content-summary" id="hra-summary">
+    @Html.Partial("_hrareport", Model.HRASummary)
+</div>
+<script>
+     @if (Model.HRASummary != null && Model.HRASummary.hasSummary) {
+        @: toggleHRAView('summary');
+        }
+    else {
+        @: toggleHRAView('assessment');
+        @: var link = '@Url.Action("HRA", "HRA", new { hraid = "-1" })';
+        @: link = link.replace("-1", @Model.hraid);
+        @: $("#assessment").load(link);
+        }
+
+    function ChangeMenu(item, id) {
+        if (item == "HRA") {
+            var link =  '@Url.Action("HRA", "HRA", new { hraid = "-1" })';
+            link = link.replace("-1", id);
+            $("#assessment").load(link);
+            toggleHRAView('assessment');
+        }
+        else {
+            $('#ada-modal').remove();
+            var link = '@Url.Action("HRAReport", "HRA", new { hraid = "-1" })';
+            link = link.replace("-1", id);
+            $("#hra-summary").load(link);
+            toggleHRAView('summary');
+        }
+    }
+
+    function toggleHRAView(showItem) {
+        var hideItem = showItem === 'summary' ? 'assessment' : 'summary';
+        $('#' + hideItem + '-toggle-button').removeClass('active');
+        $('#' + showItem + '-toggle-button').addClass('active');
+        $('.content-' + showItem).removeClass('hide');
+        $('.content-' + hideItem).addClass('hide');
+    }
+</script>

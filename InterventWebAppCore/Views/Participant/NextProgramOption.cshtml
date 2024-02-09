@@ -1,0 +1,26 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<section class="main">
+	<div class="grid-container">
+		<div class="grid-x grid-margin-x" data-equalizer data-equalizer-mq="medium-up">
+			<div class="small-12 cell bg-wrapper">
+                <div class="small-12 cell">
+					<h1>@Translate.Message("L6"), @HttpContextAccessor.HttpContext.Session.GetString(SessionContext.ParticipantName)!</h1>
+                    <p>
+						@String.Format(Translate.Message("L1927"), Translate.Message(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.AssessmentName)).ToLower())
+                    </p>
+                </div>
+				@Url.Action("ProgramOptions", "Participant", new { Coaching = false })
+				<p class="text-center underline">
+					<a href="../Reports/ReportsDashboard">@Translate.Message("L660")</a>
+				</p>
+			</div>
+		</div>
+	</div>
+</section>

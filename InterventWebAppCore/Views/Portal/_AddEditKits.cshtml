@@ -1,0 +1,19 @@
+﻿@model InterventWebApp.PortalModel
+
+<form id="add-kit-data" class="organization-modal-form create-profile-form" data-abide novalidate>
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <h2>Add/Remove Kits</h2>
+        </div>
+        <div class="cell">
+            @Html.DropDownListFor(m => m.kitType, Model.kits, new Dictionary<string, object> { { "id", "kitType" }, { "class", "override-select-kit" }, { "multiple", "multiple" }, { "data-prompt", "Select" }, { "required", true } })
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x button-set new-button">
+        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="button" type="submit" id="AddKit">Save</button></div>
+        <div class="cell medium-6 medium-order-1 medium-text-left"><button class="button hollow" type="reset" id="closeKit">Cancel</button></div>
+    </div>
+</form>
+<div class="grid-x grid-margin-x">
+    <div class="cell text-center new-button"><button class="button" id="CopyKits">Copy from previous portal</button></div>
+</div>

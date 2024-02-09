@@ -1,0 +1,544 @@
+﻿@model InterventWebApp.ActivityModel
+@using InterventWebApp
+
+<div id="tableoptionBlock" class="optionBlock table6 kits-form">
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-6"><h2>Rows</h2></div>
+        <div class="cell medium-6 text-right small-only-text-center">
+            <button id="tableadd-option" class="button hollow"><i class="fa fa-plus"></i>Add Row</button>
+        </div>
+    </div>
+
+    <div class="grid-x grid-margin-x">
+        <div id="tableRowDetail-body" class="tableadd-option cell">
+            <select id="rowList" onchange="readColumn()" class="primary-select"></select>
+        </div>
+        <div class="cell small-6">
+            <label for="totalrow">Total number of rows for user input</label><input id="totalrow" type="text" />
+        </div>
+        <div class="cell small-6">
+            <label for="totalcolumn">Total number of column for user input</label><input id="totalcolumn" type="text" />
+        </div>
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-text-left">
+                <button type="button" class="small" id="saveoption">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-x grid-margin-x" id="subColumnDv">
+        <div class="cell medium-12">
+            <h2>Row <span id="spnRowNo"></span> </h2>
+        </div>
+        <div id="tablecolumnDetail-body" class="grid-x grid-margin-x table-container">
+            <div class="cell small-12"></div>
+        </div>
+        <div class="cell medium-12">
+            <button id="add-column" class="button hollow"><i class="fa fa-plus"></i>Add Column</button>
+        </div>
+    </div>
+    <div id="dvAddColumn">
+		<div class="grid-x grid-margin-x">
+			<div class="cell medium-6">
+				<label>Language</label>
+				@Html.DropDownList("tablequestionlanguage", Model.LanguageList, new Dictionary<string, object> { { "onchange", "TableQuestionLanguageChange()" }, { "class", "primary-select" } })
+			</div>
+		</div>
+		<div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>Column Name</label>
+                <input type="text" value="" id="columnName" />
+            </div>
+            <div class="cell medium-6" id="quesType">
+                <label>Question Type</label>
+                <select id="tableQuestionType" class="primary-select"></select>
+            </div>
+            <div class="cell medium-6">
+                <label>Column Span</label>
+                <input type="number" value="1" min="1" id="colSpan" />
+            </div>
+            <div class="cell medium-6">
+                <label>Row Span</label>
+                <input type="number" value="1" min="1" id="rowSpan" />
+            </div>
+            <div class="cell medium-6">
+                <label>Column style</label>
+                <input type="text" id="style" />
+            </div>
+        </div>
+
+        <input type="hidden" id="hdnColumnId" />
+        <input type="hidden" id="hdnRowId" />
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-text-left">
+                <button type="button" class="small" id="addColumn">@Translate.Message("L968")</button>
+            </div>
+            <div class="cell medium-6 medium-text-right">
+                <button class="small secondary" type="reset" id="closeColumn">@Translate.Message("L967")</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="tableChkOptionBlock" class="optionBlock table7 kits-form">
+    <div>
+        <div class="cell medium-12">
+            <label>Column Span for question </label>
+            <input type="text" value="1" id="ccolSpan" onchange="editColSpan()" />
+        </div>
+    </div>
+    <div>
+        <h2>Question List</h2>
+        <div class="cell medium-6 text-right small-only-text-center">
+            <button id="tableadd-ques" class="button hollow"><i class="fa fa-plus"></i>Add Checkbox Questions</button>
+        </div>
+        <div id="tablequesDetail-body" class="grid-x grid-margin-x table-container">
+            <div class="cell small-12"></div>
+        </div>
+    </div>
+    <div>
+        <h2>Option List</h2>
+        <div class="cell medium-6 text-right small-only-text-center">
+            <button id="tableadd-chkoption" class="button hollow"><i class="fa fa-plus"></i>Add Options</button>
+        </div>
+        <div id="tableoptionDetail-body" class="grid-x grid-margin-x table-container">
+            <div class="cell small-12"></div>
+        </div>
+
+    </div>
+
+    <div id="dvAddQues">
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-6">
+                <label>Language</label>
+                @Html.DropDownList("tablechkquestionlanguage", Model.LanguageList, new Dictionary<string, object> { { "onchange", "TableChkQuestionLanguageChange()" }, { "class", "primary-select" } })
+            </div>
+            <div class="cell medium-12">
+                <label>Name</label>
+                <input type="text" value="" id="cname" />
+            </div>
+            <div class="cell medium-6 csequence">
+                <label>Sequence</label>
+                <input type="number" id="cSequence" />
+            </div>
+            <div class="cell medium-6 chkQues">
+                <label>Question Index</label>
+                <input type="text" value="" id="cindex" />
+            </div>
+
+        </div>
+
+        <input type="hidden" id="hdnQuesId" />
+        <input type="hidden" id="hdnIndexId" />
+        <input type="hidden" id="hdnIsOption" value="false" />
+        <div class="grid-x grid-margin-x button-set">
+            <div class="cell medium-6 medium-text-left">
+                <button type="button" class="small" id="addQues">@Translate.Message("L968")</button>
+            </div>
+            <div class="cell medium-6 medium-text-right">
+                <button class="small secondary" type="reset" id="closeQues">@Translate.Message("L967")</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var columnList = null;
+    var chkQuesList = null;
+    var chkOptionList = null;
+    var indexId = 0;
+     function readRow() {
+        $.ajax({
+            url: "@Url.Action("ReadRows", "Kit")",
+            data: { questionId: $("#hdnQuestionId").val() },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                populateRow(data)
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+     function readChkTable() {
+        $.ajax({
+            url: "@Url.Action("ReadTableChkBox", "Kit")",
+            data: { parentQuesId: $("#hdnQuestionId").val() },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                populateChkTable(data)
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+     function TableQuestionLanguageChange() {
+        var lang = $('#tablequestionlanguage').val();
+        var id = $('#hdnColumnId').val()
+        if (id != "") {
+            if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage") {
+                for (var i = 0; i < columnList.length; i++) {
+                    if (columnList[i].ColumnId == id && columnList[i].LanguageTextValue != null) {
+                        for (var j = 0; j < columnList[i].LanguageTextValue.length; j++) {
+                            if (columnList[i].LanguageTextValue[j].LanguageCode == lang) {
+                                $('#columnName').val(columnList[i].LanguageTextValue[j].Text);
+                            }
+                        }
+                    }
+                }
+
+            }
+            else {
+                for (var i = 0; i < columnList.length; i++) {
+                    if (columnList[i].ColumnId == id) {
+                        $('#columnName').val(columnList[i].QuestionText);
+                    }
+                }
+            }
+        }
+     }
+
+
+    function populateRow(data) {
+        if (data.Record != null) {
+            $("#rowList").empty();
+            $("#rowList").append("<option value=''>-- Select --</option>");
+            for (i = 0; i < data.Record.Rows.length; i++) {
+                $("#rowList").append("<option value=" + data.Record.Rows[i].Id + ">" + data.Record.Rows[i].OptionText + "</option>");
+            }
+            $("#totalrow").val(data.Record.RowCount);
+            $("#totalcolumn").val(data.Record.ColumnCount);
+        }
+    }
+
+    function populateColumn(data) {
+        $("#dvAddColumn").hide();
+        if (data.Record != null) {
+            var html = "";
+            columnList = data.Record.Columns;
+            html = html + "<table class='cell medium-12'><thead><tr><th>Column Text</th><th>RowSpan</th><th>ColSpan</th><th>Style</th><th>Edit</th></tr></thead>";
+            for (var i = 0; i < data.Record.Columns.length; i++) {
+                html = html + "<tr><td>" + data.Record.Columns[i].QuestionText + "</td>";
+                html = html + "<td>" + data.Record.Columns[i].RowSpan + "</td>";
+                html = html + "<td>" + data.Record.Columns[i].ColumnSpan + "</td>";
+                html = html + "<td>" + data.Record.Columns[i].Style + "</td>"
+				html = html + "<td><a class='anchor-blue' onclick='editRow(" + data.Record.Columns[i].ColumnId + ")'><i class='fa fa-th-list'></i></a></td></tr>";
+            }
+
+            html = html + "</table>";
+            $("#tablecolumnDetail-body").html(html)
+        }
+    }
+
+    function populateChkTable(data) {
+        $("#dvAddQues").hide();
+        if (data.Record != null) {
+            var html = "";
+            indexId = data.Record.IndexId;
+            $("#ccolSpan").val(data.Record.ColSpan)
+            chkQuesList = data.Record.Questions;
+            html = html + "<table class='cell medium-12'><thead><tr><th>Index Text</th><th>Question Text</th><th>Edit</th></tr></thead>";
+            for (var i = 0; i < data.Record.Questions.length; i++) {
+                html = html + "<tr><td>" + data.Record.Questions[i].IndexText + "</td>";
+                html = html + "<td>" + data.Record.Questions[i].QuestionText + "</td>";
+				html = html + "<td><a class='anchor-blue' onclick='editQuestion(" + data.Record.Questions[i].QuestionId + ")'><i class='fa fa-th-list'></i></a></td></tr>";
+            }
+
+            html = html + "</table>";
+            $("#tablequesDetail-body").html(html)
+            html = "";
+            chkOptionList = data.Record.Options;
+            html = html + "<table class='cell medium-12'><thead><tr><tr><th>Option Text</th><th>Edit</th></tr></thead>";
+            for (var i = 0; i < data.Record.Options.length; i++) {
+                html = html + "<tr><td>" + data.Record.Options[i].QuestionText + "</td>";
+				html = html + "<td><a class='anchor-blue' onclick='editOption(" + data.Record.Options[i].QuestionId + ")'><i class='fa fa-th-list'></i></a></td></tr>";
+            }
+
+            html = html + "</table>";
+            $("#tableoptionDetail-body").html(html)
+        }
+    }
+    function changeOptionLng() {
+        var lang = $('#tablechkquestionlanguage').val();
+        var id = $('#hdnQuesId').val()
+        if (id != "") {
+            if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage") {
+                for (var i = 0; i < chkOptionList.length; i++) {
+                    if (chkOptionList[i].QuestionId == id) {
+                        if (chkOptionList[i].LanguageTextValue != null) {
+                            for (var j = 0; j < chkOptionList[i].LanguageTextValue.length; j++) {
+                                if (chkOptionList[i].LanguageTextValue[j].LanguageCode == lang) {
+                                    $('#cname').val(chkOptionList[i].LanguageTextValue[j].Text);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        else {
+            for (var i = 0; i < chkOptionList.length; i++) {
+                if (chkOptionList[i].QuestionId == id) {
+                    $('#cname').val(chkOptionList[i].QuestionText);
+                }
+            }
+        }
+    }
+
+    function  TableChkQuestionLanguageChange() {
+        var isOption = false;
+        if ($("#hdnIsOption").val() == "true") {
+            isOption = true;
+        }
+        if (isOption) {
+            changeOptionLng()
+        } else {
+            changeQuestLang();
+        }
+    }
+
+    function changeQuestLang() {
+        var lang = $('#tablechkquestionlanguage').val();
+
+        var id = $('#hdnQuesId').val()
+        if (id != "") {
+            if (lang != "@Intervent.Web.DTO.ListOptions.DefaultLanguage") {
+                for (var i = 0; i < chkQuesList.length; i++) {
+                    if (chkQuesList[i].QuestionId == id) {
+                        if (chkQuesList[i].LanguageTextValue != null) {
+                            for (var j = 0; j < chkQuesList[i].LanguageTextValue.length; j++) {
+                                if (chkQuesList[i].LanguageTextValue[j].LanguageCode == lang) {
+                                    $('#cname').val(chkQuesList[i].LanguageTextValue[j].Text);
+                                }
+                            }
+                        }
+                        if (chkQuesList[i].IndexTextValue != null) {
+                            for (var j = 0; j < chkQuesList[i].IndexTextValue.length; j++) {
+                                if (chkQuesList[i].IndexTextValue[j].LanguageCode == lang) {
+                                    $('#cindex').val(chkQuesList[i].IndexTextValue[j].Text);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        else {
+            for (var i = 0; i < chkQuesList.length; i++) {
+                if (chkQuesList[i].ColumnId == id) {
+                    $('#cname').val(chkQuesList[i].QuestionText);
+                    $('#cindex').val(chkQuesList[i].IndexText);
+                }
+            }
+        }
+    }
+
+    function editQuestion(questionId) {
+        for (var i = 0; i < chkQuesList.length; i++) {
+            if (chkQuesList[i].QuestionId == questionId) {
+
+                $('#tablechkquestionlanguage').val("en-us");
+                $('#cname').val(chkQuesList[i].QuestionText);
+                $('#cSequence').val(chkQuesList[i].Sequence);
+                $("#cindex").val(chkQuesList[i].IndexText)
+                $('#hdnQuesId').val(chkQuesList[i].QuestionId);
+                $('#hdnIndexId').val(chkQuesList[i].IndexId)
+                $("#hdnIsOption").val("false")
+                $('#dvAddQues').show();
+                $(".chkQues").show();
+                $(".csequence").show();
+            }
+        }
+    }
+    function editOption(questionId) {
+        for (var i = 0; i < chkOptionList.length; i++) {
+            if (chkOptionList[i].QuestionId == questionId) {
+
+                $('#tablechkquestionlanguage').val("en-us");
+                $('#cname').val(chkOptionList[i].QuestionText);
+                $('#cSequence').val(chkOptionList[i].Sequence);
+                $("#hdnIsOption").val("true")
+                $("#cindex").val("")
+                $('#hdnQuesId').val(chkOptionList[i].QuestionId);
+                $('#hdnIndexId').val(chkOptionList[i].IndexId)
+                $(".chkQues").hide();
+                $('#dvAddQues').show();
+                $(".csequence").hide();
+            }
+        }
+    }
+
+    function readColumn() {
+        columnList = null;
+        $("#subColumnDv").show();
+        $('#spnRowNo').text($('#rowList option:selected').text())
+        $.ajax({
+            url: "@Url.Action("ReadColumns", "Kit")",
+            data: { rowId: $('#rowList').val() },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                populateColumn(data)
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+
+
+    $("#add-column").on('click', function () {
+
+        $('#tablequestionlanguage').val("en-us");
+        $('#columnName').val("");
+        $('#colSpan').val(1);
+        $('#rowSpan').val(1);
+        $('#style').val("");
+        $("#quesType").hide();
+        $('#tableQuestionType').val("");
+        $('#hdnColumnId').val(0);
+        $('#hdnRowId').val(0)
+        $('#dvAddColumn').show();
+    });
+
+     function editRow(columnId) {
+        for (var i = 0; i < columnList.length; i++) {
+            if (columnList[i].ColumnId == columnId) {
+                if (columnList[i].QuestionText.startsWith("@Intervent.Web.DataLayer.CommonConstants.TableOptionText")) {
+                    $("#quesType").show();
+                    $("#tableQuestionType").val(columnList[i].QuestionType)
+                }
+                else
+                    $("#quesType").hide();
+                $('#tablequestionlanguage').val("en-us");
+                $('#columnName').val(columnList[i].QuestionText);
+                $('#colSpan').val(columnList[i].ColumnSpan);
+                $('#rowSpan').val(columnList[i].RowSpan);
+                $('#style').val(columnList[i].Style);
+                $('#hdnColumnId').val(columnList[i].ColumnId);
+                $('#hdnRowId').val(columnList[i].RowId)
+                $('#dvAddColumn').show();
+            }
+        }
+    }
+    $("#tableadd-ques").on('click', function () {
+
+        $('#tablechkquestionlanguage').val("en-us");
+        $('#cname').val("");
+        $('#cSequence').val("");
+        $("#cindex").val("")
+        $('#hdnQuesId').val(0);
+        $("#hdnIsOption").val("false")
+        $('#hdnIndexId').val(0)
+        $('#dvAddQues').show();
+        $(".chkQues").show();
+        $(".csequence").show();
+    });
+
+    $("#tableadd-chkoption").on('click', function () {
+
+        $('#tablechkquestionlanguage').val("en-us");
+        $('#cname').val("");
+        $('#cSequence').val("");
+        $("#hdnIsOption").val("true")
+        $('#hdnQuesId').val(0);
+        $('#hdnIndexId').val(indexId)
+        $(".chkQues").hide();
+        $('#dvAddQues').show();
+        $(".csequence").show();
+    });
+
+     $("#addQues").on('click', function () {
+        $.ajax({
+            url: "@Url.Action("AddTableChkBox", "Kit")",
+            data: {
+                activityId: $('#hdnActivityId').val(), parentQuesId: $("#hdnQuestionId").val(), indexId: $("#hdnIndexId").val(), quesId: $("#hdnQuesId").val(), indexText: $("#cindex").val(), isOption: $("#hdnIsOption").val(), questionText: $("#cname").val(), language: $("#tablechkquestionlanguage").val(), sequence: $("#cSequence").val()
+            },
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                populateChkTable(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+     function editColSpan() {
+          $.ajax({
+            url: "@Url.Action("SetColSpan", "Kit")",
+            data: {
+                parentQuesId: $("#hdnQuestionId").val(), sequence: $("#ccolSpan").val()
+            },
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+     }
+
+    $("#tableadd-option").on('click', function () {
+
+        $.ajax({
+            url: "@Url.Action("AddRow", "Kit")",
+            data: { questionId: $("#hdnQuestionId").val() },
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                populateRow(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+
+
+    $("#addColumn").on('click', function () {
+        $.ajax({
+            url: "@Url.Action("AddColumn", "Kit")",
+            data: {
+                activityId: $('#hdnActivityId').val(), rowId: $("#rowList").val(), columnId: $("#hdnColumnId").val(), questionType: $("#tableQuestionType").val(), rowSpan: $("#rowSpan").val(), colSpan: $("#colSpan").val(), style: $("#style").val(), text: $("#columnName").val(), language: $("#tablequestionlanguage").val() },
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                populateColumn(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    });
+
+
+    $('#saveoption').on('click', function () {
+        if (confirm("Please make sure you save this once you are done with adding all the rows. You may not be able to change the size. ")) {
+            $.ajax({
+                url: "@Url.Action("AddTableOption", "Kit")",
+                data: { row: $('#totalrow').val(), column: $('#totalcolumn').val(), questionId: $("#hdnQuestionId").val(), activityId: $('#hdnActivityId').val() },
+                type: 'POST',
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    readRow();
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+
+        }
+    });
+
+    $('#closeQues').on('click', function () {
+        $('#dvAddQues').hide();
+    });
+</script>

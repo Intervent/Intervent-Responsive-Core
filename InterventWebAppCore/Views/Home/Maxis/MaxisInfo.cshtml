@@ -1,0 +1,244 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass chi-memorial info">
+    @Html.Partial("Maxis/_MaxisHeader")
+</section>
+
+<!--Signup Modal-->
+<div id="sign-up-modal" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="cell medium-12">
+        <h2 class="text-center">@Translate.Message("L431")</h2>
+        <div data-alert id="signup-error" class="alert-box alert hide">
+            @Translate.Message("L1931")
+            <a href="#" class="close">&times;</a>
+        </div>
+    </div>
+    @Html.Partial("_MaxisSignUp")
+    <div class="cell text-center">
+        <a href="#" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</a>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<section class="container feature interventincentives">
+    <a name="interventincentives" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2  text-center">
+                    <img src="../Images/gift-box.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1919")</h2>
+                    <p>@Translate.Message("L3118")</p>
+                    <p>@Translate.Message("L3119")</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature healthassessment">
+    <a name="healthassessment" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/assessment.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 ">
+                    <h2>@Translate.Message("L535")</h2>
+                    <p>@Translate.Message("L2470")</p>
+                    <p>@Translate.Message("L3120")</p>
+                    <p>@Translate.Message("L3121")</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature coachedprogram">
+    <a name="livecoaching" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/live-coaching.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L3113")</h2>
+                    <p>@Translate.Message("L3122")</p>
+                    <p>@Translate.Message("L3123")</p>
+                    <p>
+                        @Translate.Message("L3124")
+                        <br />•	@Translate.Message("L3114")
+                        <br />•	@Translate.Message("L3115")
+                        <br />•	@Translate.Message("L3116")
+                        <br />•	@Translate.Message("L2710")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="wellnesschronic" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/wellness-chronic.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L3114")</h2>
+                    <p>
+                        <br />•	@Translate.Message("L3126")
+                        <br />•	@Translate.Message("L3127")
+                    </p>
+                    <p>@Translate.Message("L3128")</p>
+                    <div class="small-12 cell text-center">
+                        <p class="more-link" href="#" onclick="$('#wellnessuccessstore').foundation('open'); return false;">
+                            @Translate.Message("L3117")<span class="more"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="stressmanagement" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/stress-management.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L3115")</h2>
+                    <p>@Translate.Message("L3130")</p>
+                    <p>@Translate.Message("L3131")</p>
+                    <p class="more-link text-center" href="#" onclick="$('#stressmanagementsuccessstore').foundation('open'); return false;">
+                        @Translate.Message("L3117")<span class="more"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature">
+    <a name="disabilitymanagement" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/disability-management.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L3116")</h2>
+                    <p>@Translate.Message("L3133")</p>
+                    <p>@Translate.Message("L3134")</p>
+                    <div class="small-12 cell text-center">
+                        <p class="more-link" href="#" onclick="$('#disabilitysuccessstore').foundation('open'); return false;">
+                            @Translate.Message("L3117")<span class="more"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="maternitylifestyle" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/maternity-lifestyle.svg" height="296" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L2710")</h2>
+                    <p>@Translate.Message("L3136")</p>
+                    <p>@Translate.Message("L3137")</p>
+                    <p class="more-link text-center" href="#" onclick="$('#maternitysuccessstore').foundation('open'); return false;">
+                        @Translate.Message("L3117")<span class="more"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<div id="wellnessuccessstore" class="reveal large" data-reveal data-close-on-click="true">
+    <a name="successstories" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x align-middle">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/success-stories.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L3114")</h2>
+                    <p>"<i>@Translate.Message("L3129")</i>"</p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div id="stressmanagementsuccessstore" class="reveal large" data-reveal data-close-on-click="true">
+    <a name="successstories" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x align-middle">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/success-stories.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L3115")</h2>
+                    <p>"<i>@Translate.Message("L3132")</i>"</p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div id="disabilitysuccessstore" class="reveal large" data-reveal data-close-on-click="true">
+    <a name="successstories" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x align-middle">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/success-stories.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L3116")</h2>
+                    <p>"<i>@Translate.Message("L3135")</i>"</p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div id="maternitysuccessstore" class="reveal large" data-reveal data-close-on-click="true">
+    <a name="successstories" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x align-middle">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/success-stories.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L2710")</h2>
+                    <p>"<i>@Translate.Message("L3138")</i>"</p>
+                </div>
+            </div>
+        </div>
+    </a>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>

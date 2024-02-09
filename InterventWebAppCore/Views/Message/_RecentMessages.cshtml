@@ -1,0 +1,498 @@
+﻿@using InterventWebApp;
+@model InterventWebApp.MessagingModel
+@using Intervent.Web.DTO;
+
+<div class="message-heading">
+    <div class="recent-msg-head msg-heading-wrapper">
+        <small data-close></small>
+        <h5>@Translate.Message("L4502")</h5>
+        <!--<i class="fa fa-ellipsis-v" aria-hidden="true"></i>-->
+    </div>
+    <div class="new-msg-head msg-heading-wrapper hide">
+        <small class="open-recent-msg"></small>
+        <h5>@Translate.Message("L4503")</h5>
+        <!--<i class="fa fa-ellipsis-v" aria-hidden="true"></i>-->
+    </div>
+    <div class="chat-msg-head msg-heading-wrapper hide" id="chat-msg-head">
+        <small class="open-recent-msg"></small>
+        <h5>@Translate.Message("L4504")</h5>
+        <!--<i class="fa fa-ellipsis-v" data-toggle="msg-options"></i>-->
+        <div class="dropdown-pane" id="msg-options" data-dropdown data-auto-focus="true" data-close-on-click="true" data-position="bottom" data-alignment="right">
+            <ul>
+                <li>@Translate.Message("L4505")</li>
+                <li>@Translate.Message("L4459")</li>
+                <li>@Translate.Message("L963")</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="message-body">
+    <div class="msg-body-list">
+        <ul>
+            @if (Model.parentMessages != null && Model.parentMessages.Count() > 0)
+            {
+                foreach (var message in Model.parentMessages)
+                {
+                    <li>
+                        <a href="#" onclick="GetMessageDetails(@message.Id)">
+                            <h5>@message.Subject</h5>
+                            <p>@Html.Raw(message.RecentMessage)</p>
+                            <div class="msg-metadata">
+                                @{string[] messageStatus = { "", "<span class='msg-status msg-pending'>"+ Translate.Message("L698") + "</span>", "<span class='msg-status msg-sent'>" + Translate.Message("L4491") + "</span>", "<span class='msg-status msg-read'>" + Translate.Message("L4492") + "</span>", "<span class='msg-status msg-follow'>" + Translate.Message("L4493") + "</span>" }; }
+                                @Html.Raw(messageStatus[message.StatusId])
+                                <span>
+                                    @message.CreateDate.ToLongDateString()
+                                    @if (message.hasAttachment)
+                                    {
+                                        <div class='f-icon'><img src='~/Images/messages/attach_file.png' alt='' /></div>
+                                    }
+                                </span>
+                            </div>
+
+                        </a>
+                    </li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="no-msg-container"><div class="no-msg"><img src="~/Images/messages/no-msg.jpg"><h3>@Translate.Message("L4496")</h3><p>@Translate.Message("L4497")</p><p>@Translate.Message("L4498")</p></div></div>
+                                    }
+        </ul>
+    </div>
+    @if (Model.hasActivePortal)
+    {
+        <div class="message-footer">
+            <div class="button-set text-center">
+                @if (Model.parentMessages != null && Model.parentMessages.Count() >= 5)
+                {
+                    <a href="~/Message/Messaging" class="button hollow">@Translate.Message("L4459")</a>
+                }
+                @if (Model.userId == Model.participantId)
+                {
+                    <a href="#" class="plus-btn button" id="new-message">@Translate.Message("L4501")</a>
+                }
+            </div>
+        </div>
+    }
+    <div class="grid-x align-center no-msg-container">
+        <p>@Translate.Message("L4583")</p>
+    </div>
+</div>
+<div class="message-form hide" id="new-msg-modal">
+    <form id="add-message" data-abide novalidate>
+        <input type="hidden" id="systemAdmin" value="@Model.systemAdminId" />
+
+        <label class="droparrow" for="subject">
+            <!-- <span class="f-label">Subject:</span> -->
+            <input type="text" name="subject" placeholder="@Translate.Message("L4464")" id="subject" maxlength="100" onchange="checkUpload();" required />
+            <small class="form-error">@Translate.Message("L480")</small>
+        </label>
+        <label>
+            <textarea required id="messageBody" placeholder="@Translate.Message("L4465")"></textarea>
+            <small class="form-error">@Translate.Message("L480")</small>
+        </label>
+        <div id="upload-option" class="hide">
+            <div class="drop-area" ondrop="dropHandler(event, this);" ondragover="dragOverHandler(event, this);">
+                <div>
+                    @Html.Raw(string.Format(Translate.Message("L4466"), "<label>", "<input type='file' name='files' id='pdfUpload' class='upload' accept='.pdf' onchange='ValidateFileExtension(false, 'pdfUpload');'/></label>"))
+                    <p>@Translate.Message("L4467")</p>
+                    <small class="form-error">@Translate.Message("L480")</small>
+                </div>
+            </div>
+            <div class="doc-remove-container hide">
+                <div>
+                    <img src="~/Images/upload-doc-tick.svg">
+                    <p id="UploadedForm"></p>
+                </div>
+            </div>
+        </div>
+        <div class="button-group align-center">
+            <button type="submit" id="submit" class="button" value="button1">@Translate.Message("L4489")</button>
+            @*<button type="submit" id="draft" class="button hollow" value="button2">Save as Draft</button>*@
+        </div>
+        @Html.Hidden("RecipientId")
+    </form>
+
+    @*<div class="message-footer">
+            <div class="button-set text-center">
+                <a href="" class="button">Send</a>
+            </div>
+        </div>*@
+</div>
+<div class="message-chat hide">
+    <div class="chat-container" id="chat-container-modal">
+    </div>
+    <div class="message-footer recent-chat-footer">
+        <div class="doc-remove-container hide">
+            <div>
+                <p id="UploadedForm"></p>
+            </div>
+        </div>
+        <input type="text" name="name" value="" />
+        <input type="hidden" id="parentMessageId" />
+        <input type="hidden" id="messageSubject" />
+        @if (Model.userId == Model.participantId && Model.hasActivePortal)
+        {
+            <textarea id="msg-textbox" class="msg-textbox recentMessage"></textarea>
+            <label><input type='file' name='files' id="updatePDF" class='upload' accept='.pdf' onchange="ValidateFileExtension(true, 'updatePDF');" /></label>
+            <button type="submit" class="submit-chat" onclick="sendResponse(false, 'pdfUpload');"></button>
+        }
+        @if (Model.parentMessages != null && Model.parentMessages.Count() >= 5)
+        {
+            <p>
+                <a href="~/Message/Messaging">@Translate.Message("L4459")</a>
+            </p>
+        }
+    </div>
+</div>
+
+<input type="hidden" id="messageId" value="0" />
+<script>
+    var options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+    var updateStatus = true;
+    if ( @Model.userId != @Model.participantId) {
+            updateStatus = false;
+        }
+    function GetMessageDetails(messageId) {
+        $("#msg-textbox").val("");
+        $("#messageId").val(0);
+        $.ajax({
+            url: "@Url.Action("GetMessageDetails", "Message")",
+            data: { messageId: messageId, updateStatus: updateStatus},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+                    BindMessageDetail(data.Record.Messages);
+                }
+                $(this).parents("#message-modal").find(".message-body").addClass("hide");
+                $(".msg-heading-wrapper").addClass("hide");
+                $(this).parents("#message-modal").find(".message-chat").removeClass("hide");
+				$(".chat-msg-head").removeClass("hide");
+				$("#msg-options").foundation();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+    $("#new-message").on("click", function (e) {
+        $("#new-msg-modal").find('input:text, textarea').val('');
+        e.preventDefault();
+        $(this).parents(".message-body").addClass("hide");
+        $(".msg-heading-wrapper").addClass("hide");
+        $(this).parents(".message-body").siblings(".message-form").removeClass("hide");
+        $(".new-msg-head").removeClass("hide");
+
+        $("#upload-option").addClass("hide");
+        $("#upload-option .doc-remove-container").addClass("hide");
+        $("#upload-option .drop-area").removeClass("hide");
+        checkUpload();
+
+
+    });
+
+    $("small.open-recent-msg").on('click', function (e) {
+        $(this).parents("#message-modal").find(".message-form, .message-chat").addClass("hide");
+        $(".msg-heading-wrapper").addClass("hide");
+        $(this).parents("#message-modal").find(".message-body").removeClass("hide");
+        $(".recent-msg-head").removeClass("hide");
+        $("#recentMessage").trigger("click");
+    });
+
+    $(".message-body ul li a").on("click", function (e) {
+        e.preventDefault();
+        $(this).parents("#message-modal").find(".message-body").addClass("hide");
+        $(".msg-heading-wrapper").addClass("hide");
+        $(this).parents("#message-modal").find(".message-chat").removeClass("hide");
+		$(".chat-msg-head").removeClass("hide");
+		$("#msg-options").foundation();
+    });
+
+    var paneMsg = $('.message-body .msg-body-list');
+    paneMsg.jScrollPane({
+        showArrows: false,
+        resizeSensor: true
+    });
+    var apiMsg = paneMsg.data().jsp;
+
+    $('#message-modal').on('open.zf.reveal', function () {
+	setTimeout(function(){
+        apiMsg.reinitialise();
+	}, 500);
+    });
+
+    function dropHandler(ev) {
+        if (ev.dataTransfer.items) {
+            if (ev.dataTransfer.items[0].kind === 'file') {
+                var fileUpload = document.getElementById("pdfUpload");
+                fileUpload.files = ev.dataTransfer.files;
+                ValidateFileExtension(false);
+
+            }
+         }
+            ev.preventDefault();
+
+    }
+
+    function dragOverHandler(ev) {
+        ev.preventDefault();
+    }
+
+    function BindMessageDetail(messageDetails) {
+        $("#parentMessageId").val(messageDetails[0].Id);
+        $("#messageSubject").val(messageDetails[0].Subject);
+        var messageDetailsHtml = [];
+        $('#chat-container-modal').html("");
+        $("#chat-msg-head h5").html(messageDetails[0].Subject);
+        if (messageDetails != null && messageDetails.length > 0) {
+            for (var i = 0; i < messageDetails.length; i++) {
+                var date = new Date(parseInt(messageDetails[i].CreateDate.substr(6)));
+                if (messageDetails[i].Attachment != null) {
+                    var deleteText = "", myMsg = "doc-left";
+                    if (messageDetails[i].CreatorName == null)
+                        myMsg = "";
+                    if (messageDetails[i].CanShowDelete) {
+                        deleteText = "<i class='fa fa-ellipsis-v chat-options' data-toggle='chat-options'></i><div class='dropdown-pane' id='chat-options' data-dropdown data-auto-focus='true' data-close-on-click='true' data-alignment='right' data-h-offset='-12' data-v-offset='-30'><div class='chat-opt-title'><p>@Translate.Message("L4494")</p> <img src='/Images/challenge/icon-down-arrow.png' alt='v'></div><div class='chat-opt-list'><ul><li onclick=deleteAttachment(" + messageDetails[i].Id + ",'" + messageDetails[i].Attachment + "')><img src='/Images/delete-icon-red.svg' alt=''> @Translate.Message("L3704")</li></ul></div></div>";
+                    }
+                    messageDetailsHtml += "<div class='uploaded-doc " + myMsg +"'><div class='doc-detail'><img src='/Images/attachment-pdf.png' alt='PDF'><p>" + messageDetails[i].Attachment + "</p></div><div class='doc-action'><a href='../Messageuploads/" + messageDetails[i].Attachment + "' download><img src='/Images/chat-download-icon.jpg' alt='Download'></a>" + deleteText + "</div></div>";
+                }
+                if (messageDetails[i].IsSent) {
+                    if (messageDetails[i].CreatorName == null) {
+                        var seen = "", msgBody = "";
+                        if (messageDetails[i].MessageRecipients[0].IsRead != true) {
+                            seen = "<span> | @Translate.Message("L4499")</span >";
+                        }
+                        else if (messageDetails[i].MessageRecipients[0].IsRead == true) {
+                            seen = "<span> | @Translate.Message("L4500")</span >";
+                        }
+                        if (messageDetails[i].Attachment != messageDetails[i].MessageBody) {
+                            msgBody = "<div class='chat-content'>" + messageDetails[i].MessageBody + "</p></div>";
+                        }
+                        messageDetailsHtml += "<div class='chat my-msg'>" + msgBody + "" +
+                            "<div class='chat-date'>" + date.toLocaleDateString(undefined, options) + seen + "</div></div >";
+                    }
+                    else if (messageDetails[i].Attachment != messageDetails[i].MessageBody) {
+                        messageDetailsHtml += "<div class='chat'><div class='chat-sender'>" + messageDetails[i].CreatorName + (messageDetails[i].CreatorRole != null ? ("<span>" + messageDetails[i].CreatorRole + "</span>") : "") + "</div>" +
+                            "<div class='chat-content'><p>" + messageDetails[i].MessageBody + "</p></div>" +
+                            "<div class='chat-date'>" + date.toLocaleDateString(undefined, options) + "</div></div>";
+                    }
+                }
+                else if (!messageDetails[i].IsSent && messageDetails[i].DisplayId == @Model.userId.ToString()){
+                    $("#msg-textbox").val(messageDetails[i].MessageBody);
+                    $("#messageId").val(messageDetails[i].Id);
+                }
+
+            }
+        }
+        $('#chat-container-modal').html(messageDetailsHtml);
+    }
+
+
+    function sendResponse(update, uploadId) {
+        var parentMessageId = $("#parentMessageId").val();
+        var messageId = $("#messageId").val();
+        var messageSubject = $("#messageSubject").val();
+        var responseText = $("#msg-textbox").val().trim();
+        var recipientId = $("#systemAdmin").val();
+        if (!update && responseText == "") {
+            return false;
+        }
+        if (!update || responseText != "" || messageId != 0) {
+            var formData = new FormData();
+            var file = document.getElementById(uploadId).files[0];
+
+            if (file != undefined && responseText != file.name) {
+                formData.append("messageId", 0);
+                formData.append("messageBody", file.name);
+            }
+            else {
+                formData.append("messageId", messageId);
+                formData.append("messageBody", responseText);
+            }
+            formData.append("FileUpload", file);
+            formData.append("recipientId", recipientId);
+            formData.append("subject", messageSubject);
+            formData.append("isSent", !update);
+            formData.append("parentMessageId", parentMessageId);
+            $.ajax({
+                data: formData,
+                url: "@Url.Action("AddEditMessage", "Message")",
+                type: 'POST',
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                async: false,
+                success: function (data) {
+                    if (data != null) {
+                        if (update) {
+                            $("#messageId").val(data.updateResponse.updatedId);
+                        }
+                        else {
+                            BindMessageDetail(data.Record.Messages);
+                            if (!(file != undefined && responseText != file.name)) {
+                                $("#messageId").val(0);
+                                $("#msg-textbox").val("");
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+    if (@Model.userId == @Model.participantId) {
+        document.getElementById("msg-textbox").addEventListener("mouseout", function () {
+            sendResponse(true, "pdfUpload");
+        }, false);
+    }
+
+    function ValidateFileExtension(update) {
+        var pdfId = update ? "updatePDF" : "pdfUpload";
+        var formData = new FormData();
+        var file = document.getElementById(pdfId).files[0];
+        if (!file) {
+            return false;
+        }
+        formData.append("FileUpload", file);
+        var extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+
+        if (!(extension && /^(jpg|png|jpeg|gif|pdf)$/.test(extension.toLowerCase()))) {
+            alert("@Translate.Message("L2221")");
+            return;
+        }
+        else {
+            $.ajax({
+                type: 'post',
+                url: '@Url.Action("ValidateImage", "Common")',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.data !== "Failed") {
+                        $(".drop-area").addClass("hide");
+                        if (update) {
+                            if ($("#msg-textbox").val() == "") {
+                                $("#msg-textbox").val(file.name);
+                            }
+                            sendResponse(false, pdfId);
+                        }
+                        else {
+                            $(".doc-remove-container").removeClass("hide");
+                            $('#UploadedFormNewMsg').html(file.name);
+                        }
+                        $("#updatePDF")[0].value = '';
+                    }
+                    else {
+                        alert("@Translate.Message("L2130")");
+                    }
+                },
+                error: function (error) {
+                    alert("@Translate.Message("L2221")");
+                }
+            });
+        }
+
+    }
+
+    $('#add-message').foundation();
+    $('#add-message')
+        .on('forminvalid.zf.abide', function (ev) {
+            var invalid_fields = $(this).find('[data-invalid]');
+            console.log(invalid_fields);
+        })
+        .on('formvalid.zf.abide', function (ev) {
+            $('#add-message button#submit').prop('disabled', true);
+            var messageId = $("#messageId").val();
+            var recipientId = $("#systemAdmin").val();
+            var subject = $("#subject").val();
+            var messageBody = $("#messageBody").val();
+            var isSent = true;
+            var parentMessageId = null;
+            var file = document.getElementById("pdfUpload").files[0];
+            var formData = new FormData();
+
+            formData.append("FileUpload", file);
+            formData.append("messageId", messageId);
+            formData.append("recipientId", recipientId);
+            formData.append("subject", subject);
+            formData.append("messageBody", messageBody);
+            formData.append("isSent", isSent);
+            //formData.append("parentMessageId", 0);
+
+
+            $("#loader-wrapper").fadeIn();
+            $.ajax({
+                type: 'POST',
+                url: "@Url.Action("AddEditMessage", "Message")",
+                data: formData,
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.Result != null) {
+                        $('.open-recent-msg').trigger('click');
+                        $("#new-msg-modal").find('input:text, textarea').val('');
+                        $(".drop-area").removeClass("hide");
+                        $(".doc-remove-container").addClass("hide");
+                        $("#recentMessage").trigger("click");
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+            $("#loader-wrapper").fadeOut();
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        });
+
+    function checkUpload() {
+        if ($('#UserText').val() == "" || $('#subject').val() == "") {
+
+            $("#upload-option").addClass("hide");
+        }
+        else {
+            $("#upload-option").removeClass("hide");
+        }
+	}
+
+	$("#msg-options li").on("click", function () {
+		$("#msg-options").foundation("close");
+    });
+
+    $("#chat-container-modal").on("click", ".drop-menu-lv2 li a", function (e) {
+        e.preventDefault();
+        $(".drop-menu-lv2 li a").removeClass("active");
+        $(this).addClass("active");
+        var status = $(this).text();
+        var classname = $(this).children("span").attr("class");
+        $(".chat-heading-btm .msg-status").text(status).attr("class", classname);
+        $('#ellipsis-dropdown').foundation('close');
+    });
+
+    $("#chat-container-modal").on("click", ".chat-opt-list li, .chat-opt-title img", function (e) {
+        e.preventDefault();
+        $('#chat-options').foundation('close');
+    });
+
+    $("#chat-container-modal").on("click", "i.ellipsis-dropdown", function () {
+        $('#ellipsis-dropdown').foundation();
+    });
+
+    $("#chat-container-modal").on("click", "i.chat-options", function () {
+        $('#chat-options').foundation();
+    });
+
+
+    function deleteAttachment(messageId, attachment) {
+        $.ajax({
+            url: "@Url.Action("DeleteAttachment", "Message")",
+            type: 'POST',
+            dataType: "json",
+            data: { MessageId:messageId, AttachmentName:attachment },
+                success: function (data) {
+                    GetMessageDetails($("#parentMessageId").val());
+				}
+
+        });
+    }
+</script>

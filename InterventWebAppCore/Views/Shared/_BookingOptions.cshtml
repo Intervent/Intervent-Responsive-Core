@@ -1,0 +1,15 @@
+﻿
+<div class="grid-x grid-margin-x">
+    <div class="small-12 cell text-center">
+        <h3>Schedule the appointment using one of the options below</h3>
+    </div>
+</div>
+<div class="grid-x grid-margin-x">
+    <div class="small-6 cell text-right">
+        <button id="add-appointment-button" data-open="add-appointment" class="button right small" data-modal-path="@Html.Raw(Url.Action("SearchFreeSlot", "Scheduler"))">Search</button>
+    </div>
+    <div class="small-6 cell text-left">
+        <button id="add-appointment-button" data-open="add-appointment" class="button left small" data-modal-path="@Html.Raw(Url.Action("CalendarSearch", "Scheduler"))">Calendar</button>
+    </div>
+    <a class="close-button" data-close>&#215;</a>
+</div>

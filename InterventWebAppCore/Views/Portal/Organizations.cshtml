@@ -1,0 +1,462 @@
+﻿@using InterventWebApp
+@model InterventWebApp.OrganizationModel
+<!--ADMIN VIEW-->
+@{
+    ViewBag.Title = "Organizations";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Details = "Organization";
+}
+<section class="main search-participants org-main-body">
+    <div class="grid-container">
+        <div class="grid-x food-diary-main-wrapper">
+            <div class="cell">
+                <div class="diary-top-section">
+                    <div class="diary-top-left">
+                        <h2>All Organizations</h2>
+                        <div class="search-bar">
+                            <input type="text" id="search-org" placeholder="Search" maxlength="200" />
+                            <button class="search-btn" onclick="searchByOrgName()"></button>
+                        </div>
+                    </div>
+
+                    <div class="diary-top-right new-button">
+                        <button class="button plus-btn" data-open="AddOrganization">Add Organization</button>
+                    </div>
+                </div>
+                <!-- Top section ends -->
+
+                <div class="diary-body-section">
+                    <div class="diary-cards-section">
+                        <div class="daily-target-cards">
+                            <div class="grid-x grid-margin-x">
+                                <div class="cell small-3">
+                                    <div class="diary-cards meal-target-cards" onclick="filterOrgList(this, 1)">
+                                        <img src="../Images/organization/org-active.svg" alt="">
+                                        <div class="cards-content">
+                                            <p id="ActiveOrgCount"></p>
+                                            <span>Organization are active</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="cell small-3">
+                                    <div class="diary-cards meal-target-cards" onclick="filterOrgList(this, 2)">
+                                        <img src="../Images/organization/org-coaching-prog.svg" alt="">
+                                        <div class="cards-content">
+                                            <p id="CoachingOrgCount"></p>
+                                            <span>Organizations with coaching programs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="cell small-3">
+                                    <div class="diary-cards meal-target-cards" onclick="filterOrgList(this, 3)">
+                                        <img src="../Images/organization/org-self-help.svg" alt="">
+                                        <div class="cards-content">
+                                            <p id="SelfHelpOrgCount"></p>
+                                            <span>Organizations with self-help programs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="cell small-3">
+                                    <div class="diary-cards meal-target-cards" onclick="filterOrgList(this, 4)">
+                                        <img src="../Images/organization/org-membership-ended.svg" alt="">
+                                        <div class="cards-content">
+                                            <p id="InActiveOrgCount"></p>
+                                            <span>Inactive portals</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="food-calender-section org-list-section">
+                        <div class="grid-x">
+                            <div class="cell">
+                                <div class="org-list-filter flex-container align-justify align-middle">
+                                    <h4>Organizations List</h4>
+                                </div>
+                            </div>
+                            <div class="cell">
+                                <div class="org-search-results" id="organizationsList"></div>
+                            </div>
+                            <div class="cell small-12">
+                                <!-- pagination Start -->
+                                <div class="pagination-area hide" id="pagination-centered">
+                                    <ul>
+                                        <li id="numeric"></li>
+                                    </ul>
+                                    <!-- page-link Start -->
+                                    <div class="page-link">
+                                        <label>@Translate.Message("L4041")</label>
+                                        <div class="grid-x">
+                                            <input type="text" id="jumptoPageNo">
+                                            <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                                        </div>
+                                    </div>
+                                    <!-- page-link End -->
+                                </div>
+                                <!-- pagination End -->
+                            </div>
+                            <div id="no-graph" class="cell main-graph-container hide">
+                                <div class="cell main-chart ">
+                                    <div class="no-graph-info text-center">
+                                        <img src="../Images/device/no-data.png" alt="Alternate Text">
+                                        <span>
+                                            Sorry, there is no portal for this organization.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Body section ends -->
+            </div>
+        </div>
+    </div>
+</section>
+<div id="AddOrganization" class="reveal large add-org-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <form id="AddOrganization" class="organization-modal-form create-profile-form" data-abide novalidate>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <h2>Add Organization</h2>
+            </div>
+            <div class="cell">
+                <div class="grid-x grid-margin-x grid-margin-y">
+                    <div class="cell medium-4">
+                        <label>Name</label>
+                        <input type="text" value="" id="orgName" maxlength="256" required />
+                        <small class="form-error">Required</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Description</label>
+                        <input type="text" value="" id="orgDescription" maxlength="256" required />
+                        <small class="form-error">Required</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Parent Organization</label>
+                        @Html.DropDownListFor(m => m.ParentOrganization, Model.ParentOrganizations, "--Select--", new Dictionary<string, object> { { "id", "parentOrg" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Group</label>
+                        @Html.DropDownListFor(m => m.Group, Model.Groups, new Dictionary<string, object> { { "id", "groupList" }, { "class", "override-select" }, { "multiple", "multiple" }, { "data-prompt", "Select" }, { "required", true } })
+                        <small class="form-error">Required</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Url</label>
+                        <input type="text" value="" id="url" maxlength="100" required />
+                        <small class="form-error">Required</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Integrate with</label>
+                        @Html.DropDownListFor(m => m.Integration, Model.Integrations, "--Select Integration--", new Dictionary<string, object> { { "id", "integration" } })
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Contact Email</label>
+                        <input type="text" value="" id="contactemail" maxlength="50" required />
+                        <small class="form-error">Required</small>
+                    </div>
+                    <div class="cell medium-4">
+                        <label>Contact Number</label>
+                        <input type="text" value="" id="contactnumber" maxlength="50" required />
+                        <small class="form-error">Required</small>
+                    </div>
+                    <div class="cell medium-4">&nbsp;</div>
+                    <div class="cell medium-4">
+                        <div id="IsAutoActivateEmailcheckbox" class="tick-buttons check-btn">
+                            <input type="checkbox" id="IsAutoActivateEmail" />
+                            <label for="IsAutoActivateEmail">
+                                Requires account activation email?
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="cell medium-4">
+                        <div id="IsActivecheckbox" class="tick-buttons check-btn">
+                            <input type="checkbox" id="IsActive" />
+                            <label for="IsActive">
+                                Active
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="cell medium-4">
+                        <div id="OwnCoachcheckbox" class="tick-buttons check-btn">
+                            <input type="checkbox" id="OwnCoach" />
+                            <label for="OwnCoach">
+                                Own Coach?
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="cell medium-4">
+                        <div id="TermsForSSOcheckbox" class="tick-buttons check-btn">
+                            <input type="checkbox" id="TermsForSSO" />
+                            <label for="TermsForSSO">
+                                Terms for sso?
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-x grid-margin-x button-set new-button">
+                    <div class="cell medium-6 medium-order-2 medium-text-right"><button class="button" type="submit">Save</button></div>
+                    <div class="cell medium-6 medium-order-1 medium-text-left"><button class="button hollow" type="reset" id="closeOrg">Cancel</button></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<input type="hidden" id="Url" value="@Model.BaseUrl" />
+
+<!-- Preloader-->
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+
+<div id="edit-portal-data" class="reveal medium" data-reveal>
+</div>
+
+<input type="hidden" id="selectedOrgId" />
+<input type="hidden" id="orgId" />
+<script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+    var totalPages = 0;
+    var filterBy = 0;
+    var search = "";
+    var url = $('#Url').val();
+
+    var toalGroups = '@Model.Groups.Count()';
+    //Activate the detailed info
+    $(document).on('click', '.item', function () {
+        if ($(this).find('.control').hasClass('active')) {
+            $(this).parent().find('.detailed-info').addClass('hide');
+            $(this).find('.control').removeClass('active');
+        } else {
+            $(this).parent().find('.detailed-info').removeClass('hide');
+            $(this).find('.control').addClass('active');
+        }
+    });
+
+    $(document).ready(function () {
+        ListOrganizations();
+        $('#closeOrg').on('click', function () {
+            resetOrgModel();
+        });
+        $(".check-btn input").on('click', function () {
+            if ($(this).is(":checked")) {
+                $(this).parent(".check-btn").addClass("selected");
+            }
+            else {
+                $(this).parent(".check-btn").removeClass("selected");
+            }
+        });
+
+        $("#search-org").on("keyup", function(event) {
+            if (event.keyCode === 13) {
+                searchByOrgName();
+            }
+        });
+    });
+
+    function resetOrgModel() {
+        $('#AddOrganization').foundation('close');
+        $("#orgName").val("");
+        $("#orgDescription").val("");
+        $('#parentOrg').val("");
+        $('#groupList').val("");
+        $("#orgId").val("");
+        $("#contactnumber").val("");
+        $("#contactemail").val("");
+        $('#IsAutoActivateEmailcheckbox').removeClass("selected");
+        $('#IsActivecheckbox').removeClass("selected");
+        $('#OwnCoachcheckbox').removeClass("selected");
+        $('#TermsForSSOcheckbox').removeClass("selected");
+    }
+
+    function searchByOrgName() {
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        search = $("#search-org").val();
+        ListOrganizations();
+    }
+
+    function ListOrganizations() {
+        var model = {};
+        var paginationdata = {
+            'page': currentPage,
+            'pageSize': pageSize,
+            'totalRecords': totalRecords,
+            'filterBy': filterBy,
+            'search': search
+        };
+        model = (paginationdata);
+        var strData = JSON.stringify(model);
+        $('#organizationsList').html("");
+        $('#pagination-centered').addClass("hide");
+        $.ajax({
+            url: "@Url.Action("ListOrganizationsforSetup", "Portal")",
+            data: strData,
+            type: 'POST',
+            contentType: 'application/json, charset=utf-8',
+            dataType: "json",
+            success: function (data) {
+                if (data != null && data.TotalRecords != 0) {
+                    totalRecords = data.TotalRecords;
+                    totalPages = parseInt((totalRecords + pageSize - 1) / pageSize);
+                    $('#organizationsList').html("");
+                    $('#ActiveOrgCount').html(data.ActiveOrgCount);
+                    $('#CoachingOrgCount').html(data.CoachingOrgCount);
+                    $('#SelfHelpOrgCount').html(data.SelfHelpOrgCount);
+                    $('#InActiveOrgCount').html(data.InActiveOrgCount);
+                    var organizationHtml = "";
+                    organizationHtml += "<ul class='custom-table'><li class='grid-x grid-margin-x'><div class='cell small-6 medium-2'>Organization</div><div class='cell small-2 hide-for-small-only'>Recent Portal</div><div class='cell small-1 hide-for-small-only'>Language</div><div class='cell small-2 hide-for-small-only'>HRA Version</div><div class='cell small-2 hide-for-small-only'>Program Types</div><div class='cell small-6 medium-3'>End Date</div></li>";
+
+                    for (var i = 0; i < data.Records.length; i++) {
+                        var organization = data.Records[i];
+                        var activeClass = organization.IsActivePortal == true ? 'active-green' : 'inactive-red';
+                        organizationHtml += "<li class='grid-x grid-margin-x'><div class='cell small-6 medium-2'><p>" + organization.Name + "<span>" + (organization.ParentOrganizationName != null ? ("Parent: " + organization.ParentOrganizationName) : "") + "</span></p></div><div class='cell small-6 medium-2 hide-for-small-only'><label class='show-for-small-only'>Recent Portal</label><p>" + (organization.RecentPortalName != null ? organization.RecentPortalName : "-") + "</p></div>" +
+                            "<div class= 'cell small-6 medium-1 hide-for-small-only'><label class='show-for-small-only'>Langauage</label><p>" + (organization.Language != null ? organization.Language : "-") + "</p></div ><div class='cell small-6 medium-2 hide-for-small-only'><label class='show-for-small-only'>HRA Version</label><p>" + (organization.HRAVersion != null ? organization.HRAVersion : "-") + "</p></div>" +
+                            "<div class= 'cell small-6 medium-2 hide-for-small-only'><label class='show-for-small-only'>Program Types</label><p>" + (organization.ProgramTypes != null ? organization.ProgramTypes : "-") + "</p></div > <div class='cell small-6 medium-3 list-trigger'><p>" + (organization.EndDate != null ? organization.EndDate : "") + "</p><p class='" + (organization.ActiveDetails != null ? activeClass : "") + "' >" + (organization.ActiveDetails != null ? organization.ActiveDetails : "-") + "</p><i class='acc-trigger'></i></div>" +
+                            "<div class= 'cell'><div class='grid-x grid-margin-x'><div class='cell medium-12'><label>Description</label><p>" + organization.Description + "</p></div>" +
+                            "<div class='cell medium-4 small-6'><label>Phone Number</label><p>" + organization.PhoneNumber + "</p></div><div class='cell medium-4 small-6'><label>Email</label><p>" + organization.Email + "</p></div>" +
+                            "<div class='cell medium-4 small-6'><label>Group</label><p>" + organization.Groups + "</p></div><div class='cell medium-4 small-6'><label>Activation Email?</label><p>" + organization.EmailValidationRequired + "</p></div>" +
+                            " <div class='cell medium-4 small-6'><label>Own Coach?</label><p>" + organization.OwnCoach + "</p></div><div class='cell medium-4 small-6'><label>SSO</label><p>" + organization.SSO + "</p></div><div class='cell medium-4 small-6'><label>Terms of SSO</label><p>" + organization.TermsForSSO + "</p></div></div>" +
+                            "<div class='new-button'><a href='../Portal/OrganizationDetails/" + organization.Id +"' class='button hollow'>See Details</a></div></div></li>";
+                    }
+                    organizationHtml +="</ul>";
+                    $('#organizationsList').append(organizationHtml);
+                    if (totalRecords > 10)
+                        $('#pagination-centered').removeClass("hide");
+                }
+                else
+                {
+                    $('#ActiveOrgCount').html(data.ActiveOrgCount);
+                    $('#CoachingOrgCount').html(data.CoachingOrgCount);
+                    $('#SelfHelpOrgCount').html(data.SelfHelpOrgCount);
+                    $('#InActiveOrgCount').html(data.InActiveOrgCount);
+                    $('#organizationsList').html("<div id='no-graph' class='cell main-graph-container'><div class='cell main-chart'><div class='no-graph-info text-center'><img src='" + url +"/Images/device/no-data.png' alt='Alternate Text'><span>@Translate.Message("L2774")</span></div></div></div>");
+                }
+                AddPager();
+            },
+            complete: function() {
+                $(".list-trigger i.acc-trigger").on("click", function () {
+                    $(this).parents("li").toggleClass("is-active");
+                });
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    }
+
+    $("#AddOrganization").foundation();
+    $("#AddOrganization").on('formvalid.zf.abide', function () {
+        $("#loader-wrapper").fadeIn();
+        var id = $("#orgId").val();
+        var orgName = $("#orgName").val();
+        var orgDescription = $("#orgDescription").val();
+        var parentOrg = $("#parentOrg").val();
+        var groups = getGroups();
+        var url = $("#url").val();
+        var contactnumber = $("#contactnumber").val();
+        var contactemail = $("#contactemail").val();
+        var IsAutoActivateEmail = $('#IsAutoActivateEmail').is(":checked");
+        var IsActive = $('#IsActive').is(":checked");
+        var TermsForSSO = $('#TermsForSSO').is(":checked");
+        var OwnCoach = $('#OwnCoach').is(":checked");
+        var integrationWith = $('#integration').val();
+        $.ajax({
+            url: "@Url.Action("CreateOrganization", "Portal")",
+            data: {
+                Name: orgName,
+                Description: orgDescription,
+                id: id,
+                parentOrg: parentOrg,
+                groups: groups,
+                url: url,
+                contactnumber: contactnumber,
+                contactemail: contactemail,
+                IsAutoActivateEmail: IsAutoActivateEmail,
+                IsActive: IsActive,
+                TermsForSSO: TermsForSSO,
+                OwnCoach: OwnCoach,
+                IntegrationWith : integrationWith
+            },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                ListOrganizations();
+                resetOrgModel();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        })
+
+
+    function getGroups() {
+        var groups = "";
+        var selectObject = $('[name="Group"]')[0].selectedOptions;
+        for (var i = 0; i < selectObject.length; i++) {
+            if (groups == "") {
+                groups = selectObject[i].value
+            }
+            else {
+                groups = groups + "-" + selectObject[i].value;
+            }
+        }
+        return groups;
+    }
+
+    function UnSelectItems() {
+        $.ajax({
+            url: "@Url.Action("ListRoles", "Admin")",
+            type: 'POST',
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data != null && data.Records != null) {
+                    for (var i = 0; i < data.Records.length; i++) {
+                        $("li[data-value='" + data.Records[i].Id + "']").removeClass("selected");
+                    }
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function GotoPage(page) {
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        ListOrganizations();
+    }
+
+    function filterOrgList(obj, filter) {
+        if ($(obj).hasClass("is-active")) {
+            $(obj).removeClass("is-active");
+            filterBy = 0;
+        }
+        else {
+            $(".daily-target-cards .meal-target-cards").removeClass("is-active");
+            $(obj).addClass("is-active");
+            filterBy = filter;
+        }
+        search = $("#search-org").val();
+        totalRecords = 0;
+        currentPage = 0;
+        totalPages = 0;
+        ListOrganizations();
+    }
+
+</script>

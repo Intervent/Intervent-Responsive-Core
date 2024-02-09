@@ -1,0 +1,95 @@
+﻿@model InterventWebApp.ProgramDetailsModel
+@using InterventWebApp
+<form class="organization-modal-form create-profile-form" id="add-program-data" data-abide novalidate>
+	<div class="grid-x grid-margin-x grid-margin-y">
+		<div class="cell medium-4">
+			<label>Name of the Program</label>
+			@Html.DropDownListFor(m => m.programinPortal.ProgramId, Model.programLists, "--Select--", new Dictionary<string, object> { { "id", "inProgName" }, { "required", "required" } })
+			<small class="form-error">Program Name is required.</small>
+		</div>
+		<div class="cell medium-4">
+			<label for="">Cost</label>
+			@Html.TextBoxFor(m => m.programinPortal.Cost, new Dictionary<string, object> { { "id", "inProgCost" }, { "required", "required" } })
+			<small class="form-error">Cost is required.</small>
+		</div>
+		<div class="cell medium-4">
+			<label for="">Appointment Call Template<a href="@Url.Action("AppointmentCallTemplate", "Program")" target="_blank">(Manage Templates)</a></label>
+			@Html.DropDownListFor(m => m.programinPortal.ApptCallTemplateId, Model.callTemplateList, "--Select--", new Dictionary<string, object> { { "id", "inApptCallTemplate" } })
+		</div>
+		<div class="cell medium-4">
+			<label for="">More Info</label>
+			@Html.TextBoxFor(m => m.programinPortal.MoreInfo, new Dictionary<string, object> { { "id", "inMoreInfo" } })
+		</div>
+		<div class="cell medium-4">
+			<label for="">Name for Admin</label>
+			@Html.TextBoxFor(m => m.programinPortal.NameforAdmin, new Dictionary<string, object> { { "id", "inNameforAdmin" }, { "maxlength", "100" } })
+		</div>
+		<div class="cell medium-4">
+			<label for="">Description for Admin</label>
+			@Html.TextBoxFor(m => m.programinPortal.DescriptionforAdmin, new Dictionary<string, object> { { "id", "inDescriptionforAdmin" }, { "maxlength", "512" } })
+		</div>
+		<div class="medium-4 cell">
+			<label>Pick text language</label>
+			@Html.DropDownList("inLangPick", ViewData["languageList"] as IEnumerable<SelectListItem>, new Dictionary<string, object> { { "onchange", "LanguageChange()" } })
+		</div>
+		<div class="cell medium-4">
+			<label for="">Name for User</label>
+			@Html.TextBoxFor(m => m.programinPortal.NameforUser, new Dictionary<string, object> { { "id", "inNameforUser" }, { "maxlength", "100" } })
+		</div>
+		<div class="cell medium-4">
+			<label for="">Description for User</label>
+			@Html.TextBoxFor(m => m.programinPortal.DescriptionforUser, new Dictionary<string, object> { { "id", "inDescriptionforUser" }, { "maxlength", "512" } })
+		</div>
+		<div class="cell medium-4">
+			<label for="">Sort Order</label>
+			@Html.TextBoxFor(m => m.programinPortal.SortOrder, new Dictionary<string, object> { { "id", "progOrderBy" }, { "type", "number" } })
+		</div>
+		<div class="cell medium-4 flex-container align-middle">
+			<div class="tick-buttons check-btn">
+				@Html.CheckBoxFor(m => m.programinPortal.Active, new Dictionary<string, object> { { "id", "inIsactive" } })
+				<label for="inIsactive">
+					Active
+					<span class="checkmark"></span>
+				</label>
+			</div>
+		</div>
+		<div class="cell">
+			<div class="form-save-button"><button class="button" id="add-program">Save</button></div>
+		</div>
+	</div>
+</form>
+<script>
+
+    $("#add-program-data").foundation();
+    $("#add-program-data").on('forminvalid.zf.abide', function () {
+    }).on('formvalid.zf.abide', function () {
+        var id = $('#PrograminPortalId').val();
+        var progId = $("#inProgName").val();
+        var progCost = $("#inProgCost").val();
+        var moreInfo = $("#inMoreInfo").val();
+        var isactive = $('#inIsactive').is(':checked');
+        var apptCallTemplate = $('#inApptCallTemplate').val();
+        if (apptCallTemplate == '')
+            apptCallTemplate = null;
+        var nameforUser = $("#inNameforUser").val();
+        var descriptionforUser = $("#inDescriptionforUser").val();
+        var nameforAdmin = $("#inNameforAdmin").val();
+        var descriptionforAdmin = $("#inDescriptionforAdmin").val();
+		var lang = $('#inLangPick').val();
+		var sortOrder = $('#progOrderBy').val();
+        $.ajax({
+            url: "@Url.Action("AddProgramsinPortal", "Portal")",
+			data: { id: id, portalId: portalId, progId: progId, progCost: progCost, moreInfo: moreInfo, isactive: isactive, nameforUser: nameforUser, descriptionforUser: descriptionforUser, nameforAdmin: nameforAdmin, descriptionforAdmin: descriptionforAdmin, apptCallTemplateId: apptCallTemplate, language: lang, sortOrder: sortOrder },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#add-program-model').foundation('close');
+                $('.programs-cards').trigger('click');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    });
+</script>

@@ -1,0 +1,119 @@
+﻿@using InterventWebApp
+
+<!--Email Confirmation Modal-->
+@{string className = ViewData["LMCClass"] != null ? ViewData["LMCClass"].ToString() : "";}
+<div id="register-modal" class="reveal small @className" data-reveal>
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <h2 class="text-center">@Translate.Message("L474")</h2>
+            <p>
+                @Translate.Message("L475") <span class="register-modal-email"></span>.
+                @Translate.Message("L476")
+            </p>
+            <p class="small">@Translate.Message("L477")</p>
+            <button id="register-modal-close" class="pink right">@Translate.Message("L478") </button>
+        </div>
+    </div>
+    <a class="close-button" data-close>&#215;</a>
+</div>
+
+<!--Email Confirmation Error Modal-->
+<div id="conf-error-modal" class="reveal small @className" data-reveal>
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <h2 class="text-center">@Translate.Message("L474")</h2>
+            <p>
+                @Translate.Message("L479")
+            </p>
+            <button id="conf-error-modal-close" class="pink right">@Translate.Message("L478")</button>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<!--Reset Password Token Error Modal-->
+<div id="password-error-modal" class="reveal small @className" data-reveal>
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+            <p>
+                @Translate.Message("L2577")
+            </p>
+            <button id="reset-link-modal" class="pink right">@Translate.Message("L470")</button>
+        </div>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var email = '@Context.Request.Query["Email"]';
+        var token = '@Context.Request.Query["Token"]';
+        var type = '@Context.Request.Query["Type"]';
+        email = email.replace("&#39;", "'");
+        if (email != "" && token != "") {
+            if (type == "") {
+                $.ajax({
+                    url: "@Url.Action("ConfirmEmail", "Account")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: { Email: email, Token: token },
+                    success: function (data) {
+                        if (data == "success") {
+                            $('.login-modal-confirmed').removeClass('hide');
+                            $('#logEmail').val(email);
+                            $('#login-modal').foundation('open');
+                        }
+                        else {
+                            $('#conf-error-modal').foundation('open');
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    DisplayError(jqXHR.status);
+                });
+            }
+            else {
+                $.ajax({
+                    url: "@Url.Action("ValidateToken", "Account")",
+                     type: 'POST',
+                     dataType: "json",
+                     data: { Email: email, Token: token },
+                     success: function (data) {
+                         if (data == "success") {
+                             $('#reset-password-modal').foundation('open');
+                         }
+                         else {
+                             $('#password-error-modal').foundation('open');
+                         }
+                     }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    DisplayError(jqXHR.status);
+                });
+            }
+        }
+
+        $("#reset-link-modal").on('click', function () {
+             $.ajax({
+                     url: "@Url.Action("ForgotPassword", "Account")",
+                     type: 'POST',
+                     dataType: "json",
+                     data: {
+                         Email: email,
+                         OrgContactEmail: $('#supportEmail').val()
+                     },
+                     success: function (data) {
+                         if (data == "success") {
+                             $('#password-error-modal').foundation('close');
+                         }
+                     }
+             }).fail(function (jqXHR, textStatus, errorThrown) {
+                 DisplayError(jqXHR.status);
+             });
+         });
+    });
+
+    $(document).on('click', '#register-modal-close', function () {
+        $('#register-modal').foundation('close');
+    });
+</script>

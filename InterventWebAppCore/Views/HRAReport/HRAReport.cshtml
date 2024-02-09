@@ -1,0 +1,344 @@
+﻿@using InterventWebApp;
+@model InterventWebApp.DrSummaryModel
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_AWVLayout.cshtml";
+}
+
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")"></script>
+<script src="@Url.Content("~/Scripts/IVCharts.js")?v=@CommonUtility.GetRandom()"></script>
+<section class="main dr-summary @(ViewData["isPdf"] != null ? "pdf-print" : "")">
+    <div class="grid-x grid-margin-x">
+        <div class="cell first-page">
+            <h1 class="header-title">@Translate.Message("L188")</h1>
+            <button class="small title-button hide-for-print" onclick="doPrint();"><i class="fa fa-print"></i>@Translate.Message("L205")</button>
+            <!--measurements-->
+            @if (Model.measurementsandGoals != null)
+            {
+                <div class="grid-x grid-margin-x tile-item with-padding">
+                    <div class="cell small-12 tile-header">
+                        <h3 class="left blue">@Translate.Message("L224")</h3>
+                        <div class="grid-x grid-margin-x collapse show-for-medium-up">
+                            @{string headerWidth = "";}
+                            @if (Model.initialMeasurementsandGoals != null && Model.initialMeasurementsandGoals.Count > 0)
+                            {
+                                <div class="cell small-offset-4 small-2">
+                                    <h5 class="right">@Translate.Message("L1884")</h5>
+                                </div>
+                                headerWidth = "small-2";
+                            }
+                            else
+                            {
+                                headerWidth = "small-offset-4 small-4";
+                            }
+                            <div class="cell @headerWidth">
+                                <h5 class="right full">@Translate.Message("L2536")</h5>
+                            </div>
+                            <div class="cell small-4 last-column">
+                                <h5 class="right full">@Translate.Message("L223")</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cell bg-wrapper tabular">
+                        @for (int i = 0; i < Model.measurementsandGoals.Count; i++)
+                        {
+                            <div class="cell tabular-row table-print" data-equalizer>
+                                <div class="cell small-6 medium-4" data-equalizer-watch>
+                                    <span>@Model.measurementsandGoals[i].Name</span>
+                                    <span data-tooltip class="recommendation-handle has-tip show-for-small-only hide-for-print"
+                                          aria-haspopup="true" title="Recommended: @Model.measurementsandGoals[i].Goal">?</span>
+                                </div>
+                                @{string classWidth = "";}
+                                @if (Model.initialMeasurementsandGoals != null && Model.initialMeasurementsandGoals.Count > 0)
+                                {
+                                    <div class="cell small-3 medium-2 text-center" data-equalizer-watch>
+                                        <div class="value">@Model.initialMeasurementsandGoals[i].Measurement</div>
+                                    </div>
+                                    classWidth = "small-3 medium-2";
+                                }
+                                else
+                                {
+                                    classWidth = "small-6 medium-4";
+                                }
+                                <div class="cell @classWidth text-center" data-equalizer-watch>
+                                    <div class="value">@Model.measurementsandGoals[i].Measurement</div>
+                                </div>
+                                <div class="cell show-for-medium-up medium-4" data-equalizer-watch>@Model.measurementsandGoals[i].Goal</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="grid-x grid-margin-x tile-item subtext">@Translate.Message("L222")</div>
+            }
+            <!--Checkups & Tests-->
+            @if (Model.checkupsandGoals != null)
+            {
+                <div class="grid-x grid-margin-x tile-item with-padding force-new-page">
+                    <div class="cell small-12 tile-header">
+                        <h3 class="left cyan">@Translate.Message("L221")</h3>
+                        <div class="item-desc">@Translate.Message("L220")</div>
+                        <div class="grid-x grid-margin-x collapse show-for-medium-up">
+                            <div class="cell small-4 small-offset-8">
+                                <h5 class="right">@Translate.Message("L217")</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cell bg-wrapper tabular">
+                        @for (int i = 0; i < Model.checkupsandGoals.Count; i++)
+                        {
+                            <div class="cell tabular-row table-print" data-equalizer>
+                                <div class="cell small-6 medium-4" data-equalizer-watch>
+                                    <span>@Model.checkupsandGoals[i].Name</span>
+                                    <span data-tooltip class="recommendation-handle has-tip show-for-small-only hide-for-print"
+                                          aria-haspopup="true" title="Recommended Schedule: @Model.checkupsandGoals[i].Recommended">?</span>
+                                </div>
+                                <div class="cell small-6 medium-4 text-center" data-equalizer-watch>
+                                    @if (Model.checkupsandGoals[i].Status == 1)
+                                    {
+                                        <div class="on track">@Model.checkupsandGoals[i].StatusMessage</div>
+                                    }
+                                    else if (Model.checkupsandGoals[i].Status == 2)
+                                    {
+                                        <div class="no track">@Model.checkupsandGoals[i].StatusMessage</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="track">@Model.checkupsandGoals[i].StatusMessage</div>
+                                    }
+                                </div>
+                                <div class="cell show-for-medium-up medium-4" data-equalizer-watch>@Model.checkupsandGoals[i].Recommended</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            <!--Immunizations-->
+            @if (Model.immunizationandGoals != null)
+            {
+                <div class="grid-x grid-margin-x tile-item with-padding force-new-page">
+                    <div class="cell small-12 tile-header">
+                        <h3 class="left green">@Translate.Message("L219")</h3>
+                        <div class="item-desc">@Translate.Message("L218")</div>
+                        <div class="grid-x grid-margin-x collapse show-for-medium-up">
+                            <div class="cell small-4 small-offset-8">
+                                <h5 class="right">@Translate.Message("L217")</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cell bg-wrapper tabular">
+                        @for (int i = 0; i < Model.immunizationandGoals.Count; i++)
+                        {
+                            <div class="cell tabular-row table-print" data-equalizer>
+                                <div class="cell small-6 medium-4" data-equalizer-watch>
+                                    <span>@Model.immunizationandGoals[i].Name</span>
+                                    <span data-tooltip class="recommendation-handle has-tip show-for-small-only hide-for-print"
+                                          aria-haspopup="true" title="Recommended Schedule: @Model.immunizationandGoals[i].Recommended">?</span>
+                                </div>
+                                <div class="cell small-6 medium-4 text-center" data-equalizer-watch>
+                                    @if (Model.immunizationandGoals[i].Status == 1)
+                                    {
+                                        <div class="on track">@Model.immunizationandGoals[i].StatusMessage</div>
+                                    }
+                                    else if (Model.immunizationandGoals[i].Status == 2)
+                                    {
+                                        <div class="no track">@Model.immunizationandGoals[i].StatusMessage</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="track">@Model.immunizationandGoals[i].StatusMessage</div>
+                                    }
+                                </div>
+                                <div class="cell show-for-medium-up medium-4" data-equalizer-watch>@Model.immunizationandGoals[i].Recommended</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            <!--Medical Conditions & Risk Factors-->
+            <div class="grid-x grid-margin-x tile-item with-padding force-new-page">
+                <div class="cell small-12 tile-header">
+                    <h3 class="left red">@Translate.Message("L216")</h3>
+                </div>
+                <div class="cell bg-wrapper tabular">
+                    <!--at risk-->
+                    @if (Model.medicalConditionsandRiskFactors.highRisk.Count > 0)
+                    {
+                        <div class="cell tabular-row at-risk">
+                            <div class="cell">
+                                <h4 class="title-red"><i class="fa fa-frown-o"></i>@Translate.Message("L212")</h4>
+                                <ul class="column-list">
+                                    @for (int i = 0; i < Model.medicalConditionsandRiskFactors.highRisk.Count; i++)
+                                    {
+                                        <li>@Model.medicalConditionsandRiskFactors.highRisk[i]</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                    <!--incomplete data-->
+                    @if (Model.medicalConditionsandRiskFactors.missingRisk.Count > 0)
+                    {
+                        <div class="cell tabular-row incomplete">
+                            <div class="cell">
+                                <h4><i class="fa fa-circle-thin"></i>@Translate.Message("L211")</h4>
+                                <ul class="column-list">
+                                    @for (int i = 0; i < Model.medicalConditionsandRiskFactors.missingRisk.Count; i++)
+                                    {
+                                        <li>@Model.medicalConditionsandRiskFactors.missingRisk[i]</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                    <!--not at risk-->
+                    @if (Model.medicalConditionsandRiskFactors.noRisk.Count > 0)
+                    {
+                        <div class="cell tabular-row not-at-risk">
+                            <div class="cell">
+                                <h4 class="title-green"><i class="fa fa-smile-o"></i> @Translate.Message("L210")</h4>
+                                <ul class="column-list">
+                                    @for (int i = 0; i < Model.medicalConditionsandRiskFactors.noRisk.Count; i++)
+                                    {
+                                        <li>@Model.medicalConditionsandRiskFactors.noRisk[i]</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <!--Doctor Referrals-->
+            @if (Model.DrReferralModel.referrals.Count > 0)
+            {
+                <div class="grid-x grid-margin-x tile-item with-padding force-new-page">
+                    <div class="cell small-12 tile-header">
+                        <h3 class="left pink">@Translate.Message("L209")</h3>
+                    </div>
+                    <div class="cell bg-wrapper tabular">
+                        <div class="cell tabular-row">
+                            <div class="cell">
+                                <ul class="tabular-list pink">
+                                    @for (int i = 0; i < Model.DrReferralModel.referrals.Count; i++)
+                                    {
+                                        <li>@Model.DrReferralModel.referrals[i]</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.hadFollowUp == true)
+            {
+                <div class="grid-x grid-margin-x tile-item with-padding force-new-page">
+                    <div class="cell small-12 tile-header">
+                        <h2 class="left blue">@Translate.Message("L2108")</h2>
+                    </div>
+                    <div class="cell bg-wrapper tabular">
+                        <div class="cell tabular-row">
+                            <div class="cell">
+                                <div class="small-12 cell report-dashboard">
+                                    <div class="simple-bar-container">
+                                        <p>@Translate.Message("L2110")@Translate.Message("L2480")</p>
+                                        <span>Previous Year @Translate.Message("L2111")</span>
+                                        <div id="age-chart" class="simple-bar-chart blue">
+                                            <div class="bar progress-@Model.PreviousYearScheduledCoachingSession"></div>
+                                            <div class="dial">@Model.PreviousYearScheduledCoachingSession</div>
+                                        </div>
+                                        <span>Previous Year @Translate.Message("L2112")</span>
+                                        <div id="age-chart" class="simple-bar-chart blue">
+                                            <div class="bar progress-@Model.PreviousYearCompletedCoachingSession"></div>
+                                            <div class="dial">@Model.PreviousYearCompletedCoachingSession</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-x grid-margin-x tile-item with-padding force-new-page">
+                    <div class="cell small-12 tile-header">
+                        <h2 class="left green">@Translate.Message("L2113")</h2>
+                    </div>
+                    <div class="cell bg-wrapper tabular">
+                        <div class="cell tabular-row">
+                            <div class="cell">
+                                <div class="small-12 cell">
+                                    <div class="simple-bar-container data-content">
+                                        <span>@Translate.Message("L2481")</span>
+                                        <br /><br />
+                                        <div>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>@Translate.Message("L2114")</th>
+                                                        <th>@Translate.Message("L2115")</th>
+                                                        <th>@Translate.Message("L2116")</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var data in Model.PreviousYearAssignedKitsmodel)
+                                                    {
+                                                        <tr>
+                                                            <td>@String.Format("{0:MM/dd/yyyy}", data.DateAssigned.Value)</td>
+                                                            <td>@data.EducationalTopic</td>
+                                                            <td align="center">
+                                                                @if (data.PercentCompleted == 100)
+                                                                {
+                                                                    <i class="fa fa-check-square"></i>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<div id="what-is-doctors-summary" class="reveal medium" data-reveal>
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <h2>@Translate.Message("L208")</h2>
+            <p>
+                @Translate.Message("L207")
+            </p>
+            <input type="checkbox" id="dont-show-again" value="">
+            <label for="dont-show-again">@Translate.Message("L206")</label>
+            <button onclick="$('#what-is-doctors-summary').foundation('close');" class="expand">@Translate.Message("L537")</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function doPrint() {
+        window.open("@Url.Action("DrSummaryPrint", "Reports")"  + '?isPdf=1');
+    }
+
+    $(document).ready(function () {
+        var isPdf = false;
+        @if (ViewData["isPdf"] != null)
+        {
+            @: isPdf = true;
+                }
+
+        if(isPdf){
+            $('.hide-for-print').hide();
+            $('.print-only').removeClass('print-only');
+            $('.user-layout').addClass('user-layout-print')
+        }
+        function between(x, min, max) {
+            return x >= min && x <= max;
+        }
+    });
+</script>

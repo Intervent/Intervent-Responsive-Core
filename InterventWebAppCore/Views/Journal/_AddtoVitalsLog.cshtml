@@ -1,0 +1,316 @@
+﻿@using InterventWebApp
+@model InterventWebApp.VitalsModel
+
+<form data-abide novalidate id="dailyvitals-form">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            @Html.HiddenFor(M => M.DailyVitals.Id)
+            <div class="cell">
+                <h2 class="text-center">@Translate.Message("L2830")</h2>
+                <h4>@Translate.Message("L2831")</h4>
+                @{
+                    int i = 0;
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L2817")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.HasWeight, 1, new Dictionary<string, object> { { "id", "WeightYes" }, { "Name", "DailyVitals.HasWeight" } })
+                                <label for="WeightYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.HasWeight, 2, new Dictionary<string, object> { { "id", "WeightNo" }, { "Name", "DailyVitals.HasWeight" } })
+                                <label for="WeightNo">@Translate.Message("L3")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question" id="UserWeight">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1</div>
+                            <div class="qText">
+                                @Translate.Message("L168")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            @*<div class="grid-x collapse">
+                                    <div class="small-8 cell">
+                                        @Html.TextBoxFor(M => M.DailyVitals.Weight, new Dictionary<string, object> { { "id", "Weight" }, { "data-abide-validator", "validateWeight" } })
+                                        <small class="form-error">@Translate.Message("L955") @Model.Measurements[BioLookup.Weight].Min-@Model.Measurements[BioLookup.Weight].Max.</small>
+                                    </div>
+                                    <div class="small-4 cell">
+                                        <span class="postfix">@Translate.Message(@Model.Measurements[BioLookup.Weight].MeasurementUnit)</span>
+                                    </div>
+                                </div>*@
+                            <div class="grid-x collapse input-group-padding">
+                                <div class="cell input-group">
+                                    @Html.TextBoxFor(M => M.DailyVitals.Weight, new Dictionary<string, object> { { "id", "Weight" }, { "class", "input-group-field" }, { "data-validator", "validateWeight" } })
+                                    <span class="input-group-label">@Translate.Message(@Model.Measurements[BioLookup.Weight].MeasurementUnit)</span>
+                                </div>
+                                <small data-abide-error class="form-error">@Translate.Message("L955") @Model.Measurements[BioLookup.Weight].Min-@Model.Measurements[BioLookup.Weight].Max.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L2820")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.AerobicExercise, 1, new Dictionary<string, object> { { "id", "AerobicExerciseYes" }, { "Name", "DailyVitals.AerobicExercise" } })
+                                <label for="AerobicExerciseYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.AerobicExercise, 2, new Dictionary<string, object> { { "id", "AerobicExerciseNo" }, { "Name", "DailyVitals.AerobicExercise" } })
+                                <label for="AerobicExerciseNo">@Translate.Message("L3")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L2821")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.HealthyEating, 1, new Dictionary<string, object> { { "id", "HealthyEatingYes" }, { "Name", "DailyVitals.HealthyEating" } })
+                                <label for="HealthyEatingYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.HealthyEating, 2, new Dictionary<string, object> { { "id", "HealthyEatingNo" }, { "Name", "DailyVitals.HealthyEating" } })
+                                <label for="HealthyEatingNo">@Translate.Message("L3")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L2822")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Hydration, 1, new Dictionary<string, object> { { "id", "HydrationYes" }, { "Name", "DailyVitals.Hydration" } })
+                                <label for="HydrationYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Hydration, 2, new Dictionary<string, object> { { "id", "HydrationNo" }, { "Name", "DailyVitals.Hydration" } })
+                                <label for="HydrationNo">@Translate.Message("L3")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @if (Model.Gender == 1)
+                                {
+                                    <span>@String.Format(Translate.Message("L2823"), 2)</span>
+                                }
+                                else
+                                {
+                                    <span>@String.Format(Translate.Message("L2823"), 1)</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Alcohol, 1, new Dictionary<string, object> { { "id", "AlcoholYes" }, { "Name", "DailyVitals.Alcohol" } })
+                                <label for="AlcoholYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Alcohol, 2, new Dictionary<string, object> { { "id", "AlcoholNo" }, { "Name", "DailyVitals.Alcohol" } })
+                                <label for="AlcoholNo">@Translate.Message("L3")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L2824")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Tobacco, 1, new Dictionary<string, object> { { "id", "TobaccoYes" }, { "Name", "DailyVitals.Tobacco" } })
+                                <label for="TobaccoYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Tobacco, 2, new Dictionary<string, object> { { "id", "TobaccoNo" }, { "Name", "DailyVitals.Tobacco" } })
+                                <label for="TobaccoNo">@Translate.Message("L3")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L2825")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Medications, 1, new Dictionary<string, object> { { "id", "MedicationsYes" }, { "Name", "DailyVitals.Medications" } })
+                                <label for="MedicationsYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Medications, 2, new Dictionary<string, object> { { "id", "MedicationsNo" }, { "Name", "DailyVitals.Medications" } })
+                                <label for="MedicationsNo">@Translate.Message("L3")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Medications, 3, new Dictionary<string, object> { { "id", "MedicationsNA" }, { "Name", "DailyVitals.Medications" } })
+                                <label for="MedicationsNA">@Translate.Message("L100")</label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L2827")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Sleep, 1, new Dictionary<string, object> { { "id", "SleepYes" }, { "Name", "DailyVitals.Sleep" } })
+                                <label for="SleepYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Sleep, 2, new Dictionary<string, object> { { "id", "SleepNo" }, { "Name", "DailyVitals.Sleep" } })
+                                <label for="SleepNo">@Translate.Message("L3")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L2828")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Stress, 1, new Dictionary<string, object> { { "id", "StressYes" }, { "Name", "DailyVitals.Stress" } })
+                                <label for="StressYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Stress, 2, new Dictionary<string, object> { { "id", "StressNo" }, { "Name", "DailyVitals.Stress" } })
+                                <label for="StressNo">@Translate.Message("L3")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L2829")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Happy, 1, new Dictionary<string, object> { { "id", "HappyYes" }, { "Name", "DailyVitals.Happy" } })
+                                <label for="HappyYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.DailyVitals.Happy, 2, new Dictionary<string, object> { { "id", "HappyNo" }, { "Name", "DailyVitals.Happy" } })
+                                <label for="HappyNo">@Translate.Message("L3")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x button-set">
+                        <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small" type="submit">@Translate.Message("L481")</button></div>
+                        <div class="cell medium-6 medium-order-1"><button class="small secondary" type="reset" id="closeDailyVitals">@Translate.Message("L967")</button></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</form>
+<a class="close-button" data-close>&#215;</a>
+<script>
+    var formsubmit = true;
+    Foundation.Abide.defaults.validators['validateWeight'] = function ($el, required, parent) {
+        var min = @Model.Measurements[BioLookup.Weight].Min;
+        var max = @Model.Measurements[BioLookup.Weight].Max;
+        if((($el.val() >= min && $el.val() <= max) || (required == false && $el.val() == "")) && (!($el.val() != $el.val().replace(/[^0-9\.]/g, ''))))
+            return true;
+        else
+            return false;
+    };
+    $("#dailyvitals-form").trigger("reset");
+
+    @if(Model.DailyVitals != null && Model.DailyVitals.HasWeight == 1)
+    {
+         @: $("#UserWeight").show();
+    }
+    else {
+         @: $("#UserWeight").hide();
+    }
+
+    $('#closeDailyVitals').on('click', function () {
+        $('#add-Daily-vital').foundation('close');
+        RealignPage();
+    });
+
+   $("#dailyvitals-form").foundation();
+    $('#dailyvitals-form')
+        .on('forminvalid.zf.abide', function () {
+            var invalid_fields = $(this).find('[data-invalid]');
+            if (invalid_fields) {
+                var scrollTo = $('#' + invalid_fields[0].id).offset().top;
+                $('html, body').animate({
+                    scrollTop: scrollTo
+                }, 400);
+            }
+        })
+        .on('formvalid.zf.abide', function () {
+            var formdata = $("#dailyvitals-form").serialize();
+            if (formsubmit == true && $('input[type=radio]:checked').length > 0) {
+                $("#loader-wrapper").fadeIn();
+                $.ajax({
+                    url: "@Url.Action("AddEditDailyVitals", "Journal")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: formdata,
+                    success: function () {
+                        $('#add-Daily-vital').foundation('close');
+                        startIndex = 0;
+                        pageSize = 15;
+                        totalRecords = 0;
+                        currentPage = 0;
+                        totalPages = 0;
+                        $("#loader-wrapper").fadeOut();
+                        ListVitalsLog();
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                formsubmit = false;
+            }
+        }).on("submit", function (ev) {
+            ev.preventDefault();
+        })
+        $("#loader-wrapper").fadeOut();
+
+    $('input[name="DailyVitals.HasWeight"]').on('change', function () {
+        if (this.value == 1) {
+            $("#UserWeight").show();
+            document.getElementById("Weight").required = true;
+        }
+        else {
+            $("#UserWeight").hide();
+            document.getElementById("Weight").required = false;
+        }
+    });
+</script>

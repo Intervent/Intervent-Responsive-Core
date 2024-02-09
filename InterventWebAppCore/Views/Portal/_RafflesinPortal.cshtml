@@ -1,0 +1,130 @@
+﻿@model InterventWebApp.RaffleDetailsModel
+@using InterventWebApp
+
+<form class='organization-modal-form create-profile-form' id="add-raffle-data" data-abide novalidate>
+    <div class='grid-x grid-margin-x grid-margin-y'>
+        <div class='cell medium-4'>
+            <label>Type</label>
+            @Html.DropDownListFor(m => m.rafflesinPortals.RaffleTypeId, Model.raffleTypes, "--Select--", new Dictionary<string, object> { { "id", "raffleType" }, { "required", "required" } })
+            <small class="form-error">Type is required.</small>
+        </div>
+        <div class='cell medium-4'>
+            <label>Points</label>
+            <select id='pointType' required="required">
+                <option value=''>--Select--</option>
+                <option value='1'>1 point</option>
+                <option value='250'>250 points</option>
+                <option value='500'>500 points</option>
+                <option value='1000'>1000 points</option>
+            </select>
+            <small class="form-error">Points is required.</small>
+        </div>
+        <div class='cell medium-4'>
+            <label>Name</label>
+            @Html.TextBoxFor(m => m.rafflesinPortals.Name, new Dictionary<string, object> { { "id", "raffleName" }, { "maxlength", "100" } })
+        </div>
+        <div class='cell medium-4 new-button'>
+            <label>Date</label>
+            <div id='dates'>
+                @if (Model.rafflesinPortals != null && Model.rafflesinPortals.RaffleDates != null && Model.rafflesinPortals.RaffleDates.Count() > 0)
+                {
+                    foreach (var raffleDate in Model.rafflesinPortals.RaffleDates)
+                    {
+                        @:  <input type="text" id="raffleDate-@raffleDate.Id" name="raffleDate" value="@raffleDate.RaffleDateStr" placeholder="MM/DD/YYYY">
+                    }
+
+                }
+            </div>
+            <button class='button' type='button' id='addDate'>Add Date</button>
+        </div>
+        <div class='cell medium-4'>
+            <label>Reward</label>
+            @Html.TextBoxFor(m => m.rafflesinPortals.Reward, new Dictionary<string, object> { { "id", "raffleReward" } })
+        </div>
+        <div class='cell medium-4'>
+            <label>Description</label>
+            @Html.TextBoxFor(m => m.rafflesinPortals.Description, new Dictionary<string, object> { { "id", "raffleDesc" }, { "maxlength", "250" } })
+        </div>
+		<div class='cell medium-4'>
+			<div class="tick-buttons check-btn">
+				@Html.CheckBoxFor(m => m.rafflesinPortals.isActive, new Dictionary<string, object> { { "id", "raffleisActive" } })
+				<label for="raffleisActive">
+					Active
+					<span class="checkmark"></span>
+				</label>
+			</div>
+		</div>
+        <div class='cell'>
+            <div class='form-save-button new-button'><button class='button' type="submit" id="AddRaffle">Save</button></div>
+        </div>
+        <input type="hidden" id="rafflesinPortalId" value="@Model.rafflesinPortals.Id" />
+    </div>
+</form>
+
+<script>
+
+    $(document).ready(function () {
+        $('#pointType').val(@Model.rafflesinPortals.Points);
+    });
+
+    $("#add-raffle-data").foundation();
+    $("#add-raffle-data").on('forminvalid.zf.abide', function () {
+    }).on('formvalid.zf.abide', function () {
+        var dates = document.getElementsByName("raffleDate");
+        var dateObj = [];
+        for (var i = 0; i < dates.length; i++) {
+            dateObj.push({ key: dates[i].id.split("-")[1], value: dates[i].value });
+        }
+        var id = $('#rafflesinPortalId').val();
+        var portalId = $('#selectedPortal').val();
+        var Type = $('#raffleType').val();
+        var pointType = $('#pointType').val();
+        var reward = $("#raffleReward").val();
+        var name = $('#raffleName').val();
+        var desc = $('#raffleDesc').val();
+        var isActive = $('#raffleisActive').is(':checked');
+        $.ajax({
+            url: "@Url.Action("AddEditPortalRaffles", "Portal")",
+            data: { Id: id, portalId: portalId, raffleType: Type, date: dateObj, reward : reward, name: name, description : desc, isActive: isActive, pointType: pointType },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $("input[name='raffleDate']").val("");
+                $('#raffles-results').append('');
+                $('.raffles-cards').trigger('click');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        $("#loader-wrapper").fadeOut();
+    }).on("submit", function (ev) {
+        ev.preventDefault();
+    });
+
+    $("#addDate").on('click', function (ev) {
+        var dateCell = document.getElementById("dates");
+        var count = dateCell.getElementsByTagName('input').length;
+        if ($('#raffleType').val() == 1 && (count + 1) > 1) {
+            $('#addDate').hide();
+            return;
+        }
+        else if ($('#raffleType').val() == 2 && (count + 1) > 2) {
+            $('#addDate').hide();
+            return;
+        }
+        else if ($('#raffleType').val() == 3 && (count + 1) > 4) {
+            $('#addDate').hide();
+            return;
+        }
+        else if ($('#raffleType').val() == 4 && (count + 1) > 12) {
+            $('#addDate').hide();
+            return;
+        }
+        var input = document.createElement("input");
+        input.type = "text";
+        input.id = 'raffleDate-' + (count + 1);
+        input.name = 'raffleDate';
+        input.placeholder = 'MM/DD/YYYY';
+        dateCell.appendChild(input);
+    });
+</script>

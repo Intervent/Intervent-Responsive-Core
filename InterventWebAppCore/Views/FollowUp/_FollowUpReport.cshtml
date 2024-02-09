@@ -1,0 +1,387 @@
+@using InterventWebApp;
+@model InterventWebApp.FollowupReport
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<script src="@Url.Content("~/Scripts/amcharts4/core.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/charts.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/amcharts4/themes/animated.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/FollowUpChart.js")?v=@CommonUtility.GetRandom()"></script>
+
+@if (Model != null && Model.hasSummary)
+{
+    <div class="nav-to-top">
+        <a href="#" class="button"><i class="fa fa-chevron-up"></i></a>
+    </div>
+    <!--Brief Summary and Goals-->
+    <div class='grid-x collapse summary-row'>
+        <div class='small-9 medium-7 cell summary-name'><i class='fa fa-file-text-o'></i><div class='summary-title'>@Translate.Message("L493")</div></div>
+        <div class='small-3 medium-5 cell summary-content'>
+            <button class='side-button' onclick='toggleFollowupSummary(this)'><i class='fa fa-angle-right'></i></button>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x tile-item hide brief-summary" id="Summary">
+        <div class="cell bg-wrapper tabular">
+            <div class="report-item">
+                <h4 class="title-meh">@Translate.Message("L501")</h4>
+                <div class="grid-x grid-margin-x">
+                    @if (!string.IsNullOrEmpty(Model.hdsRisks.chdRiskText))
+                    {
+                        <p>@Html.Raw(Model.hdsRisks.chdRiskText)</p>
+                    }
+                    <div class="cell medium-6 medium-centered">
+                        @if (Model.hdsRisks.chdRiskChart != null)
+                        {
+                            <div class="report-chart" id="chart-chd"></div>
+                            @Html.Partial("_ChartsforFollowupReport", Model.hdsRisks.chdRiskChart)
+                        }
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.hdsRisks.tenYearRiskText))
+                    {
+                        <p>@Html.Raw(Model.hdsRisks.tenYearRiskText)</p>
+                    }
+                    <div class="cell medium-6 medium-centered">
+                        @if (Model.hdsRisks.tenYearRiskChart != null)
+                        {
+                            <div class="report-chart" id="chart-tenyear"></div>
+                            @Html.Partial("_ChartsforFollowupReport", Model.hdsRisks.tenYearRiskChart)
+                        }
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.hdsRisks.lifetimeRiskText))
+                    {
+                        <p>@Html.Raw(Model.hdsRisks.lifetimeRiskText)</p>
+                    }
+                    <div class="cell medium-6 medium-centered">
+                        @if (Model.hdsRisks.lifetimeRiskChart != null)
+                        {
+                            <div class="report-chart" id="chart-lifetime"></div>
+                            @Html.Partial("_ChartsforFollowupReport", Model.hdsRisks.lifetimeRiskChart)
+                        }
+                    </div>
+                </div>
+
+                <!--Blood pressure-->
+                <h4 class="title-meh">@Translate.Message("L1233")</h4>
+                @if (Model.bpRisk != null)
+                {
+                    <p>@Model.bpRisk.riskText</p>
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-6">
+                            @if (Model.bpRisk.sbpRiskChart != null)
+                            {
+                                <div class="report-chart" id="chart-sbp"></div>
+                                @Html.Partial("_ChartsforFollowupReport", Model.bpRisk.sbpRiskChart)
+                            }
+                        </div>
+                        <div class="cell medium-6">
+                            @if (Model.bpRisk.dbpRiskChart != null)
+                            {
+                                <div class="report-chart" id="chart-dbp"></div>
+                                @Html.Partial("_ChartsforFollowupReport", Model.bpRisk.dbpRiskChart)
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!--Cholesterol-->
+                <h4 class="title-meh">@Translate.Message("L1231")</h4>
+                @if (Model.ctRisk != null)
+                {
+                    if (!string.IsNullOrEmpty(Model.ctRisk.riskText))
+                    {
+                        <p>@Model.ctRisk.riskText</p>
+                    }
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-6">
+                            @if (Model.ctRisk.tcRiskChart != null)
+                            {
+                                <div class="report-chart" id="chart-tc"></div>
+                                @Html.Partial("_ChartsforFollowupReport", Model.ctRisk.tcRiskChart)
+                            }
+                        </div>
+                        <div class="cell medium-6">
+                            @if (Model.ctRisk.hdlRiskChart != null)
+                            {
+                                <div class="report-chart" id="chart-hdl"></div>
+                                @Html.Partial("_ChartsforFollowupReport", Model.ctRisk.hdlRiskChart)
+                            }
+                        </div>
+                        <div class="cell medium-6">
+                            @if (Model.ctRisk.ldlRiskChart != null)
+                            {
+                                <div class="report-chart" id="chart-ldl"></div>
+                                @Html.Partial("_ChartsforFollowupReport", Model.ctRisk.ldlRiskChart)
+                            }
+                        </div>
+                        <div class="cell medium-6">
+                            @if (Model.ctRisk.trigRiskChart != null)
+                            {
+                                <div class="report-chart" id="chart-trig"></div>
+                                @Html.Partial("_ChartsforFollowupReport", Model.ctRisk.trigRiskChart)
+                            }
+                        </div>
+                    </div>
+                }
+
+
+                <!--Weight-->
+                <h4 class="title-meh">@Translate.Message("L275")</h4>
+                @if (Model.overweightRisk != null)
+                {
+                    <p>Aim for goal values or below.</p>
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-8 medium-centered">
+                            @if (Model.overweightRisk.riskChart != null)
+                            {
+                                <div class="report-chart" id="chart-overweight"></div>
+                                @Html.Partial("_ChartsforFollowupReport", Model.overweightRisk.riskChart)
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!--Diabetes-->
+                <h4 class="title-meh">@Translate.Message("L1592")</h4>
+                @if (Model.diabetesRisk != null)
+                {
+                    <p>@Translate.Message("L1513")</p>
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-6">
+                            @if (Model.diabetesRisk.glucChart != null)
+                            {
+                                <div class="report-chart" id="chart-glucose"></div>
+                                @Html.Partial("_ChartsforFollowupReport", Model.diabetesRisk.glucChart)
+                            }
+                        </div>
+                        <div class="cell medium-6">
+                            @if (Model.diabetesRisk.a1cChart != null)
+                            {
+                                <div class="report-chart" id="chart-a1c"></div>
+                                @Html.Partial("_ChartsforFollowupReport", Model.diabetesRisk.a1cChart)
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!--Tobacco-->
+                @if (Model.tobaccoRisk != null && Model.tobaccoRisk.riskChart != null)
+                {
+                    <h4 class="title-meh">@Translate.Message("L1060")</h4>
+                    <p>
+                        @Model.tobaccoRisk.riskText
+                    </p>
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-6 medium-centered">
+                            <div class="report-chart" id="chart-tob"></div>
+                        </div>
+                        @Html.Partial("_ChartsforFollowupReport", Model.tobaccoRisk.riskChart)
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!--Coaching Sessions-->
+    <div class='grid-x collapse summary-row'>
+        <div class='small-9 medium-7 cell summary-name'><i class='fa fa-file-text-o'></i><div class='summary-title'>@Translate.Message("L2108")</div></div>
+        <div class='small-3 medium-5 cell summary-content'>
+            <button class='side-button' onclick='toggleCoachingSession(this)'><i class='fa fa-angle-right'></i></button>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x tile-item hide" id="Coaching">
+        <div class="cell bg-wrapper tabular">
+            @if (Model.PreviousYearScheduledCoachingSession != null)
+            {
+                <div class="grid-x grid-margin-x">
+                    <div class="small-12 cell data-content report-dashboard">
+                        <div class="simple-bar-container">
+                            <p>@Translate.Message("L2110")@Translate.Message("L2480")</p>
+                            <span>Previous Year @Translate.Message("L2111")</span>
+                            <div id="age-chart" class="simple-bar-chart blue">
+                                <div class="bar progress-@Model.PreviousYearScheduledCoachingSession"></div>
+                                <div class="dial">@Model.PreviousYearScheduledCoachingSession</div>
+                            </div>
+                            <span>Previous Year @Translate.Message("L2112")</span>
+                            <div id="age-chart" class="simple-bar-chart blue">
+                                <div class="bar progress-@Model.PreviousYearCompletedCoachingSession"></div>
+                                <div class="dial">@Model.PreviousYearCompletedCoachingSession</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="grid-x grid-margin-x">
+                <div class="small-12 cell data-content report-dashboard">
+                    <div class="simple-bar-container">
+                        <p>@Translate.Message("L2110")</p>
+                        <h4>
+                            @Translate.Message("L2109") : @if (Model.NoOfWeeks.HasValue && Model.NoOfWeeks > 0)
+                            {
+                                @Model.NoOfWeeks
+                            }
+                            else
+                            {
+                                <span>@Translate.Message("L1149")</span>
+                            }
+                        </h4>
+                        <span>@Translate.Message("L2111")</span>
+                        <div id="age-chart" class="simple-bar-chart blue">
+                            <div class="bar progress-@Model.ScheduledCoachingSession"></div>
+                            <div class="dial">@Model.ScheduledCoachingSession</div>
+                        </div>
+                        <span>@Translate.Message("L2112")</span>
+                        <div id="age-chart" class="simple-bar-chart blue">
+                            <div class="bar progress-@Model.CompletedCoachingSession"></div>
+                            <div class="dial">@Model.CompletedCoachingSession</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--educational topics-->
+    <div class='grid-x collapse summary-row'>
+        <div class='small-9 medium-7 cell summary-name'><i class='fa fa-file-text-o'></i><div class='summary-title'>@Translate.Message("L2113")</div></div>
+        <div class='small-3 medium-5 cell summary-content'>
+            <button class='side-button' onclick='toggleFollowupKits(this)'><i class='fa fa-angle-right'></i></button>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x tile-item hide" id="Kits">
+        <div class="cell bg-wrapper tabular">
+            @if (Model.PreviousYearAssignedKitsmodel != null && Model.PreviousYearAssignedKitsmodel.Count > 0)
+            {
+                <div class="cell tabular-row">
+                    <div class="cell">
+                        <p>@Translate.Message("L2481")</p>
+                        <br />
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>@Translate.Message("L2114")</th>
+                                    <th>@Translate.Message("L2115")</th>
+                                    <th>@Translate.Message("L2116")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.PreviousYearAssignedKitsmodel)
+                                {
+                                    <tr>
+                                        <td>@String.Format("{0:" + HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat) + "}", data.DateAssigned.Value)</td>
+                                        <td>@data.EducationalTopic</td>
+                                        <td>@data.PercentCompleted</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            <div class="cell tabular-row">
+                <div class="cell">
+                    <p>@Translate.Message("L2418")</p>
+                    <br />
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>@Translate.Message("L2114")</th>
+                                <th>@Translate.Message("L2115")</th>
+                                <th>@Translate.Message("L2116")</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.AssignedKitsmodel)
+                            {
+                                <tr>
+                                    <td>@String.Format("{0:" + HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat) + "}", data.DateAssigned.Value)</td>
+                                    <td>@data.EducationalTopic</td>
+                                    <td>@data.PercentCompleted</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Referrals-->
+    <div class='grid-x collapse summary-row'>
+        <div class='small-9 medium-7 cell summary-name'><i class='fa fa-file-text-o'></i><div class='summary-title'>@Translate.Message("L512")</div></div>
+        <div class='small-3 medium-5 cell summary-content'>
+            <button class='side-button' onclick='toggleReferrals(this)'><i class='fa fa-angle-right'></i></button>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x tile-item hide" id="Referrals">
+        <div class="cell bg-wrapper tabular">
+            <div class="cell tabular-row">
+                <div class="cell">
+                    <ul class="tabular-list pink">
+                        @for (int i = 0; i < Model.referrals.Count; i++)
+                        {
+                            <li>@Model.referrals[i]</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<div id="satisfaction-survey" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+
+<script>
+        $(document).ready(function () {
+            $(document).foundation();
+            if ('@Model.IsSurveyCompleted' != 'True' && '@Model.hasSummary' == 'True') {
+                $('#satisfaction-survey').load('../../Participant/SatisfactionSurvey/');
+                $('#satisfaction-survey').foundation('open');
+            }
+        });
+
+        function toggleFollowupSummary(dispatcher) {
+            if (!$("#Summary").hasClass("hide")) {
+                $("#Summary").addClass("hide");
+                $(dispatcher).removeClass('toggled');
+            }
+            else {
+                $("#Summary").removeClass("hide");
+                $(dispatcher).addClass('toggled');
+            }
+        }
+
+        function toggleCoachingSession(dispatcher) {
+            if (!$("#Coaching").hasClass("hide")) {
+                $("#Coaching").addClass("hide");
+                $(dispatcher).removeClass('toggled');
+            }
+            else {
+                $("#Coaching").removeClass("hide");
+                $(dispatcher).addClass('toggled');
+                $(document).foundation('equalizer', 'reflow');
+            }
+        }
+
+        function toggleFollowupKits(dispatcher) {
+            if (!$("#Kits").hasClass("hide")) {
+                $("#Kits").addClass("hide");
+                $(dispatcher).removeClass('toggled');
+            }
+            else {
+                $("#Kits").removeClass("hide");
+                $(dispatcher).addClass('toggled');
+            }
+        }
+
+        function toggleReferrals(dispatcher) {
+            if (!$("#Referrals").hasClass("hide")) {
+                $("#Referrals").addClass("hide");
+                $(dispatcher).removeClass('toggled');
+            }
+            else {
+                $("#Referrals").removeClass("hide");
+                $(dispatcher).addClass('toggled');
+            }
+        }
+</script>

@@ -1,0 +1,182 @@
+﻿@model InterventWebApp.ProgramsinPortalsModel
+@using InterventWebApp
+
+@{
+    ViewBag.Title = "Courses";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="main courses">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 cell">
+                <h1>@Translate.Message("L2448")</h1>
+                @if (Model.ProgramsinPortals.Count > 0)
+                {
+                    <div data-alert class="callout radius" data-closable>
+                        @Translate.Message("L1675")
+                        <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="grid-x grid-margin-x small-up-1 medium-up-2">
+                        @{var j = 0;}
+                        @for (int i = 0; i < Model.ProgramsinPortals.Count; i++)
+                        {
+                            j++;
+                            if (j == 8)
+                            {
+                                j = 1;
+                            }
+                            <div class="cell">
+                                <div class="card course-color-@j">
+                                    <div class="card-header">
+                                        <div class="progress-dots">
+                                            <span class="complete"></span>
+                                            <span class="complete"></span>
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                        <!--<span class="reward points">100</span>-->
+                                    </div>
+                                    <div class="card-body">
+                                        <h3>@Model.ProgramsinPortals[i].NameforUser</h3>
+                                        <img src="../Images/@Model.ProgramsinPortals[i].program.ImageUrl" />
+                                        <p>@Model.ProgramsinPortals[i].DescriptionforUser</p>
+                                        @if (Model.ProgramsinPortals[i].Id == Model.currentProgramId)
+                                        {
+                                            <a class="button" href="~/Program/MyProgram/">
+                                                <span>@Translate.Message("L1674")</span>
+                                            </a>
+                                        }
+                                        else if (Model.hasActivePortal == true && Model.userinProgram == false)
+                                        {
+                                            if (Model.showPricing)
+                                            {
+                                                if (Model.taskforProgram == false)
+                                                {
+                                                    <a class="button" href="#" onclick="openBillingInfo('@Model.ProgramsinPortals[i].NameforUser','@Model.ProgramsinPortals[i].Id','@Model.ProgramsinPortals[i].Cost'); return false;">
+                                                        <span>Buy</span>
+                                                    </a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <a class="button" href="#" onclick="EnrollinProgram(@Model.ProgramsinPortals[i].Id);">
+                                                    <span>@Translate.Message("L1673")</span>
+                                                </a>
+                                            }
+
+                                        }
+                                        <a class="button" href="#" onclick="openCourseInfo('@Model.ProgramsinPortals[i].MoreInfo');  return false;">
+                                            <span>@Translate.Message("L1672")</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div>@Translate.Message("L1671")</div>
+                }
+            </div>  
+        </div>
+        <input type="hidden" id="selectedProgram" />
+        <input type="hidden" id="programName" value="" />
+    </div>
+</section>
+<div id="more-info" class="reveal large" data-reveal>
+</div>
+<div id="billing-info" class="reveal medium" data-reveal>
+    <p>@Translate.Message("L2487")</p>
+    <a class="button right" href="#" onclick="AddtoAdminTask()">
+        <span>Confirm</span>
+    </a>
+</div>
+<script src="https://www.paypalobjects.com/api/checkout.js" data-version-4 log-level="warn"></script>
+<script src="https://js.braintreegateway.com/js/braintree-2.32.1.min.js"></script>
+<script type="text/javascript">
+    @if(Model.failed != null && Model.failed == true)
+    {
+       @: $("#more-info").html("Transaction Failed.");
+       @: $("#more-info").foundation('open');
+    }
+        function EnrollinProgram(id) {
+            $.ajax({
+                url: "@Url.Action("EnrollinProgram", "Program")",
+                type: 'POST',
+                dataType: "json",
+                data: { ProgramsinPortalsId: id },
+                success: function (data) {
+                    if (data.Options.success == true) {
+                        window.location.href = "../Program/MyProgram/";
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        }
+
+    function openCourseInfo(moreInfo) {
+        $('#more-info').html(moreInfo);
+        $('#more-info').foundation('open');
+    }
+
+    function closeCourseInfo() {
+        $(".course-info").fadeOut();
+    }
+
+    function setHeight() {
+        var maxHeight = 0;
+        $('.card-body p').css('margin-bottom', '');
+        $('.card-body').each(function () {
+            var currentHeight = $(this).outerHeight();
+            if (currentHeight > maxHeight) {
+                maxHeight = currentHeight;
+            }
+        });
+        $('.card-body').each(function () {
+            var offset = maxHeight - $(this).outerHeight();
+            $(this).find('p').css('margin-bottom', offset + 'px');
+        });
+    }
+
+    $(window).on('resize', function () {
+        setHeight();
+    });
+
+    function openBillingInfo(name, progId, progcost) {
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../PayPal/PaymentWithPaypal",
+            data: { progId: progId, user: @Model.participantId),progName: name, cost: parseFloat(progcost) },
+            success: function (data) {
+                window.location = data.url;
+            }
+        });
+    }
+
+    function AddtoAdminTask() {
+        var programName = $('#programName').val();
+        var comments = '@Translate.Message("L2488")';
+        comments = comments.replace("{0}", '"' + programName + '"');
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../Admin/AddEditTask",
+            async: false,
+            data: { id: null, taskTypeId: 17, status: "N", user: @Model.participantId), owner: @Model.userId), comment: comments },
+            success: function (data) {
+                openCourseInfo('Thank you!');
+                setTimeout(function () { location.reload(); }, 4000);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+    setHeight();
+</script>

@@ -1,0 +1,295 @@
+﻿@using InterventWebApp
+@model SleepData
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <div class="grid-x main-chart-header">
+            <div class="cell medium-6">
+                <h6>@Translate.Message("L4045"): </h6>
+                <div class="graph-selector-container" id="graph-selector-container">
+                    <span data-toggle="graph-date-filter" data-value="wt-week-data">@Translate.Message("L2741")</span>
+                    <div class="graph-selector dropdown-pane" id="graph-date-filter" data-dropdown data-close-on-click="true">
+                        <ul>
+                            <li data-value="wt-week-data">@Translate.Message("L2741")</li>
+                            <li data-value="wt-month-data">@Translate.Message("L2740")</li>
+                            <li data-value="wt-90days-data">@Translate.Message("L2739")</li>
+                            <li data-value="wt-yesterday-data">@Translate.Message("L2742")</li>
+                            <li data-value="wt-date-range">@Translate.Message("L2744")</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="graph-date-range hide">
+                    <form id="date-search">
+                        <div class="input-container">
+                            <label for="graph-start-date">
+                                <input type="text" name="graph-start-date" placeholder="@Translate.Message("L1445")" id="graph-start-date" autocomplete="off" />
+                                <input id="HStartDate" type="hidden" />
+                            </label>
+                            <label for="graph-end-date">
+                                <input type="text" name="graph-end-date" placeholder="@Translate.Message("L4001")" id="graph-end-date" autocomplete="off" />
+                                <input id="HEndDate" type="hidden" />
+                            </label>
+                        </div>
+                        <div class="button-group align-center">
+                            <button type="reset" class="button hollow" id="reset-date">@Translate.Message("L3967")</button>
+                            <button type="submit" class="button" id="submit-date">@Translate.Message("L963")</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @*<div class="chart-update-date cell medium-6 text-right">Last Update <strong><span id="recentDate"></span></strong></div>*@
+        </div>
+    </div>
+    <div id="no-graph" class="cell main-graph-container hide">
+        <div class="cell main-chart ">
+            <div class="no-graph-info text-center">
+                <img src="~/Images/device/no-data.png" alt="Alternate Text">
+                <span>@Translate.Message("L4000")</span>
+            </div>
+        </div>
+    </div>
+    <div id="has-data" class="cell">
+        <div class="main-graph-container sleep-graph-container">
+            <div class="units-list">
+                <ul>
+                    <li><span class="unit-count" id="avgHours"></span> @Translate.Message("L4046") <span class="unit-count" id="avgMinutes"></span> @Translate.Message("L4047")<span id="sleepRange"></span><i class="fa fa-info" data-toggle="sleep-tooltip"></i></li>
+                </ul>
+                @*<p style="text-align:center">Last update <strong><span class="unit-count" id="lastUpdated"></span></strong></p>*@
+                <div class="dropdown-pane device-tooltip" data-position="top" data-alignment="center" id="sleep-tooltip" data-dropdown data-v-offset="12" data-auto-focus="true" data-hover="true" data-hover-pane="true">
+                    <p>@Translate.Message("L4048")</p>
+                </div>
+            </div>
+
+            <div id="sleep-month-data" class="main-chart hide"></div>
+        </div>
+
+        <div class="main-graph-details sleep-graph-details">
+            <h5>@Html.Raw(String.Format(Translate.Message("L4049"), "<span id='pastDays'>7</span>"))</h5>
+
+            <div class="wt-activity-details">
+                <div class="grid-x grid-margin-y">
+                    <div class="cell medium-4">
+                        @Translate.Message("L4050")
+                        <p><span id="avgSleepHours"></span> @Translate.Message("L4046") <span id="avgSleepMinutes"></span> @Translate.Message("L4047")</p>
+                    </div>
+                    <div class="cell medium-4">
+                        @Translate.Message("L4051")
+                        <p><span id="avgDeepSleepHours"></span> @Translate.Message("L4046") <span id="avgDeepSleepMinutes"></span> @Translate.Message("L4047")</p>
+                    </div>
+                    <div class="cell medium-4">
+                        @Translate.Message("L4052")
+                        <p>@Translate.Message("L1149")</p>
+                    </div>
+                    <div class="cell medium-4">
+                        @Translate.Message("L4053")
+                        <p><span id="avgTimeAwakeHours"></span> @Translate.Message("L4046") <span id="avgTimeAwakeMinutes"></span> @Translate.Message("L4047")</p>
+                    </div>
+                    <div class="cell medium-4">
+                        @Translate.Message("L4054")
+                        <p><span id="avgLightSleepHours"></span> @Translate.Message("L4046") <span id="avgLightSleepMinutes"></span> @Translate.Message("L4047")</p>
+                    </div>
+                    <div class="cell medium-4">
+                        @Translate.Message("L4055")
+                        <p>@Translate.Message("L1149")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#graph-start-date").on("change", function () {
+        $('#HStartDate').val(toSystemDateFormat($('#graph-start-date').val()));
+    });
+    $("#graph-end-date").on("change", function () {
+        $('#HEndDate').val(toSystemDateFormat($('#graph-end-date').val()));
+    });
+    $(document).ready(function () {
+        var graphData;
+        LoadSleepData(7);
+
+        $(".graph-selector ul li").on("click", function () {
+            var showData = $(this).data("value");
+            var showText = $(this).text();
+            $(".graph-selector-container span").text(showText);
+            $(".graph-selector-container span").data('value', showData);
+            $("#graph-date-filter").foundation("close");
+            changeGraph();
+        });
+
+		$('#' + $(this).val()).removeClass('hide');
+
+		//Date range picker for graphs
+        $("#graph-start-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()}).on('change', function (selected) {
+            var endDate = new Date($("#HEndDate").val());
+            var minDate = new Date($("#HStartDate").val());
+            if (endDate < minDate) {
+                $('#graph-end-date').fdatepicker('setDate', minDate);
+            }
+            $('#graph-end-date').fdatepicker('setStartDate', minDate);
+            $("#graph-end-date").trigger("change");
+        });
+        $("#graph-end-date").fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            endDate: new Date()
+        });
+
+        $("#date-search").on('submit', function (ev) {
+            LoadSleepData(0);
+            ev.preventDefault();
+            $(".graph-date-range").addClass("hide");
+        });
+
+		$(document).on('click', function(){
+			$('.graph-date-range').addClass("hide");
+		});
+		$('.graph-date-range, .datepicker, .graph-selector').on('click', function(e){
+			e.stopPropagation();
+		});
+    });
+
+    function changeGraph() {
+        if ($(".graph-selector-container span").data('value').includes("week-data")) {
+            $(".graph-date-range").addClass("hide");
+            $('#sleep-week-data').addClass('hide');
+            LoadSleepData(7);
+            $("#pastDays").html(7);
+            $('#sleep-month-data').removeClass('hide');
+        }
+        else if ($(".graph-selector-container span").data('value').includes("month-data")) {
+            $(".graph-date-range").addClass("hide");
+            $('#sleep-week-data').addClass('hide');
+            LoadSleepData(30);
+            $("#pastDays").html(30);
+            $('#sleep-month-data').removeClass('hide');
+        }
+        else if ($(".graph-selector-container span").data('value').includes("90days-data")) {
+            $(".graph-date-range").addClass("hide");
+            $('#sleep-week-data').addClass('hide');
+            LoadSleepData(90);
+            $("#pastDays").html(90);
+            $('#sleep-month-data').removeClass('hide');
+        }
+        else if ($(".graph-selector-container span").data('value').includes("date-range")) {
+            $(".graph-date-range").removeClass("hide");
+            $("#graph-start-date").val("");
+            $("#graph-end-date").val("");
+        }
+        else {
+            $(".graph-date-range").addClass("hide");
+            LoadSleepData(1);
+            $("#pastDays").html(1);
+            $('#sleep-week-data').removeClass('hide');
+        }
+    }
+
+    function LoadSleepData(days) {
+        var startDate, endDate;
+        if ($(".graph-selector-container span").data('value').includes("date-range")) {
+            startDate = $("#HStartDate").val();
+            endDate = $("#HEndDate").val();
+            var diffDays = Math.round((new Date(new Date(endDate) - new Date(startDate))) / 1000 / 60 / 60 / 24);
+            $("#pastDays").html(diffDays);
+        }
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            data: {days: days, startDate : startDate, endDate : endDate},
+            url: "@Url.Action("ListSleepData", "Devices")",
+            success: function (sleepData) {
+                if (sleepData.monthData.length == 0) {
+                    $("#no-graph").removeClass("hide");
+                    $("#has-data").addClass("hide");
+                }
+                else {
+                    $("#no-graph").addClass("hide");
+                    $("#has-data").removeClass("hide");
+                    //$('#recentDate').text(sleepData.recentDate);
+                    //$("#lastUpdated").text(sleepData.mostRecent);
+                    if (sleepData.avgSleep != null) {
+                        var avgSleep = sleepData.avgSleep.split(':');
+                        $('#avgHours').text(avgSleep[0]);
+                        if (avgSleep[0] < 7)
+                            $('#sleepRange').html("<span class='units-tag red'>@Translate.Message("L4011")</span>");
+                        else
+                            $('#sleepRange').html("<span class='units-tag green'>@Translate.Message("L4010")</span>");
+                        $('#avgMinutes').text(avgSleep[1]);
+                        $('#avgSleepHours').text(avgSleep[0]);
+                        $('#avgSleepMinutes').text(avgSleep[1]);
+                    }
+                    if (sleepData.avgDeepSleep != null) {
+                        var avgDeepSleep = sleepData.avgDeepSleep.split(':');
+                        $('#avgDeepSleepHours').text(avgDeepSleep[0]);
+                        $('#avgDeepSleepMinutes').text(avgDeepSleep[1]);
+                    }
+                    if (sleepData.avgLightSleep != null) {
+                        var avgLightSleep = sleepData.avgLightSleep.split(':');
+                        $('#avgLightSleepHours').text(avgLightSleep[0]);
+                        $('#avgLightSleepMinutes').text(avgLightSleep[1]);
+                    }
+                    if (sleepData.avgTimeAwake != null) {
+                        var avgTimeAwake = sleepData.avgTimeAwake.split(':');
+                        $('#avgTimeAwakeHours').text(avgTimeAwake[0]);
+                        $('#avgTimeAwakeMinutes').text(avgTimeAwake[1]);
+                    }
+                    $("#sleep-month-data").show();
+                    monthGraph(sleepData.monthData);
+                }
+            }
+        });
+    }
+
+    function monthGraph(data) {
+        // Create chart instance for Month's data
+        var chart = am4core.create("sleep-month-data", am4charts.XYChart);
+        //chart.dateFormatter.inputDateFormat = "dd-MM-yyyy";
+        chart.responsive.enabled = true;
+        var data = data;
+
+        // Create X-axes
+        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis.startLocation = 0;
+        dateAxis.endLocation = 1;
+        dateAxis.renderer.cellStartLocation = 0;
+        dateAxis.renderer.cellEndLocation = 1;
+        dateAxis.renderer.grid.template.disabled = true;
+        dateAxis.dateFormats.setKey("day", "dd\nMMM");
+        dateAxis.renderer.labels.template.fill = am4core.color("#999999");
+        dateAxis.renderer.grid.template.location = 0;
+
+        // Create value Y-axis
+        var durationAxis = chart.yAxes.push(new am4charts.DurationAxis());
+        durationAxis.baseUnit = "hour";
+        durationAxis.min = 0;
+        durationAxis.renderer.opposite = true;
+        durationAxis.renderer.grid.template.disabled = true;
+        durationAxis.renderer.labels.template.fill = am4core.color("#999999");
+        durationAxis.title.text = "@Translate.Message("L4056")";
+
+        // Create series1 column series
+        var ColSeries = chart.series.push(new am4charts.ColumnSeries());
+        ColSeries.dataFields.valueY = "value";
+        ColSeries.dataFields.dateX = "date";
+
+        var columnTemplate = ColSeries.columns.template;
+        columnTemplate.fill = am4core.color("#6d77cf");
+        columnTemplate.fillOpacity = .8;
+        columnTemplate.strokeOpacity = 0;
+        columnTemplate.width = 10;
+        ColSeries.data = data;
+        /* Add a single HTML-based tooltip to first series */
+        columnTemplate.tooltipHTML = `<p style="font-size: 12px; margin-bottom: 4px; color: #bcbcbc">@Translate.Message("L4057")</p>
+        <p style="font-size: 16px; font-weight: bold; margin-bottom: 0; text-align: center; color: #fff" > {label}</p>
+        <p style="font-size: 12px; margin-bottom: 4px; text-align: center; color: #bcbcbc" >@Translate.Message("L4035") {dateX.formatDate('dd MMMM')} </p>`;
+        ColSeries.tooltip.getFillFromObject = false;
+        ColSeries.tooltip.background.fill = am4core.color("#484848");
+        ColSeries.tooltip.pointerOrientation = "vertical";
+        $("#sleep-month-data").removeClass("hide");
+    }
+</script>

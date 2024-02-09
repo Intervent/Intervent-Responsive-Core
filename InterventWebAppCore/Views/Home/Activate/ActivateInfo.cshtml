@@ -1,0 +1,171 @@
+﻿@using InterventWebApp
+@{
+	ViewBag.Title = "LandingPages";
+	Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+	ViewBag.Details = "LandingPage";
+}
+<section class="feature reversed intro compass info">
+    @Html.Partial("Activate/_ActivateHeader")
+</section>
+
+<!--Signup Modal-->
+<div id="sign-up-modal" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="cell medium-12">
+        <h2 class="text-center">@Translate.Message("L431")</h2>
+        <div data-alert id="signup-error" class="alert-box alert hide">
+            Sign Up Error
+            <a href="#" class="close">&times;</a>
+        </div>
+    </div>
+    @Html.Partial("_ActivateSignUp")
+    <div class="cell text-center">
+        <a href="#" onclick="$('#login-modal').foundation('open'); return false;">@Translate.Message("L426")</a>
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<section class="container feature">
+    <a name="employerrewards" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../images/penta-logo.png" alt="" />
+                </div>
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1348")</h2>
+                    <p>@Translate.Message("L3054")</p>
+                    <p>
+                        @Html.Raw(@Translate.Message("L3055"))
+                        <br />•	@Translate.Message("L3056")
+                        <br />•	@Translate.Message("L3057")
+                        <br />•	@Translate.Message("L3058")
+                    </p>
+                    <br/><p>@Translate.Message("L3059")</p>
+                    <p>
+                        @Html.Raw(@Translate.Message("L3060"))
+                        <br />1.	@Html.Raw(Translate.Message("L3061"))
+                        <br />2.	@Html.Raw(Translate.Message("L3062"))
+                        <br />3. @Html.Raw(Translate.Message("L3063"))
+                    </p>
+                    <div class="small-12 cell text-center">
+                        <p class="more-link" href="#" onclick="$('#incentives').foundation('open'); return false;">
+                            @Translate.Message("L1363")<span class="more"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+<section class="container feature">
+    <a name="healthassessment" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/assessment.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L535")</h2>
+                    <p>@Translate.Message("L1904").</p>
+                    <p>@Translate.Message("L1905").</p>
+                    <p>@Translate.Message("L1906").</p>
+                    <p>@string.Format(Translate.Message("L1907"), TempData.Peek("OrgContactNumber").ToString()) @string.Format(Translate.Message("L3064"), TempData["OrgContactNumber"].ToString(), TempData.Peek("OrgContactEmail").ToString())</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="coachedprogram" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1912")</h2>
+                    <p>@Translate.Message("L1908").</p>
+                    <p>@Translate.Message("L1909").</p>
+                    <p>@Translate.Message("L1910").</p>
+                    <p>@string.Format(Translate.Message("L3065"), TempData.Peek("OrgContactNumber").ToString(), TempData.Peek("OrgContactEmail").ToString())</p>
+                </div>
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/coaching.svg" alt="" />
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="selfhelpprograms" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-icon cell medium-5 text-center">
+                    <img src="../Images/self-help.svg" alt="" />
+                </div>
+                <div class="feature-info cell medium-7">
+                    <h2>@Translate.Message("L1913")</h2>
+                    <p>@Translate.Message("L1914").</p>
+                    <p>@Translate.Message("L1915").</p>
+                    <p>@string.Format(Translate.Message("L3066"), TempData.Peek("OrgContactNumber").ToString(), TempData.Peek("OrgContactEmail").ToString())</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<section class="container feature">
+    <a name="successstories" class="compass anchor">
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="feature-info cell medium-7 medium-order-1">
+                    <h2>@Translate.Message("L1351")</h2>
+                    <p>@Translate.Message("L2729")</p>
+                    <ul class="checkmark green listinside">
+                        <li>“@Translate.Message("L2431")”</li>
+                        <li>“@Translate.Message("L2432")”</li>
+                        <li>“@Translate.Message("L2433")”</li>
+                    </ul>
+                </div>                
+                <div class="feature-icon cell medium-5 medium-order-2 text-center">
+                    <img src="../Images/success.svg" alt="" />
+                </div>
+            </div>
+        </div>
+    </a>
+</section>
+
+<div id="incentives" class="reveal large" data-reveal data-close-on-click="true">
+    <h4>@Translate.Message("L1365"):</h4>
+    <table class="table margin-top-1">
+        <tr><th class="pink">@Translate.Message("L1731")</th><th class="pink">@Translate.Message("L1716")</th></tr>
+        <tr><td>@Translate.Message("L535")</td><td>100 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L1367")</td><td>100 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L1368")</td><td>250 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L1369")</td><td>100 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L1370")</td><td>50 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L2508")</td><td>100 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L2572")</td><td>200 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L2573")</td><td>50+ @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L3071")</td><td>50 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L3072")</td><td>50 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L3073")</td><td>100 @Translate.Message("L1716")</td></tr>
+        <tr><td>@Translate.Message("L3074")</td><td>25 @Translate.Message("L1716")</td></tr>
+    </table>
+    <h4>@Translate.Message("L1364"):</h4>
+    <table class="table margin-top-1">
+        <tr><th class="pink">@Translate.Message("L1371")</th><th class="pink">250</th><th class="pink">251-499</th><th class="pink">500-999</th><th class="pink">@Translate.Message("L1377")</th></tr>
+        <tr><td></td><td>@Html.Raw(@Translate.Message("L2861"))</td><td>@Html.Raw(@Translate.Message("L2862"))</td><td>@Html.Raw(@Translate.Message("L2863"))</td><td>@Html.Raw(@Translate.Message("L2864"))</td></tr>
+        <tr><td>@Translate.Message("L3158")</td><td><i class="fa fa-close"></i></td><td></td><td></td><td></td></tr>
+        <tr><td>@String.Format(Translate.Message("L3077"), "R3000")</td><td></td><td><i class="fa fa-close"></i></td><td><i class="fa fa-close"></i></td><td><i class="fa fa-close"></i></td></tr>
+        <tr><td>@String.Format(Translate.Message("L3078"), "R5000")</td><td></td><td><i class="fa fa-close"></i></td><td><i class="fa fa-close"></i></td><td><i class="fa fa-close"></i></td></tr>
+        <tr><td>@String.Format(Translate.Message("L3079"), "R9000")</td><td></td><td></td><td><i class="fa fa-close"></i></td><td><i class="fa fa-close"></i></td></tr>
+        <tr><td>@Translate.Message("L2574")</td><td></td><td></td><td></td><td><i class="fa fa-close"></i></td></tr>
+    </table>
+    <p>*@Translate.Message("L3080")</p>
+    <p>*@Translate.Message("L3106")</p>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>

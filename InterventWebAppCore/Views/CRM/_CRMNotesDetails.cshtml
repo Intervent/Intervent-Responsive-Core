@@ -1,0 +1,155 @@
+﻿@model InterventWebApp.CRMProfileModel
+@using InterventWebApp
+
+@if (Model.CRM_Contact.CRM_Notes.Count > 0)
+{
+    <div class="record-detail-table">
+        <ul id="records-list" class="records-list accordion" data-accordion data-allow-all-closed="true">
+            <li class="list-heading">
+                <div class="flex-container">
+                    <p>Type</p>
+                    <p>Agent</p>
+                    <p>Date</p>
+                </div>
+            </li> <!-- Fixed list title -->
+            @foreach (var note in Model.CRM_Contact.CRM_Notes)
+            {
+                <li class="list-items accordion-item" data-accordion-item>
+                    <!-- Accordion tab title -->
+                    <a href="#" class="accordion-title">
+                        <div class="flex-container">
+                            <p>
+                                <strong>@(note.Type == 2 ? "Call" : note.Type == 1 ? "Email" : note.Type == 3 ? "Online Webform" : "IMI Call")</strong>
+                                @{var dispositionType = ""; }
+                                @if (note.CRM_Dispositions != null)
+                                {
+                                    if (note.CRM_Dispositions.Complaint.Value)
+                                    {
+                                        dispositionType = "<span class='tag tag-red'> " + (note.CRM_Dispositions != null ? note.CRM_Dispositions.Disposition : "") + "</span>";
+                                    }
+                                    else
+                                    {
+                                        dispositionType = "<span class='tag tag-green'>" + (note.CRM_Dispositions != null ? note.CRM_Dispositions.Disposition : "") + "</span>";
+                                    }
+                                }
+                                @Html.Raw(dispositionType)
+                            </p>
+                            <p>
+                                @note.User1.FirstName @note.User1.LastName
+                                <span class="record-time">@(note.MasterControlNo != null ? note.MasterControlNo : "")</span>
+                            </p>
+                            <p>
+                                <span class="record-date">@note.CreatedOnDateText</span>
+                                <span class="record-time">@note.CreatedOnTimeText</span>
+                            </p>
+                        </div>
+                    </a>
+
+                    <!-- Accordion tab content -->
+                    <div class="accordion-content" data-tab-content>
+                        <div class="record-details">
+                            <div class="grid-x">
+                                <div class="cell small-6 large-4">
+                                    <p>Contact Profile <span>@(note.CRM_CallerProfileTypes != null ? note.CRM_CallerProfileTypes.Type : "")</span></p>
+                                </div>
+                                <div class="cell small-6 large-4">
+                                    <p>Contact Name <span>@(note.FullName != null ? note.FullName : "")</span></p>
+                                </div>
+                                <div class="cell small-6 large-4">
+                                    <p>Account Type <span>@(note.CRM_AccountTypes != null ? note.CRM_AccountTypes.Type : "")</span></p>
+                                </div>
+                                @if (note.InquiryType1 != null)
+                                {
+                                    <div class="cell small-6 large-4">
+                                        <p>Inquiry Type <span>@note.InquiryType1.Type</span></p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="record-details">
+                            <div class="grid-x">
+                                <div class="cell small-6 large-4">
+                                    <p>Coupon Code <span>@(!string.IsNullOrEmpty(note.CouponCode) ? note.CouponCode : "")</span></p>
+                                </div>
+                                <div class="cell small-6 large-4">
+                                    <p>HCP Name <span>@(note.HCPList != null ? (note.HCPList.FirstName + " " + note.HCPList.LastName) : "")</span></p>
+                                </div>
+                                <div class="cell small-6 large-4">
+                                    <p>Requires Escalation <span>@(note.RequiredEscalation == 1 ? "Yes" : note.RequiredEscalation == 2 ? "No" : "")</span></p>
+                                </div>
+                                <div class="cell small-6 large-4">
+                                    <p>
+                                        Contact Classification <span>@(note.CRM_ComplaintClassificationTypes != null ? note.CRM_ComplaintClassificationTypes.Type : "")</span>
+                                    </p>
+                                </div>
+                                <div class="cell small-6 large-4">
+                                    <p>
+                                        Pogo Serial Number <span>@(note.CRM_PogoMeterNumbers != null ? note.CRM_PogoMeterNumbers.PogoMeterNumber : "")</span>
+                                    </p>
+                                </div>
+                                <div class="cell small-6 large-4">
+                                    <p>
+                                        Requires RMA <span>@(note.RequiredRMA == 1 ? "Yes" : note.RequiredRMA == 2 ? "No" : "")</span>
+                                    </p>
+                                </div>
+                                @if (note.RequiredRMA == 1)
+                                {
+                                    <div class="cell small-6 large-4">
+                                        <p> RMA Number <span>@(note.RMANumber != null ? note.RMANumber : "")</span></p>
+                                    </div>
+                                }
+                                else if (note.RequiredRMA == 2)
+                                {
+                                    <div class="cell small-6 large-4">
+                                        <p> QAD Number <span>@(note.QADNumber != null ? note.QADNumber : "")</span></p>
+                                    </div>
+                                }
+                                <div class="cell small-6 large-4">
+                                    <p> Master Control Number <span>@(note.MasterControlNo != null ? note.MasterControlNo : "")</span></p>
+                                </div>
+                                <div class="cell small-6 large-4">
+                                    <p> Cartridge Lot Number <span>@(note.CartridgeLotNumber != null ? note.CartridgeLotNumber : "")</span></p>
+                                </div>
+                                <div class="cell small-6 large-4">
+                                    <p>First Call Resolution <span>@(note.FirstCallResolution == 1 ? "Yes" : note.FirstCallResolution == 2 ? "No" : "")</span></p>
+                                </div>
+                                <div class="cell small-6 large-4">
+                                    <p> POGO Champion <span>@(note.POGOChampion == 1 ? "Yes" : note.POGOChampion == 2 ? "No" : "")</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-x record-notes">
+                            <div class="cell">
+                                <p>
+                                    Note <span>@(note.Notes != null ? note.Notes : "")</span>
+                                </p>
+                            </div>
+                            @if (!Model.fromInfoPage)
+                            {
+                                <div class="cell flex-container">
+                                    <span class="hide"><a href="#"><img src="~/Images/crm/delete-record-icon.svg" height="18" alt=""> Delete Record</a></span>
+                                    <span><a onclick="AddEditNotes(@Model.CRM_Contact.Id, @note.Id)"><img src="~/Images/crm/edit-record-icon.svg" height="18" alt=""> Edit this Record</a></span>
+                                    <span data-open="change-log-modal" onclick="ViewChangeLog(@note.Id, '@(note.Type == 2 ? "Call" : "Email")','@note.User1.FirstName @note.User1.LastName', '@note.CreatedOnDateText', '@note.CreatedOnTimeText')"><a href="#"><img src="~/Images/crm/view-log-icon.svg" height="18" alt=""> View Change Log</a></span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+            @if (Model.TotalRecords > Model.CRM_Contact.CRM_Notes.Count)
+            {
+                <li class="list-items accordion-item">
+                    <div class="new-button text-center">
+                        <button class="button" onclick="RefreshListNotes(@Model.CRM_Contact.Id, 5);">More details</button>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <div class="text-center empty-data"><div><img src="~/Images/crm/empty-data-image.svg" alt=""></div><p>No data were found.</p><div class="text-center new-button"></div></div>
+}

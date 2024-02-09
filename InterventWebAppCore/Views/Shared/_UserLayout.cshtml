@@ -1,0 +1,337 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    @*Set the viewport width to device width for mobile *@
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+    <meta name="description" content="My Intervent Dashboard" />
+    <title>INTERVENT | Better Health for Life™</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="@Url.Content("~/Content/css/jquery.jscrollpane.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/css/introjs.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+    @if (ViewBag.Details == "FollowUpReport")
+    {
+        <link href="@Url.Content("~/Content/css/followup-report.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+    }
+    else if (ViewBag.Details == "PrintableDetailedPlan")
+    {
+        <link href="@Url.Content("~/Content/css/printable-summary.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+    }
+    else if (ViewBag.Details == "Message")
+    {
+        <link href="@Url.Content("~/Content/css/messaging.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+    }
+    else
+    {
+        <link href="@Url.Content("~/Content/css/Site.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" type="text/css" />
+    }
+
+    <!-- Insert this within your head tag and after foundation.css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/motion-ui@1.2.3/dist/motion-ui.min.css" />
+
+    <link href="@Url.Content("~/Content/css/font-awesome.css")?v=@CommonUtility.GetRandom()" rel="stylesheet" ) />
+    <link href='https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,600,500,700,800,900' rel='stylesheet' type='text/css'>
+
+    <script src="@Url.Content("~/Scripts/jquery-3.6.1.min.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="https://code.jquery.com/jquery-migrate-3.4.0.js"></script>
+    <script src="@Url.Content("~/Scripts/modernizr-2.8.3.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/foundation/fastclick.js")?v=@CommonUtility.GetRandom()"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/ErrorHandler.js")?v=@CommonUtility.GetRandom()"></script>
+
+    @RenderSection("head", required: false)
+
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }
+                , i[r].l = 1 * new Date(); a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+        ga('create', 'UA-44789781-2', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <!-- Google Tag Manager -->
+    <script>
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-58RVRG9');</script>
+    <!-- End Google Tag Manager -->
+</head>
+
+<body class="user-layout">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-58RVRG9"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    @if ((HttpContextAccessor.HttpContext.Session.GetString(SessionContext.MobileSignOn) == null || !Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.MobileSignOn))) && ViewBag.Details != "InitialDashboard" && ViewBag.Details != "ProgramIntro" && (!HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.AdminId).HasValue || HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId) == HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.AdminId)))
+    {
+        <div class="dashboard-chat">
+            <div class="chat-show-hide"></div>
+            <div class="chat-button" id="recentMessage" data-open="message-modal" data-modal-path="@Html.Raw(Url.Action("GetRecentUserMessages", "Message"))">
+                @if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.MessageCount).HasValue)
+                {
+                    <span class="chat-notification">@HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.MessageCount)</span>
+                }
+                <img src="~/Images/icon-chat-green.png" alt="Chating Button Image" />
+            </div>
+        </div>
+    }
+    <div data-sticky-container class="header-blue">
+        <div class="contain-to-grid sticky" data-sticky data-stick-to="top" data-margin-top="0" data-sticky-on="small">
+            <nav class="top-bar" data-topbar role="navigation">
+                <div class="title-bar" data-responsive-toggle="responsive-menu" data-hide-for="large">
+                    <button class="menu-icon" type="button" data-toggle="responsive-menu"></button>
+                </div>
+                @if (CommonUtility.HasAdminRole(User.RoleCode()))
+                {
+                    <h1 class="menu-text"><a href="@Url.Action("Stream", "Participant", new { ForceParticipant = true })">@Translate.Message("L424") </a></h1>
+                }
+                else
+                {
+                    <h1 class="menu-text"><a href="@Url.Action("Stream", "Participant", new { byClick = true })">@Translate.Message("L424")</a></h1>
+                }
+                <div class="top-bar-menu-items" id="responsive-menu">
+                    <div class="top-bar-right large-order-2">
+                        <ul class="menu vertical large-horizontal" data-responsive-menu="drilldown large-dropdown" data-auto-height="true" data-close-on-click="false">
+                            @if (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.OrgContactNumber) != null)
+                            {
+                                <li><a><img src="~/Images/footer-call-icon.png" alt="" /> @HttpContextAccessor.HttpContext.Session.GetString(SessionContext.OrgContactNumber)</a></li>
+                            }
+                            @if (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.Challenges) != null && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.Challenges)) == true && HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HRACompleteDate) != null)
+                            {
+                                <li class="points-counter">@Html.Raw(CommonUtility.GetIncentivePointsString(Url.Action("Activities", "Challenge"), HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).HasValue ? HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value : HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.InActiveParticipantPortalId).Value, HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value))</li>
+                            }
+                            <li>
+                                <a href="#" class="submenu-parent">@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.ParticipantName)</a>
+                                <ul class="menu vertical">
+                                    <li>
+                                        <a id="profilepic" href="" data-open="user-profile" data-modal-path="@Html.Raw(Url.Action("UserProfile", "Account"))">
+                                            @Translate.Message("L877")
+                                        </a>
+                                    </li>
+                                    @if (CommonUtility.HasAdminRole(User.RoleCode()))
+                                    {
+                                        <li><a href="@Url.Action("Stream", "Participant", new { ForceParticipant = false })">@Translate.Message("L9") </a></li>
+                                    }
+                                    @if (!HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.AdminId).HasValue && (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SSO) == null || !Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SSO))))
+                                    {
+                                        <li>
+                                            <a href="" data-open="change-password" data-modal-path="@Html.Raw(Url.Action("ChangePassword", "Account"))" class="change-password-modal">
+                                                @Translate.Message("L243")
+                                            </a>
+                                        </li>
+                                    }
+                                    @if ((HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SingleSignOn) == null || !Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SingleSignOn)))
+                                    && (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.MobileSignOn) == null || !Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.MobileSignOn))))
+                                    {
+                                        <li><a href="@Url.Action("Logout", "Account")">@Translate.Message("L1680")</a></li>
+                                    }
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                    <div class="top-bar-left large-order-1">
+                        <ul class="menu vertical large-horizontal" data-responsive-menu="drilldown large-dropdown" data-auto-height="true" data-close-on-click="false">
+                            @if (ViewData["InitialStage"] == null && ViewBag.Details != "InitialDashboard" && ViewBag.Details != "ProgramIntro" && ViewBag.Details != "InitialDashboardNew" && Convert.ToInt16(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.HasHRA)) != (int)HRAStatus.No)
+                            {
+                                <li>
+
+                                    <a href="#" class="submenu-parent">
+                                        @Translate.Message(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.AssessmentName))
+                                    </a>
+                                    <ul class="menu vertical">
+                                        <li><a href="~/HRA/HRADashboard">@Translate.Message("L926")</a></li>
+                                        @if (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HRACompleteDate) != null)
+                                        {
+                                            <li><a href="~/Reports/ReportsDashboard">@Translate.Message("L1064")</a></li>
+                                            if (((HttpContextAccessor.HttpContext.Session.GetString(SessionContext.CoachingProgram) != null && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.CoachingProgram).ToString()) == true) ||
+                                            (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SelfHelpProgram) != null && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.SelfHelpProgram).ToString()) == true)) &&
+                                            (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.ShowProgramOption) != null && Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.ShowProgramOption).ToString()) == true))
+                                            {
+                                                <li><a href="~/Reports/recommendationsdashboard">@Translate.Message("L927")</a></li>
+                                            }
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                            @if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ProgramType).HasValue)
+                            {
+                                <li>
+                                    <a href="#" class="submenu-parent">@Translate.Message("L2105")</a>
+                                    <ul class="menu vertical">
+                                        <li><a href="~/Program/MyProgram/">@Translate.Message("L934")</a></li>
+                                        @if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp).HasValue && Convert.ToByte(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp).ToString()) > 0)
+                                        {
+                                            <li><a href="~/FollowUp/FollowUpDashboard">@Translate.Message("L2442")</a></li>
+                                        }
+                                        @if (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.FollowUpCompleteDate) != null)
+                                        {
+                                            <li><a href="~/Reports/FollowupReportDashboard">@Translate.Message("L2103")</a></li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div id="time-tracker"></div>
+    <div id="change-password" class="reveal small" data-reveal></div>
+    <div id="user-profile" class="reveal large padded-modal-container" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+    <input id="userDateFormat" type="hidden" value="@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToString().ToUpper()">
+    <input id="errorUrl" type="hidden" value="@Url.Action("Error", "Account")" />
+    <input id="notFoundUrl" type="hidden" value="@Url.Action("NotFoundError", "Account")" />
+    <input id="notAuthorizedUrl" type="hidden" value="@Url.Action("NotAuthorized", "Account")" />
+    <script src="@Url.Content("~/Scripts/js/foundation.min.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/app.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/foundation-datepicker.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/foundation-select.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/moment.js")?v=@CommonUtility.GetRandom()"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/DateFormatter.js")?v=@CommonUtility.GetRandom()"></script>
+    <script>
+        function UpdateProfileStatus() {
+        }
+    </script>
+    @RenderBody()
+
+    <footer>
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x footer-content">
+                <div class="cell large-6 small-6">
+                    <div class="flex-container align-left">
+                        <div>Copyright © @DateTime.Now.Year INTERVENT</div>
+                        <div><a href="~/Home/ServiceAgreement?modal=false" target="_blank">@Translate.Message("L440")</a></div>
+                        <div><a href="~/Home/ServiceAgreement?modal=false#privacy" target="_blank">@Translate.Message("L2436")</a></div>
+                    </div>
+                </div>
+                <div class="cell large-6 small-6">
+                    <div class="flex-container align-right">
+                        @if (HttpContextAccessor.HttpContext.Session.GetString(SessionContext.OrgContactNumber) != null)
+                        {
+                            <div><a><img src="~/Images/footer-call-icon.png" alt="" /> @(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.OrgContactNumber) != null ? HttpContextAccessor.HttpContext.Session.GetString(SessionContext.OrgContactNumber).ToString() : "1-855-494-1093")</a></div>
+                        }
+                        <div><a href=""><img src="~/Images/footer-mail-icon.png" alt="" /> @(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.OrgContactEmail) != null ? HttpContextAccessor.HttpContext.Session.GetString(SessionContext.OrgContactEmail).ToString() : "info@myintervent.com")</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    @{
+        Html.RenderPartial("_Session");
+    }
+    <div id="message-modal" class="reveal message-modal" data-reveal data-close-on-click="true" data-close-on-esc="false">
+    </div>
+    <script src="@Url.Content("~/Scripts/jquery-ui.min.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/jquery.mousewheel.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/jquery.jscrollpane.min.js")?v=@CommonUtility.GetRandom()"></script>
+    <script src="@Url.Content("~/Scripts/intro.js")?v=@CommonUtility.GetRandom()"></script>
+    <script>
+        $(document).foundation();
+        function showmodal(elem, e) {
+            var attr_val = elem.data("open");
+            var attr_path = elem.data("modal-path");
+            if (attr_val && attr_path) {
+                e.preventDefault();
+                var $modal1 = $('#' + attr_val);
+                $modal1.addClass('no-padding');
+                $.ajax(attr_path).done(function (resp) {
+                    $modal1.html(resp).foundation('open').removeClass('no-padding');
+                });
+            }
+        }
+
+        $('.override-select').foundationSelect();
+
+        $(document).ready(function () {
+        @if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.AdminId).HasValue && ViewData["isPdf"] == null)
+        {
+            @:LoadTimeTracker();
+        }
+
+                $("[data-open]").on('click', function (e) {
+                    showmodal($(this), e)
+                });
+
+            $("[data-reveal]").on("open.zf.reveal", function () {
+                $(document).ready(function () {
+                    if ($('[data-tabs]').length) {
+                        $('[data-tabs]').foundation();
+                    }
+                });
+            });
+        });
+
+        function LoadTimeTracker() {
+            $.ajax({
+                url: "@Url.Action("TimeTracker", "Participant", new { InfoPage = false })",
+                type: 'POST',
+                success: function (data) {
+                    if ($("#time-tracker").length != 0)
+                        $('#time-tracker').html(data);
+                },
+                complete: function () {
+                    $("#stop-timer").foundation();
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+        }
+    </script>
+
+    @*Use the Scripts section to define page specific scripts*@
+    @RenderSection("scripts", required: false)
+
+    <script>
+        $('ul.menu').on('open.zf.drilldown', function () {
+            var chk_ht = $("ul.is-drilldown-submenu.is-active").height();
+            $(this).parents(".top-bar-menu-items").height(chk_ht);
+        });
+        $('ul.menu').on('hide.zf.drilldown', function () {
+            $(this).parents(".top-bar-menu-items").height("auto");
+        });
+
+        // Patch for a Bug in v6.3.1
+        $(window).on('changed.zf.mediaquery', function () {
+            $('.is-dropdown-submenu.invisible').removeClass('invisible');
+        });
+
+        $("button.menu-icon").on('click', function () {
+            $("li.is-drilldown-submenu-parent").attr("aria-expanded", "false");
+
+            $("ul.is-drilldown-submenu").removeClass("is-active is-closing").addClass("invisible");
+            $("ul.is-drilldown-submenu").attr("aria-hidden", "true");
+
+            $(this).parents(".top-bar").find(".top-bar-menu-items").height("auto");
+        });
+
+    </script>
+
+    <script>
+        $(document).on("click", ".close-covid-noti", function () {
+            $(this).parents(".covid-notification").hide();
+        });
+
+        $(document).on("click", "div.chat-show-hide", function () {
+            $(this).toggleClass("is-hide");
+            $(this).siblings(".chat-button").toggleClass("is-hide");
+        });
+    </script>
+</body>
+
+</html>

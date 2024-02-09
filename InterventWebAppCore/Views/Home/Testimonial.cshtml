@@ -1,0 +1,63 @@
+﻿<!--ADMIN VIEW-->
+@using InterventWebApp
+<section class="main search-participants">
+    <div class="grid-continer">
+    <div class="grid-x grid-margin-x">
+        <div class="small-12 cell">
+            <div class="panel filters">
+                <section class="feature">
+                    <div class="grid-x grid-margin-x">
+                        <div class="feature cell medium-12">
+                            <h1>INTERVENT Lifestyle Health Coaching Program</h1>
+                            <h3 style="color:dodgerblue"><b>Participant Success Stories</b></h3>
+                            <p style="color:deepskyblue">
+                                <b>Directions:</b>
+                                You are invited to share your feelings about your INTERVENT health
+                                coaching program experience. Be specific about your challenges, your results and
+                                what worked for you. We will use your feedback to continue to make improvements in
+                                our program. Other participants can also benefit from your experiences.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+                <fieldset>
+                    <legend>Feedback</legend>
+                    <textarea rows="7" id="feedback" placeholder="Please describe your experience in your own words in the space below."></textarea>
+                </fieldset>
+                <fieldset>
+                    <legend>Sign and Date below</legend>
+                    <div class="small-12 medium-6 cell">
+                        <input id="Name" type="text" placeholder="Name" />
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <input id="Date" type="text" placeholder="Date" />
+                    </div>
+                    <div class="small-12 medium-6 cell">
+                        <button class="secondary-color small" id="submit">
+                            Submit
+                        </button>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    $("#Date").fdatepicker();
+    $("#submit").on('click', function () {
+        var feedback = $("#feedback").val();
+        var Name = $("#Name").val();
+        var Date = $("#Date").val();
+        $.ajax({
+            url: "@Url.Action("AddTestimonial", "Participant")",
+            data: { feedback: feedback, SignedName : Name, Date: Date },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                alert("Thank you for submitting your testimonial. We value your feedback.");
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    });
+</script>

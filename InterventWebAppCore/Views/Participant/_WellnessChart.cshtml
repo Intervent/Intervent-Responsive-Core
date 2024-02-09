@@ -1,0 +1,145 @@
+﻿@using InterventWebApp
+@model InterventWebApp.WellnessChartModel
+
+<div id="divWellnessData">
+    <div class="control-bar">
+        <div class="grid-x grid-padding-x">
+            <div class="small-12 text-right cell">
+                <div class="right action-container">
+                    @if (Model.hasActivePortal)
+                    {
+                        if (Model.organizationId == Model.teamsBPOrgId)
+                        {
+                            <button id="add-data-button" data-open="add-wellness-data" class="button" data-modal-path="@Html.Raw(Url.Action("AddEditTeamsBP_PPR", "Participant"))"><i class="fa fa-plus"></i>Add Data</button>
+                        }
+                        else
+                        {
+                            <button id="add-data-button" data-open="add-wellness-data" class="button" data-modal-path="@Html.Raw(Url.Action("AddWellnessData", "Participant"))"><i class="fa fa-plus"></i>Add Data</button>
+                        }
+                    }
+                    <button id="chart-toggle-button" class="icon-button button hollow active">
+                        <i class="fa fa-line-chart"></i>
+                    </button>
+                    <button id="table-toggle-button" class="icon-button button hollow">
+                        <i class="fa fa-table"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content-chart wellness">
+        <div id="health-data-chart" style="width:100%;height:400px;"></div>
+        <div id="status-data-chart" style="width:100%;height:400px;"></div>
+    </div>
+    <div class="content-table hide table-overflow-container">
+        <div id="wellness-results"></div>
+        <!-- pagination Start -->
+        <div class="pagination-area hide" id="pagination-centered">
+            <ul>
+                <li id="numeric"></li>
+            </ul>
+            <!-- page-link Start -->
+            <div class="page-link">
+                <label>@Translate.Message("L4041")</label>
+                <div class="grid-x">
+                    <input type="text" id="jumptoPageNo">
+                    <button type="submit" id="gotoPage_submit" class="button">@Translate.Message("L4042")</button>
+                </div>
+            </div>
+            <!-- page-link End -->
+        </div>
+        <!-- pagination End -->
+        <br>
+    </div>
+    <div id="no-wellness-graph" class="cell main-graph-container">
+        <div class="cell main-chart ">
+            <div class="no-graph-info text-center">
+                <img src="~/Images/device/no-data.png" alt="Alternate Text">
+                <span>@Translate.Message("L4000")</span>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="@Url.Content("~/Scripts/LoadWellnessDataAndChart.js")?v=@CommonUtility.GetRandom()"></script>
+
+<script>
+    var startIndex = 1;
+    var pageSize = 15;
+    var totalRecords = 0;
+    var currentPage = 0;
+	var totalPages = 0;
+	var isTeamsBP = false;
+    var url = "@Html.Raw(Url.Action("ListWellnessData", "Participant"))";
+
+    $(document).ready(function () {
+        $("#add-wellness-data").on("open.zf.reveal", function () {
+            setTimeout(function () {
+                $("#add-wellness-data #loader-wrapper").hide();
+                //alert('true');
+            }, 500);
+        });
+        @if (Model.organizationId == Model.teamsBPOrgId)
+        {
+            @: isTeamsBP = true;
+        }
+        var data = GetHealthData(currentPage, pageSize, totalRecords, isTeamsBP, url, '@ViewData["Weight"]', '@ViewData["Waist"]',  true);
+        var healthData = data[0];
+        var statusData = data[1];
+        var isDiabetic = data[2];
+        //$("#health-data-chart").html("");
+        if (healthData.length > 0 || statusData.length > 0) {
+            $('.content-chart').removeClass('hide');
+            $("#no-wellness-graph").addClass("hide");
+            var chart;
+            if (isDiabetic)
+                chart = CreateChart(healthData, "health-data-chart", "Weight", "SBP", "DBP", "A1C");
+            else
+                chart = CreateChart(healthData, "health-data-chart", "Weight", "SBP", "DBP");
+            chart.validateData();
+            //$("#status-data-chart").html("");
+            var statusChart = CreateChart(statusData, "status-data-chart", "Practicing healthy eating habits", "Being physically active", "Managing stress", "Staying motivated");
+            statusChart.validateData();
+        }
+        else {
+            $('#divWellnessData').find('.content-chart').addClass('hide');
+            $("#no-wellness-graph").removeClass("hide");
+        }
+
+		$("#gotoPage_submit").on('click', function (e) {
+			e.preventDefault();
+			var page = $('#jumptoPageNo').val();
+			if (totalPages > page - 1 && page != '' && page != 0)
+                GotoPage(page - 1)
+			$('#jumptoPageNo').val('');
+		});
+
+    });
+
+    function zoomChart() {
+        chart.zoomToIndexes(chart.dataProvider.length - 20, chart.dataProvider.length - 1);
+    }
+
+    //Chart/Table toggle
+    $(document).on('click', '#chart-toggle-button', function () {
+        toggleDashboardView('chart');
+    });
+    $(document).on('click', '#table-toggle-button', function () {
+        toggleDashboardView('table');
+    });
+    toggleDashboardView = function (showItem) {
+        var hideItem = showItem === 'table' ? 'chart' : 'table';
+        $('#' + hideItem + '-toggle-button').removeClass('active');
+        $('#' + showItem + '-toggle-button').addClass('active');
+        if (totalRecords > 0) {
+			$('#divWellnessData').find('.content-' + showItem).removeClass('hide');
+			$('#divWellnessData').find('.content-' + hideItem).addClass('hide');
+        }
+    }
+
+    function GotoPage(page) {
+        $('#pagination-centered').addClass("hide");
+        currentPage = page;
+        startIndex = page * pageSize + 1;
+        GetHealthData(currentPage, pageSize, totalRecords, isTeamsBP, url, '@ViewData["Weight"]', '@ViewData["Waist"]', true);
+    }
+</script>

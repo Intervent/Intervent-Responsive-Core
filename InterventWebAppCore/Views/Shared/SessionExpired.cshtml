@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = "Error";
+    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+<section class="main">
+    <div class="row" data-equalizer data-equalizer-mq="medium-up">
+        <div class="columns bg-wrapper ">
+            <div class="tiles columns small-12">
+                <div id="view">                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    var userAgent = window.navigator.userAgent.toLowerCase(),
+    safari = /safari/.test(userAgent),
+    ios = /iphone|ipod|ipad/.test(userAgent);
+    if(ios) {
+        if (safari) {
+            $('#view').append("Your session has expired. Please click <a href='https://www.staging.pogopatterns.com/#/' style='color:deepskyblue'>this link</a> to be redirected.");//browser
+        } else if (!safari) {
+            $('#view').append("Your session has expired please refresh the screen.");//webview
+        }
+    } else {
+        //not iOS
+        if (isNativeApp()) {
+            $('#view').append("Your session has expired please refresh the screen.");
+        }
+        else {
+            $('#view').append("Your session has expired. Please click <a href='https://www.staging.pogopatterns.com/#/' style='color:deepskyblue'>this link</a> to be redirected.");
+        }
+    };
+
+    function isNativeApp() {
+        return /AppName\/[0-9\.]+$/.test(navigator.userAgent);
+    }
+
+</script>

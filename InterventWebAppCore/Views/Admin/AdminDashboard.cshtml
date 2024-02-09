@@ -1,0 +1,172 @@
+﻿@model InterventWebApp.AdminDashboardModel
+
+@using InterventWebApp
+@{
+    ViewBag.Title = "CoachDashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="main admin-dashboard dashboard-content">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <!-- MONTH VIEW -->
+            <div class="small-12 cell hide" id="month-view">
+                <div class="data-container">
+                    <div class="container-title cyan">@Translate.Message("L284")</div>
+                    <div class="grid-container">
+                        <div class="content grid-x">
+                            <div class="small-12 text-center cell">
+                                <div class="calender-area">
+                                    <button id="prevMonth" class="secondary small nav lnav"><i class="fa fa-chevron-left"></i></button>
+                                    <span class="month-picker-label"></span>
+                                    <button id="nextMonth" class="secondary small nav rnav"><i class="fa fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="small-12 cell">
+                                <ul id="calendar-month" class="grid-x grid-padding-x small-up-1 medium-up-7 calendar-month"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- DAY VIEW -->
+            <div class="small-12 cell" id="day-view">
+                <div class="data-container">
+                    <div class="container-title cyan">@Translate.Message("L284")</div>
+                    <div class="grid-container">
+                        <div class="content grid-x">
+                            <div class="large-6 medium-12 text-center cell">
+                                <div class="calender-area">
+                                    <button id="prevDay" class="secondary small nav lnav"><i class="fa fa-chevron-left"></i></button>
+                                    <span class="day-picker-label"></span>
+                                    <button id="nextDay" class="secondary small nav rnav"><i class="fa fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="large-6 medium-12 text-center large-text-right cell">
+                                <button type="button" class="button" id="show-month-button" onclick="movetoMonth();"><i class="fa fa-calendar"></i>@Translate.Message("L285")</button>
+                            </div>
+                            <div class="small-12 cell">
+                                <div class="cal-day grid-x grid-margin-x collapse">
+                                    <div id="noApptDay" class="cell small-12 text-center no-appointment-message"></div>
+                                    <div id="apptDay" class="cell small-12">
+                                        <ul id="calendar-day" class="appointment-list"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- FIND PARTICIPANT & TASKS -->
+        <div class="grid-x grid-margin-x" data-equalizer>
+            <div class="small-12 large-6 small-only-text-center cell">
+                <div class="data-container search-container" data-equalizer-watch>
+                    <div class="container-title green">@Translate.Message("L286")</div>
+                    <div class="content search">
+                        <i class="fa fa-search"></i>
+                        <input type="text" class="user-picker typeahead tt-input" value="" id="userSearch" placeholder="Search for a participant by name" />
+                        <a href="~/Participant/Participantadvancedsearch" role="button" class="button secondary small advanced-search-link">
+                            <i class="fa fa-search-plus"></i>@Translate.Message("L287")
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="small-12 large-6 cell">
+                <div class="grid-x grid-margin-x grid-margin-y cards">
+                    @if (Model.AdminModules.Count > 0 && (Context.Session.GetString(SessionContext.MobileSignOn) == null || !Convert.ToBoolean(Context.Session.GetString(SessionContext.MobileSignOn))))
+                    {
+                        for (int i = 0; i < Model.AdminModules.Count; i++)
+                        {
+                            if (Model.AdminModules[i].Name == "Messages")
+                            {
+                                <div class="dashboard-chat">
+                                    <div class="chat-button">
+                                        <a href="../Message/MessageDashboard">
+                                            @if (Model.messageCount > 0)
+                                            {
+                                                <span class="chat-notification">@Model.messageCount</span>
+                                            }
+                                            <img src="../Images/icon-chat-orange.png" alt="Chating Button Image" />
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="small-6 cell">
+                                    <a href="../@Model.AdminModules[i].Url">
+                                        <div class="dashboard-item @Model.AdminModules[i].IconColor">
+                                            <div class="slider">&nbsp;</div>
+                                            <div><i class="@Model.AdminModules[i].Icon"></i></div>
+                                            <div class="title">@Model.AdminModules[i].Name</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--Schedule Your Session Modal-->
+<div id="schedule-session" class="reveal medium" data-reveal>
+    <h2>@Translate.Message("L288")</h2>
+
+</div>
+<!--User Profile Modal-->
+<div id="admin-profile" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+</div>
+<!--Cancel Appointment-->
+<div id="cancel-appointment" class="reveal medium" data-reveal data-close-on-click="false" data-close-on-esc="false"></div>
+<!--Appointment No Show-->
+@Html.Partial("_RevertNoShow")
+@Html.Partial("_TimeTracker")
+
+<script src="@Url.Content("~/Scripts/calendar.js")?v=@CommonUtility.GetRandom()"></script>
+<script src="@Url.Content("~/Scripts/typeahead.jquery.min.js")?v=@CommonUtility.GetRandom()"></script>
+<script>
+    //variables for javascript
+    var coachId = @Context.Session.GetInt32(SessionContext.AdminId);
+    var cancelUrl = '@Html.Raw(Url.Action("CancelAppointment", "Scheduler"))';
+
+    $( document ).ready(function() {
+        $('.my-tasks li a').on('click', function(e){
+            e.preventDefault();
+            $(this).parent().toggleClass('complete');
+        });
+
+        //typehead
+        var users = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('Name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace
+            ,remote: {
+                url: '../Admin/ListUsers?name=%QUERY',
+                wildcard: "%QUERY"
+            },
+            limit: Number.MAX_VALUE
+        });
+
+        users.initialize();
+
+        $('.typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 3
+        }, {
+            name: 'users',
+            displayKey: 'Name',
+            source: users.ttAdapter(),
+            limit: 100
+        })
+        $('.typeahead').bind('typeahead:selected', function(ev, user) {
+            window.location.href = "../Participant/ParticipantProfile/" + user.Id;
+        });
+    });
+
+    function UpdateAppointmentUI() {
+        printDay();
+    }
+</script>

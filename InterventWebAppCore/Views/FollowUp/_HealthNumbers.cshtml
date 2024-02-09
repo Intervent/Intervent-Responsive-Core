@@ -1,0 +1,1744 @@
+﻿@using Intervent.Web.DTO;
+@using InterventWebApp;
+@using Intervent.Web.DataLayer;
+@model FU_HealthNumbersModel
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div class="inner-survey-modal">
+    <div class="modal-header health-form-header">
+        <h2 class="text-center">@Translate.Message("L488")</h2>
+    </div>
+
+    <div class="health-form-content">
+        <div class="tab-list">
+            <ul class="tabs text-center" data-tabs id="health-number-tabs">
+                <li class="tabs-title is-active" id="basic"><a id="basiclink" class="button hollow upcoming-challenges-btn" href="#test-basic-details" onclick="activateTab(1)" aria-selected="true">@Translate.Message("L2938")</a></li>
+                <li class="tabs-title" id="bloodwork"><a id="reportlink" class="button hollow" href="#test-report" onclick="activateTab(2)">@Translate.Message("L2937")</a></li>
+            </ul>
+        </div>
+        <div class="tabs-content" data-tabs-content="health-number-tabs">
+            <div class="tabs-panel new-button is-active" id="test-basic-details">
+                <form data-abide id="health-number-form" novalidate>
+                    <div class="health-form-seperator">
+                        <h5>@Translate.Message("L167")<span>@Translate.Message("L2942")</span></h5>
+                        <div class="units-switch text-center">
+                            <div class="switch slider-switch">
+                                <input type="checkbox" name="units-selector" id="units-selector" class="switch-input" value="" />
+                                <label id="units-selector-lable" class="switch-paddle" for="units-selector">
+                                    <span class="switch-inactive" aria-hidden="true">@Translate.Message("L2599")</span>
+                                    <span class="switch-active" aria-hidden="true">@Translate.Message("L2598")</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="grid-x grid-margin-x">
+                            <div id="divHeight" class="medium-4 cell toggle-measurement-units">
+                                <div class="grid-x grid-margin-x collapse">
+                                    <div class="cell">
+                                        <label>
+                                            @Translate.Message("L169")
+                                        </label>
+                                    </div>
+                                    <div class="cell large-6">
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(M => M.HeightFt, new Dictionary<string, object> { { "required", "required" }, { "data-validator", "validateHeight" }, { "onchange", "ValidateInchs(); SetEditFlag(); UpdateMetric(this, event)" }, { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                                            <span class="input-group-label postfix">@Translate.Message(@Model.Measurements[BioLookup.Height].MeasurementUnit)</span>
+                                        </div>
+                                        <small data-form-error-for="HeightFt" class="form-error">@Translate.Message("L954") @Model.Measurements[BioLookup.Height].Min-@Model.Measurements[BioLookup.Height].Max.</small>
+                                    </div>
+                                    <div class="cell large-6">
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(M => M.HeightInch, new Dictionary<string, object> { { "id", "HeightInch" }, { "pattern", "number" }, { "step", "0.01" }, { "data-validator", "validateInch" }, { "onchange", "SetEditFlag(); UpdateMetric(this, event)" }, { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                                            <span class="input-group-label postfix">@Translate.Message("L1983")</span>
+                                        </div>
+                                        <small data-form-error-for="HeightInch" class="form-error">@Translate.Message("L953"). @Translate.Message("L2021") 0-12.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="divHeightMetric" class="medium-4 cell toggle-measurement-units">
+                                <div class="grid-x coach-availability">
+                                    <div class="cell">
+                                        <label>
+                                            @Translate.Message("L169")
+                                        </label>
+                                    </div>
+                                    <div class="input-group cell">
+                                        @Html.TextBoxFor(M => M.HealthNumbersInMetric.HeightCM, new Dictionary<string, object> { { "id", "HeightCM" }, { "required", "required" }, { "data-validator", "validateHeightMetric" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "SetEditFlag(); UpdateImperial(this, event)" }, { "class", "input-group-field" }, { "data-live-validate", true } })
+                                        <span class="input-group-label postfix">@Model.MetricMeasurements[BioLookup.Height].MeasurementUnit</span>
+                                    </div>
+                                    <small data-form-error-for="HeightCM" class="form-error">@Translate.Message("L954") @Model.MetricMeasurements[BioLookup.Height].Min-@Model.MetricMeasurements[BioLookup.Height].Max.</small>
+                                </div>
+                            </div>
+                            <div id="divWeight" class="medium-3 medium-offset-1 cell toggle-measurement-units">
+                                <div class="grid-x collapse">
+                                    <div class="cell">
+                                        <label for="Weight">
+                                            @Translate.Message("L168")
+                                        </label>
+                                    </div>
+                                    <div class="input-group cell">
+                                        @Html.TextBoxFor(M => M.HealthNumbers.Weight, new Dictionary<string, object> { { "id", "Weight" }, { "required", "required" }, { "data-validator", "validateWeight" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateMetric(this, event)" }, { "class", "input-group-field" }, { "data-live-validate", true } })
+                                        <span class="input-group-label postfix">@Translate.Message(@Model.Measurements[BioLookup.Weight].MeasurementUnit)</span>
+                                    </div>
+                                    <small data-form-error-for="Weight" class="form-error">@Translate.Message("L955") @Model.Measurements[BioLookup.Weight].Min-@Model.Measurements[BioLookup.Weight].Max.</small>
+                                </div>
+                            </div>
+                            <div id="divWaist" class="medium-3 medium-offset-1 cell toggle-measurement-units">
+                                <div class="grid-x collapse">
+                                    <div class="cell">
+                                        <label for="Waist">
+                                            @Translate.Message("L170")
+                                        </label>
+                                    </div>
+                                    <div class="input-group cell">
+                                        @Html.TextBoxFor(M => M.HealthNumbers.Waist, new Dictionary<string, object> { { "id", "Waist" }, { "data-validator", "validateWaist" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateMetric(this, event)" }, { "data-live-validate", true } })
+                                        <span class="input-group-label postfix">@Translate.Message(@Model.Measurements[BioLookup.Waist].MeasurementUnit)</span>
+                                    </div>
+                                    <small data-form-error-for="Waist" class="form-error">@Translate.Message("L976") @Model.Measurements[BioLookup.Waist].Min-@Model.Measurements[BioLookup.Waist].Max.</small>
+                                </div>
+                            </div>
+                            <div id="divWeightMetric" class="medium-3 medium-offset-1 cell toggle-measurement-units">
+                                <div class="grid-x collapse">
+                                    <div class="cell">
+                                        <label for="Weight">
+                                            @Translate.Message("L168")
+                                        </label>
+                                    </div>
+                                    <div class="input-group cell">
+                                        @Html.TextBoxFor(M => M.HealthNumbersInMetric.Weight, new Dictionary<string, object> { { "id", "WeightMetric" }, { "required", "required" }, { "data-validator", "validateWeightMetric" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateImperial(this, event)" }, { "class", "input-group-field" }, { "data-live-validate", true } })
+                                        <span class="input-group-label postfix">@Translate.Message(@Model.MetricMeasurements[BioLookup.Weight].MeasurementUnit)</span>
+                                    </div>
+                                    <small data-form-error-for="WeightMetric" class="form-error">@Translate.Message("L955") @Model.MetricMeasurements[BioLookup.Weight].Min-@Model.MetricMeasurements[BioLookup.Weight].Max.</small>
+                                </div>
+                            </div>
+                            <div id="divWaistMetric" class="medium-3 medium-offset-1 cell toggle-measurement-units">
+                                <div class="grid-x collapse">
+                                    <div class="cell">
+                                        <label for="Waist">
+                                            @Translate.Message("L170")
+                                        </label>
+                                    </div>
+                                    <div class="input-group cell">
+                                        @Html.TextBoxFor(M => M.HealthNumbersInMetric.Waist, new Dictionary<string, object> { { "id", "WaistMetric" }, { "data-validator", "validateWaistMetric" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateImperial(this, event)" }, { "data-live-validate", true } })
+                                        <span class="input-group-label postfix">@Translate.Message(@Model.MetricMeasurements[BioLookup.Waist].MeasurementUnit)</span>
+                                    </div>
+                                    <small data-form-error-for="WaistMetric" class="form-error">@Translate.Message("L976") @Model.MetricMeasurements[BioLookup.Waist].Min-@Model.MetricMeasurements[BioLookup.Waist].Max.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="health-form-seperator">
+                        <h5>@Translate.Message("L189")</h5>
+                        <div class="grid-x grid-margin-x" data-equalizer="box-height">
+                            <div class="medium-4 cell">
+                                <div class="grid-x">
+                                    <div class="cell">
+                                        <label>@Translate.Message("L156")</label>
+                                    </div>
+
+                                    <div class="cell">
+                                        <div class="grid-x">
+                                            <div class="bp-arm-category cell small-4">
+                                                <label for="BPArmLeft" class="bp-arm-left">
+                                                    @Html.RadioButtonFor(M => M.HealthNumbers.BPArm, 1, new { @id = "BPArmLeft" })
+                                                    @Translate.Message("L202")
+                                                </label>
+                                            </div>
+                                            <div class="bp-arm-category cell small-4">
+                                                <label for="BPArmRight" class="bp-arm-right">
+                                                    @Html.RadioButtonFor(M => M.HealthNumbers.BPArm, 2, new { @id = "BPArmRight" })
+                                                    @Translate.Message("L203")
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="medium-3 medium-offset-1 cell">
+                                <div class="grid-x collapse">
+                                    <div class="cell" data-equalizer-watch="box-height">
+                                        <label for="SBP">
+                                            @Translate.Message("L157")
+                                        </label>
+                                    </div>
+                                    <div class="input-group cell">
+                                        @Html.TextBoxFor(m => m.HealthNumbers.SBP, new Dictionary<string, object> { { "id", "SBP" }, { "pattern", "integer" }, { "data-validator", "validateSBP" }, { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                                        <span class="input-group-label postfix">mmHg</span>
+                                    </div>
+                                    <small data-form-error-for="SBP" class="form-error" id="sbpError">@Translate.Message("L595") @Model.Measurements[BioLookup.SBP].Min-@Model.Measurements[BioLookup.SBP].Max.</small>
+                                </div>
+                            </div>
+                            <div class="medium-3 medium-offset-1 cell">
+                                <div class="grid-x collapse">
+                                    <div class="cell" data-equalizer-watch="box-height">
+                                        <label for="DBP">
+                                            @Translate.Message("L158")
+                                        </label>
+                                    </div>
+                                    <div class="input-group cell">
+                                        @Html.TextBoxFor(m => m.HealthNumbers.DBP, new Dictionary<string, object> { { "id", "DBP" }, { "pattern", "integer" }, { "data-validator", "validateDBP" }, { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                                        <span class="input-group-label postfix">mmHg</span>
+                                    </div>
+                                    <small data-form-error-for="DBP" class="form-error" id="dbpError">@Translate.Message("L980") @Model.Measurements[BioLookup.DBP].Min-@Model.Measurements[BioLookup.DBP].Max.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (CommonUtility.HasAdminRole(User.RoleCode()) && !CommonUtility.IsParticipantView(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.IsParticipantView)))
+                    {
+                        <div class="health-form-seperator">
+                            <h5>@Translate.Message("L952") <span>@Translate.Message("L171")</span></h5>
+
+                            <div class="grid-x grid-margin-x">
+                                <div class="medium-6 cell">
+                                    <div class="grid-x collapse">
+                                        <div class="cell">
+                                            <label for="RMR">
+                                                @Translate.Message("L172")
+                                            </label>
+                                        </div>
+                                        <div class="input-group cell">
+                                            @Html.TextBoxFor(M => M.HealthNumbers.RMR, new Dictionary<string, object> { { "id", "RMR" }, { "pattern", "integer" }, { "data-validator", "validateRMR" }, { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                                            <span class="input-group-label postfix">@Translate.Message("L1984")</span>
+                                        </div>
+                                        <small data-form-error-for="RMR" class="form-error">@Translate.Message("L951") @Model.Measurements[BioLookup.RMR].Min - @Model.Measurements[BioLookup.RMR].Max.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid-x grid-margin-x">
+                                <div class="medium-6 cell">
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="cell">
+                                            <label for="THRFrom">
+                                                @Translate.Message("L173")
+                                            </label>
+                                        </div>
+                                        <div class="cell medium-6">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(M => M.HealthNumbers.THRFrom, new Dictionary<string, object> { { "id", "THRFrom" }, { "pattern", "integer" }, { "placeholder", Translate.Message("L3809") }, { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Translate.Message(Model.Measurements[BioLookup.HeartRate].MeasurementUnit)</span>
+                                            </div>
+                                        </div>
+                                        <div class="cell medium-6">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(M => M.HealthNumbers.THRTo, new Dictionary<string, object> { { "id", "THRTo" }, { "pattern", "integer" }, { "data-validator", "validateTHR" }, { "placeholder", Translate.Message("L3810") }, { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Translate.Message(Model.Measurements[BioLookup.HeartRate].MeasurementUnit)</span>
+                                            </div>
+                                            <small data-form-error-for="THRTo" class="form-error" id="thrError">@Translate.Message("L173") @Model.Measurements[BioLookup.HeartRate].Min-@Model.Measurements[BioLookup.HeartRate].Max.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.HRAVer).HasValue && HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.HRAVer).Value == (int)HRAVersions.ActivateVersion)
+                                {
+                                    <div class="medium-6 cell">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="CRF">
+                                                    @Translate.Message("L3081")
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbers.CRF, new Dictionary<string, object> { { "id", "CRF" }, { "pattern", "number" }, { "data-validator", "validateCRF" }, { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">ml/kg/min</span>
+                                            </div>
+                                            <small data-form-error-for="CRF" class="form-error">@Translate.Message("L2021") @Model.Measurements[BioLookup.CRF].Min - @Model.Measurements[BioLookup.CRF].Max.</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="medium-6 cell">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="RHR">
+                                                    @Translate.Message("L3107")
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbers.RHR, new Dictionary<string, object> { { "id", "RHR" }, { "pattern", "integer" }, { "data-validator", "validateRHR" }, { "class", "input-group-field" }, { "onkeypress", "ValidateNumeric(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">bpm</span>
+                                            </div>
+                                            <small data-form-error-for="RHR" class="form-error">@Translate.Message("L2021") @Model.Measurements[BioLookup.RHR].Min - @Model.Measurements[BioLookup.RHR].Max.</small>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    <div class="grid-x grid-margin-x button-set">
+                        <div class="cell text-center">
+                            <button class="button" type="submit">@Translate.Message("L481")</button>
+                            <button class="button hollow" type="reset" id="closeNumbers">@Translate.Message("L967")</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="tabs-panel new-button" id="test-report">
+                <div class="proceed-options" id="step2">
+                    <h5 class="text-center">@Translate.Message("L2890")</h5>
+                    <div class="grid-x grid-margin-x grid-margin-y large-up-2">
+                        <div class="cell">
+                            <div class="card">
+                                <div class="card-image text-center">
+                                    @if (CommonUtility.IsIntegratedWithLMC(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.IntegrationWith)))
+                                    {
+                                        <img src="~/Images/labs/lmc-lab-icon.svg" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/Images/labs/lab-corp-icon.png" />
+                                    }
+                                </div>
+                                <div class="card-section">
+                                    <h4 class="text-center">@Translate.Message("L2891")</h4>
+                                    @if (CommonUtility.IsIntegratedWithLMC(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.IntegrationWith)))
+                                    {
+                                        <p>@Translate.Message("L3858")</p>
+                                    }
+                                    else
+                                    {
+                                        <p>@Translate.Message("L2892")</p>
+                                    }
+
+                                    <div class="button-set text-center new-button">
+                                        <button class="button test-order-button" id="labcorpbutton" onclick="AddLabChoice(@((int)LabChoices.LabCorp));">@Translate.Message("L2878")</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="card">
+                                <div class="card-image text-center">
+                                    <img src="~/Images/labs/doctor-office-icon.svg" />
+                                </div>
+                                <div class="card-section">
+                                    <h4 class="text-center">@Translate.Message("L2894")</h4>
+                                    @if (CommonUtility.IsIntegratedWithLMC(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.IntegrationWith)))
+                                    {
+                                        <p>@Translate.Message("L3859")</p>
+                                        <br /> <br />
+                                        <p>@Translate.Message("L3860")</p>
+                                    }
+                                    else
+                                    {
+                                        <p>
+                                            @Translate.Message("L2893")
+                                            <br />
+                                            @Translate.Message("L3741")
+                                        </p>
+                                    }
+                                    <div class="button-set text-center new-button">
+                                        <button class="button test-order-button" id="doctorsbutton" onclick="AddLabChoice(@((int)LabChoices.DoctorsOffice));">@Translate.Message("L2889")</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-x order-test-local text-center new-button" id="step3-doctora">
+                    <div class="cell large-8 medium-12 large-offset-2">
+                        <div class="order-test-heading"><h4>@Translate.Message("L2870")</h4></div>
+
+                        <div class="card">
+                            <div class="card-section">
+                                <div class="order-notification">
+                                    <h4>@Translate.Message("L3854")</h4>
+                                    @if (!CommonUtility.IsIntegratedWithLMC(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.IntegrationWith)))
+                                    {
+                                        <p>@Translate.Message("L2872")</p>
+                                        <p><a href="#" onclick="ResendEmail();">@Translate.Message("L2873")</a></p>
+                                    }
+                                    <br />
+                                    <label for="imageUpload" class="button">@Translate.Message("L2874")</label>
+                                    <input type="file" id="imageUpload" class="show-for-sr" name="files" onchange="upload_files();">
+                                    <p>@Translate.Message("L2221") @Translate.Message("L3142")</p>
+                                </div>
+                                <div class="order-suggestion">
+                                    <p><strong>@string.Format(Translate.Message("L2876"), CommonUtility.IsIntegratedWithLMC(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.IntegrationWith)) ? "833-874-8635" : "912-349-2254")</strong>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="visit-doctor">
+                            <button class="button hollow" data-open="upload-successful" id="closeReport" onclick=" $('#survey-health-numbers').foundation('close');">@Translate.Message("L2943")</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-x order-test-online text-center" id="step3-labcorp">
+                    <div class="cell large-8 medium-12 large-offset-2">
+                        <div class="card">
+                            <div class="card-image text-center">
+                                <img src="~/Images/labs/lab-corp-icon.png" />
+                            </div>
+                            <div class="card-section">
+                                <div class="order-notification">
+                                    <h4>@Translate.Message("L2884")</h4>
+                                    <p>@Translate.Message("L2886"):</p>
+                                    <div class="booking-id"><span id="orderId"></span></div>
+                                </div>
+                                @Html.Raw(Translate.Message("L2933"))
+                                <p><a href="#" onclick="ResendEmail();">@Translate.Message("L2873")</a></p>
+
+                                <div class="order-suggestion">
+                                    <p>@Translate.Message("L2887")</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="visit-doctor">
+                            <button class="button" id="closeReport" onclick=" $('#survey-health-numbers').foundation('close');">@Translate.Message("L2943")</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-x order-test-online text-center" id="step3-diagnosticlabchoice">
+                    <div class="cell large-8 medium-12 large-offset-2">
+                        <div class="card">
+                            <div class="card-image text-center">
+                                <img src="~/Images/labs/lmc-lab-icon.svg" />
+                            </div>
+                            <div class="card-section">
+                                <div class="order-notification diagnostic-selection">
+                                    <h4>@Translate.Message("L3854")</h4>
+                                </div>
+
+                                <div class="order-suggestion diagnostic-selection">
+                                    <p>@Translate.Message("L3855")</p>
+                                </div>
+
+                                <div class="order-notification diagnostic-selection-done hide">
+                                    <h4>@Translate.Message("L3856")</h4>
+                                </div>
+
+                                <div class="order-suggestion diagnostic-selection-done hide">
+                                    <p>@Translate.Message("L3857")</p>
+                                </div>
+                                <input id="LMCLabId" type="hidden">
+                                @if (CommonUtility.HasAdminRole(User.RoleCode()) && !CommonUtility.IsParticipantView(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.IsParticipantView)))
+                                {
+                                    <div id="lmclabselection" class="lmclabselection diagnostic-selection">
+                                        Lab Selection:
+                                        <select id="LMCLabs">
+                                            <option id="0">Select</option>
+                                            @foreach (var lab in Model.LabList)
+                                            {
+                                                <option id="@lab.Value">@lab.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="visit-doctor">
+                            <button class="button" data-open="upload-successful" id="closeReport" onclick=" $('#survey-health-numbers').foundation('close');">@Translate.Message("L2943")</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-upload-successful" id="step3-doctorb">
+                    <div class="grid-x order-test-local text-center">
+                        <div class="cell large-8 medium-12 large-offset-2">
+                            <div class="order-test-heading"><h4>@Translate.Message("L2870")</h4></div>
+
+                            <div class="card">
+                                <div class="card-section">
+                                    <div class="order-notification">
+                                        <h4>@Translate.Message("L2881")</h4>
+
+                                        <div class="show-uploaded-report">
+                                            <span class="report-name" id="uploadedLab"></span> <!-- Name of pdf file uploaded will come in this span -->
+                                            <p><a href="#" onclick="openFile();">@Translate.Message("L2125")</a></p>
+                                        </div>
+
+                                        <p>@Translate.Message("L2944")</p>
+                                    </div>
+
+                                    <div class="order-suggestion">
+                                        <p><strong>@string.Format(Translate.Message("L2876"), CommonUtility.IsIntegratedWithLMC(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.IntegrationWith)) ? "833-874-8635" : "912-349-2254")</strong>.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="button" data-open="upload-successful" id="closeReport" onclick=" $('#survey-health-numbers').foundation('close');">@Translate.Message("L2943")</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="manual-test-entry" id="manual">
+                    <form data-abide id="bloodtest-form" novalidate autocomplete="off">
+                        <div class="health-form-seperator">
+                            <h5>@Translate.Message("L2941")<span>@Translate.Message("L2942")</span></h5>
+                            <div class="units-switch text-center">
+                                <div class="switch slider-switch">
+                                    <input type="checkbox" name="units-selector-blood-test" id="units-selector-blood-test" class="switch-input" value="" />
+                                    <label id="units-selector-blood-test-lable" class="switch-paddle" for="units-selector-blood-test">
+                                        <span class="switch-inactive" aria-hidden="true">@Translate.Message("L2599")</span>
+                                        <span class="switch-active" aria-hidden="true">@Translate.Message("L2598")</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="lab-choice">
+                                <div class="grid-x grid-margin-x">
+                                    <div class="medium-3 cell">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label>
+                                                    @Translate.Message("L160")
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbers.BloodTestDate, new Dictionary<string, object> { { "id", "BloodTestDate" }, { "class", "fdatepicker" }, { "data-validator", "validateDate" }, { "data-live-validate", true } })
+                                            </div>
+                                            <small id="dateError" data-form-error-for="BloodTestDate" class="form-error">@Translate.Message("L962").</small>
+                                        </div>
+                                        <input id="followupBloodTestDate" type="hidden">
+                                    </div>
+                                    <div class="medium-12 cell">
+                                        <div class="grid-x">
+                                            <div class="cell">
+                                                <label>
+                                                    @Translate.Message("L159")
+                                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2417")"><i class="fa fa-question-circle"></i></span>
+                                                </label>
+                                            </div>
+                                            <div class="cell large-4 medium-6 small-12">
+                                                <div class="grid-x grid-margin-x">
+                                                    <div class="fast-hour radio-orange cell small-5">
+                                                        <label for="DidYouFastNo">
+                                                            @Html.RadioButtonFor(M => M.HealthNumbers.DidYouFast, 2, new Dictionary<string, object> { { "id", "DidYouFastNo" }, { "Name", "healthNumbers.DidYouFast" }, { "data-validator", "validateFasting" } })
+                                                            @Translate.Message("L3")
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="fast-hour radio-orange cell small-5">
+                                                        <label for="DidYouFastYes">
+                                                            @Html.RadioButtonFor(M => M.HealthNumbers.DidYouFast, 1, new Dictionary<string, object> { { "id", "DidYouFastYes" }, { "Name", "healthNumbers.DidYouFast" }, { "data-validator", "validateFasting" } })
+                                                            @Translate.Message("L2")
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                    </div>
+                                                    <small id="DidYouFastError" class="form-error">@Translate.Message("L480")</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid-x grid-margin-x">
+                                    <div id="divTotChol" class="medium-3 cell toggle-measurement-units">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="TotalChol">
+                                                    @Translate.Message("L161")
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbers.TotalChol, new Dictionary<string, object> { { "id", "TotalChol" }, { "data-validator", "validateTC" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateMetric(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Model.Measurements[BioLookup.Cholesterol].MeasurementUnit</span>
+                                            </div>
+                                            <small data-form-error-for="TotalChol" class="form-error" id="tcError">@Translate.Message("L961") @Model.Measurements[BioLookup.Cholesterol].Min-@Model.Measurements[BioLookup.Cholesterol].Max.</small>
+                                        </div>
+                                    </div>
+                                    <div id="divTotCholMetric" class="medium-3 cell toggle-measurement-units">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="TotalChol">
+                                                    @Translate.Message("L161")
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @*<input type="text" id="TotalCholMetric" class="input-group-field" data-validator="validateTCMetric" data-live-validate>*@
+                                                @Html.TextBoxFor(M => M.HealthNumbersInMetric.TotalChol, new Dictionary<string, object> { { "id", "TotalCholMetric" }, { "data-validator", "validateTCMetric" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateImperial(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Model.MetricMeasurements[BioLookup.Cholesterol].MeasurementUnit</span>
+                                            </div>
+                                            <small data-form-error-for="TotalCholMetric" class="form-error" id="tcMetricError">@Translate.Message("L961") @Model.MetricMeasurements[BioLookup.Cholesterol].Min-@Model.MetricMeasurements[BioLookup.Cholesterol].Max.</small>
+                                        </div>
+                                    </div>
+                                    <div id="divTrig" class="medium-3 medium-offset-1 cell toggle-measurement-units">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="Trig">
+                                                    @Translate.Message("L162")
+                                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2422")"><i class="fa fa-question-circle"></i></span>
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbers.Trig, new Dictionary<string, object> { { "id", "Trig" }, { "data-validator", "validateTrig" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateMetric(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Model.Measurements[BioLookup.Triglycerides].MeasurementUnit</span>
+                                            </div>
+                                            <small data-form-error-for="Trig" class="form-error">@Translate.Message("L960") @Model.Measurements[BioLookup.Triglycerides].Min-@Model.Measurements[BioLookup.Triglycerides].Max.</small>
+                                        </div>
+                                    </div>
+                                    <div id="divTrigMetric" class="medium-3 medium-offset-1 cell  toggle-measurement-units">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="Trig">
+                                                    @Translate.Message("L162")
+                                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2422")"><i class="fa fa-question-circle"></i></span>
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbersInMetric.Trig, new Dictionary<string, object> { { "id", "TrigMetric" }, { "data-validator", "validateTrigMetric" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateImperial(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Model.MetricMeasurements[BioLookup.Triglycerides].MeasurementUnit</span>
+                                            </div>
+                                            <small data-form-error-for="TrigMetric" class="form-error">@Translate.Message("L960") @Model.MetricMeasurements[BioLookup.Triglycerides].Min-@Model.MetricMeasurements[BioLookup.Triglycerides].Max.</small>
+                                        </div>
+                                    </div>
+                                    <div id="divHDL" class="medium-3 medium-offset-1 cell  toggle-measurement-units">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="HDL">
+                                                    @Translate.Message("L164")
+                                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2420")"><i class="fa fa-question-circle"></i></span>
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbers.HDL, new Dictionary<string, object> { { "id", "HDL" }, { "data-validator", "validateHDL" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateMetric(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Model.Measurements[BioLookup.HDL].MeasurementUnit</span>
+                                            </div>
+                                            <small data-form-error-for="HDL" class="form-error">@Translate.Message("L959") @Model.Measurements[BioLookup.HDL].Min-@Model.Measurements[BioLookup.HDL].Max.</small>
+                                        </div>
+                                    </div>
+                                    <div id="divHDLMetric" class="medium-3 medium-offset-1 cell  toggle-measurement-units">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="HDL">
+                                                    @Translate.Message("L164")
+                                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2420")"><i class="fa fa-question-circle"></i></span>
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbersInMetric.HDL, new Dictionary<string, object> { { "id", "HDLMetric" }, { "data-validator", "validateHDLMetric" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateImperial(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Model.MetricMeasurements[BioLookup.HDL].MeasurementUnit</span>
+                                            </div>
+                                            <small data-form-error-for="HDLMetric" class="form-error">@Translate.Message("L959") @Model.MetricMeasurements[BioLookup.HDL].Min-@Model.MetricMeasurements[BioLookup.HDL].Max.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid-x grid-margin-x">
+                                    <div id="divLDL" class="medium-3 cell  toggle-measurement-units">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="LDL">
+                                                    @Translate.Message("L163")
+                                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2421")"><i class="fa fa-question-circle"></i></span>
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbers.LDL, new Dictionary<string, object> { { "id", "LDL" }, { "data-validator", "validateLDL" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateMetric(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Model.Measurements[BioLookup.LDL].MeasurementUnit</span>
+                                            </div>
+                                            <small data-form-error-for="LDL" class="form-error">@Translate.Message("L958") @Model.Measurements[BioLookup.LDL].Min-@Model.Measurements[BioLookup.LDL].Max.</small>
+                                        </div>
+                                    </div>
+                                    <div id="divLDLMetric" class="medium-3 cell  toggle-measurement-units">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="LDL">
+                                                    @Translate.Message("L163")
+                                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2421")"><i class="fa fa-question-circle"></i></span>
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbersInMetric.LDL, new Dictionary<string, object> { { "id", "LDLMetric" }, { "data-validator", "validateLDLMetric" }, { "onchange", "UpdateImperial(this, event)" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Model.MetricMeasurements[BioLookup.LDL].MeasurementUnit</span>
+                                            </div>
+                                            <small data-form-error-for="LDLMetric" class="form-error">@Translate.Message("L958") @Model.MetricMeasurements[BioLookup.LDL].Min-@Model.MetricMeasurements[BioLookup.LDL].Max.</small>
+                                        </div>
+                                    </div>
+                                    <div id="divGlucose" class="medium-3 medium-offset-1 cell toggle-measurement-units">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="Glucose">
+                                                    @Translate.Message("L165")
+                                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2423")"><i class="fa fa-question-circle"></i></span>
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbers.Glucose, new Dictionary<string, object> { { "id", "Glucose" }, { "data-validator", "validateGlucose" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateMetric(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Model.Measurements[BioLookup.Glucose].MeasurementUnit</span>
+                                            </div>
+                                            <small data-form-error-for="Glucose" class="form-error">@Translate.Message("L957") @Model.Measurements[BioLookup.Glucose].Min-@Model.Measurements[BioLookup.Glucose].Max.</small>
+                                        </div>
+                                    </div>
+                                    <div id="divGlucoseMetric" class="medium-3 medium-offset-1 cell toggle-measurement-units">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="Glucose">
+                                                    @Translate.Message("L165")
+                                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2423")"><i class="fa fa-question-circle"></i></span>
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbersInMetric.Glucose, new Dictionary<string, object> { { "id", "GlucoseMetric" }, { "data-validator", "validateGlucoseMetric" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "onchange", "UpdateImperial(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">@Model.MetricMeasurements[BioLookup.Glucose].MeasurementUnit</span>
+                                            </div>
+                                            <small data-form-error-for="GlucoseMetric" class="form-error">@Translate.Message("L957") @Model.MetricMeasurements[BioLookup.Glucose].Min-@Model.MetricMeasurements[BioLookup.Glucose].Max.</small>
+                                        </div>
+                                    </div>
+                                    <div class="medium-3 medium-offset-1 cell">
+                                        <div class="grid-x collapse">
+                                            <div class="cell">
+                                                <label for="A1C">
+                                                    @Translate.Message("L166")
+                                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2419")"><i class="fa fa-question-circle"></i></span>
+                                                </label>
+                                            </div>
+                                            <div class="input-group cell">
+                                                @Html.TextBoxFor(M => M.HealthNumbers.A1C, new Dictionary<string, object> { { "id", "A1C" }, { "data-validator", "validateA1C" }, { "class", "input-group-field" }, { "onkeypress", "ValidateDecimal(this, event)" }, { "data-live-validate", true } })
+                                                <span class="input-group-label postfix">%</span>
+                                            </div>
+                                            <small data-form-error-for="A1C" class="form-error">@Translate.Message("L956") @Model.Measurements[BioLookup.A1c].Min-@Model.Measurements[BioLookup.A1c].Max.</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid-x grid-margin-x button-set">
+                                    <div class="cell text-center">
+                                        <button class="button" type="submit" id="submitBloodWork">@Translate.Message("L2939")</button>
+                                        <button class="button hollow" type="reset" id="closeBloodWork">@Translate.Message("L967")</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert-box success hide" id="resend-email-message" data-closable>
+        <div id="email-alert"></div>
+    </div>
+
+    <a class="close-button" id="closeButton" data-close>&#215;</a>
+</div>
+
+<div class="reveal small" id="confirmation-modal" data-reveal data-multiple-opened="true">
+    <p>@Translate.Message("L4274")</p>
+    <div class="flex-container align-justify align-middle new-button">
+        <button class="button" onclick="SaveHealthDetails()">@Translate.Message("L873")</button>
+        <button class="button hollow" onclick="closeWindow()">@Translate.Message("L2166")</button>
+    </div>
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/ValidateNumbers.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/HealthNumbers.js")?v=@CommonUtility.GetRandom()"></script>
+<script type="text/javascript">
+    var reportSelected = false, forceClick = false;
+    var checkChol = false;
+    var labId = '@Model.LabId';
+    var diagnosticLabId = '@Model.DiagnosticLabId';
+    var orderNo = '@Model.OrderNo';
+    var labOption = '@Model.LabSelection';
+    var IsAdmin = '@Model.IsAdmin';
+    var labOrder = '@Model.LabOrder';
+    var hasBloodvalues = false;
+    var IsHeightOrWeightChanged = false;
+    var IsIntegratedWithLMC = false;
+    var CurrentMeasurementUnit = '@Convert.ToInt16(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.Unit))';
+    var WeightConvUnit = @Model.MetricMeasurements[BioLookup.Weight].ConversionValue;
+    var WaistConvUnit = @Model.MetricMeasurements[BioLookup.Waist].ConversionValue;
+    var HeightConvUnit = @Model.MetricMeasurements[BioLookup.Height].ConversionValue;
+    var CholConvUnit = @Model.MetricMeasurements[BioLookup.Cholesterol].ConversionValue;
+    var TrigConvUnit = @Model.MetricMeasurements[BioLookup.Triglycerides].ConversionValue;
+    var HDLConvUnit = @Model.MetricMeasurements[BioLookup.HDL].ConversionValue;
+    var LDLConvUnit = @Model.MetricMeasurements[BioLookup.LDL].ConversionValue;
+    var GlucoseConvUnit = @Model.MetricMeasurements[BioLookup.Glucose].ConversionValue;
+    $("#LMCLabId").val(labId);
+
+    var hraHeight = @(Model.PreviousHealthNumbers.Height.HasValue ? Model.PreviousHealthNumbers.Height.Value : 0);
+    var hraWeight = @(Model.PreviousHealthNumbers.Weight.HasValue ? Model.PreviousHealthNumbers.Weight.Value : 0);
+    var hraWaist = @(Model.PreviousHealthNumbers.Waist.HasValue ? Model.PreviousHealthNumbers.Waist.Value : 0);
+    var hraSBP = @(Model.PreviousHealthNumbers.SBP.HasValue ? Model.PreviousHealthNumbers.SBP.Value : 0);
+    var hraDBP = @(Model.PreviousHealthNumbers.DBP.HasValue ? Model.PreviousHealthNumbers.DBP.Value : 0);
+    var hraTC = @(Model.PreviousHealthNumbers.TotalChol.HasValue ? Model.PreviousHealthNumbers.TotalChol.Value : 0);
+    var hraHDL = @(Model.PreviousHealthNumbers.HDL.HasValue ? Model.PreviousHealthNumbers.HDL.Value : 0);
+    var hraLDL = @(Model.PreviousHealthNumbers.LDL.HasValue ? Model.PreviousHealthNumbers.LDL.Value : 0);
+    var hraTrig = @(Model.PreviousHealthNumbers.Trig.HasValue ? Model.PreviousHealthNumbers.Trig.Value : 0);
+    var hraGlucose = @(Model.PreviousHealthNumbers.Glucose.HasValue ? Model.PreviousHealthNumbers.Glucose.Value : 0);
+    var hraA1C = @(Model.PreviousHealthNumbers.A1C.HasValue ? Model.PreviousHealthNumbers.A1C.Value : 0);
+    var basicDetails = false;
+
+    Foundation.Abide.defaults.validators['validateSBP'] = function ($el, required, parent) {
+        var min = @Model.Measurements[BioLookup.SBP].Min;
+	    var max = @Model.Measurements[BioLookup.SBP].Max;
+        if((parseInt($el.val()) >= min && parseInt($el.val()) <= max) || (required == false && $el.val() == ""))
+            if ($el.val() != "")
+            {
+                var response = compareBP();
+                if (response == false)
+                {
+                    $("#sbpError").text("@Translate.Message("L2134")");
+                    return false;
+                }
+                else
+                    return true;
+            }
+            else
+                return true;
+        else
+        {
+            $("#sbpError").text("@Translate.Message("L595")" + " " + min + " - " + max);
+            return false;
+        }
+    };
+    Foundation.Abide.defaults.validators['validateDBP'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.DBP].Min;
+	    var max = @Model.Measurements[BioLookup.DBP].Max;
+	    if((parseInt($el.val()) >= min && parseInt($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateDate'] = function ($el, required, parent) {
+	    if ($el.val() == ""){
+            $('#followupBloodTestDate').val("");
+            if ($.isNumeric($("#TotalChol").val()) || $.isNumeric($("#Trig").val()) || $.isNumeric($("#HDL").val()) || $.isNumeric($("#LDL").val()) || $.isNumeric($("#Glucose").val()) || $.isNumeric($("#A1C").val()))
+			    return false;
+		    else
+			    return true;
+	    }
+        else {
+            $('#followupBloodTestDate').val(toSystemDateFormat($('#BloodTestDate').val()));
+            var dateValidate = new Date($("#followupBloodTestDate").val());
+            if (isNaN(dateValidate.getDate())) {
+                return false;
+            }
+            var entered = $("#followupBloodTestDate").val();
+		    var enteredDate = new Date(entered);
+		    var currentDate = new Date();
+		    var range = new Date();
+		    range.setDate(range.getDate() - 365);
+            if (enteredDate > currentDate || enteredDate < range) {
+                $("#dateError").addClass("is-visible");
+                $("#dateError").text("@Translate.Message("L2133")");
+                return false;
+            }
+            else {
+                $("#BloodTestDate").removeClass("is-invalid-input");
+                $("#dateError").removeClass("is-visible");
+            }
+	    }
+    };
+    Foundation.Abide.defaults.validators['validateFasting'] = function ($el, required, parent) {
+        if ($("input[name='HealthNumbers.DidYouFast']:checked").length == 0) {
+            if ($.isNumeric($("#TotalChol").val()) || $.isNumeric($("#Trig").val()) || $.isNumeric($("#HDL").val()) || $.isNumeric($("#LDL").val()) || $.isNumeric($("#Glucose").val()) || $.isNumeric($("#A1C").val())) {
+                $("#DidYouFastError").addClass("is-visible");
+                return false;
+            }
+            else {
+                $("#DidYouFastError").removeClass("is-visible");
+                return true;
+            }
+        }
+        else {
+            $("#DidYouFastError").removeClass("is-visible");
+            return true;
+        }
+    };
+    Foundation.Abide.defaults.validators['validateTC'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.Cholesterol].Min;
+        var max = @Model.Measurements[BioLookup.Cholesterol].Max;
+        if ($el.is(":hidden"))
+            return true;
+	    else if((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == ""))
+		    if ($el.val() != "")
+			    return compareCholesterol(false);
+		    else
+			    return true;
+	    else
+	    {
+		    $("#tcError").text("@Translate.Message("L961")" + " " + min + " - " + max);
+		    return false;
+	    }
+    };
+    Foundation.Abide.defaults.validators['validateTCMetric'] = function ($el, required, parent) {
+        var min = @Model.MetricMeasurements[BioLookup.Cholesterol].Min;
+        var max = @Model.MetricMeasurements[BioLookup.Cholesterol].Max;
+        if ($el.is(":hidden"))
+                return true;
+        else if((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == ""))
+		    if ($el.val() != "")
+                return compareCholesterol(true);
+		    else
+			    return true;
+	    else
+	    {
+		    $("#tcMetricError").text("@Translate.Message("L961")" + " " + min + " - " + max);
+		    return false;
+	    }
+    };
+    Foundation.Abide.defaults.validators['validateTrig'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.Triglycerides].Min;
+	    var max = @Model.Measurements[BioLookup.Triglycerides].Max;
+        if ($el.is(":hidden"))
+            return true;
+        else if ((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == "")) {
+            $("#TotalChol").trigger("change");
+            return true;
+        } else
+		    return false;
+        };
+    Foundation.Abide.defaults.validators['validateTrigMetric'] = function ($el, required, parent) {
+        var min = @Model.MetricMeasurements[BioLookup.Triglycerides].Min;
+        var  max = @Model.MetricMeasurements[BioLookup.Triglycerides].Max;
+        if ($el.is(":hidden"))
+            return true;
+        else if ((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == "")) {
+            $("#TotalCholMetric").trigger("change");
+            return true;
+        } else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateHDL'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.HDL].Min;
+        var max = @Model.Measurements[BioLookup.HDL].Max;
+        if ($el.is(":hidden"))
+            return true;
+        else if ((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == "")) {
+            $("#TotalChol").trigger("change");
+            return true;
+        } else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateHDLMetric'] = function ($el, required, parent) {
+        var min = @Model.MetricMeasurements[BioLookup.HDL].Min;
+        var max = @Model.MetricMeasurements[BioLookup.HDL].Max;
+        if ($el.is(":hidden"))
+            return true;
+        else if ((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == "")) {
+            $("#TotalCholMetric").trigger("change");
+            return true;
+        } else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateLDL'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.LDL].Min;
+        var max = @Model.Measurements[BioLookup.LDL].Max;
+        if ($el.is(":hidden"))
+            return true;
+        else if ((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == "")) {
+            $("#TotalChol").trigger("change");
+            return true;
+        } else
+		    return false;
+        };
+    Foundation.Abide.defaults.validators['validateLDLMetric'] = function ($el, required, parent) {
+           var min = @Model.MetricMeasurements[BioLookup.LDL].Min;
+           var max = @Model.MetricMeasurements[BioLookup.LDL].Max;
+        if ($el.is(":hidden"))
+            return true;
+        else if ((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == "")) {
+            $("#TotalCholMetric").trigger("change");
+            return true;
+        } else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateGlucose'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.Glucose].Min;
+        var max = @Model.Measurements[BioLookup.Glucose].Max;
+        if ($el.is(":hidden") || (parseInt($el.val()) >= min && parseInt($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+        };
+         Foundation.Abide.defaults.validators['validateGlucoseMetric'] = function ($el, required, parent) {
+           var min = @Model.MetricMeasurements[BioLookup.Glucose].Min;
+           var max = @Model.MetricMeasurements[BioLookup.Glucose].Max;
+	    if($el.is(":hidden") || (parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateA1C'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.A1c].Min;
+	    var max = @Model.Measurements[BioLookup.A1c].Max;
+	    if((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateWeight'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.Weight].Min;
+        var max = @Model.Measurements[BioLookup.Weight].Max;
+        var weight = $el.val();
+        if ($el.is(":hidden") || ((weight >= min && weight <= max) || (required == false && weight == "")) && (!(weight != weight.replace(/[^0-9\.]/g, ''))))
+		    return true;
+	    else
+		    return false;
+        };
+    Foundation.Abide.defaults.validators['validateWeightMetric'] = function ($el, required, parent) {
+            var min = @Model.MetricMeasurements[BioLookup.Weight].Min;
+            var max = @Model.MetricMeasurements[BioLookup.Weight].Max;
+        var weight = $el.val();
+        if ($el.is(":hidden") || ((weight >= min && weight <= max) || (required == false && weight == "")) && (!(weight != weight.replace(/[^0-9\.]/g, ''))))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateHeight'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.Height].Min;
+        var max = @Model.Measurements[BioLookup.Height].Max;
+        var height = $el.val().replace(/\s+/g, '');
+        if ($el.is(":hidden") || (height >= min && height <= max) || (required == false && height.replace(/\s+/g, '') == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateHeightMetric'] = function ($el, required, parent) {
+        var min = @Model.MetricMeasurements[BioLookup.Height].Min;
+        var max = @Model.MetricMeasurements[BioLookup.Height].Max;
+	    var height  = $el.val();
+        if ($el.is(":hidden") || (height >= min && height <= max) || (required == false && height.replace(/\s+/g, '') == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateWaist'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.Waist].Min;
+        var max = @Model.Measurements[BioLookup.Waist].Max;
+        if ($el.is(":hidden") || (parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+        };
+        Foundation.Abide.defaults.validators['validateWaistMetric'] = function ($el, required, parent) {
+           var min = @Model.MetricMeasurements[BioLookup.Waist].Min;
+           var max = @Model.MetricMeasurements[BioLookup.Waist].Max;
+            if ($el.is(":hidden") || (parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateRMR'] = function ($el, required, parent) {
+        var min = @Model.Measurements[BioLookup.RMR].Min;
+        var max = @Model.Measurements[BioLookup.RMR].Max;
+	    if((parseInt($el.val()) >= min && parseInt($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateTHR'] = function ($el, required, parent) {
+	    var min = @Model.Measurements[BioLookup.HeartRate].Min;
+	    var max = @Model.Measurements[BioLookup.HeartRate].Max;
+	    var thrFrom = parseInt($("#THRFrom").val());
+	    var thrTo = parseInt($("#THRTo").val());
+	    if((thrFrom >= min && thrTo <= max) || ($("#THRFrom").val() == "" && $("#THRTo").val() == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateCRF'] = function ($el, required, parent) {
+        var min = @Model.Measurements[BioLookup.CRF].Min;
+        var max = @Model.Measurements[BioLookup.CRF].Max;
+	    if((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateRHR'] = function ($el, required, parent) {
+        var min = @Model.Measurements[BioLookup.RHR].Min;
+        var max = @Model.Measurements[BioLookup.RHR].Max;
+	    if((parseFloat($el.val()) >= min && parseFloat($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateCAC'] = function ($el, required, parent) {
+        var min = @Model.Measurements[BioLookup.CAC].Min;
+        var max = @Model.Measurements[BioLookup.CAC].Max;
+	    if((parseInt($el.val()) >= min && parseInt($el.val()) <= max) || (required == false && $el.val() == ""))
+		    return true;
+	    else
+		    return false;
+    };
+    Foundation.Abide.defaults.validators['validateInch'] = function ($el, required, parent) {
+        if ($el.is(":hidden") || (parseFloat($el.val()) >= 0 && parseFloat($el.val()) <= 12) || $el.val() == "")
+            return true;
+        else
+            return false;
+    };
+    Foundation.Abide.defaults.validators['validateSource'] = function ($el, required, parent) {
+        if ($("input[name='labsource']:checked").length == 0)
+            return false;
+        else
+            return true;
+    };
+
+    $(document).ready(function () {
+        $(".bp-arm-category label").on('click', function(){
+			$(".bp-arm-category").removeClass("selected");
+			if($(this).children("input[type='radio']:checked")) {
+				$(this).parent(".bp-arm-category").addClass("selected");
+			}
+        });
+
+        $(".fast-hour label").on('click', function () {
+			var isDisabled = $('#DidYouFastYes').is(':disabled');
+			if (!isDisabled)
+			{
+			  $(".fast-hour").removeClass("selected");
+			  if ($(this).children("input[type='radio']:checked")) {
+				 $(this).parent(".fast-hour").addClass("selected");
+			  }
+			}
+		});
+
+        if (CurrentMeasurementUnit == "1") {
+            $("#divHeight").removeClass('hide');
+            $("#divWeight").removeClass('hide');
+            $("#divWaist").removeClass('hide');
+            $("#divGlucose").removeClass('hide');
+            $("#divTotChol").removeClass('hide');
+            $("#divTrig").removeClass('hide');
+            $("#divHDL").removeClass('hide');
+            $("#divLDL").removeClass('hide');
+            $("#divDesiredWeight").removeClass('hide');
+            $("#divHeightMetric").addClass('hide');
+            $("#divWeightMetric").addClass('hide');
+            $("#divWaistMetric").addClass('hide');
+            $("#divGlucoseMetric").addClass('hide');
+            $("#divTotCholMetric").addClass('hide');
+            $("#divTrigMetric").addClass('hide');
+            $("#divHDLMetric").addClass('hide');
+            $("#divLDLMetric").addClass('hide');
+            $("#divDesiredWeightMetric").addClass('hide');
+        }
+        else {
+            $("#divHeight").addClass('hide');
+            $("#divWeight").addClass('hide');
+            $("#divWaist").addClass('hide');
+            $("#divGlucose").addClass('hide');
+            $("#divTotChol").addClass('hide');
+            $("#divTrig").addClass('hide');
+            $("#divHDL").addClass('hide');
+            $("#divLDL").addClass('hide');
+            $("#divDesiredWeight").addClass('hide');
+            $("#divHeightMetric").removeClass('hide');
+            $("#divWeightMetric").removeClass('hide');
+            $("#divWaistMetric").removeClass('hide');
+            $("#divGlucoseMetric").removeClass('hide');
+            $("#divTotCholMetric").removeClass('hide');
+            $("#divTrigMetric").removeClass('hide');
+            $("#divHDLMetric").removeClass('hide');
+            $("#divLDLMetric").removeClass('hide');
+            $("#divDesiredWeightMetric").removeClass('hide');
+            $("#units-selector-blood-test-lable").trigger("click");
+            $("#units-selector-lable").trigger("click");
+        }
+
+        @if(Model.HealthNumbers != null)
+        {
+            if (Model.HealthNumbers.BPArm.HasValue)
+            {
+                if (Model.HealthNumbers.BPArm == 1)
+                {
+                    @: $('.bp-arm-left').trigger("click");
+                }
+                else if (Model.HealthNumbers.BPArm == 2)
+                {
+                    @: $('.bp-arm-right').trigger("click");
+                }
+                else
+                {
+                    @: $('.bp-arm-unknown').trigger("click");
+                }
+            }
+            if (Model.HealthNumbers.DidYouFast.HasValue)
+            {
+                if(Model.HealthNumbers.DidYouFast == 1)
+                {
+                    @: $('#DidYouFastYes').parents(".fast-hour").addClass("selected");
+                }
+                else if(Model.HealthNumbers.DidYouFast == 2)
+                {
+                    @: $('#DidYouFastNo').parents(".fast-hour").addClass("selected");
+
+                }
+            }
+        }
+        @if(Model.readOnlyLab)
+        {
+            @: $("#bloodtest-form :input").prop("disabled", true);
+            @: $("#units-selector-blood-test").attr('disabled', false);
+            @: $('#submitBloodWork').attr('disabled', false);
+            @: $('#closeBloodWork').attr('disabled', false);
+            @: $('#closeButton').removeClass('hide');
+        }
+        @if (Model.readOnly)
+        {
+            @: $("#health-number-form :input").prop("disabled", true);
+            @: $('#closeNumbers').attr('disabled', false);
+            @: $("#bloodtest-form :input").prop("disabled", true);
+            @: $('#closeBloodWork').attr('disabled', false);
+            @: $('#closeButton').removeClass('hide');
+        }
+        @if (!string.IsNullOrEmpty(Model.BloodTestDate))
+        {
+            @: $('#BloodTestDate').val(toLocalDateFormat('@Model.BloodTestDate'));
+        }
+        if ($('#BloodTestDate').val() != "") {
+            $('#followupBloodTestDate').val(toSystemDateFormat($('#BloodTestDate').val()));
+        }
+        ValidateInchs();
+        $('#closeNumbers').on('click', function () {
+            $('#survey-health-numbers').foundation('close');
+            RealignPage();
+        });
+
+        $('#closeBloodWork').on('click', function () {
+            $('#survey-health-numbers').foundation('close');
+            RealignPage();
+        });
+
+        $('#closeReport').on('click', function () {
+            $('#survey-health-numbers').foundation('close');
+        });
+
+        $("#LMCLabs").on('change', function () {
+            var selectedLab = $(this).children(":selected").attr("id");
+            var labId = $("#LMCLabId").val();
+            if (selectedLab > 0)
+                updateDiagnosticLabId(labId, 2, selectedLab);
+        });
+
+        @if(CommonUtility.IsIntegratedWithLMC(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.IntegrationWith)))
+        {
+            @: IsIntegratedWithLMC = true;
+        }
+
+        @if(Model.HealthNumbers != null && (HRAUtility.hasCompletedHealthNumbers(null, null, Model.HealthNumbers) || (CommonUtility.IsIntegratedWithLMC(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.IntegrationWith)) && Model.HealthNumbers.BloodTestDate.HasValue)))
+        {
+            @: hasBloodvalues = true;
+        }
+
+        @if (Model.IncompleteFollowUp)
+        {
+            @: $('#reportlink').attr("disabled", "disabled");
+            @: $('#bloodwork').addClass("no-click");
+            @: $('#reportlink').removeAttr("href");
+        }
+
+
+        if ($("#HeightFt").val() != "" || $("#HeightInch").val() != "") {
+            onImperialHeightChange();
+        }
+        if ($("#HeightCM").val() != "") {
+            onMetricHeightChange();
+        }
+        if ($("#Weight").val() != "") {
+            $("#WeightMetric").val(($("#Weight").val() / WeightConvUnit).toFixed(1));
+        }
+        else if ($("#WeightMetric").val() != "") {
+            $("#Weight").val(($("#WeightMetric").val() * WeightConvUnit).toFixed(1));
+        }
+        if ($("#Waist").val() != "") {
+            $("#WaistMetric").val(($("#Waist").val() * WaistConvUnit).toFixed(1));
+        }
+        else if ($("#WaistMetric").val() != "") {
+            $("#Waist").val(($("#WaistMetric").val() / WaistConvUnit).toFixed(1));
+        }
+
+        $("#confirmation-modal").foundation();
+        $('#confirmation-modal').foundation('close');
+        $("#health-number-form").foundation();
+        $('#health-number-form')
+        .on("forminvalid.zf.abide", function(ev,frm) {
+            var invalid_fields = $(this).find('[data-invalid]');
+
+            if (invalid_fields) {
+                var scrollTo = $('#' + invalid_fields[0].id).parent('div').position().top;
+                $('#health-number-form').parents('.reveal-overlay').animate({
+                    scrollTop: scrollTo
+                }, 400);
+            }
+        })
+        .on('formvalid.zf.abide', function (ev, frm) {
+            $("#lab-choice :input").attr("disabled", false);
+            basicDetails = true;
+            var isValid = ValidateDataWithHRA();
+            if (!isValid)
+                $('#confirmation-modal').foundation('open');
+            else {
+                SaveBasicDetails();
+            }
+        })
+        // to prevent form from submitting upon successful validation
+        .on("submit", function(ev) {
+            ev.preventDefault();
+    })
+
+    $('#bloodtest-form').foundation();
+    $('#bloodtest-form')
+        .on("forminvalid.zf.abide", function(ev,frm) {
+            if (invalid_fields) {
+                var invalid_fields = $(this).find('[data-invalid]');
+                var scrollTo = $('#' + invalid_fields[0].id).offset().top;
+                $('#bloodtest-form').parents('.reveal-overlay').animate({
+                    scrollTop: scrollTo
+                }, 400);
+            }
+        })
+        .on('formvalid.zf.abide', function (ev, frm) {
+            $("#lab-choice :input").attr("disabled", false);
+            basicDetails = false;
+            var isValid = ValidateBloodDataWithHRA();
+            if (!isValid) {
+                $('#confirmation-modal').foundation('open');
+            }
+            else {
+                SaveBloodDetails();
+            }
+        })
+        // to prevent form from submitting upon successful validation
+        .on("submit", function(ev) {
+            ev.preventDefault();
+    })
+
+
+    $('.fdatepicker').fdatepicker({
+            format: "@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.DateFormat).ToLower()",
+            onRender: function (date) {
+                var d = new Date();
+                d.setDate(d.getDate() - 365);
+                return date.valueOf() > Date.now() || date.valueOf() < d.valueOf() ? 'disabled' : '';
+            }
+        });
+        @if (Model.HealthNumbers!=null && Model.HealthNumbers.BloodTestDate.HasValue)
+        {
+            @: $('#BloodTestDate').val(toLocalDateFormat('@Model.HealthNumbers.BloodTestDate'));
+        }
+        $('#step2').hide();
+        $('#step3-doctora').hide();
+        $('#step3-doctorb').hide();
+        $('#step3-labcorp').hide();
+        $('#step3-diagnosticlabchoice').hide();
+        $('#manual').hide();
+    });
+
+    function updateDiagnosticLabId(labId, selection, selectedLab) {
+        $.ajax({
+            url: "@Url.Action("UpdateLabSelection", "Lab")",
+            data: { id: labId, selection: selection, labId: selectedLab },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data.LabOrder) {
+                    diagnosticLabId = selectedLab;
+                    $("#reportlink").trigger("click");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function upload_files() {
+        $("#lab-corp-btn").attr("disabled", true);
+        var formData = new FormData();
+        var file = document.getElementById("imageUpload").files[0];
+        formData.append("FileUpload", file);
+        formData.append("id",labId);
+        formData.append("action", 'lab');
+        var extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+
+        if (!(extension && /^(jpg|png|jpeg|gif|pdf)$/.test(extension.toLowerCase()))) {
+            alert("@Translate.Message("L2221")");
+            return;
+        }
+        if (parseFloat(file.size / 1024).toFixed(2) > 4096) {
+            alert("@Translate.Message("L3142")");
+            return;
+        }
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("UploadFile", "Common")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.data != "Failed") {
+                labOrder = response.data;
+                forceClick = true;
+                $("#reportlink").trigger("click");
+            }
+            },
+            error: function (error) {
+                 alert("@Translate.Message("L2221")");
+                 $("#lab-corp-btn").attr("disabled", false);
+            }
+        });
+    }
+
+    function activateTab(id) {
+        if (id == 1) {
+            $("#test-report, #bloodwork").removeClass("is-active")
+            $("#test-basic-details, #basic").addClass("is-active")
+            $('#closeButton').removeClass('hide');
+        } else if ($("#reportlink").is('[disabled=disabled]') != true){
+            $("#test-basic-details, #basic").removeClass("is-active")
+            $("#test-report, #bloodwork").addClass("is-active")
+        }
+    }
+
+    $("input#units-selector").on('click', function () {
+        $(".toggle-measurement-units").toggleClass("hide");
+        $("#units-selector-blood-test-lable").trigger("click");
+    });
+
+    $("input#units-selector-blood-test").on('click', function () {
+        $(".toggle-measurement-units").toggleClass("hide");
+        $("#units-selector-lable").trigger("click");
+    });
+
+    function compareCholesterol(isMetric) {
+	    var unit = isMetric ? "Metric" : "";
+        var trigLimit = @Model.Measurements[BioLookup.Triglycerides].Limit;
+        if (parseFloat($("#HDL" + unit).val())>0 || parseFloat($("#LDL" + unit).val())>0)
+        {
+            if((parseFloat($("#HDL" + unit).val()) + parseFloat($("#LDL" + unit).val()) > parseFloat($("#TotalChol" + unit).val()))){
+                if ('@CommonUtility.HasAdminRole(User.RoleCode())' == 'True' && '@CommonUtility.IsParticipantView(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.IsParticipantView)))' == 'False') {
+                    checkChol = true;
+                    return true;
+                }
+                $("#tc" + unit + "Error").text("@Translate.Message("L2131")");
+                return false;
+            }
+            if ((parseFloat($("#HDL" + unit).val()) >= parseFloat($("#TotalChol" + unit).val())) ||
+                (parseFloat($("#LDL" + unit).val()) >= parseFloat($("#TotalChol" + unit).val())))
+            {
+                $("#tc"  + unit + "Error").text("@Translate.Message("L2131")");
+				return false;
+            }
+            else
+                return true;
+        }
+        else if(parseFloat($("#Trig" + unit).val()) <= trigLimit && (parseFloat($("#Trig" + unit).val())/5 >= parseFloat($("#TotalChol" + unit).val())))
+        {
+            $("#tc" + unit+ "Error").text("@Translate.Message("L2132")");
+            return false;
+        }
+        else
+            return true;
+    }
+
+    function BloodTestReport() {
+        $('#step2').hide();
+        $('#step3-doctora').hide();
+        $('#step3-doctorb').hide();
+        $('#step3-labcorp').hide();
+        $('#step3-diagnosticlabchoice').hide();
+        $('#manual').hide();
+        if (!hasBloodvalues) {
+            if ('@Model.LabIntegration' == 'False') {
+                $("#manual").show();
+            }
+            else if ('@Model.LabIntegration' == 'True' && '@Model.LabCompleteDate.HasValue' == 'False') {
+                if (labOption == '1') {
+                    if (labOrder == '')
+                        $('#step3-doctora').show();
+                    else {
+                        document.getElementById('uploadedLab').innerHTML = labOrder.substring(0, 10);
+                        $('#step3-doctorb').show();
+                    }
+                }
+                else if (labOption == '2') {
+                    if (IsIntegratedWithLMC) {
+                        $('#step3-diagnosticlabchoice').show();
+                        if (diagnosticLabId != '') {
+                            $('.diagnostic-selection-done').removeClass('hide');
+                            $('.diagnostic-selection').addClass('hide');
+                        }
+                        else {
+                            $('.diagnostic-selection').removeClass('hide');
+                            $('.diagnostic-selection-done').add('hide');
+                        }
+                    }
+                    else {
+                        $('#step3-labcorp').show();
+                        if (orderNo)
+                            document.getElementById('orderId').innerHTML = orderNo;
+                    }
+                }
+                else {
+                    $("#step2").show();
+                    $('#closeButton').removeClass('hide');
+                }
+            }
+        }
+        else {
+            $("#manual").show();
+        }
+    }
+
+    $("#basiclink").on('click', function () {
+        $('#closeButton').removeClass('hide');
+        if (reportSelected) {
+            $('#reportlink').removeAttr("disabled");
+            $('#bloodwork').removeClass("no-click");
+        }
+    });
+
+    $("#reportlink").on('click', function () {
+            $("#HeightCM").trigger("change");
+            $("#HeightFt").trigger("change");
+            $("#Weight").trigger("change");
+        if ($("#reportlink").is('[disabled=disabled]') != true || forceClick) {
+            IsHeightOrWeightChanged = false;
+            $('#manual').hide();
+            $('#closeButton').addClass('hide');
+            BloodTestReport();
+            reportSelected = true;
+            forceClick = false;
+        }
+    });
+
+    $("#submitBloodWork").on('click', function () {
+            if ($('#BloodTestDate').val() != "") {
+                if ($.isNumeric($("#TotalChol").val()) || $.isNumeric($("#Trig").val()) || $.isNumeric($("#HDL").val()) || $.isNumeric($("#LDL").val()) || $.isNumeric($("#Glucose").val()) || $.isNumeric($("#A1C").val())) {
+                    $("#BloodTestDate").removeClass("is-invalid-input");
+                    $("#dateError").removeClass("is-visible");
+                    return true;
+                }
+                else {
+                    $("#BloodTestDate").addClass("is-invalid-input");
+                    $("#dateError").addClass("is-visible");
+                    $("#dateError").text("@Translate.Message("L2671")");
+                    return false;
+                }
+            }
+    });
+
+    function AddLabChoice(option) {
+        $("#doctorsbutton").attr("disabled", true); //disabling buttons to avoid duplicate entry
+        $("#labcorpbutton").attr("disabled", true); //disabling buttons to avoid duplicate entry
+        $.ajax({
+            url: "@Url.Action("AddLabSelection", "Lab")",
+            type: 'POST',
+            dataType: "json",
+            data: {
+                labSource: option
+            },
+            success: function (data) {
+                if (!data.LabOrder.status) {
+                    $('#lab-order-error').removeClass('hide');
+                    if (data.LabOrder.duplicate) {
+                        $("#labError").html('@Translate.Message("L3690")');
+                        setTimeout(function () {
+                            $('#lab-order-error').addClass('hide');
+                        }, 5000);
+                        labId = data.LabOrder.labId;
+                        $("#LMCLabId").val(labId);
+                        orderNo = data.LabOrder.OrderId;
+                       labOption = data.LabOrder.labSelection;
+                        forceClick = true;
+                        $("#reportlink").trigger("click");
+                    }
+                    else {
+                        $("#labError").html('@Translate.Message("L2731")');
+                        setTimeout(function () {
+                            $('#lab-order-error').addClass('hide');
+                        }, 5000);
+                    }
+                }
+                else if (data.LabOrder.labId != 0 && data.LabOrder.OrderId == null && option == 2) {
+                    labClose = false;
+                    $('#step2').hide();
+                    $("#LMCLabId").val(data.LabOrder.labId);
+                    $('#step3-diagnosticlabchoice').show();
+                }
+                else {
+                    labId = data.LabOrder.labId;
+                    $("#LMCLabId").val(data.LabOrder.labId);
+                    orderNo = data.LabOrder.OrderId;
+                    labOption = option;
+                    forceClick = true;
+                    $("#reportlink").trigger("click");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function ResendEmail() {
+        $.ajax({
+            url: "@Url.Action("ResendLabRequisitionEmail", "Lab")",
+            data: { Id: labId, labOrderNo: orderNo },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                $('#resend-email-message').removeClass('hide');
+                $('#email-alert').html("@Translate.Message("L2950")");
+                setTimeout(function () {
+                    $('#resend-email-message').addClass('hide');
+                }, 1000);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    $("#useExisting").on('click', function () {
+        $('#step1').hide();
+        $('#manual').show();
+        $('#closeButton').addClass('hide');
+        $("#bloodtest-form :input").prop("disabled", true);
+        $('#submitBloodWork').attr('disabled', false);
+        $('#closeBloodWork').attr('disabled', false);
+    });
+
+    function removeAttachment(id, fileName) {
+        $.ajax({
+            url: "@Url.Action("RemovePicture", "Account")",
+            data: { id: id, picture: fileName, source: "Lab"},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                labOrder = '';
+                forceClick = true;
+                $("#reportlink").trigger("click");
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function OpenOrderConfFile() {
+        var link = '@Url.Action("PullLabOrderConfirmation", "Lab", new { id = "Id" })';
+        window.open(link.replace("Id", orderNo), '_blank');
+    }
+
+    function openFile() {
+        window.open('/Intervent-Responsive/Lab/'+labOrder, '_blank');
+    }
+
+    function SetEditFlag() {
+        IsHeightOrWeightChanged = true;
+    }
+
+    function SaveBasicDetails() {
+        if (IsHeightOrWeightChanged) {
+            if (!IsBMIOutOfRange() || confirm("@Translate.Message("L2009")")) {
+                SaveHealthNumbers();
+            }
+            IsHeightOrWeightChanged = false;
+        }
+        else {
+            SaveHealthNumbers();
+        }
+    }
+
+    function SaveHealthNumbers()
+    {
+        $.ajax({
+            url: "@Url.Action("HealthNumbers", "FollowUp")",
+            type: 'POST',
+            dataType: "json",
+            data: $("#health-number-form").serialize() + '&bloodwork=false',
+            success: function (data) {
+                if (data != null && data.PageSeqDone != null) {
+                    $('#reportlink').attr("href", "#test-report");
+                    $('#reportlink').removeAttr("disabled");
+                    $('#bloodwork').removeClass("no-click");
+                    $("#reportlink").trigger("click");
+                    forceClick = true;
+                    if (pages.indexOf("YN") < 0)
+                        pages = pages + ".@PageName.YN.ToString().";
+                    UpdateFollowUpStatus();
+                }
+            }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function closeWindow() {
+        $('#confirmation-modal').foundation('close');
+    }
+
+    function SaveHealthDetails() {
+        closeWindow();
+        if (basicDetails)
+            SaveBasicDetails();
+        else
+            SaveBloodDetails();
+    }
+
+    function SaveBloodDetails() {
+        if(checkChol && !confirm("@Translate.Message("L3157")")){
+            return;
+        }
+        $('#BloodTestDate').val($('#followupBloodTestDate').val());
+        $.ajax({
+            url: "@Url.Action("HealthNumbers", "FollowUp")",
+            type: 'POST',
+            dataType: "json",
+            data: $("#bloodtest-form").serialize() + '&bloodwork=true',
+            success: function (data) {
+                if (data != null && data.PageSeqDone != null) {
+                    $('#survey-health-numbers').foundation('close');
+                }
+                else {
+                    $('#BloodTestDate').val(toLocalDateFormat($('#followupBloodTestDate').val()));
+                    alert("@Html.Raw(Translate.Message("L3832"))");
+            }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+        });
+    }
+
+    function ValidateDataWithHRA() {
+        var heightInch = 0;
+        if (!isNaN(parseFloat($("#HeightInch").val())))
+            heightInch = parseFloat($("#HeightInch").val());
+        var heightFt = parseFloat($("#HeightFt").val());
+        var height = (heightFt * 12) + heightInch;
+        var weight = parseFloat($("#Weight").val());
+        var waist = parseFloat($("#Waist").val());
+        var sbp = parseFloat($("#SBP").val());
+        var dbp = parseFloat($("#DBP").val());
+        if (hraHeight != 0 && height != hraHeight.toFixed(1)) return false;
+        if (CompareHARandFollowUp(weight, hraWeight)) return false;
+        if (CompareHARandFollowUp(waist, hraWaist)) return false;
+        if (CompareHARandFollowUp(sbp, hraSBP)) return false;
+        if (CompareHARandFollowUp(dbp, hraDBP)) return false;
+
+        return true;
+    }
+
+    function ValidateBloodDataWithHRA() {
+        var totalChol = parseFloat($("#TotalChol").val());
+        var hdl = parseFloat($("#HDL").val());
+        var ldl = parseFloat($("#LDL").val());
+        var a1C = parseFloat($("#A1C").val());
+        var trig = parseFloat($("#Trig").val());
+        var glucose = parseFloat($("#Glucose").val());
+
+        if (CompareHARandFollowUp(totalChol, hraTC)) return false;
+        if (CompareHARandFollowUp(hdl, hraHDL)) return false;
+        if (CompareHARandFollowUp(ldl, hraLDL)) return false;
+        if (CompareHARandFollowUp(a1C, hraA1C)) return false;
+        if (CompareHARandFollowUp(trig, hraTrig)) return false;
+        if (CompareHARandFollowUp(glucose, hraGlucose)) return false;
+
+        return true;
+    }
+
+    function CompareHARandFollowUp(followUp, hra) {
+        return hra != 0 && followUp != 0 && hra != followUp && FindDifferenceByPercentage(hra, followUp) > 20;
+    }
+
+    function FindDifferenceByPercentage(h, f) {
+        return 100 * Math.abs(((h - f) / h));
+    }
+
+</script>
+
+<button class="close-button" data-close aria-label="Close modal" type="button" onclick="removeForm('health-number-form')">
+    <span aria-hidden="true">&times;</span>
+</button>

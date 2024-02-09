@@ -1,0 +1,168 @@
+﻿<!--USER VIEW-->
+@model Intervent.Web.DTO.WeightLossJournalDto
+@using InterventWebApp
+<h2 class="text-center">@Translate.Message("L555") </h2>
+<form id="frmWeightLoss" data-abide novalidate>
+    @Html.HiddenFor(model => model.Id)
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-6">
+            <label>@Translate.Message("L554")</label>
+            @Html.TextBoxFor(model => model.Date, new Dictionary<string, object> { { "class", "fdatepicker form-control" }, { "required", "required" } })
+            <small class="form-error">@Translate.Message("L480")</small>
+            <input id="hiddenDate" type="hidden">
+        </div>
+        <div class="cell medium-6">
+            <label>@Translate.Message("L553")</label>
+            @Html.EditorFor(model => model.DayNo, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+            <small class="form-error">@Translate.Message("L480")</small>
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-6">
+            <label>@Model.WeightText</label>
+            @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+            <small class="form-error">@Translate.Message("L480")</small>
+        </div>
+        <div class="cell medium-6">
+            <label>@Model.WaistText</label>
+            @Html.TextBoxFor(model => model.Waist, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-12">
+            <div class="grid-x collapse">
+                <div class="cell medium-12">
+                    <label>@Translate.Message("L551")</label>
+                    @Html.TextAreaFor(model => model.Food, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell medium-12">
+                    <label>@Translate.Message("L550")</label>
+                    @Html.TextAreaFor(model => model.NotAuthorizedFood, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell medium-12">
+                    <label>
+                        @Html.CheckBoxFor(model => model.HadWater)
+                        @Translate.Message("L549")
+                    </label>
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell medium-12">
+                    <label>
+                        @Html.CheckBoxFor(model => model.CutSodium)
+                        @Translate.Message("L548")
+                    </label>
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell medium-12">
+                    <label>
+                        @Html.CheckBoxFor(model => model.SideEffects)
+                        @Translate.Message("L547")
+                    </label>
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell medium-12">
+                    <label>@Translate.Message("L541")</label>
+                    @Html.RadioButtonFor(model => model.MotivationScale, 5) @Translate.Message("L542")<br />
+                    @Html.RadioButtonFor(model => model.MotivationScale, 4) @Translate.Message("L543")<br />
+                    @Html.RadioButtonFor(model => model.MotivationScale, 3) @Translate.Message("L544")<br />
+                    @Html.RadioButtonFor(model => model.MotivationScale, 2) @Translate.Message("L545")<br />
+                    @Html.RadioButtonFor(model => model.MotivationScale, 1) @Translate.Message("L546")
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell medium-12">
+                    <label>@Translate.Message("L540")</label>
+                    @Html.EditorFor(model => model.Exercise, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell medium-12">
+                    <label>@Translate.Message("L539")</label>
+                    @Html.TextAreaFor(model => model.Activity, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell medium-12">
+                    <label>@Translate.Message("L538")</label>
+                    @Html.TextAreaFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+            <div class="grid-x collapse">
+                <div class="cell">
+                    <button type="submit" id="edit-weightloss-button" class="button">@Translate.Message("L968")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<a class="close-button" data-close>&#215;</a>
+
+<script>
+    var formsubmit = true;
+    $("#Date").on("change", function () {
+        $('#hiddenDate').val(toSystemDateFormat(this.value))
+    });
+    $(document).ready(function () {
+        $('.fdatepicker').fdatepicker({
+            format: "@ViewData["DateFormat"],
+            disableDblClickSelection: true,
+            pickTime: false,
+            endDate: new Date()
+        });
+        if (@Model.Id > 0) {
+            var date = new Date('@Model.Date.ToShortDateString()');
+            var dateStr = toLocalDateFormat(date);
+            $("#Date").val(dateStr);
+            $("#Date").trigger("change");
+        }
+        else
+        {
+            $("#Date").val('');
+            $("#DayNo").val('');
+        }
+    });
+    $("#frmWeightLoss").foundation();
+    $('#frmWeightLoss').on('forminvalid.zf.abide', function () {
+        var invalid_fields = $(this).find('[data-invalid]');
+        if (invalid_fields) {
+            var scrollTo = $('#' + invalid_fields[0].id).offset().top;
+            $('html, body').animate({
+                scrollTop: scrollTo
+            }, 400);
+        }
+    }).on('formvalid.zf.abide', function () {
+        if (formsubmit == true) {
+            $("#Date").val($('#hiddenDate').val());
+            $.ajax({
+                url: "@Url.Action("CreateOrEdit", "Journal")",
+                data: $('#frmWeightLoss').serialize(),
+                type: 'POST',
+                dataType: "json",
+                success: function () {
+                        startIndex = 0;
+                        pageSize = 15;
+                        totalRecords = 0;
+                        currentPage = 0;
+                        totalPages = 0;
+                    ListWeightLossDiary();
+                    $('#add-weight-loss').foundation('close');
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+            formsubmit = false;
+        }
+        })
+        // to prevent form from submitting upon successful validation
+        .on("submit", function (ev) {
+            ev.preventDefault();
+
+        });
+</script>

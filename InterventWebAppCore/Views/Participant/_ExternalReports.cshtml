@@ -1,0 +1,39 @@
+﻿
+@model InterventWebApp.ExternalReportsModel
+@using InterventWebApp
+
+@using InterventWebApp
+<div class="dashboard-content participant-log cell">
+    <div class="control-bar">
+        <div class="grid-x grid-margin-x">
+            <div class="small-12 medium-6 cell">
+                <h2>External Reports</h2>
+            </div>
+        </div>
+    </div>
+    <div class="actions send-report-wrapper">
+        <div class="content-table noscroll-table-list">
+            <table id="search-results" class="table basic-table2">
+                <thead>
+                    <tr><th style="width: 75%;"><span>Name</span></th><th style="text-align: center;"><span>View Attachment</span></th></tr>
+                </thead>
+                @foreach (var report in Model.reportsList)
+                {
+                    <tr>
+                        <td>@report.Text</td>
+                        <td style="text-align: center;"><a onclick="showReport(@report.Value)"><i class='fa fa-leanpub'></i></a></td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+    <a class="close-button" id="close-report" data-close>&#215;</a>
+</div>
+
+<script type="text/javascript">
+    function showReport(reportId) {
+        var link = '@Url.Action("PullExternalReport", "Participant",new { reportId = -1 })'
+        link = link.replace("-1", reportId);
+        window.open(link, '_blank');
+    }
+</script>

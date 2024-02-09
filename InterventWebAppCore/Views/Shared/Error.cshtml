@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "Error";
+    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+<section class="main grid-container no-bgimg">
+    <div class="grid-x error-msg-container">
+        <div class="cell flex-container align-middle align-center">
+            <div class="error-message">
+                <span>ERROR CODE: 500</span>    
+                <h2>Oops!!</h2>
+                <p>
+                    The server encountered an internal error.
+                </p>
+                <a href="@(TempData.Peek("OrgURL")!= null ? TempData.Peek("OrgURL") : "https://www.myintervent.com/")" class="button">Back to homepage</a>
+            </div>
+            <div>
+                <img src="~/Images/rocket-image.png" alt="" />
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,96 @@
+﻿@using InterventWebApp
+
+<div class="intro-header @ViewData["headerStyle"]">
+    <div class="contain-to-grid">
+        <div class="compass-menu">
+            <div class="menu-top">
+                <div class="menu-icon"><i class="fa fa-bars"></i></div>
+                <div class="menu-logo name logo"><a href="~/Home/Janssen"><h1>@Translate.Message("L424")</h1><span>@Translate.Message("L425")</span></a></div>
+                <div class="menu-login">
+                    <a href="" onclick="$('#login-modal').foundation('open'); return false;">
+                        <i class="fa fa-user hide-for-small-only"></i> @Translate.Message("L426")
+                    </a>
+                </div>
+            </div>
+            <div class="menu-content">
+                <div class="menu-header">
+                    <div class="menu-close"><i class="fa fa-times"></i></div>
+                    <div class="menu-logo name logo"><h1>@Translate.Message("L424")</h1><span>@Translate.Message("L425")</span></div>
+                    <div class="menu-login">
+                        <a href="" onclick="$('#login-modal').foundation('open'); return false;">
+                            <i class="fa fa-user hide-for-small-only"></i> @Translate.Message("L426")
+                        </a>
+                    </div>
+                </div>
+                <ul>
+                    <li><a href="~/Home/Janssen">@Translate.Message("L1347")</a></li>
+                    <li><a href="~/Home/JanssenInfo#janssenINTERVENT">Janssen & INTERVENT</a></li>
+                    <li><a href="~/Home/JanssenInfo#healthassessment">@Translate.Message("L535")</a></li>
+                    <li><a href="~/Home/JanssenInfo#coachedprogram">@Translate.Message("L1349")</a></li>
+                    <li><a href="~/Home/JanssenInfo#cardiosmart">@Translate.Message("L2033")</a></li>
+                    <li><a href="~/Home/JanssenInfo#successstories">@Translate.Message("L1351")</a></li>
+                </ul>
+            </div>
+            <div class="menu-overlay hide"></div>
+        </div>
+        <div class="chi-banner">
+            <a><img src="~/Images/janssen_symbol.png" />Janssen</a>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_Login", new ViewDataDictionary(ViewData) { { "ShowSignUp", "True" } })
+
+@Html.Partial("_ForgotPassword")
+
+@Html.Partial("_EmailConfirmation")
+
+@Html.Partial("_ResendConfirmEmail")
+
+<!--Signup Modal-->
+
+
+<script type="text/javascript">
+    $(".intro-header").sticky({ topSpacing: 0 });
+    //menu v2
+    function showMenu() {
+        $('.menu-content').addClass('active');
+        $('.menu-overlay').removeClass('hide');
+    }
+
+    function hideMenu() {
+        $('.menu-content').removeClass('active');
+        $('.menu-overlay').addClass('hide');
+    }
+
+    $('.menu-icon').on('click', function () {
+        showMenu();
+    });
+
+    $('.menu-close').on('click', function () {
+        hideMenu();
+    });
+
+    $('.menu-overlay').on('click', function () {
+        hideMenu();
+    });
+
+    $('.menu-content li a').on('click', function () {
+        hideMenu();
+    });
+
+    function changeLanguage(language) {
+        $.ajax({
+            url: "@Url.Action("ChangeLanguage", "Home")",
+            dataType: "json",
+            data: { language: language },
+            success: function (data) {
+                window.location.reload();
+            }
+        });
+    }
+
+    $(document).on('click', '#language-dropdown li a', function () {
+        changeLanguage($(this).attr('data-lang'));
+    });
+</script>

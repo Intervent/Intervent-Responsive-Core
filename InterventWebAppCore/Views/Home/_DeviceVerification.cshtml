@@ -1,0 +1,275 @@
+﻿<div id="device-security-verify-container" class="device-verfiy-form hide">
+    <h3>Security Verfication</h3>
+    <p>We don't recongnize your device. To verify your identity we will send you a security code.</p>
+
+    <div class="device-verify-container" id="opt-device-verification">
+        <label class="radio-main-label">Where should we send your security code?</label>
+        <div class="">
+            <div id="device-phoneno" class="tick-buttons radio-btn hide">
+                <label for="verify-number">
+                    <input type="radio" id="verify-number" name="verify-device" />
+                    Phone no: <span id="verify-device-phone"></span>
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+            <div class="tick-buttons radio-btn">
+                <label for="verify-email">
+                    <input type="radio" id="verify-email" name="verify-device" />
+                    Email: <span id="verify-device-email"></span>
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+        </div>
+        <span id="alert-error-code" class="form-error"><i class="fa fa-exclamation-circle"></i></span>
+
+		<div class="grid-x grid-margin-x button-set align-middle">
+			<div class="cell medium-6 medium-order-1 medium-text-right">
+				<button class="button" id="send-code-btn">Send</button>
+			</div>
+			<div class="cell medium-6 medium-order-2 medium-text-left">
+				<button id="cancel-device-check" class="button hollow">Cancel</button>
+			</div>
+		</div>
+    </div>
+
+    <div class="device-verify-container hide" id="email-device-verification">
+        <label id="code-sent-label" class="radio-main-label"></label>
+        <div class="flex-container align-middle align-justify">
+            <input id="vcode-1" type="text" name="name" placeholder="_" autocomplete="off" maxlength="1" class="v-code" />
+            <input id="vcode-2" type="text" name="name" placeholder="_" autocomplete="off" maxlength="1" class="v-code" />
+            <input id="vcode-3" type="text" name="name" placeholder="_" autocomplete="off" maxlength="1" class="v-code" />
+            <input id="vcode-4" type="text" name="name" placeholder="_" autocomplete="off" maxlength="1" class="v-code" />
+            <input id="vcode-5" type="text" name="name" placeholder="_" autocomplete="off" maxlength="1" class="v-code" />
+            <input id="vcode-6" type="text" name="name" placeholder="_" autocomplete="off" maxlength="1" class="v-code" />
+        </div>
+        <div class="flex-container align-middle align-justify">
+            <a href="#" id="resend-email-code" class="hide">Resend code</a>
+            <span id="alert-error-verify" class="form-error"><i class="fa fa-exclamation-circle"></i></span>
+            <span id="count-down-timer" class="code-attempt-timer">
+                <span class="security-timer"></span>
+            </span>
+        </div>
+
+		<div class="grid-x grid-margin-x button-set align-middle">
+			<div class="cell medium-6 medium-order-1 medium-text-right">
+				<button id="validate-code-btn" class="button" disabled>Submit</button>
+			</div>
+			<div class="cell medium-6 medium-order-2 medium-text-left">
+				<button class="button hollow cancel-btn">Cancel</button>
+			</div>
+		</div>
+    </div>
+    <input id="verify-device-userid" hidden />
+</div>
+
+<div id="try-later" class="reveal try-later" data-reveal data-close-on-click="true" data-close-on-esc="true">
+    <div class="text-center">
+        <img src="~/Images/lmc/try-later.svg" alt="" />
+        <p id="try-later-msg">
+            You have exhausted your attempts to resend the code.
+            Please try again after sometime.
+        </p>
+
+        <button class="button" id="try-later-close" type="button">Okay</button>
+    </div>
+    <a class="close-button" id="try-later-cross" data-close>&#215;</a>
+</div>
+
+<script>
+	var securitytimer, totalTime;
+    var resendCode = 60, retry = 600;
+    var verifyCode = 3;
+
+    $(document).ready(function () {
+		$("button#send-code-btn").on('click', function () {
+			var radioClicked = $('#opt-device-verification input[type="radio"]:checked').attr('id');
+			if (radioClicked == 'verify-number' || radioClicked == 'verify-email') {
+                if (radioClicked == 'verify-email') {
+                    $('#code-sent-label').html("Please check your email. We have sent you a security code to " + $("#verify-device-email").html());
+                    SendVerificationCode(true);
+                } else {
+                    $('#code-sent-label').html("Please check your text message. We have sent you a security code to " + $("#verify-device-phone").html());
+                    SendVerificationCode(false);
+                }
+
+            } else {
+                $("#alert-error-code").html("Please select an option to send a verification code").addClass("is-visible");
+			}
+		});
+
+        $(".device-verify-container .cancel-btn").on('click', function () {
+            Cancel();
+        });
+
+        $(".radio-btn").on('click', function () {
+            $("#alert-error-code").html("").removeClass("is-visible");
+        });
+
+        $('#resend-email-code').on('click', function () {
+            Cancel();
+        });
+        
+        $('#try-later-close').on('click', function () {
+            location.reload();
+        });
+        
+        $('#try-later-cross').on('click', function () {
+            location.reload();
+        });
+
+        $('#validate-code-btn').on('click', function () {
+            if (verifyCode != 0) {
+                verifyCode--;
+                $('#validate-code-btn').prop('disabled', true);
+                VerifySecurityCode();
+            }
+            else
+            {
+                $("#alert-error-verify").html("You have reached the maximum submit. Please retry with new code.");
+                $("#alert-error-verify").addClass("is-visible");
+                $('#validate-code-btn').prop('disabled', true);
+            }
+        });
+
+        $("#cancel-device-check").on('click', function () {
+            location.reload();
+		});
+
+		var charLimit = 1;
+		var allFill;
+		$(".device-verify-container input").keydown(function (e) {
+
+            var keys = [8, 9, 19, 20, 27, 33, 34, 35, 36, 37, 38, 39, 40, 45, 46, 144, 145, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105];
+
+			if (e.which == 8 || e.which == 46) {
+                $(".v-code").removeClass("is-invalid-input");
+                $("#alert-error-verify").html("");
+                $("#alert-error-verify").removeClass("is-visible");
+				$(this).parents(".device-verify-container").find("button.button").prop("disabled", true);
+            } else if ($.inArray(e.which, keys) >= 0) {
+				return true;
+			} else if (e.shiftKey || e.which <= 47 || e.which >= 58) {
+				return false;
+			}
+		}).keyup(function () {
+			if (this.value.length == charLimit) {
+				$(".device-verify-container:not(.hide) input").each(function () {
+					console.log($(this).val());
+					if ($(this).val() == '') {
+						allFill = false;
+						return false;
+					}
+					else
+						allFill = true;
+				});
+				if ($(this).index() < 5 && !allFill) {
+					$(this).next('input').trigger('focus');
+					return false;
+				}
+				else {
+					$(this).parents(".device-verify-container").find("button.button").prop("disabled", false);
+				}
+			}
+		});
+	});
+
+    function SendVerificationCode(throughEmail) {
+        var userId = parseInt($("#verify-device-userid").val());
+        var deviceId = $("#DeviceId").val();
+        $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: "@Url.Action("SendVerificationCode", "Account")",
+                data: { userId: userId, deviceId: deviceId, throughEmail: throughEmail },
+                success: function (data) {
+                    if (data.Status && data.Message == "Success") {
+                        $('.device-verify-container').addClass('hide');
+                        $('#email-device-verification').removeClass('hide');
+                        $("#alert-error-code").html("");
+                        $("#alert-error-code").removeClass("is-visible");
+                        StartCountDown();
+                    } else if (data.Message == "try later") {
+                        $("#try-later-msg").html("You have exhausted your attempts to resend the code.<br>Please try again after " + data.WaitingTime);
+                        $("#try-later").foundation("open");
+                    } else {
+                        $("#alert-error-code").html(data.Message);
+                        $("#alert-error-code").addClass("is-visible");
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function VerifySecurityCode() {
+        var userId = parseInt($("#verify-device-userid").val());
+        var deviceId = $("#DeviceId").val();
+        var code = $("#vcode-1").val() + $("#vcode-2").val() + $("#vcode-3").val() + $("#vcode-4").val() + $("#vcode-5").val() + $("#vcode-6").val();
+        $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: "@Url.Action("VerifySecurityCode", "Account")",
+                data: { userId: userId, code: code, deviceId: deviceId },
+                success: function (data) {
+                    if (data == "Success") {
+                        window.location.href = "@Url.Action("Stream", "Participant")";
+                    }
+                    else if (data == "try later") {
+                        $("#try-later").foundation("open");
+                    }
+                    else {
+                        $(".v-code").addClass("is-invalid-input");
+                        $("#alert-error-verify").html(data);
+                        $("#alert-error-verify").addClass("is-visible");
+                    }
+                },
+                complete: function (data) {
+                    $('#validate-code-btn').prop('disabled', false);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
+    function StartCountDown() {
+        $("#count-down-timer").removeClass("hide");
+        $("#resend-email-code").addClass("hide");
+        resendCode = 60;
+        StartTimer();
+		securitytimer = setInterval(function () {
+            if (resendCode != 0) {
+                resendCode--;
+            } else {
+                $("#resend-email-code").removeClass("hide");
+				$("#count-down-timer").addClass("hide");
+			}
+        }, 1000);
+    }
+
+    function Cancel() {
+        $('.device-verify-container').addClass('hide');
+        $('.device-verify-container input').val('');
+        $('#opt-device-verification').removeClass('hide');
+        $("#alert-error-verify").html("");
+        $("#alert-error-verify").removeClass("is-visible");
+        $('#validate-code-btn').prop('disabled', false);
+        $(".v-code").removeClass("is-invalid-input");
+        StopCountDown();
+        verifyCode = 3;
+    }
+
+    function StartTimer() {
+        retry = 600;
+        totalTime = setInterval(function () {
+            if (retry-- == 0) {
+                Cancel();
+            }
+        }, 1000);
+    }
+
+    function StopCountDown() {
+		clearInterval(securitytimer);
+        clearInterval(totalTime);
+        $('#resend-email-code').addClass('hide');
+    }
+</script>

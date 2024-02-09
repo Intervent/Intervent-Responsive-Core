@@ -1,0 +1,62 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp;
+@model PhysicalActivityGoalModel
+
+<div class="grid-container">
+    <div class="grid-x grid-margin-x">
+        <div class="cell">
+            <h2>@Translate.Message("L271")</h2>
+            <div class="grid-x grid-margin-x">
+                @if (!Model.ExerPlan.ToLower().Contains("g"))
+                {
+                    <div class="cell small-12">
+                        <h3>@Translate.Message("L531")</h3>
+                        <p>@Translate.Message("L532") </p>
+                        <table class="exercise-plan">
+                            <thead class="header-blue">
+                                <tr>
+                                    <th>@Translate.Message("L471")</th>
+                                    <th>@Translate.Message("L472")</th>
+                                    <th>@Translate.Message("L473")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i <= 11; i++)
+                                {
+                                    <tr>
+                                        @if (i == 11)
+                                        {
+                                            <td>@(i + 1) @Translate.Message("L1634")</td>
+                                        }
+                                        else
+                                        {
+                                            <td>@(i + 1)</td>
+                                        }
+                                        @for (int j = 0; j <= 1; j++)
+                                        {
+                                            <td>@Model.ExerPlanArray[i, j]</td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                <div class="cell small-12 avoid-page-break-inside">
+                    <h3>@Translate.Message("L1635"):</h3>
+                    <ul class="decorated blue"></ul>
+                    @if (Model.exGuidelines.Count > 0)
+                    {
+                        <ul class="decorated blue">
+                            @for (int i = 0; i < Model.exGuidelines.Count; i++)
+                            {
+                                @Html.Raw(Model.exGuidelines[i])
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<a class="close-button hide-for-print" data-close>&#215;</a>

@@ -1,0 +1,2689 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp;
+@model InterventWebApp.OtherRisksModel
+
+<div class="inner-survey-modal">
+    <form data-abide novalidate id="riskfactors-form">
+        <h2 class="text-center">@Translate.Message("L484")</h2>
+        <div class="grid-container">
+            <div class="grid-x grid-margin-x">
+                <div class="cell">
+                    @{
+                        int i = 0;
+                        if (Model.GINAQuestion)
+                        {
+                            <div class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(++i).</div>
+                                    <div class="qText">
+                                        @Translate.Message("L48")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.HeartHist, 1, new Dictionary<string, object> { { "id", "HeartHistYes" }, { "Name", "otherRisks.HeartHist" }, { "data-validator", "validateHeartHist" } })
+                                        <label for="HeartHistYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.HeartHist, 2, new Dictionary<string, object> { { "id", "HeartHistNo" }, { "Name", "otherRisks.HeartHist" }, { "data-validator", "validateHeartHist" } })
+                                        <label for="HeartHistNo">@Translate.Message("L3")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.HeartHist, 3, new Dictionary<string, object> { { "id", "HeartHistDontKnow" }, { "Name", "otherRisks.HeartHist" }, { "data-validator", "validateHeartHist" } })
+                                        <label for="HeartHistDontKnow">@Translate.Message("L122")</label>
+                                        <small id="HeartHistError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(++i).</div>
+                                    <div class="qText">
+                                        @Translate.Message("L49")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.CancerHist, 1, new Dictionary<string, object> { { "id", "CancerHistYes" }, { "Name", "otherRisks.CancerHist" }, { "data-validator", "validateCancerHist" } })
+                                        <label for="CancerHistYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.CancerHist, 2, new Dictionary<string, object> { { "id", "CancerHistNo" }, { "Name", "otherRisks.CancerHist" }, { "data-validator", "validateCancerHist" } })
+                                        <label for="CancerHistNo">@Translate.Message("L3")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.CancerHist, 3, new Dictionary<string, object> { { "id", "CancerHistDontKnow" }, { "Name", "otherRisks.CancerHist" }, { "data-validator", "validateCancerHist" } })
+                                        <label for="CancerHistDontKnow">@Translate.Message("L122")</label>
+                                        <small id="CancerHistError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(++i).</div>
+                                    <div class="qText">
+                                        @Translate.Message("L50")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.DiabetesHist, 1, new Dictionary<string, object> { { "id", "DiabetesHistYes" }, { "Name", "otherRisks.DiabetesHist" }, { "data-validator", "validateDiabetesHist" } })
+                                        <label for="DiabetesHistYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.DiabetesHist, 2, new Dictionary<string, object> { { "id", "DiabetesHistNo" }, { "Name", "otherRisks.DiabetesHist" }, { "data-validator", "validateDiabetesHist" } })
+                                        <label for="DiabetesHistNo">@Translate.Message("L3")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.DiabetesHist, 3, new Dictionary<string, object> { { "id", "DiabetesHistDontKnow" }, { "Name", "otherRisks.DiabetesHist" }, { "data-validator", "validateDiabetesHist" } })
+                                        <label for="DiabetesHistDontKnow">@Translate.Message("L122")</label>
+                                        <small id="DiabetesHistError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div data-alert class="callout secondary hide" id="SmokePopup">
+                            @string.Format(Translate.Message("L2102"), Translate.Message(Model.AssessmentName).ToLower())
+                        </div>
+                        <div class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++i).</div>
+                                <div class="qText">
+                                    @Translate.Message("L51")
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.SmokeCig, 1, new Dictionary<string, object> { { "id", "SmokeCigYes" }, { "Name", "otherRisks.SmokeCig" }, { "data-validator", "validateSmokeCig" } })
+                                    <label for="SmokeCigYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.SmokeCig, 2, new Dictionary<string, object> { { "id", "SmokeCigNo" }, { "Name", "otherRisks.SmokeCig" }, { "data-validator", "validateSmokeCig" } })
+                                    <label for="SmokeCigNo">@Translate.Message("L3")</label>
+                                    <small id="SmokeCigError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="NoOfCigdiv" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(i).1</div>
+                                <div class="qText">
+                                    @Translate.Message("L52")
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.TextBoxFor(M => M.otherRisks.NoOfCig, new Dictionary<string, object> { { "data-validator", "validateNoOfCig" }, { "type", "number" }, { "min", "0" } })
+                                    <small class="form-error"> @Translate.Message("L2813")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="SmokeHistdiv" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(i).1</div>
+                                <div class="qText">
+                                    @Translate.Message("L53")
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                @Html.DropDownListFor(M => M.otherRisks.SmokeHist, Model.SmokeHistList, "--" + Translate.Message("L421") + "--", new Dictionary<string, object> { { "data-validator", "validateSmokeHist" } })
+                                <div class="qOption">
+                                    <small class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++i).</div>
+                                <div class="qText">
+                                    @Translate.Message("L57")
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.OtherTobacco, 1, new Dictionary<string, object> { { "id", "OtherTobaccoYes" }, { "Name", "otherRisks.OtherTobacco" }, { "data-validator", "validateOtherTobacco" } })
+                                    <label for="OtherTobaccoYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.OtherTobacco, 2, new Dictionary<string, object> { { "id", "OtherTobaccoNo" }, { "Name", "otherRisks.OtherTobacco" }, { "data-validator", "validateOtherTobacco" } })
+                                    <label for="OtherTobaccoNo">@Translate.Message("L3")</label>
+                                    <small id="OtherTobaccoError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="OtherTobaccoTypesdiv" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(i).1</div>
+                                <div class="qText">
+                                    @Translate.Message("L58")
+                                </div>
+                            </div>
+                            <div class="tobacco-group" data-validator-limit="1,3">
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.CheckBoxFor(M => M.CigarBool, new Dictionary<string, object> { { "class", "OtherTobaccoTypes" }, { "data-validator", "validateOtherTobaccoTypes" } })
+                                        <label for="CigarBool">@Translate.Message("L59")</label>
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.CheckBoxFor(M => M.PipeBool, new Dictionary<string, object> { { "class", "OtherTobaccoTypes" }, { "data-validator", "validateOtherTobaccoTypes" } })
+                                        <label for="PipeBool">@Translate.Message("L60")</label>
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.CheckBoxFor(M => M.SmokelessTobBool, new Dictionary<string, object> { { "class", "OtherTobaccoTypes" }, { "data-validator", "validateOtherTobaccoTypes" } })
+                                        <label for="SmokelessTobBool">@Translate.Message("L61")</label>
+                                    </div>
+                                </div>
+
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.CheckBoxFor(M => M.WaterPipesBool, new Dictionary<string, object> { { "class", "OtherTobaccoTypes" }, { "data-validator", "validateOtherTobaccoTypes" } })
+                                        <label for="WaterPipesBool">@Translate.Message("L1979")</label>
+                                    </div>
+                                </div>
+
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.CheckBoxFor(M => M.OtherFormofTobBool, new Dictionary<string, object> { { "class", "OtherTobaccoTypes" }, { "data-validator", "validateOtherTobaccoTypes" } })
+                                        <label for="OtherFormofTobBool">@Translate.Message("L1980")</label>
+                                        <small class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++i).</div>
+                                <div class="qText">
+                                    @Translate.Message("L593")
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.ECig, 1, new Dictionary<string, object> { { "id", "ECigYes" }, { "Name", "otherRisks.ECig" }, { "data-validator", "validateECig" } })
+                                    <label for="ECigYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.ECig, 2, new Dictionary<string, object> { { "id", "ECigNo" }, { "Name", "otherRisks.ECig" }, { "data-validator", "validateECig" } })
+                                    <label for="ECigNo">@Translate.Message("L3")</label>
+                                    <small id="ECigError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++i).</div>
+                                <div class="qText">
+                                    @string.Format(Translate.Message("L62"), Translate.Message(Model.durationMonths).ToUpper())
+                                    <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2414")"><i class="fa fa-question-circle"></i></span>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.ModExer, 1, new Dictionary<string, object> { { "id", "ModExerYes" }, { "Name", "otherRisks.ModExer" }, { "data-validator", "validateModExer" } })
+                                    <label for="ModExerYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.ModExer, 2, new Dictionary<string, object> { { "id", "ModExerNo" }, { "Name", "otherRisks.ModExer" }, { "data-validator", "validateModExer" } })
+                                    <label for="ModExerNo">@Translate.Message("L3")</label>
+                                    <small id="ModExerError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="ModExerPFWdiv" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(i).1</div>
+                                <div class="qText">
+                                    @string.Format(Translate.Message("L62"), Translate.Message(Model.durationWeeks).ToUpper())
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.ModExerPFW, 1, new Dictionary<string, object> { { "id", "ModExerPFWYes" }, { "Name", "otherRisks.ModExerPFW" }, { "data-validator", "validateModExerPFW" } })
+                                    <label for="ModExerPFWYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.ModExerPFW, 2, new Dictionary<string, object> { { "id", "ModExerPFWNo" }, { "Name", "otherRisks.ModExerPFW" }, { "data-validator", "validateModExerPFW" } })
+                                    <label for="ModExerPFWNo">@Translate.Message("L3")</label>
+                                    <small id="ModExerPFWError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="VigExerdiv" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(i).1</div>
+                                <div class="qText">
+                                    @if (CommonUtility.IsIntegratedWithLMC(Model.integrationWith))
+                                    {
+                                        <span>@string.Format(Translate.Message("L3198"), Translate.Message(Model.durationMonths).ToUpper())</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@string.Format(Translate.Message("L63"), Translate.Message(Model.durationMonths).ToUpper())</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.VigExer, 1, new Dictionary<string, object> { { "id", "VigExerYes" }, { "Name", "otherRisks.VigExer" }, { "data-validator", "validateVigExer" } })
+                                    <label for="VigExerYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.VigExer, 2, new Dictionary<string, object> { { "id", "VigExerNo" }, { "Name", "otherRisks.VigExer" }, { "data-validator", "validateVigExer" } })
+                                    <label for="VigExerNo">@Translate.Message("L3")</label>
+                                    <small id="VigExerError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="VigExerPFWdiv" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(i).2</div>
+                                <div class="qText">
+                                    @string.Format(Translate.Message("L63"), Translate.Message(Model.durationWeeks))
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.VigExerPFW, 1, new Dictionary<string, object> { { "id", "VigExerPFWYes" }, { "Name", "otherRisks.VigExerPFW" }, { "data-validator", "validateVigExerPFW" } })
+                                    <label for="VigExerPFWYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.otherRisks.VigExerPFW, 2, new Dictionary<string, object> { { "id", "VigExerPFWNo" }, { "Name", "otherRisks.VigExerPFW" }, { "data-validator", "validateVigExerPFW" } })
+                                    <label for="VigExerPFWNo">@Translate.Message("L3")</label>
+                                    <small id="VigExerPFWError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        if (Model.HRAVer.HasValue && Model.HRAVer.Value == (int)HRAVersions.CaptivaVersion)
+                        {
+                            <div id="PhysicalActivitiesdiv" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(++i).</div>
+                                    <div class="qText">
+                                        @Translate.Message("L4333")
+                                    </div>
+                                </div>
+                                <div class="aerobic-group" data-validator-limit="1,3">
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.WalkingBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="WalkingBool">
+                                                @Translate.Message("L4334")
+                                            </label>
+                                        </div>
+                                        <div id="WalkingBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).1.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.WalkingActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix" id="WalkingActivityEachWeek">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_WalkingActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).1.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.WalkingExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_WalkingExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).1.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.WalkingIntenseExercise, 1, new Dictionary<string, object> { { "id", "WalkingVigorousIntense" }, { "Name", "otherRisks.WalkingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.WalkingIntenseExercise, 2, new Dictionary<string, object> { { "id", "WalkingModerateIntense" }, { "Name", "otherRisks.WalkingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.WalkingIntenseExercise, 3, new Dictionary<string, object> { { "id", "WalkingLessthanModerateIntense" }, { "Name", "otherRisks.WalkingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="WalkingIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.JoggingBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="JoggingBool">
+                                                @Translate.Message("L4335")
+                                            </label>
+                                        </div>
+                                        <div id="JoggingBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).2.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.JoggingActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_JoggingActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).2.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.JoggingExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_JoggingExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).2.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.JoggingIntenseExercise, 1, new Dictionary<string, object> { { "id", "JoggingVigorousIntense" }, { "Name", "otherRisks.JoggingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.JoggingIntenseExercise, 2, new Dictionary<string, object> { { "id", "JoggingModerateIntense" }, { "Name", "otherRisks.JoggingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.JoggingIntenseExercise, 3, new Dictionary<string, object> { { "id", "JoggingLessthanModerateIntense" }, { "Name", "otherRisks.JoggingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="JoggingIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.TreadmillBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="TreadmillBool">
+                                                @Translate.Message("L4336")
+                                            </label>
+                                        </div>
+                                        <div id="TreadmillBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).3.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.TreadmillActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_TreadmillActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).3.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.TreadmillExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_TreadmillExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).3.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.TreadmillIntenseExercise, 1, new Dictionary<string, object> { { "id", "TreadmillVigorousIntense" }, { "Name", "otherRisks.TreadmillIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.TreadmillIntenseExercise, 2, new Dictionary<string, object> { { "id", "TreadmillModerateIntense" }, { "Name", "otherRisks.TreadmillIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.TreadmillIntenseExercise, 3, new Dictionary<string, object> { { "id", "TreadmillLessthanModerateIntense" }, { "Name", "otherRisks.TreadmillIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="TreadmillIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.CyclingBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="CyclingBool">@Translate.Message("L4337")</label>
+                                        </div>
+                                        <div id="CyclingBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).4.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.CyclingActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_CyclingActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).4.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.CyclingExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_CyclingExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).4.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.CyclingIntenseExercise, 1, new Dictionary<string, object> { { "id", "CyclingVigorousIntense" }, { "Name", "otherRisks.CyclingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.CyclingIntenseExercise, 2, new Dictionary<string, object> { { "id", "CyclingModerateIntense" }, { "Name", "otherRisks.CyclingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.CyclingIntenseExercise, 3, new Dictionary<string, object> { { "id", "CyclingLessthanModerateIntense" }, { "Name", "otherRisks.CyclingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="CyclingIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.StairMachBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="StairMachBool">
+                                                @Translate.Message("L4338")
+                                            </label>
+                                        </div>
+                                        <div id="StairMachBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).5.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.StairMachActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_StairMachActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).5.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.StairMachExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_StairMachExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).5.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.StairMachIntenseExercise, 1, new Dictionary<string, object> { { "id", "StairMachVigorousIntense" }, { "Name", "otherRisks.StairMachIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.StairMachIntenseExercise, 2, new Dictionary<string, object> { { "id", "StairMachModerateIntense" }, { "Name", "otherRisks.StairMachIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.StairMachIntenseExercise, 3, new Dictionary<string, object> { { "id", "StairMachLessthanModerateIntense" }, { "Name", "otherRisks.StairMachIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="StairMachIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.EllipticTrainerBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="EllipticTrainerBool">
+                                                @Translate.Message("L4339")
+                                            </label>
+                                        </div>
+                                        <div id="EllipticTrainerBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).6.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.EllipticTrainerActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_EllipticTrainerActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).6.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.EllipticTrainerExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_EllipticTrainerExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).6.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.EllipticTrainerIntenseExercise, 1, new Dictionary<string, object> { { "id", "EllipticTrainerVigorousIntense" }, { "Name", "otherRisks.EllipticTrainerIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.EllipticTrainerIntenseExercise, 2, new Dictionary<string, object> { { "id", "EllipticTrainerModerateIntense" }, { "Name", "otherRisks.EllipticTrainerIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.EllipticTrainerIntenseExercise, 3, new Dictionary<string, object> { { "id", "EllipticTrainerLessthanModerateIntense" }, { "Name", "otherRisks.EllipticTrainerIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="EllipticTrainerIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.RowingMachBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="RowingMachBool">
+                                                @Translate.Message("L4340")
+                                            </label>
+                                        </div>
+                                        <div id="RowingMachBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).7.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.RowingMachActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_RowingMachActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).7.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.RowingMachExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_RowingMachExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).7.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.RowingMachIntenseExercise, 1, new Dictionary<string, object> { { "id", "RowingMachVigorousIntense" }, { "Name", "otherRisks.RowingMachIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.RowingMachIntenseExercise, 2, new Dictionary<string, object> { { "id", "RowingMachModerateIntense" }, { "Name", "otherRisks.RowingMachIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.RowingMachIntenseExercise, 3, new Dictionary<string, object> { { "id", "RowingMachLessthanModerateIntense" }, { "Name", "otherRisks.RowingMachIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="RowingMachIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.AerobicMachBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="AerobicMachBool">
+                                                @Translate.Message("L4341")
+                                            </label>
+                                        </div>
+                                        <div id="AerobicMachBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).8.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.AerobicMachActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_AerobicMachActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).8.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.AerobicMachExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_AerobicMachExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).8.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.AerobicMachIntenseExercise, 1, new Dictionary<string, object> { { "id", "AerobicMachVigorousIntense" }, { "Name", "otherRisks.AerobicMachIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.AerobicMachIntenseExercise, 2, new Dictionary<string, object> { { "id", "AerobicMachModerateIntense" }, { "Name", "otherRisks.AerobicMachIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.AerobicMachIntenseExercise, 3, new Dictionary<string, object> { { "id", "AerobicMachLessthanModerateIntense" }, { "Name", "otherRisks.AerobicMachIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="AerobicMachIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.AerobicDanceBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="AerobicDanceBool">
+                                                @Translate.Message("L4342")
+                                            </label>
+                                        </div>
+                                        <div id="AerobicDanceBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).9.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.AerobicDanceActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_AerobicDanceActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).9.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.AerobicDanceExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_AerobicDanceExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).9.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.AerobicDanceIntenseExercise, 1, new Dictionary<string, object> { { "id", "AerobicDanceVigorousIntense" }, { "Name", "otherRisks.AerobicDanceIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.AerobicDanceIntenseExercise, 2, new Dictionary<string, object> { { "id", "AerobicDanceModerateIntense" }, { "Name", "otherRisks.AerobicDanceIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.AerobicDanceIntenseExercise, 3, new Dictionary<string, object> { { "id", "AerobicDanceLessthanModerateIntense" }, { "Name", "otherRisks.AerobicDanceIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="AerobicDanceIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.OutdoorCyclingBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="OutdoorCyclingBool">
+                                                @Translate.Message("L4343")
+                                            </label>
+                                        </div>
+                                        <div id="OutdoorCyclingBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).10.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.OutdoorCyclingActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_OutdoorCyclingActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).10.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.OutdoorCyclingExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_OutdoorCyclingExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).10.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.OutdoorCyclingIntenseExercise, 1, new Dictionary<string, object> { { "id", "OutdoorCyclingVigorousIntense" }, { "Name", "otherRisks.OutdoorCyclingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.OutdoorCyclingIntenseExercise, 2, new Dictionary<string, object> { { "id", "OutdoorCyclingModerateIntense" }, { "Name", "otherRisks.OutdoorCyclingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.OutdoorCyclingIntenseExercise, 3, new Dictionary<string, object> { { "id", "OutdoorCyclingLessthanModerateIntense" }, { "Name", "otherRisks.OutdoorCyclingIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="OutdoorCyclingIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.SwimmingLapsBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="SwimmingLapsBool">@Translate.Message("L4344")</label>
+                                        </div>
+                                        <div id="SwimmingLapsBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).11.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.SwimmingLapsActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_SwimmingLapsActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).11.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.SwimmingLapsExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_SwimmingLapsExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).11.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.SwimmingLapsIntenseExercise, 1, new Dictionary<string, object> { { "id", "SwimmingLapsVigorousIntense" }, { "Name", "otherRisks.SwimmingLapsIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.SwimmingLapsIntenseExercise, 2, new Dictionary<string, object> { { "id", "SwimmingLapsModerateIntense" }, { "Name", "otherRisks.SwimmingLapsIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.SwimmingLapsIntenseExercise, 3, new Dictionary<string, object> { { "id", "SwimmingLapsLessthanModerateIntense" }, { "Name", "otherRisks.SwimmingLapsIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="SwimmingLapsIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.RacquetSportsBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="RacquetSportsBool">@Translate.Message("L4345")</label>
+                                        </div>
+                                        <div id="RacquetSportsBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).12.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.RacquetSportsActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_RacquetSportsActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).12.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.RacquetSportsExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_RacquetSportsExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).12.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.RacquetSportsIntenseExercise, 1, new Dictionary<string, object> { { "id", "RacquetSportsVigorousIntense" }, { "Name", "otherRisks.RacquetSportsIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.RacquetSportsIntenseExercise, 2, new Dictionary<string, object> { { "id", "RacquetSportsModerateIntense" }, { "Name", "otherRisks.RacquetSportsIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.RacquetSportsIntenseExercise, 3, new Dictionary<string, object> { { "id", "RacquetSportsLessthanModerateIntense" }, { "Name", "otherRisks.RacquetSportsIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="RacquetSportsIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.OtherAerobicBool, new Dictionary<string, object> { { "class", "AerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="OtherAerobicBool">@Translate.Message("L4346")</label>
+                                        </div>
+                                        <div id="OtherAerobicBoolDiv" class="q-sub-section" hidden>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).13.1</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4348")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.OtherAerobicActivityEachWeek, new Dictionary<string, object> { { "data-validator", "validateActivityEachWeek" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4349")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_OtherAerobicActivityEachWeek"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).13.2</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4350")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption input-group">
+                                                        @Html.TextBoxFor(M => M.otherRisks.OtherAerobicExerciseEachTime, new Dictionary<string, object> { { "data-validator", "validateExerciseEachTime" }, { "type", "number" }, { "min", "0" } })
+                                                        <span class="input-group-label postfix">@Translate.Message("L4365")</span>
+                                                    </div>
+                                                    <small class="form-error" data-form-error-for="otherRisks_OtherAerobicExerciseEachTime"> @Translate.Message("L2813")</small>
+                                                </div>
+                                            </div>
+                                            <div class="question">
+                                                <div class="qHeader">
+                                                    <div class="qNumber">@(i).13.3</div>
+                                                    <div class="qText">
+                                                        @Translate.Message("L4351")
+                                                    </div>
+                                                </div>
+                                                <div class="qBody">
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.OtherAerobicIntenseExercise, 1, new Dictionary<string, object> { { "id", "OtherAerobicVigorousIntense" }, { "Name", "otherRisks.OtherAerobicIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="VigorousIntense">@Translate.Message("L4352")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.OtherAerobicIntenseExercise, 2, new Dictionary<string, object> { { "id", "OtherAerobicModerateIntense" }, { "Name", "otherRisks.OtherAerobicIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="ModerateIntense">@Translate.Message("L4353")</label>
+                                                    </div>
+                                                    <div class="qOption">
+                                                        @Html.RadioButtonFor(M => M.otherRisks.OtherAerobicIntenseExercise, 3, new Dictionary<string, object> { { "id", "OtherAerobicLessthanModerateIntense" }, { "Name", "otherRisks.OtherAerobicIntenseExercise" }, { "data-validator", "validateIntenseExercise" } })
+                                                        <label for="LessthanModerateIntense">@Translate.Message("L4354")</label>
+                                                        <small id="OtherAerobicIntenseExerciseError" class="form-error">@Translate.Message("L480")</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="qBody">
+                                        <div class="qOption">
+                                            @Html.CheckBoxFor(M => M.NoAerobicBool, new Dictionary<string, object> { { "class", "NoAerobicActivities" }, { "data-validator", "validateAerobicActivities" } })
+                                            <label for="NoAerobicBool">@Translate.Message("L4347")</label>
+                                            <small class="form-error" id="aerobic-error">@Translate.Message("L480")</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="MusclesActivitiesdiv" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(++i).</div>
+                                    <div class="qText">
+                                        @Translate.Message("L4355")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.MusclesActivities, 1, new Dictionary<string, object> { { "id", "MusclesActivitiesYes" }, { "Name", "otherRisks.MusclesActivities" }, { "data-validator", "validateMusclesActivities" } })
+                                        <label for="MusclesActivitiesYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.MusclesActivities, 2, new Dictionary<string, object> { { "id", "MusclesActivitiesNo" }, { "Name", "otherRisks.MusclesActivities" }, { "data-validator", "validateMusclesActivities" } })
+                                        <label for="MusclesActivitiesNo">@Translate.Message("L3")</label>
+                                        <small id="MusclesActivitiesError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="MusclesActivitiesDaysdiv" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(i).1</div>
+                                    <div class="qText">
+                                        @Translate.Message("L4356")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption input-group">
+                                        @Html.TextBoxFor(M => M.otherRisks.MusclesActivitiesDays, new Dictionary<string, object> { { "data-validator", "validateMusclesActivitiesDays" }, { "type", "number" }, { "min", "0" } })
+                                        <span class="input-group-label postfix">
+                                            @Translate.Message("L4357")
+                                        </span>
+                                    </div>
+                                    <small class="form-error" data-form-error-for="otherRisks_MusclesActivitiesDays"> @Translate.Message("L2813")</small>
+                                </div>
+                            </div>
+
+                            <div id="FlexibilityActivitiesdiv" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(++i).</div>
+                                    <div class="qText">
+                                        @Translate.Message("L4358")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.FlexibilityActivities, 1, new Dictionary<string, object> { { "id", "FlexibilityActivitiesYes" }, { "Name", "otherRisks.FlexibilityActivities" }, { "data-validator", "validateFlexibilityActivities" } })
+                                        <label for="FlexibilityActivitiesYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.FlexibilityActivities, 2, new Dictionary<string, object> { { "id", "FlexibilityActivitiesNo" }, { "Name", "otherRisks.FlexibilityActivities" }, { "data-validator", "validateFlexibilityActivities" } })
+                                        <label for="FlexibilityActivitiesNo">@Translate.Message("L3")</label>
+                                        <small id="FlexibilityActivitiesError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="FlexibilityActivitiesDaysdiv" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(i).1</div>
+                                    <div class="qText">
+                                        @Translate.Message("L4359")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption input-group">
+                                        @Html.TextBoxFor(M => M.otherRisks.FlexibilityActivitiesDays, new Dictionary<string, object> { { "data-validator", "validateFlexibilityActivitiesDays" }, { "type", "number" }, { "min", "0" } })
+                                        <span class="input-group-label postfix">
+                                            @Translate.Message("L4357")
+                                        </span>
+                                    </div>
+                                    <small class="form-error" data-form-error-for="otherRisks_FlexibilityActivitiesDays"> @Translate.Message("L2813")</small>
+                                </div>
+                            </div>
+
+                            <div id="PhysicallyActiveLeveldiv" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(++i)</div>
+                                    <div class="qText">
+                                        @Translate.Message("L4360")
+                                    </div>
+                                </div>
+
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.PhysicallyActiveLevel, 1, new Dictionary<string, object> { { "id", "Sedentary" }, { "Name", "otherRisks.PhysicallyActiveLevel" }, { "data-validator", "validatePhysicallyActiveLevel" } })
+                                        <label for="Sedentary">@Translate.Message("L4361")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.PhysicallyActiveLevel, 2, new Dictionary<string, object> { { "id", "SomewhatActive" }, { "Name", "otherRisks.PhysicallyActiveLevel" }, { "data-validator", "validatePhysicallyActiveLevel" } })
+                                        <label for="SomewhatActive">@Translate.Message("L4362")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.PhysicallyActiveLevel, 3, new Dictionary<string, object> { { "id", "Active" }, { "Name", "otherRisks.PhysicallyActiveLevel" }, { "data-validator", "validatePhysicallyActiveLevel" } })
+                                        <label for="Active">@Translate.Message("L4363")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.otherRisks.PhysicallyActiveLevel, 4, new Dictionary<string, object> { { "id", "VeryActive" }, { "Name", "otherRisks.PhysicallyActiveLevel" }, { "data-validator", "validatePhysicallyActiveLevel" } })
+                                        <label for="VeryActive">@Translate.Message("L4364")</label>
+                                        <small id="PhysicallyActiveLevelError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+                        if (CommonUtility.IsIntegratedWithLMC(Context.Session.GetInt32(SessionContext.IntegrationWith).HasValue ? (byte)Context.Session.GetInt32(SessionContext.IntegrationWith).Value : null))
+                        {
+                            <div id="ExerciseMinsDiv" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(++i).</div>
+                                    <div class="qText">
+                                        @Translate.Message("L3199")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.TextBoxFor(M => M.otherRisks.ExerciseMins, new Dictionary<string, object> { { "data-validator", "validateExerciseMins" }, { "type", "number" }, { "min", "0" } })
+                                        <small class="form-error"> @Translate.Message("L2813")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        if (Model.HRAVer.HasValue && Model.HRAVer.Value == (int)HRAVersions.ActivateVersion)
+                        {
+                            <div id="ExerFreq" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber" id="ExerFreqQNo">@(++i).</div>
+                                    <div class="qText">
+                                        @Translate.Message("L3082")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    @Html.DropDownListFor(M => M.otherRisks.ExerciseFrequency, Model.ExerciseFrequencyList, "--" + Translate.Message("L421") + "--", new Dictionary<string, object> { { "data-validator", "validateExerFreq" } })
+                                    <div class="qOption">
+                                        <small class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ExerIntensity" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber" id="ExerIntensityQNo">@(i).1</div>
+                                    <div class="qText">
+                                        @Translate.Message("L3083")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    @Html.DropDownListFor(M => M.otherRisks.ExerciseIntensity, Model.ExerciseIntensityList, "--" + Translate.Message("L421") + "--", new Dictionary<string, object> { { "data-validator", "validateExerIntensity" } })
+                                    <div class="qOption">
+                                        <small class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ExerDuration" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber" id="ExerDurationQNo">@(i).2</div>
+                                    <div class="qText">
+                                        @Translate.Message("L3084")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    @Html.DropDownListFor(M => M.otherRisks.ExerciseDuration, Model.ExerciseDurationList, "--" + Translate.Message("L421") + "--", new Dictionary<string, object> { { "data-validator", "validateExerDuration" } })
+                                    <div class="qOption">
+                                        <small class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    }
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L64")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.ExertPain, 1, new Dictionary<string, object> { { "id", "ExertPainYes" }, { "Name", "otherRisks.ExertPain" }, { "data-validator", "validateExertPain" } })
+                                <label for="ExertPainYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.ExertPain, 2, new Dictionary<string, object> { { "id", "ExertPainNo" }, { "Name", "otherRisks.ExertPain" }, { "data-validator", "validateExertPain" } })
+                                <label for="ExertPainNo">@Translate.Message("L3")</label>
+                                <small id="ExertPainError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @string.Format(Translate.Message("L65"), Translate.Message(Model.durationMonths).ToUpper())
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.LowFatDiet, 1, new Dictionary<string, object> { { "id", "LowFatDietYes" }, { "Name", "otherRisks.LowFatDiet" }, { "data-validator", "validateLowFatDiet" } })
+                                <label for="LowFatDietYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.LowFatDiet, 2, new Dictionary<string, object> { { "id", "LowFatDietNo" }, { "Name", "otherRisks.LowFatDiet" }, { "data-validator", "validateLowFatDiet" } })
+                                <label for="LowFatDietNo">@Translate.Message("L3")</label>
+                                <small id="LowFatDietError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="LowFatDietdiv" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1</div>
+                            <div class="qText">
+                                @string.Format(Translate.Message("L65"), Translate.Message(Model.durationWeeks))
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.LowFatDietPFW, 1, new Dictionary<string, object> { { "id", "LowFatDietPFWYes" }, { "Name", "otherRisks.LowFatDietPFW" }, { "data-validator", "validateLowFatDietPFW" } })
+                                <label for="LowFatDietPFWYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.LowFatDietPFW, 2, new Dictionary<string, object> { { "id", "LowFatDietPFWNo" }, { "Name", "otherRisks.LowFatDietPFW" }, { "data-validator", "validateLowFatDietPFW" } })
+                                <label for="LowFatDietPFWNo">@Translate.Message("L3")</label>
+                                <small id="LowFatDietPFWError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @string.Format(Translate.Message("L66"), Translate.Message(Model.durationMonths).ToUpper())
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.HealthyCarb, 1, new Dictionary<string, object> { { "id", "HealthyCarbYes" }, { "Name", "otherRisks.HealthyCarb" }, { "data-validator", "validateHealthyCarb" } })
+                                <label for="HealthyCarbYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.HealthyCarb, 2, new Dictionary<string, object> { { "id", "HealthyCarbNo" }, { "Name", "otherRisks.HealthyCarb" }, { "data-validator", "validateHealthyCarb" } })
+                                <label for="HealthyCarbNo">@Translate.Message("L3")</label>
+                                <small id="HealthyCarbError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="HealthyCarbdiv" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1</div>
+                            <div class="qText">
+                                @string.Format(Translate.Message("L66"), Translate.Message(Model.durationWeeks))
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.HealthyCarbPFW, 1, new Dictionary<string, object> { { "id", "HealthyCarbPFWYes" }, { "Name", "otherRisks.HealthyCarbPFW" }, { "data-validator", "validateHealthyCarbPFW" } })
+                                <label for="HealthyCarbPFWYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.HealthyCarbPFW, 2, new Dictionary<string, object> { { "id", "HealthyCarbPFWNo" }, { "Name", "otherRisks.HealthyCarbPFW" }, { "data-validator", "validateHealthyCarbPFW" } })
+                                <label for="HealthyCarbPFWNo">@Translate.Message("L3")</label>
+                                <small id="HealthyCarbError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L67")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.TwoAlcohol, 1, new Dictionary<string, object> { { "id", "TwoAlcoholYes" }, { "Name", "otherRisks.TwoAlcohol" }, { "data-validator", "validateTwoAlcohol" } })
+                                <label for="TwoAlcoholYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.TwoAlcohol, 2, new Dictionary<string, object> { { "id", "TwoAlcoholNo" }, { "Name", "otherRisks.TwoAlcohol" }, { "data-validator", "validateTwoAlcohol" } })
+                                <label for="TwoAlcoholNo">@Translate.Message("L3")</label>
+                                <small id="TwoAlcoholError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="OneAlcoholdiv" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1</div>
+                            <div class="qText">
+                                @Translate.Message("L68")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.OneAlcohol, 1, new Dictionary<string, object> { { "id", "OneAlcoholYes" }, { "Name", "otherRisks.OneAlcohol" }, { "data-validator", "validateOneAlcohol" } })
+                                <label for="OneAlcoholYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.OneAlcohol, 2, new Dictionary<string, object> { { "id", "OneAlcoholNo" }, { "Name", "otherRisks.OneAlcohol" }, { "data-validator", "validateOneAlcohol" } })
+                                <label for="OneAlcoholNo">@Translate.Message("L3")</label>
+                                <small id="OneAlcoholError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L69")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.OverWeight, 1, new Dictionary<string, object> { { "id", "OverWeightYes" }, { "Name", "otherRisks.OverWeight" }, { "data-validator", "validateOverWeight" } })
+                                <label for="OverWeightYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.OverWeight, 2, new Dictionary<string, object> { { "id", "OverWeightNo" }, { "Name", "otherRisks.OverWeight" }, { "data-validator", "validateOverWeight" } })
+                                <label for="OverWeightNo">@Translate.Message("L3")</label>
+                                <small id="OverWeightError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @string.Format(Translate.Message("L70"), Translate.Message(Model.durationMonths))
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.FeelStress, 1, new Dictionary<string, object> { { "id", "FeelStressYes" }, { "Name", "otherRisks.FeelStress" }, { "data-validator", "validateFeelStress" } })
+                                <label for="FeelStressYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.FeelStress, 2, new Dictionary<string, object> { { "id", "FeelStressNo" }, { "Name", "otherRisks.FeelStress" }, { "data-validator", "validateFeelStress" } })
+                                <label for="FeelStressNo">@Translate.Message("L3")</label>
+                                <small id="FeelStressError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="FeelStressdiv" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1</div>
+                            <div class="qText">
+                                @string.Format(Translate.Message("L70"), Translate.Message(Model.durationWeeks))
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.FeelStressPFW, 1, new Dictionary<string, object> { { "id", "FeelStressPFWYes" }, { "Name", "otherRisks.FeelStressPFW" }, { "data-validator", "validateFeelStressPFW" } })
+                                <label for="FeelStressPFWYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.FeelStressPFW, 2, new Dictionary<string, object> { { "id", "FeelStressPFWNo" }, { "Name", "otherRisks.FeelStressPFW" }, { "data-validator", "validateFeelStressPFW" } })
+                                <label for="FeelStressPFWNo">@Translate.Message("L3")</label>
+                                <small id="FeelStressPFWError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @string.Format(Translate.Message("L71"), Translate.Message(Model.durationMonths))
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.FeelAnxiety, 1, new Dictionary<string, object> { { "id", "FeelAnxietyYes" }, { "Name", "otherRisks.FeelAnxiety" }, { "data-validator", "validateFeelAnxiety" } })
+                                <label for="FeelAnxietyYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.FeelAnxiety, 2, new Dictionary<string, object> { { "id", "FeelAnxietyNo" }, { "Name", "otherRisks.FeelAnxiety" }, { "data-validator", "validateFeelAnxiety" } })
+                                <label for="FeelAnxietyNo">@Translate.Message("L3")</label>
+                                <small id="FeelAnxietyError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="FeelAnxietydiv" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1</div>
+                            <div class="qText">
+                                @string.Format(Translate.Message("L71"), Translate.Message(Model.durationWeeks))
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.FeelAnxietyPFW, 1, new Dictionary<string, object> { { "id", "FeelAnxietyPFWYes" }, { "Name", "otherRisks.FeelAnxietyPFW" }, { "data-validator", "validateFeelAnxietyPFW" } })
+                                <label for="FeelAnxietyPFWYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.FeelAnxietyPFW, 2, new Dictionary<string, object> { { "id", "FeelAnxietyPFWNo" }, { "Name", "otherRisks.FeelAnxietyPFW" }, { "data-validator", "validateFeelAnxietyPFW" } })
+                                <label for="FeelAnxietyPFWNo">@Translate.Message("L3")</label>
+                                <small id="FeelAnxietyPFWError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L72")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.FeelDepression, 1, new Dictionary<string, object> { { "id", "FeelDepressionYes" }, { "Name", "otherRisks.FeelDepression" }, { "data-validator", "validateFeelDepression" } })
+                                <label for="FeelDepressionYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.FeelDepression, 2, new Dictionary<string, object> { { "id", "FeelDepressionNo" }, { "Name", "otherRisks.FeelDepression" }, { "data-validator", "validateFeelDepression" } })
+                                <label for="FeelDepressionNo">@Translate.Message("L3")</label>
+                                <small id="FeelDepressionError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="OnlyDepressiondiv" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1</div>
+                            <div class="qText">
+                                @Translate.Message("L73")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.OnlyDepression, 1, new Dictionary<string, object> { { "id", "OnlyDepressionYes" }, { "Name", "otherRisks.OnlyDepression" }, { "data-validator", "validateOnlyDepression" } })
+                                <label for="OnlyDepressionYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.OnlyDepression, 2, new Dictionary<string, object> { { "id", "OnlyDepressionNo" }, { "Name", "otherRisks.OnlyDepression" }, { "data-validator", "validateOnlyDepression" } })
+                                <label for="OnlyDepressionNo">@Translate.Message("L3")</label>
+                                <small id="OnlyDepressionError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L74")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.PhysicalProb, 1, new Dictionary<string, object> { { "id", "PhysicalProbYes" }, { "Name", "otherRisks.PhysicalProb" }, { "data-validator", "validatePhysicalProb" } })
+                                <label for="PhysicalProbYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.PhysicalProb, 2, new Dictionary<string, object> { { "id", "PhysicalProbNo" }, { "Name", "otherRisks.PhysicalProb" }, { "data-validator", "validatePhysicalProb" } })
+                                <label for="PhysicalProbNo">@Translate.Message("L3")</label>
+                                <small id="PhysicalProbError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="PhysicalProbDetdiv" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1</div>
+                            <div class="qText">
+                                @Translate.Message("L75")
+                            </div>
+                        </div>
+                        <div class="prob-group" data-validator-limit="1,5">
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.ArthritisBool, new Dictionary<string, object> { { "class", "PhysicalProbDet" }, { "data-validator", "validatePhysicalProbDet" } })
+                                    <label for="ArthritisBool">@Translate.Message("L36")</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.BreathProbBool, new Dictionary<string, object> { { "class", "PhysicalProbDet" }, { "data-validator", "validatePhysicalProbDet" } })
+                                    <label for="BreathProbBool">@Translate.Message("L76")</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.BackInjuryBool, new Dictionary<string, object> { { "class", "PhysicalProbDet" }, { "data-validator", "validatePhysicalProbDet" } })
+                                    <label for="BackInjuryBool">@Translate.Message("L77")</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.ChronicPainBool, new Dictionary<string, object> { { "class", "PhysicalProbDet" }, { "data-validator", "validatePhysicalProbDet" } })
+                                    <label for="ChronicPainBool">@Translate.Message("L78")</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.OtherPhysLimitBool, new Dictionary<string, object> { { "class", "PhysicalProbDet" }, { "data-validator", "validatePhysicalProbDet" } })
+                                    <label for="OtherPhysLimitBool">@Translate.Message("L79")</label>
+                                    <small class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++i).</div>
+                            <div class="qText">
+                                @Translate.Message("L80")
+                                <span data-tooltip aria-haspopup="true" title="@Translate.Message("L2413")"><i class="fa fa-question-circle"></i></span>
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.SleepApnea, 1, new Dictionary<string, object> { { "id", "SleepApneaYes" }, { "Name", "otherRisks.SleepApnea" }, { "data-validator", "validateSleepApnea" } })
+                                <label for="SleepApneaYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.SleepApnea, 2, new Dictionary<string, object> { { "id", "SleepApneaNo" }, { "Name", "otherRisks.SleepApnea" }, { "data-validator", "validateSleepApnea" } })
+                                <label for="SleepApneaNo">@Translate.Message("L3")</label>
+                                <small id="SleepApneaError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="SleepIssuesdiv" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1</div>
+                            <div class="qText">
+                                @Translate.Message("L81")
+                            </div>
+                        </div>
+                        <div class="issues-group" data-validator-limit="1,5">
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.SleepyBool, new Dictionary<string, object> { { "class", "otherissues" }, { "data-validator", "validateSleepIssues" } })
+                                    <label for="SleepyBool">@Translate.Message("L82").</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.SnoreBool, new Dictionary<string, object> { { "class", "otherissues" }, { "data-validator", "validateSleepIssues" } })
+                                    <label for="SnoreBool">@Translate.Message("L83").</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.BreathPauseBool, new Dictionary<string, object> { { "class", "otherissues" }, { "data-validator", "validateSleepIssues" } })
+                                    <label for="BreathPauseBool">@Translate.Message("L84").</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.HeadacheBool, new Dictionary<string, object> { { "class", "otherissues" }, { "data-validator", "validateSleepIssues" } })
+                                    <label for="HeadacheBool">@Translate.Message("L85").</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.FeelTiredBool, new Dictionary<string, object> { { "class", "otherissues" }, { "data-validator", "validateSleepIssues" } })
+                                    <label for="FeelTiredBool">@Translate.Message("L86").</label>
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.CheckBoxFor(M => M.NoIssueBool, new Dictionary<string, object> { { "class", "nootherissues" }, { "data-validator", "validateSleepIssues" } })
+                                    <label for="NoIssueBool">@Translate.Message("L87").</label>
+                                    <small class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="SleepApneaMeddiv" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(i).1</div>
+                            <div class="qText">
+                                @Translate.Message("L1333")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.SleepApneaMed, 1, new Dictionary<string, object> { { "id", "SleepApneaMedYes" }, { "Name", "otherRisks.SleepApneaMed" }, { "data-validator", "validateSleepApneaMed" } })
+                                <label for="SleepApneaMedYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.otherRisks.SleepApneaMed, 2, new Dictionary<string, object> { { "id", "SleepApneaMedNo" }, { "Name", "otherRisks.SleepApneaMed" }, { "data-validator", "validateSleepApneaMed" } })
+                                <label for="SleepApneaMedNo">@Translate.Message("L3")</label>
+                                <small id="SleepApneaMedError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="grid-x button-set">
+                <div class="cell medium-6 medium-order-2 medium-text-right"><button class="small button" type="submit">@Translate.Message("L481")</button></div>
+                <div class="cell medium-6 medium-order-1 medium-text-left"><button class="small secondary button" type="reset" id="closeRisks">@Translate.Message("L967")</button></div>
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript">
+        var formsubmit = true;
+        Foundation.Abide.defaults.validators['validateHeartHist'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.HeartHist']:checked").length == 0)
+		        return false;
+	        else
+		        $('#HeartHistError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateCancerHist'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.CancerHist']:checked").length == 0)
+		        return false;
+	        else
+		        $('#CancerHistError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateDiabetesHist'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.DiabetesHist']:checked").length == 0)
+		        return false;
+	        else
+		        $('#DiabetesHistError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateSmokeCig'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.SmokeCig']:checked").length == 0)
+		        return false;
+	        else
+		        $('#SmokeCigError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateOtherTobacco'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.OtherTobacco']:checked").length == 0)
+		        return false;
+	        else
+		        $('#OtherTobaccoError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateECig'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.ECig']:checked").length == 0)
+		        return false;
+	        else
+		        $('#ECigError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateModExer'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.ModExer']:checked").length == 0)
+		        return false;
+	        else
+		        $('#ModExerError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateExertPain'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.ExertPain']:checked").length == 0)
+		        return false;
+	        else
+		        $('#ExertPainError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateLowFatDiet'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.LowFatDiet']:checked").length == 0)
+		        return false;
+	        else
+		        $('#LowFatDietError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateHealthyCarb'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.HealthyCarb']:checked").length == 0)
+		        return false;
+	        else
+		        $('#HealthyCarbError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateTwoAlcohol'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.TwoAlcohol']:checked").length == 0)
+		        return false;
+	        else
+		        $('#TwoAlcoholError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateOverWeight'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.OverWeight']:checked").length == 0)
+		        return false;
+	        else
+		        $('#OverWeightError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateFeelStress'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.FeelStress']:checked").length == 0)
+		        return false;
+	        else
+		        $('#FeelStressError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateFeelAnxiety'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.FeelAnxiety']:checked").length == 0)
+		        return false;
+	        else
+		        $('#FeelAnxietyError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateFeelDepression'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.FeelDepression']:checked").length == 0)
+		        return false;
+	        else
+		        $('#FeelDepressionError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validatePhysicalProb'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.PhysicalProb']:checked").length == 0)
+		        return false;
+	        else
+		        $('#PhysicalProbError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateSleepApnea'] = function ($el, required, parent) {
+	        if ($("input[name='otherRisks.SleepApnea']:checked").length == 0)
+		        return false;
+	        else
+		        $('#SleepApneaError').hide();
+	        return true;
+        };
+        Foundation.Abide.defaults.validators['validateNoOfCig'] = function ($el, required, parent) {
+            if ($('#SmokeCigYes').is(":checked")) {
+                if ($el.val() == "" || $el.val() < 0)
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+
+        Foundation.Abide.defaults.validators['validateExerciseMins'] = function ($el, required, parent) {
+            if ($el.val() == "" || $el.val() < 0)
+			    return false;
+		    else
+			    return true;
+        };
+        Foundation.Abide.defaults.validators['validateSmokeHist'] = function ($el, required, parent) {
+	        if ($('#SmokeCigNo').is(":checked")) {
+                if ($el.val() == "")
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateOtherTobaccoTypes'] = function ($el, required, parent) {
+	        if ($('#OtherTobaccoYes').is(":checked")) {
+		        var group = parent.closest('.tobacco-group');
+		        var limit = group.attr('data-validator-limit').split(',');
+		        var countC = group.find(':checked').length;
+		        if (countC >= limit[0]) {
+                    group.find('small.form-error').hide();
+                    group.find('small.form-error').removeClass('is-visible');
+			        return true;
+		        } else {
+			        group.find('small.form-error').css({ display: 'block' });
+			        return false;
+		        }
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateVigExer'] = function ($el, required, parent) {
+	        if ($('#ModExerYes').is(":checked")) {
+		        if ($("input[name='otherRisks.VigExer']:checked").length == 0)
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateModExerPFW'] = function ($el, required, parent) {
+	        if ($('#ModExerNo').is(":checked") && '@Model.pastHRA' == 'True') {
+		        if ($("input[name='otherRisks.ModExerPFW']:checked").length == 0)
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateLowFatDietPFW'] = function ($el, required, parent) {
+	        if ($('#LowFatDietNo').is(":checked") && '@Model.pastHRA' == 'True') {
+		        if ($("input[name='otherRisks.LowFatDietPFW']:checked").length == 0)
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateHealthyCarbPFW'] = function ($el, required, parent) {
+	        if ($('#HealthyCarbNo').is(":checked") && '@Model.pastHRA' == 'True') {
+		        if ($("input[name='otherRisks.HealthyCarbPFW']:checked").length == 0)
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateFeelStressPFW'] = function ($el, required, parent) {
+	        if ($('#FeelStressNo').is(":checked") && '@Model.pastHRA' == 'True') {
+		        if ($("input[name='otherRisks.FeelStressPFW']:checked").length == 0)
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateFeelAnxietyPFW'] = function ($el, required, parent) {
+	        if ($('#FeelAnxietyNo').is(":checked") && '@Model.pastHRA' == 'True') {
+		        if ($("input[name='otherRisks.FeelAnxietyPFW']:checked").length == 0)
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateVigExerPFW'] = function ($el, required, parent) {
+	        if ($('#VigExerNo').is(":checked") && '@Model.pastHRA' == 'True') {
+		        if ($("input[name='otherRisks.VigExerPFW']:checked").length == 0)
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateOneAlcohol'] = function ($el, required, parent) {
+	        if ($('#TwoAlcoholNo').is(":checked")) {
+		        if ($("input[name='otherRisks.OneAlcohol']:checked").length == 0)
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateOnlyDepression'] = function ($el, required, parent) {
+	        if ($('#FeelDepressionYes').is(":checked")) {
+		        if ($("input[name='otherRisks.OnlyDepression']:checked").length == 0)
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validatePhysicalProbDet'] = function ($el, required, parent) {
+	        if ($("#PhysicalProbYes").is(":checked")) {
+		        var group = parent.closest('.prob-group');
+		        var limit = group.attr('data-validator-limit').split(',');
+		        var countC = group.find(':checked').length;
+		        if (countC >= limit[0] && countC <= limit[1]) {
+                    group.find('small.form-error').hide();
+                    group.find('small.form-error').removeClass('is-visible');
+			        return true;
+		        } else {
+			        group.find('small.form-error').css({ display: 'block' });
+			        return false;
+		        }
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateSleepApneaMed'] = function ($el, required, parent) {
+	        if ($("#SleepApneaYes").is(":checked")) {
+		        if ($("input[name='otherRisks.SleepApneaMed']:checked").length == 0)
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateSleepIssues'] = function ($el, required, parent) {
+	        if ($("#SleepApneaNo").is(":checked")) {
+		        var group = parent.closest('.issues-group');
+		        var limit = group.attr('data-validator-limit').split(',');
+		        var countC = group.find(':checked').length;
+		        if (countC >= limit[0] && countC <= limit[1]) {
+                    group.find('small.form-error').hide();
+                    group.find('small.form-error').removeClass('is-visible');
+			        return true;
+		        } else {
+			        group.find('small.form-error').css({ display: 'block' });
+			        return false;
+		        }
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateExerFreq'] = function ($el, required, parent) {
+	        if($el.is(":visible")){
+                if ($el.val() == "")
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateExerIntensity'] = function ($el, required, parent) {
+	        if($el.is(":visible") && $('#otherRisks_ExerciseFrequency').val() > 0){
+                if ($el.val() == "")
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateExerDuration'] = function ($el, required, parent) {
+	        if($el.is(":visible") && $('#otherRisks_ExerciseFrequency').val() > 0){
+                if ($el.val() == "")
+			        return false;
+		        else
+			        return true;
+	        }
+	        else
+		        return true;
+        };
+        Foundation.Abide.defaults.validators['validateAerobicActivities'] = function ($el, required, parent) {
+            var activityId = $el.attr("Id").replace('Bool', '');
+            if ($el.is(":visible")) {
+                if (!$('#' + $el.attr("Id") + '').is(":checked")) {
+                    $("#" + $el.attr("Id") +"Div").hide();
+                    $('#otherRisks_' + activityId + 'ActivityEachWeek').val('');
+                    $('#otherRisks_' + activityId + 'ExerciseEachTime').val('');
+                    $("input[name='otherRisks." + activityId + "IntenseExercise']").prop("checked", false);
+                }
+                else
+                    $("#" + $el.attr("Id") + "Div").show();
+                var group = parent.closest('.aerobic-group');
+                var limit = group.attr('data-validator-limit').split(',');
+                var countC = group.find(':checked').length;
+                if (countC >= limit[0]) {
+                    $('#aerobic-error').hide();
+                    $('#aerobic-error').removeClass('is-visible');
+                    return true;
+                } else {
+                    $('#aerobic-error').css({ display: 'block' });
+                    return false;
+                }
+            }
+            else {
+                return true;
+            }
+    };
+
+    Foundation.Abide.defaults.validators['validateExerciseEachTime'] = function ($el, required, parent) {
+        if ($el.is(":visible") && $el.val() == "" || $el.val() < 0)
+            return false;
+        else
+            return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateActivityEachWeek'] = function ($el, required, parent) {
+        if ($el.is(":visible") && $el.val() == "" || $el.val() < 0)
+                return false;
+            else
+                return true;
+    };
+
+    Foundation.Abide.defaults.validators['validateIntenseExercise'] = function ($el, required, parent) {
+        var activityName = $el.attr("Name");
+        if ($el.is(":visible") && $("input[name='" + activityName +"']:checked").length == 0)
+            return false;
+        else
+            $('#IntenseExerciseError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateMusclesActivities'] = function ($el, required, parent) {
+        if ($el.is(":visible") && $("input[name='otherRisks.MusclesActivities']:checked").length == 0)
+            return false;
+        else
+            $('#MusclesActivitiesError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateMusclesActivitiesDays'] = function ($el, required, parent) {
+        if ($('#MusclesActivitiesYes').is(":checked")) {
+            if ($el.val() == "" || $el.val() < 0)
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+    Foundation.Abide.defaults.validators['validateFlexibilityActivities'] = function ($el, required, parent) {
+        if ($el.is(":visible") && $("input[name='otherRisks.FlexibilityActivities']:checked").length == 0)
+            return false;
+        else
+            $('#FlexibilityActivitiesError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateFlexibilityActivitiesDays'] = function ($el, required, parent) {
+        if ($('#FlexibilityActivitiesYes').is(":checked")) {
+            if ($el.val() == "" || $el.val() < 0)
+                return false;
+            else
+                return true;
+        }
+        else
+            return true;
+    };
+    Foundation.Abide.defaults.validators['validatePhysicallyActiveLevel'] = function ($el, required, parent) {
+        if ($el.is(":visible") && $("input[name='otherRisks.PhysicallyActiveLevel']:checked").length == 0)
+            return false;
+        else
+            $('#IntenseExerciseError').hide();
+        return true;
+    };
+    $(document).ready(function () {
+        @if (Model.readOnly)
+        {
+            @: $("#riskfactors-form :input").prop("disabled", true);
+                    @: $('#closeRisks').attr('disabled', false);
+                }
+        $('#closeRisks').on('click', function () {
+            $('#survey-modal').foundation('close');
+            RealignPage();
+            //removeForm('riskfactors-form');
+        });
+
+        $("#riskfactors-form").foundation();
+        $('#riskfactors-form')
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                if (invalid_fields) {
+                    var scrollTo = $('#' + invalid_fields[0].id).parent('div').position().top;
+                    $('#riskfactors-form').parents('.reveal-overlay').animate({
+                    scrollTop: scrollTo
+                    }, 400);
+                }
+            })
+            .on('formvalid.zf.abide', function () {
+                if (formsubmit == true) {
+                    $.ajax({
+                    url: "@Url.Action("OtherRiskFactors", "HRA")",
+                        type: 'POST',
+                        dataType: "json",
+                        data: $("#riskfactors-form").serialize(),
+                        success: function (data) {
+                            if (data == "success") {
+                                $(document).on('closed.zf.reveal', '[data-reveal]', function () {
+                                    UpdateHRAStatus("OR");
+                                });
+                                $('#survey-modal').foundation('close');
+                                //removeForm('riskfactors-form');
+                            }
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+                    formsubmit = false;
+                }
+            })
+            .on("submit", function (ev) {
+                ev.preventDefault();
+            })
+    });
+    //Hide questions on load
+    @if (Model.otherRisks == null || (Model.otherRisks.SmokeCig == null || (Model.otherRisks.SmokeCig.HasValue && Model.otherRisks.SmokeCig.Value == 2)))
+    {
+        <text>
+    $("#NoOfCigdiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.SmokeCig == null || (Model.otherRisks.SmokeCig.HasValue && Model.otherRisks.SmokeCig.Value == 1)))
+    {
+        <text>
+    $("#SmokeHistdiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.OtherTobacco == null || (Model.otherRisks.OtherTobacco.HasValue && Model.otherRisks.OtherTobacco.Value == 2)))
+    {
+        <text>
+    $("#OtherTobaccoTypesdiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.ModExer == null || (Model.otherRisks.ModExer.HasValue && Model.otherRisks.ModExer.Value == 2)))
+    {
+        <text>
+    $("#VigExerdiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.ModExer == null || (Model.otherRisks.ModExer.HasValue && Model.otherRisks.ModExer.Value == 1)) || Model.pastHRA == false)
+    {
+        <text>
+    $("#ModExerPFWdiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.LowFatDiet == null || (Model.otherRisks.LowFatDiet.HasValue && Model.otherRisks.LowFatDiet == 1)) || Model.pastHRA == false)
+    {
+        <text>
+    $("#LowFatDietdiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.HealthyCarb == null || (Model.otherRisks.HealthyCarb.HasValue && Model.otherRisks.HealthyCarb.Value == 1)) || Model.pastHRA == false)
+    {
+        <text>
+    $("#HealthyCarbdiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.FeelStress == null || (Model.otherRisks.FeelStress.HasValue && Model.otherRisks.FeelStress == 1)) || Model.pastHRA == false)
+    {
+        <text>
+    $("#FeelStressdiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.FeelAnxiety == null || (Model.otherRisks.FeelAnxiety.HasValue && Model.otherRisks.FeelAnxiety == 1)) || Model.pastHRA == false)
+    {
+        <text>
+    $("#FeelAnxietydiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.VigExer == null || (Model.otherRisks.VigExer.HasValue && Model.otherRisks.VigExer == 1)) || Model.pastHRA == false)
+    {
+        <text>
+    $("#VigExerPFWdiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.TwoAlcohol == null || (Model.otherRisks.TwoAlcohol.HasValue && Model.otherRisks.TwoAlcohol.Value == 1)))
+    {
+        <text>
+    $("#OneAlcoholdiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.PhysicalProb == null || (Model.otherRisks.PhysicalProb.HasValue && Model.otherRisks.PhysicalProb.Value == 2)))
+    {
+        <text>
+    $("#PhysicalProbDetdiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.FeelDepression == null || (Model.otherRisks.FeelDepression.HasValue && Model.otherRisks.FeelDepression.Value == 2)))
+    {
+        <text>
+    $("#OnlyDepressiondiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.SleepApnea == null || (Model.otherRisks.SleepApnea.HasValue && Model.otherRisks.SleepApnea.Value == 2)))
+    {
+        <text>
+    $("#SleepApneaMeddiv").hide();
+    </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.SleepApnea == null || (Model.otherRisks.SleepApnea.HasValue && Model.otherRisks.SleepApnea.Value == 1)))
+    {
+        <text>
+    $("#SleepIssuesdiv").hide();
+    </text>
+    }
+    @if(Model.otherRisks == null || (Model.otherRisks.ExerciseFrequency == null || (Model.otherRisks.ExerciseFrequency.HasValue && Model.otherRisks.ExerciseFrequency.Value == 0)))
+    {
+        <text>
+            $("#ExerIntensity").hide();
+            $("#ExerDuration").hide();
+        </text>
+    }
+    @if (Model.otherRisks == null || ((Model.otherRisks.Walking == null || (Model.otherRisks.Walking.HasValue && Model.otherRisks.Walking.Value == 2)) && (Model.otherRisks.Jogging == null || (Model.otherRisks.Jogging.HasValue && Model.otherRisks.Jogging.Value == 2))
+          && (Model.otherRisks.Treadmill == null || (Model.otherRisks.Treadmill.HasValue && Model.otherRisks.Treadmill.Value == 2)) && (Model.otherRisks.Cycling == null || (Model.otherRisks.Cycling.HasValue && Model.otherRisks.Cycling.Value == 2))
+          && (Model.otherRisks.StairMach == null || (Model.otherRisks.StairMach.HasValue && Model.otherRisks.StairMach.Value == 2)) && (Model.otherRisks.EllipticTrainer == null || (Model.otherRisks.EllipticTrainer.HasValue && Model.otherRisks.EllipticTrainer.Value == 2))
+          && (Model.otherRisks.RowingMach == null || (Model.otherRisks.RowingMach.HasValue && Model.otherRisks.RowingMach.Value == 2)) && (Model.otherRisks.AerobicMach == null || (Model.otherRisks.AerobicMach.HasValue && Model.otherRisks.AerobicMach.Value == 2))
+          && (Model.otherRisks.AerobicDance == null || (Model.otherRisks.AerobicDance.HasValue && Model.otherRisks.AerobicDance.Value == 2)) && (Model.otherRisks.OutdoorCycling == null || (Model.otherRisks.OutdoorCycling.HasValue && Model.otherRisks.OutdoorCycling.Value == 2))
+          && (Model.otherRisks.SwimmingLaps == null || (Model.otherRisks.SwimmingLaps.HasValue && Model.otherRisks.SwimmingLaps.Value == 2)) && (Model.otherRisks.RacquetSports == null || (Model.otherRisks.RacquetSports.HasValue && Model.otherRisks.RacquetSports.Value == 2))
+          && (Model.otherRisks.OtherAerobic == null || (Model.otherRisks.OtherAerobic.HasValue && Model.otherRisks.OtherAerobic.Value == 2))) || (Model.otherRisks.NoAerobic != null && (Model.otherRisks.NoAerobic.HasValue && Model.otherRisks.RacquetSports.Value == 1)))
+    {
+        <text>
+            $("#ActivityEachWeekdiv").hide();
+            $("#ExerciseEachTimediv").hide();
+            $("#IntenseExercisediv").hide();
+        </text>
+    }
+    @if(Model.otherRisks == null || (Model.otherRisks.MusclesActivitiesDays == null || (Model.otherRisks.MusclesActivitiesDays.HasValue && Model.otherRisks.MusclesActivitiesDays.Value == 2)))
+    {
+        <text>
+            $("#MusclesActivitiesDaysdiv").hide();
+        </text>
+    }
+    @if (Model.otherRisks == null || (Model.otherRisks.FlexibilityActivitiesDays == null || (Model.otherRisks.FlexibilityActivitiesDays.HasValue && Model.otherRisks.FlexibilityActivitiesDays.Value == 2)))
+    {
+        <text>
+        $("#FlexibilityActivitiesDaysdiv").hide();
+        </text>
+    }
+
+        @if (Model.otherRisks.Walking != null && Model.otherRisks.Walking == 1)
+    {
+        <text>
+        $("#WalkingBoolDiv").show();
+        </text>
+    } else
+    {
+        <text>
+        $("#WalkingBoolDiv").hide();
+        </text>
+    }
+
+	@if (Model.otherRisks.Jogging == 1)
+    {
+        <text>
+        $("#JoggingBoolDiv").show();
+        </text>
+    }
+    else
+    {
+        <text>
+        $("#JoggingBoolDiv").hide();
+        </text>
+    }
+
+    @if (Model.otherRisks.Treadmill == 1)
+    {
+        <text>
+        $("#TreadmillBoolDiv").show();
+        </text>
+    }
+    else
+    {
+        <text>
+        $("#TreadmillBoolDiv").hide();
+        </text>
+    }
+
+    @if (Model.otherRisks.Cycling == 1)
+    {
+        <text>
+        $("#CyclingBoolDiv").show();
+        </text>
+    }
+    else
+    {
+        <text>
+        $("#CyclingBoolDiv").hide();
+        </text>
+    }
+
+    @if (Model.otherRisks.StairMach == 1)
+    {
+        <text>
+        $("#StairMachBoolDiv").show();
+        </text>
+    } else
+    {
+        <text>
+        $("#StairMachBoolDiv").hide();
+        </text>
+    }
+
+    @if (Model.otherRisks.EllipticTrainer == 1)
+    {
+        <text>
+        $("#EllipticTrainerBoolDiv").show();
+        </text>
+    }
+    else
+    {
+        <text>
+        $("#EllipticTrainerBoolDiv").hide();
+        </text>
+    }
+
+    @if (Model.otherRisks.RowingMach == 1)
+    {
+        <text>
+        $("#RowingMachBoolDiv").show();
+        </text>
+    }
+    else
+    {
+        <text>
+        $("#RowingMachBoolDiv").hide();
+        </text>
+    }
+
+    @if (Model.otherRisks.AerobicMach == 1)
+    {
+        <text>
+        $("#AerobicMachBoolDiv").show();
+        </text>
+    }
+    else
+    {
+        <text>
+        $("#AerobicMachBoolDiv").hide();
+        </text>
+    }
+
+    @if (Model.otherRisks.AerobicDance == 1)
+    {
+        <text>
+        $("#AerobicDanceBoolDiv").show();
+        </text>
+    }
+    else
+    {
+        <text>
+        $("#AerobicDanceBoolDiv").hide();
+        </text>
+    }
+
+    @if (Model.otherRisks.OutdoorCycling == 1)
+    {
+        <text>
+        $("#OutdoorCyclingBoolDiv").show();
+        </text>
+    }
+    else
+    {
+        <text>
+        $("#OutdoorCyclingBoolDiv").hide();
+        </text>
+    }
+
+    @if (Model.otherRisks.SwimmingLaps == 1)
+    {
+        <text>
+        $("#SwimmingLapsBoolDiv").show();
+        </text>
+    }
+    else
+    {
+        <text>
+        $("#SwimmingLapsBoolDiv").hide();
+        </text>
+    }
+
+    @if (Model.otherRisks.RacquetSports == 1)
+    {
+        <text>
+        $("#RacquetSportsBoolDiv").show();
+        </text>
+    }
+    else
+    {
+        <text>
+        $("#RacquetSportsBoolDiv").hide();
+        </text>
+    }
+
+    @if (Model.otherRisks.OtherAerobic == 1)
+    {
+        <text>
+        $("#OtherAerobicBoolDiv").show();
+        </text>
+    }
+    else
+    {
+        <text>
+        $("#OtherAerobicBoolDiv").hide();
+        </text>
+    }
+
+
+    //Hide/Show questions based on parent question response
+    $('input[name="otherRisks.SmokeCig"]').on('change', function () {
+        if (this.value == 1) {
+            $("#NoOfCigdiv").show();
+            $("#SmokeHistdiv").hide();
+            $('#otherRisks_SmokeHist').val('');
+            if ('@Model.smokingProgram' == 'True' && !($("#OtherTobaccoYes").is(":checked")) && !($("#ECigYes").is(":checked")))
+                RevisitInterest()
+        }
+        else {
+            $("#SmokeHistdiv").show();
+            $("#NoOfCigdiv").hide();
+            $("#otherRisks_NoOfCig").val('');
+        }
+    });
+
+    $('#otherRisks_ExerciseFrequency').on('change', function () {
+        if (this.value == 0) {
+            $("#ExerIntensity").hide();
+            $("#ExerDuration").hide();
+        }
+        else {
+            $("#ExerIntensity").show();
+            $("#ExerDuration").show();
+        }
+        $('#otherRisks_ExerciseIntensity').val('');
+        $('#otherRisks_ExerciseDuration').val('');
+    });
+
+    $('input[name="otherRisks.OtherTobacco"]').on('click', function () {
+        if (this.value == 1) {
+            $("#OtherTobaccoTypesdiv").show();
+            if ('@Model.smokingProgram' == 'True' && !($("#SmokeCigYes").is(":checked")) && !($("#ECigYes").is(":checked")))
+                RevisitInterest()
+        }
+        else {
+            $("#OtherTobaccoTypesdiv").hide();
+            $('.OtherTobaccoTypes').prop("checked", false);
+        }
+    });
+    $('input[name="otherRisks.ECig"]').on('click', function () {
+        if (this.value == 1 && '@Model.smokingProgram' == 'True' && !($("#SmokeCigYes").is(":checked")) && !($("#OtherTobaccoYes").is(":checked"))) {
+            RevisitInterest()
+        }
+    });
+    $('input[name="otherRisks.ModExer"]').on('click', function () {
+        if (this.value == 1) {
+            $("#ModExerPFWdiv").hide();
+            $("#VigExerdiv").show();
+            $('input[name="otherRisks.ModExerPFW"]').prop("checked", false);
+        }
+        else {
+            $("#VigExerdiv").hide();
+            $("#VigExerPFWdiv").hide();
+            $('input[name="otherRisks.VigExer"]').prop("checked", false);
+            $('input[name="otherRisks.VigExerPFW"]').prop("checked", false);
+            if ('@Model.pastHRA' == 'True') {
+                $("#ModExerPFWdiv").show();
+            }
+        }
+    });
+
+    $('input[name="otherRisks.LowFatDiet"]').on('click', function () {
+        if (this.value == 2 && '@Model.pastHRA' == 'True') {
+            $("#LowFatDietdiv").show();
+        }
+        else {
+            $("#LowFatDietdiv").hide();
+            $('input[name="otherRisks.LowFatDietPFW"]').prop("checked", false);
+        }
+    });
+    $('input[name="otherRisks.HealthyCarb"]').on('click', function () {
+        if (this.value == 2 && '@Model.pastHRA' == 'True') {
+            $("#HealthyCarbdiv").show();
+        }
+        else {
+            $("#HealthyCarbdiv").hide();
+            $('input[name="otherRisks.HealthyCarbPFW"]').prop("checked", false);
+        }
+    });
+    $('input[name="otherRisks.FeelStress"]').on('click', function () {
+        if (this.value == 2 && '@Model.pastHRA' == 'True') {
+            $("#FeelStressdiv").show();
+        }
+        else {
+            $("#FeelStressdiv").hide();
+            $('input[name="otherRisks.FeelStressPFW"]').prop("checked", false);
+        }
+    });
+    $('input[name="otherRisks.FeelAnxiety"]').on('click', function () {
+        if (this.value == 2 && '@Model.pastHRA' == 'True') {
+            $("#FeelAnxietydiv").show();
+        }
+        else {
+            $("#FeelAnxietydiv").hide();
+            $('input[name="otherRisks.FeelAnxietyPFW"]').prop("checked", false);
+        }
+    });
+    $('input[name="otherRisks.VigExer"]').on('click', function () {
+        if (this.value == 2 && '@Model.pastHRA' == 'True') {
+            $("#VigExerPFWdiv").show();
+        }
+        else {
+            $("#VigExerPFWdiv").hide();
+            $('input[name="otherRisks.VigExerPFW"]').prop("checked", false);
+        }
+    });
+    $('input[name="otherRisks.TwoAlcohol"]').on('click', function () {
+        if (this.value == 2) {
+            $("#OneAlcoholdiv").show();
+        }
+        else {
+            $("#OneAlcoholdiv").hide();
+            $('input[name="otherRisks.OneAlcohol"]').prop("checked", false);
+        }
+    });
+    $('input[name="otherRisks.PhysicalProb"]').on('click', function () {
+        if (this.value == 1) {
+            $("#PhysicalProbDetdiv").show();
+        }
+        else {
+            $("#PhysicalProbDetdiv").hide();
+            $('.PhysicalProbDet').prop("checked", false);
+        }
+    });
+    $('input[name="otherRisks.FeelDepression"]').on('click', function () {
+        if (this.value == 1) {
+            $("#OnlyDepressiondiv").show();
+        }
+        else {
+            $("#OnlyDepressiondiv").hide();
+            $('input[name="otherRisks.OnlyDepression"]').prop("checked", false);
+        }
+    });
+    $('.otherissues').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.nootherissues').prop("checked", false);
+        }
+    });
+    $('.nootherissues').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.otherissues').prop("checked", false);
+        }
+    });
+    $('input[name="otherRisks.SleepApnea"]').on('click', function () {
+        if (this.value == 2) {
+            $("#SleepIssuesdiv").show();
+            $("#SleepApneaMeddiv").hide();
+            $('input[name="otherRisks.SleepApneaMed"]').prop("checked", false);
+        }
+        else {
+            $("#SleepIssuesdiv").hide();
+            $("#SleepApneaMeddiv").show();
+            $('.otherissues').prop("checked", false);
+            $('.nootherissues').prop("checked", false);
+        }
+    });
+
+    function RevisitInterest() {
+        $("#SmokePopup").removeClass('hide');
+        $("#SmokePopup").show();
+    }
+
+    $('.AerobicActivities').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.NoAerobicActivities').prop("checked", false);
+        }
+    });
+    $('.NoAerobicActivities').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.AerobicActivities').prop("checked", false);
+            $('.AerobicActivities').trigger('change');
+        }
+    });
+
+    $('input[name="otherRisks.MusclesActivities"]').on('change', function () {
+        if (this.value == 1) {
+            $("#MusclesActivitiesDaysdiv").show();
+        }
+        else {
+            $("#MusclesActivitiesDaysdiv").hide();
+            $("#otherRisks_MusclesActivitiesDays").val('');
+        }
+    });
+
+    $('input[name="otherRisks.FlexibilityActivities"]').on('change', function () {
+        if (this.value == 1) {
+            $("#FlexibilityActivitiesDaysdiv").show();
+        }
+        else {
+            $("#FlexibilityActivitiesDaysdiv").hide();
+            $("#otherRisks_FlexibilityActivitiesDays").val('');
+        }
+    });
+    </script>
+    <a class="close-button" data-close onclick="removeForm('riskfactors-form')">&#215;</a>
+</div>

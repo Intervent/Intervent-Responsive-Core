@@ -1,0 +1,500 @@
+﻿<!--USER VIEW-->
+@using InterventWebApp;
+@model InterventWebApp.HSPModel
+<div class="inner-survey-modal">
+<h2 class="text-center">@Translate.Message("L485")</h2>
+<form data-abide id="hsp-form" novalidate>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                @{
+                    int queNo = 0;
+                    <div id="q1" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++queNo).</div>
+                            <div class="qText">
+                                @Translate.Message("L88")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            @Html.DropDownListFor(m => m.hsp.StateOfHealth, Model.StateOfHealthList, "--" + Translate.Message("L421") + "--", new { @required = "required" })
+                            <div class="qOption">
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="q2" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++queNo).</div>
+                            <div class="qText">
+                                @Translate.Message("L94")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            @Html.DropDownListFor(m => m.hsp.LifeSatisfaction, Model.LifeSatisfactionList, "--" + Translate.Message("L421") + "--")
+                        </div>
+                    </div>
+                    <div id="q3" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++queNo).</div>
+                            <div class="qText">
+                                @Translate.Message("L99")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            @Html.DropDownListFor(m => m.hsp.JobSatisfaction, Model.JobSatisfactionList, "--" + Translate.Message("L421") + "--")
+                        </div>
+                    </div>
+                    <div id="q4" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++queNo).</div>
+                            <div class="qText">
+                                @Translate.Message("L101")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            @Html.DropDownListFor(m => m.hsp.RelaxMed, Model.RelaxMedList, "--" + Translate.Message("L421") + "--")
+                        </div>
+                    </div>
+                    <div id="q5" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++queNo).</div>
+                            <div class="qText">
+                                @Translate.Message("L106")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            @Html.DropDownListFor(m => m.hsp.WorkMissPers, Model.WorkMissPersList, "--" + Translate.Message("L421") + "--", new { @required = "required" })
+                            <div class="qOption">
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    if (Model.HRAVer != (byte)HRAVersions.IntuityVersion)
+                    {
+                        <div id="q6" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++queNo).</div>
+                                <div class="qText">
+                                    @Translate.Message("L107")
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                @Html.DropDownListFor(m => m.hsp.WorkMissFam, Model.WorkMissFamList, "--" + Translate.Message("L421") + "--", new { @required = "required" })
+                                <div class="qOption">
+                                    <small class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div id="q7" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++queNo).</div>
+                            <div class="qText">
+                                @Translate.Message("L108")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            @Html.DropDownListFor(m => m.hsp.EmergRoomVisit, Model.EmergRoomVisitList, "--" + Translate.Message("L421") + "--", new { @required = "required" })
+                            <div class="qOption">
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="q8" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++queNo).</div>
+                            <div class="qText">
+                                @Translate.Message("L109")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            @Html.DropDownListFor(m => m.hsp.AdmitHosp, Model.AdmitHospList, "--" + Translate.Message("L421") + "--", new { @required = "required" })
+                            <div class="qOption">
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    if (Model.HRAVer != (byte)HRAVersions.IntuityVersion)
+                    {
+                        <div id="q9" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++queNo).</div>
+                                <div class="qText">
+                                    @Translate.Message("L110")
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                @Html.DropDownListFor(m => m.hsp.DrVisitPers, Model.DrVisitPersList, "--" + Translate.Message("L421") + "--", new { @required = "required" })
+                                <div class="qOption">
+                                    <small class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div id="q10" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++queNo).</div>
+                            <div class="qText">
+                                @Translate.Message("L111")
+                            </div>
+                        </div>
+                        <div class="qBody">
+                            @Html.DropDownListFor(m => m.hsp.ProductivityLoss, Model.ProductivityLossList, "--" + Translate.Message("L421") + "--", new { @required = "required" })
+                            <div class="qOption">
+                                <small class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    if (Model.HRAVer != (byte)HRAVersions.IntuityVersion)
+                    {
+                        <div id="q11" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++queNo).</div>
+                                <div class="qText">
+                                    @Translate.Message("L112")
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.TextDrive, 1, new Dictionary<string, object> { { "id", "TextDriveYes" }, { "Name", "hsp.TextDrive" }, { "data-validator", "validateTextDrive" } })
+                                    <label for="TextDriveYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.TextDrive, 2, new Dictionary<string, object> { { "id", "TextDriveNo" }, { "Name", "hsp.TextDrive" }, { "data-validator", "validateTextDrive" } })
+                                    <label for="TextDriveNo">@Translate.Message("L3")</label>
+                                    <small id="TextDriveError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="q12" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++queNo).</div>
+                                <div class="qText">
+                                    @Translate.Message("L113")
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.DUI, 1, new Dictionary<string, object> { { "id", "DUIYes" }, { "Name", "hsp.DUI" }, { "data-validator", "validateDUI" } })
+                                    <label for="DUIYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.DUI, 2, new Dictionary<string, object> { { "id", "DUINo" }, { "Name", "hsp.DUI" }, { "data-validator", "validateDUI" } })
+                                    <label for="DUINo">@Translate.Message("L3")</label>
+                                    <small id="DUIError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="q13" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++queNo).</div>
+                                <div class="qText">
+                                    @Translate.Message("L114")
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.RideDUI, 1, new Dictionary<string, object> { { "id", "RideDUIYes" }, { "Name", "hsp.RideDUI" }, { "data-validator", "validateRideDUI" } })
+                                    <label for="RideDUIYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.RideDUI, 2, new Dictionary<string, object> { { "id", "RideDUINo" }, { "Name", "hsp.RideDUI" }, { "data-validator", "validateRideDUI" } })
+                                    <label for="RideDUINo">@Translate.Message("L3")</label>
+                                    <small id="RideDUIError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div id="q14" class="question">
+                        <div class="qHeader">
+                            <div class="qNumber">@(++queNo).</div>
+                            <div class="qText">
+                                @Translate.Message("L115")
+                            </div>
+                        </div>
+
+                        <div class="qBody">
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.hsp.RideNoBelt, 1, new Dictionary<string, object> { { "id", "RideNoBeltYes" }, { "Name", "hsp.RideNoBelt" }, { "data-validator", "validateRideNoBelt" } })
+                                <label for="RideNoBeltYes">@Translate.Message("L2")</label>
+                            </div>
+                            <div class="qOption">
+                                @Html.RadioButtonFor(M => M.hsp.RideNoBelt, 2, new Dictionary<string, object> { { "id", "RideNoBeltNo" }, { "Name", "hsp.RideNoBelt" }, { "data-validator", "validateRideNoBelt" } })
+                                <label for="RideNoBeltNo">@Translate.Message("L3")</label>
+                                <small id="RideNoBeltError" class="form-error">@Translate.Message("L480")</small>
+                            </div>
+                        </div>
+                    </div>
+                    if (Model.HRAVer != (byte)HRAVersions.IntuityVersion)
+                    {
+                        <div id="q15" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++queNo).</div>
+                                <div class="qText">
+                                    @Translate.Message("L116")
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.Speed10, 1, new Dictionary<string, object> { { "id", "Speed10Yes" }, { "Name", "hsp.Speed10" }, { "data-validator", "validateSpeed10" } })
+                                    <label for="Speed10Yes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.Speed10, 2, new Dictionary<string, object> { { "id", "Speed10No" }, { "Name", "hsp.Speed10" }, { "data-validator", "validateSpeed10" } })
+                                    <label for="Speed10No">@Translate.Message("L3")</label>
+                                    <small id="Speed10Error" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="q16" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++queNo).</div>
+                                <div class="qText">
+                                    @Translate.Message("L117")
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.BikeNoHelmet, 1, new Dictionary<string, object> { { "id", "BikeNoHelmetYes" }, { "Name", "hsp.BikeNoHelmet" }, { "data-validator", "validateBikeNoHelmet" } })
+                                    <label for="BikeNoHelmetYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.BikeNoHelmet, 2, new Dictionary<string, object> { { "id", "BikeNoHelmetNo" }, { "Name", "hsp.BikeNoHelmet" }, { "data-validator", "validateBikeNoHelmet" } })
+                                    <label for="BikeNoHelmetNo">@Translate.Message("L3")</label>
+                                    <small id="BikeNoHelmetError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="q17" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++queNo).</div>
+                                <div class="qText">
+                                    @Translate.Message("L118")
+                                </div>
+                            </div>
+
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.MBikeNoHelmet, 1, new Dictionary<string, object> { { "id", "MBikeNoHelmetYes" }, { "Name", "hsp.MBikeNoHelmet" }, { "data-validator", "validateMBikeNoHelmet" } })
+                                    <label for="MBikeNoHelmetYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.MBikeNoHelmet, 2, new Dictionary<string, object> { { "id", "MBikeNoHelmetNo" }, { "Name", "hsp.MBikeNoHelmet" }, { "data-validator", "validateMBikeNoHelmet" } })
+                                    <label for="MBikeNoHelmetNo">@Translate.Message("L3")</label>
+                                    <small id="MBikeNoHelmetError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                        if (Model.HRAVer != (byte)HRAVersions.ActivateVersion)
+                        {
+                            <div id="q18" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(++queNo).</div>
+                                    <div class="qText">
+                                        @Translate.Message("L120")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.hsp.SmokeDetect, 1, new Dictionary<string, object> { { "id", "SmokeDetectYes" }, { "Name", "hsp.SmokeDetect" }, { "data-validator", "validateSmokeDetect" } })
+                                        <label for="SmokeDetectYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.hsp.SmokeDetect, 2, new Dictionary<string, object> { { "id", "SmokeDetectNo" }, { "Name", "hsp.SmokeDetect" }, { "data-validator", "validateSmokeDetect" } })
+                                        <label for="SmokeDetectNo">@Translate.Message("L3")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.hsp.SmokeDetect, 3, new Dictionary<string, object> { { "id", "SmokeDetectDontKnow" }, { "Name", "hsp.SmokeDetect" }, { "data-validator", "validateSmokeDetect" } })
+                                        <label for="SmokeDetectDontKnow">@Translate.Message("L122")</label>
+                                        <small id="SmokeDetectError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="q19" class="question">
+                                <div class="qHeader">
+                                    <div class="qNumber">@(++queNo).</div>
+                                    <div class="qText">
+                                        @Translate.Message("L121")
+                                    </div>
+                                </div>
+                                <div class="qBody">
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.hsp.FireExting, 1, new Dictionary<string, object> { { "id", "FireExtingYes" }, { "Name", "hsp.FireExting" }, { "data-validator", "validateFireExting" } })
+                                        <label for="FireExtingYes">@Translate.Message("L2")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.hsp.FireExting, 2, new Dictionary<string, object> { { "id", "FireExtingNo" }, { "Name", "hsp.FireExting" }, { "data-validator", "validateFireExting" } })
+                                        <label for="FireExtingNo">@Translate.Message("L3")</label>
+                                    </div>
+                                    <div class="qOption">
+                                        @Html.RadioButtonFor(M => M.hsp.FireExting, 3, new Dictionary<string, object> { { "id", "FireExtingDontKnow" }, { "Name", "hsp.FireExting" }, { "data-validator", "validateFireExting" } })
+                                        <label for="FireExtingDontKnow">@Translate.Message("L122")</label>
+                                        <small id="FireExtingError" class="form-error">@Translate.Message("L480")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div id="q20" class="question">
+                            <div class="qHeader">
+                                <div class="qNumber">@(++queNo).</div>
+                                <div class="qText">
+                                    @Translate.Message("L123")
+                                </div>
+                            </div>
+                            <div class="qBody">
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.LiftRight, 1, new Dictionary<string, object> { { "id", "LiftRightYes" }, { "Name", "hsp.LiftRight" }, { "data-validator", "validateLiftRight" } })
+                                    <label for="LiftRightYes">@Translate.Message("L2")</label>
+                                </div>
+                                <div class="qOption">
+                                    @Html.RadioButtonFor(M => M.hsp.LiftRight, 2, new Dictionary<string, object> { { "id", "LiftRightNo" }, { "Name", "hsp.LiftRight" }, { "data-validator", "validateLiftRight" } })
+                                    <label for="LiftRightNo">@Translate.Message("L3")</label>
+                                    <small id="LiftRightError" class="form-error">@Translate.Message("L480")</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="grid-x button-set">
+            <div class="cell medium-6 medium-order-2 medium-text-right">
+                <button class="small button" type="submit">@Translate.Message("L481")</button>
+            </div>
+            <div class="cell medium-6 medium-order-1 medium-text-left">
+                <button class="small secondary button" type="reset" id="closeHSP">@Translate.Message("L967")</button>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    var formsubmit = true;
+    Foundation.Abide.defaults.validators['validateTextDrive'] = function ($el, required, parent) {
+        if ($("input[name='hsp.TextDrive']:checked").length == 0)
+            return false;
+        else
+            $('#TextDriveError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateDUI'] = function ($el, required, parent) {
+        if ($("input[name='hsp.DUI']:checked").length == 0)
+            return false;
+        else
+            $('#DUIError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateRideDUI'] = function ($el, required, parent) {
+        if ($("input[name='hsp.RideDUI']:checked").length == 0)
+            return false;
+        else
+            $('#RideDUIError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateRideNoBelt'] = function ($el, required, parent) {
+        if ($("input[name='hsp.RideNoBelt']:checked").length == 0)
+            return false;
+        else
+            $('#RideNoBeltError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateSpeed10'] = function ($el, required, parent) {
+        if ($("input[name='hsp.Speed10']:checked").length == 0)
+            return false;
+        else
+            $('#Speed10Error').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateBikeNoHelmet'] = function ($el, required, parent) {
+        if ($("input[name='hsp.BikeNoHelmet']:checked").length == 0)
+            return false;
+        else
+            $('#BikeNoHelmetError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateMBikeNoHelmet'] = function ($el, required, parent) {
+        if ($("input[name='hsp.MBikeNoHelmet']:checked").length == 0)
+            return false;
+        else
+            $('#MBikeNoHelmetError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateSmokeDetect'] = function ($el, required, parent) {
+        if ($("input[name='hsp.SmokeDetect']:checked").length == 0)
+            return false;
+        else
+            $('#SmokeDetectError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateFireExting'] = function ($el, required, parent) {
+        if ($("input[name='hsp.FireExting']:checked").length == 0)
+            return false;
+        else
+            $('#FireExtingError').hide();
+        return true;
+    };
+    Foundation.Abide.defaults.validators['validateLiftRight'] = function ($el, required, parent) {
+        if ($("input[name='hsp.LiftRight']:checked").length == 0)
+            return false;
+        else
+            $('#LiftRightError').hide();
+        return true;
+    };
+    $(document).ready(function () {
+        @if (Model.readOnly)
+        {
+            @: $("#hsp-form :input").prop("disabled", true);
+            @: $('#closeHSP').attr('disabled', false);
+        }
+        $('#closeHSP').on('click', function () {
+            $('#survey-modal').foundation('close');
+            //removeForm('hsp-form');
+            RealignPage();
+        });
+        $("#hsp-form").foundation();
+        $('#hsp-form')
+            .on('forminvalid.zf.abide', function () {
+                var invalid_fields = $(this).find('[data-invalid]');
+                if (invalid_fields) {
+                    var scrollTo = $('#' + invalid_fields[0].id).parent('div').position().top;
+                    $('#hsp-form').parents('.reveal-overlay').animate({
+                        scrollTop: scrollTo
+                    }, 400);
+                }
+            })
+            .on('formvalid.zf.abide', function () {
+                if (formsubmit == true) {
+                    $.ajax({
+                        url: "@Url.Action("HSP", "HRA")",
+                        type: 'POST',
+                        dataType: "json",
+                        data: $("#hsp-form").serialize(),
+                        success: function (data) {
+                            if (data == "success") {
+                                $(document).on('closed.zf.reveal', '[data-reveal]', function () {                                  
+                                    UpdateHRAStatus("YL");
+                                });
+                                $('#survey-modal').foundation('close');
+                                //removeForm('hsp-form');
+                            }
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                            RedirectToErrorPage(jqXHR.status);
+                        });
+                    formsubmit = false;
+                }
+            })
+            // to prevent form from submitting upon successful validation
+            .on("submit", function (ev) {
+                ev.preventDefault();
+
+            })
+    });
+</script>
+<a class="close-button" data-close onclick="removeForm('hsp-form')">&#215;</a>
+</div>

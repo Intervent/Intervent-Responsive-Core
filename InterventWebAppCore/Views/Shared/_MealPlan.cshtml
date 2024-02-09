@@ -1,0 +1,59 @@
+﻿@model InterventWebApp.NutritionGoalModel
+@using Microsoft.AspNetCore.SystemWebAdapters.Mvc;
+@using InterventWebApp
+<div class="cell meal-box avoid-page-break-inside">
+    <h4>@ViewData["Name"]</h4>
+    <ul>
+        @if (ViewData["Meat"] != "")
+        {
+
+            <li>
+                <span class="count">@ViewData["Meat"]</span>
+                <span data-tooltip data-allow-html="true" class="has-tip"
+                      title="@Html.Raw(Model.meatTitle)">
+                    @Translate.Message("L1642") 
+                </span>
+            </li>
+        }
+        @if (ViewData["Milk"] != "")
+        {
+            <li>
+                <span class="count">@ViewData["Milk"]</span>
+                <span data-tooltip  data-allow-html="true"class="has-tip"
+                      title="@Html.Raw(Model.milkTitle)">
+                    @Translate.Message("L1643")
+                </span>
+            </li>
+        }
+        @if (ViewData["Fruit"] != "")
+        {
+            <li>
+                <span class="count">@ViewData["Fruit"]</span>
+                <span data-tooltip  data-allow-html="true"class="has-tip"
+                      title="@Html.Raw(Model.fruitTitle)">@Translate.Message("L1644")</span>
+                </li>
+        }
+        @if (ViewData["NonStarch"] != "")
+        {
+            <li>
+                <span class="count">@ViewData["NonStarch"]</span>
+                <span data-tooltip  data-allow-html="true"class="has-tip"
+                      title="@Html.Raw(Model.nonstarchTitle)">@Translate.Message("L1645")</span>
+
+                </li>
+        }
+        @if (ViewData["Starch"] != "")
+        {
+            <li>
+                <span class="count">@ViewData["Starch"]</span>
+                <span data-tooltip  data-allow-html="true"class="has-tip"
+                      title="@Html.Raw(Model.grainTitle)">@Translate.Message("L1646")</span>/<span data-tooltip  data-allow-html="true"class="has-tip" title="@Html.Raw(Model.startchTitle)">@Translate.Message("L1647")</span>
+                </li>
+        }
+    </ul>
+</div>
+<script>
+    $(document).ready(function () {
+        $(document).foundation();
+    });
+</script>

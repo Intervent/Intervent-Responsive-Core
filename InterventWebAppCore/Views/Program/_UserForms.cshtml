@@ -1,0 +1,582 @@
+﻿@using InterventWebApp
+@model InterventWebApp.UserinProgramModel
+
+
+    <div class="form-container ">
+        <div class="form-header">   
+            <h3>Optional Forms</h3>
+            @if (Model.hasActivePortal) { 
+                <button id="upload-button" class="button hollow" data-open="form-upload">@Translate.Message("L415")</button>
+            }
+        </div>
+        <div class="form-content">
+            @{var deleteOption = ""; int uploadedForms = 0; int totalForms = 0;}
+            <ul class="form-download">
+                @if (Model.userinProgram.ProgramsinPortal.program.ProgramType != 1)
+                {
+                    if (!String.IsNullOrEmpty(Model.PatientReleaseForm))
+                    {
+                        totalForms++;
+                        <li class="document">
+                            <a href="~/pdf/@Model.PatientReleaseForm" target="_blank">@Translate.Message("L2218") <span class="download-icon"><img src="~/Images/blue-download-arrow-icon.jpg" alt="Alternate Text" /></span></a>
+                            @{ var form = Model.userForms.Where(x => x.FormTypeId == (int)FormTypes.PatientReleaseForm).FirstOrDefault(); }
+                            @if (form != null)
+                            {
+                                <div class="upload-form-box">
+                                    <div class="form-details">
+                                        <p>
+                                            @form.Form
+                                            @if (form.Approved)
+                                            {
+                                                deleteOption = "hide";
+                                                <span class="form-review-status">@Translate.Message("L3740")</span>
+                                            }
+                                            else
+                                            {
+                                                deleteOption = "";
+                                                <span class="form-review-status">@Translate.Message("L3703")</span>
+                                            }
+                                        </p>
+                                    </div>
+                                    <div class="from-del @deleteOption" onclick="SetInfo(this, '@form.FormTypeId', '@form.Form');" data-open="form-delete">@Translate.Message("L3704")</div>
+                                </div>
+                                uploadedForms++;
+                            }
+                        </li>
+                    }
+                    if (!String.IsNullOrEmpty(Model.MedicalClearanceForm))
+                    {
+                        totalForms++;
+                        <li class="document">
+                            <a href="~/pdf/@Model.MedicalClearanceForm" target="_blank">@Translate.Message("L2410") <span class="download-icon"><img src="~/Images/blue-download-arrow-icon.jpg" alt="Alternate Text" /></span></a>
+                            @{ var form = Model.userForms.Where(x => x.FormTypeId == (int)FormTypes.MedicalClearanceForm).FirstOrDefault(); }
+                            @if (form != null)
+                            {
+                                <div class="upload-form-box">
+                                    <div class="form-details">
+                                        <p>
+                                            @form.Form
+                                            @if (form.Approved)
+                                            {
+                                                deleteOption = "hide";
+                                                <span class="form-review-status">@Translate.Message("L3740")</span>
+                                            }
+                                            else
+                                            {
+                                                deleteOption = "";
+                                                <span class="form-review-status">@Translate.Message("L3703")</span>
+                                            }
+                                        </p>
+                                    </div>
+                                    <div class="from-del @deleteOption" onclick="SetInfo(this, '@form.FormTypeId', '@form.Form');" data-open="form-delete">@Translate.Message("L3704")</div>
+                                </div>
+                                uploadedForms++;
+                            }
+                        </li>
+                    }
+                }
+                @if (!String.IsNullOrEmpty(Model.KnowYourNumbersForm))
+                {
+                    totalForms++;
+                    <li class="document">
+                        <a href="~/pdf/@Model.KnowYourNumbersForm" target="_blank">@Translate.Message("L2411") <span class="download-icon"><img src="~/Images/blue-download-arrow-icon.jpg" alt="Alternate Text" /></span></a>
+                        @{ var form = Model.userForms.Where(x => x.FormTypeId == (int)FormTypes.KnowYourNumbersForm).FirstOrDefault(); }
+                        @if (form != null)
+                        {
+                            <div class="upload-form-box">
+                                <div class="form-details">
+                                    <p>
+                                        @form.Form
+                                        @if (form.Approved)
+                                        {
+                                            deleteOption = "hide";
+                                            <span class="form-review-status">@Translate.Message("L3740")</span>
+                                        }
+                                        else
+                                        {
+                                            deleteOption = "";
+                                            <span class="form-review-status">@Translate.Message("L3703")</span>
+                                        }
+                                    </p>
+                                </div>
+                                <div class="from-del @deleteOption" onclick="SetInfo(this, '@form.FormTypeId', '@form.Form');" data-open="form-delete">@Translate.Message("L3704")</div>
+                            </div>
+                            uploadedForms++;
+                        }
+                    </li>
+                }
+                @if (!String.IsNullOrEmpty(Model.TestimonialForm))
+                {
+                    totalForms++;
+                    <li class="document">
+                        <a href="~/pdf/@Model.TestimonialForm" target="_blank">@Translate.Message("L2425") <span class="download-icon"><img src="~/Images/blue-download-arrow-icon.jpg" alt="Alternate Text" /></span></a>
+                        @{ var form = Model.userForms.Where(x => x.FormTypeId == (int)FormTypes.TestimonialForm).FirstOrDefault(); }
+                        @if (form != null)
+                        {
+                            <div class="upload-form-box">
+                                <div class="form-details">
+                                    <p>
+                                        @form.Form
+                                        @if (form.Approved)
+                                        {
+                                            deleteOption = "hide";
+                                            <span class="form-review-status">@Translate.Message("L3740")</span>
+                                        }
+                                        else
+                                        {
+                                            deleteOption = "";
+                                            <span class="form-review-status">@Translate.Message("L3703")</span>
+                                        }
+                                    </p>
+                                </div>
+                                <div class="from-del @deleteOption" onclick="SetInfo(this, '@form.FormTypeId', '@form.Form');" data-open="form-delete">@Translate.Message("L3704")</div>
+                            </div>
+                            uploadedForms++;
+                        }
+                    </li>
+                }
+                @if (!String.IsNullOrEmpty(Model.TobaccoReleaseForm))
+                {
+                    totalForms++;
+                    <li class="document">
+                        <a href="~/pdf/@Model.TobaccoReleaseForm" target="_blank">@Translate.Message("L1288") <span class="download-icon"><img src="~/Images/blue-download-arrow-icon.jpg" alt="Alternate Text" /></span></a>
+                        @{ var form = Model.userForms.Where(x => x.FormTypeId == (int)FormTypes.TobaccoReleaseForm).FirstOrDefault(); }
+                        @if (form != null)
+                        {
+                            <div class="upload-form-box">
+                                <div class="form-details">
+                                    <p>
+                                        @form.Form
+                                        @if (form.Approved)
+                                        {
+                                            deleteOption = "hide";
+                                            <span class="form-review-status">@Translate.Message("L3740")</span>
+                                        }
+                                        else
+                                        {
+                                            deleteOption = "";
+                                            <span class="form-review-status">@Translate.Message("L3703")</span>
+                                        }
+                                    </p>
+                                </div>
+                                <div class="from-del @deleteOption" onclick="SetInfo(this, '@form.FormTypeId', '@form.Form');" data-open="form-delete">@Translate.Message("L3704")</div>
+                            </div>
+                            uploadedForms++;
+                        }
+                    </li>
+                }
+                @if (@Model.FoodList.Length != 0)
+                {
+                    <li class="document">
+                        <a href="~/pdf/@Model.FoodList" target="_blank">Food List <span class="download-icon"><img src="~/Images/blue-download-arrow-icon.jpg" alt="Alternate Text" /></span></a>
+                    </li>
+                }
+            </ul>
+            <input id="uploaded-forms" value="@uploadedForms" hidden />
+            <input id="total-forms" value="@totalForms" hidden />
+        </div>
+    </div>
+
+
+<div id="form-upload" class="reveal small" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <div class="upload-form-title">
+        <img src="~/Images/circle-upload-image.svg" alt="" />
+        <h3>@Translate.Message("L3705")</h3>
+    </div>
+    <div class="upload-pdf-container">
+        <form>
+            <div class="upload-list-container">
+                <!--Upload-list-items div will be repeated in loop-->
+                <div class="upload-list-items">
+                    <label class="doc-title">@Translate.Message("L3706")</label>
+                    <div class="doc-list-container">
+                        <span class="ui-selectmenu-button" data-toggle="doc-list1">@Translate.Message("L3707")</span>
+
+                        <div class="custom-doc-list dropdown-pane" id="doc-list1" data-dropdown data-auto-focus="true" data-close-on-click="true">
+                            <ul class="ui-menu">
+                                @if (Model.userinProgram.ProgramsinPortal.program.ProgramType != 1 && !String.IsNullOrEmpty(Model.PatientReleaseForm) && !Model.userForms.Where(x => x.FormTypeId == (int)FormTypes.PatientReleaseForm).Any())
+                                {
+                                    <li onclick="SetInfo(this, 1);"><div>@Translate.Message("L2218")</div></li>
+                                }
+                               @if (Model.userinProgram.ProgramsinPortal.program.ProgramType != 1 && !String.IsNullOrEmpty(Model.MedicalClearanceForm) && !Model.userForms.Where(x => x.FormTypeId == (int)FormTypes.MedicalClearanceForm).Any())
+                                {
+                                    <li onclick="SetInfo(this, 2);"><div>@Translate.Message("L2410")</div></li>
+                                }
+                           @if (!String.IsNullOrEmpty(Model.KnowYourNumbersForm) && !Model.userForms.Where(x => x.FormTypeId == (int)FormTypes.KnowYourNumbersForm).Any())
+                                {
+                                    <li onclick="SetInfo(this, 3);"><div>@Translate.Message("L2411")</div></li>
+                                }
+                           @if (!String.IsNullOrEmpty(Model.TestimonialForm) && !Model.userForms.Where(x => x.FormTypeId == (int)FormTypes.TestimonialForm).Any())
+                                {
+                                    <li onclick="SetInfo(this, 4);"><div>@Translate.Message("L2425")</div></li>
+                                }
+                           @if (!String.IsNullOrEmpty(Model.TobaccoReleaseForm) && !Model.userForms.Where(x => x.FormTypeId == (int)FormTypes.TobaccoReleaseForm).Any())
+                                {
+                                    <li onclick="SetInfo(this, 5);"><div>@Translate.Message("L1288")</div></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="drop-area hide" id="upload-form-dropdown" ondrop="dropHandler(event, this);" ondragover="dragOverHandler(event, this);">
+                        <img src="~/Images/upload-icon.svg" alt="" />
+                        <div>
+                            @Html.Raw(String.Format(Translate.Message("L3716"), "<label>", " <input type='file' name='upload-form' class='input-upload' accept='.png,.jpg,.jpeg,.gif,.pdf'/></label>"))
+                            <p>@Translate.Message("L3109")</p>
+                        </div>
+                    </div>
+                    <div class="browse-file-btn hide">
+                        <label for="browse-files" class="button hollow">@Translate.Message("L3708")<input type="file" name="browse-files" class="input-upload" id="browse-files" /></label>
+                    </div>
+                    <div class="doc-remove-container hide">
+                        <div>
+                            <img src="~/Images/upload-doc-tick.svg">
+                            <p id="UploadedForm"></p>
+                        </div>
+                        <a href="#" onclick="deleteForm(); return false;">@Translate.Message("L416")</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="upload-form-button button-set hide">
+                <button id="save-form" class="button">@Translate.Message("L3709")</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="upload-confirm-container hide">
+        <h3>@Translate.Message("L3710")</h3>
+        <img src="~/Images/appointment-booking/appt-confirm-tick.svg" alt="" />
+        <p>@Translate.Message("L3711")</p>
+        <button class="button" id="refreshModal">@Translate.Message("L2995")</button>
+    </div>
+
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div id="form-delete" class="reveal small delete-form-modal" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    <img src="~/Images/delete-circle-red.svg" alt="" />
+    <input id="formId" type="hidden" />
+    <input id="formName" type="hidden" />
+    <h3>@Translate.Message("L3712")</h3>
+    <p>@Translate.Message("L3713")</p>
+    <div class="delete-form-button button-set">
+        <button class="button hollow" data-close>@Translate.Message("L3714")</button>
+        <button id="delete-form" class="button" onclick="deleteForm()">@Translate.Message("L3715")</button>
+    </div>
+
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<!--Drag and drop jquery ends -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+        $(document).foundation();
+        function upload_files(type, file, listItem) {
+            var formType = $("#formId").val();
+            var formData = new FormData();
+            //var file = document.getElementById(type).files[0];
+            formData.append("FileUpload", file);
+            formData.append("formType", formType);
+            formData.append("action", 'form');
+            var extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+
+            if (!(extension && /^(jpg|png|jpeg|gif|pdf)$/.test(extension.toLowerCase()))) {
+            alert("@Translate.Message("L3109")");
+            return false;
+        }
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("UploadFile", "Common")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                    if (response.data == "Failed") {
+                        if(type == 'Patient Release Form'){
+                            $('#alert-message1').removeClass("hide");
+                        }
+                        else{
+                            $('#alert-message2').removeClass("hide");
+                        }
+                    }
+                    else {
+                        $("#UploadedForm").text(type);
+                        $("#formName").val(response.data);
+                        if ($(window).width() >= 640) {
+                            listItem.find(".drop-area, .doc-list-container").addClass("hide");
+                        }
+                        else {
+                            listItem.find(".browse-file-btn, .doc-list-container").addClass("hide");
+                        }
+                        listItem.find(".doc-remove-container").removeClass("hide");
+                        $(".upload-form-button").removeClass("hide");
+                        listItem.find(".doc-remove-container p").text(file.name);
+                    }
+            },
+            error: function (error) {
+                alert("@Translate.Message("L3109")");
+            }
+        });
+    }
+</script>
+
+<script>
+        $(document).ready(function () {
+           
+        //Custom select menu code
+        $(".custom-doc-list li").on('click', function () {
+            var docName = $(this).find("div").text();
+            $(this).closest(".doc-list-container").find("span.ui-selectmenu-button").text(docName);
+			$(this).closest("[data-dropdown]").foundation("close");
+            if ($(window).width() >= 640) {
+                $(this).closest(".doc-list-container").next(".drop-area").removeClass("hide");
+            }
+            else {
+				$(this).closest(".doc-list-container").siblings(".browse-file-btn").removeClass("hide");
+            }
+        });
+
+        //Show next form selection option
+        var listItemPos = $(".upload-list-items").first();
+        $("#add-new").on('click', function (ev) {
+            ev.preventDefault();
+            console.log(listItemPos);
+            //need to show second item in list
+            listItemPos = $(listItemPos).next();
+            listItemPos.removeClass("hide");
+        });
+
+        //Remove selected doc
+        //$(".doc-remove-container a").on('click', function (ev) {
+        //    ev.preventDefault();
+        //    $(this).closest(".upload-list-items").remove();
+        //    $(".upload-list-items").each(function () {
+        //        var listItemCount = parseInt($(this).find("span.doc-count").text());
+        //        if (!listItemCount <= 1) {
+        //            listItemCount = (listItemCount - 1).toString();
+        //        $(this).find("span.doc-count").text(listItemCount);
+        //        }
+        //    });
+        //    //$("#delete-form").trigger('click');
+        //});
+
+        $("#refreshModal").on('click', function () {
+            $("#userFrom").trigger('click');
+            $("#form-upload").foundation("close");
+        });
+
+        //Show submit message
+        $("#save-form").on('click', function (ev) {
+            ev.preventDefault();
+            $(".upload-confirm-container").removeClass("hide");
+            $(".upload-pdf-container, .upload-form-title").addClass("hide");
+        });
+
+        $("#form-upload").on("open.zf.reveal", function () {
+            $(".upload-confirm-container").addClass("hide");
+            $(".upload-pdf-container, .upload-form-title").removeClass("hide");
+        });
+
+        if ($("#uploaded-forms").val() == $("#total-forms").val()) {
+            $("#upload-button").addClass("hide");
+        }
+        });
+
+     $("#delete-form").on('click', function () {
+        var id = $("#formId").val();
+        var fileName = $("#formName").val();
+        $.ajax({
+            url: "@Url.Action("RemovePicture", "Account")",
+            data: { id: id, picture: fileName, source: "Forms" },
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data == 'success') {
+                    $("#userFrom").trigger('click');
+                    $("#form-delete").foundation("close");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+    });
+
+	function SetInfo(el, id, name) {
+		var $this = $(el);
+        $("#formId").val(id);
+        if (name)
+			$("#formName").val(name);
+		
+		if($this.parent().hasClass("ui-menu")){
+			var docName = $this.find("div").text();
+			$this.closest(".doc-list-container").find("span.ui-selectmenu-button").text(docName);
+			$this.closest("[data-dropdown]").foundation("close");
+			if ($(window).width() >= 640) {
+				$this.closest(".doc-list-container").next(".drop-area").removeClass("hide");
+			}
+			else {
+				$this.closest(".doc-list-container").siblings(".browse-file-btn").removeClass("hide");
+			}
+		}
+	}
+
+    $("#upload-button").on('click', function (ev) {
+        $("#upload-form-dropdown").addClass("hide");
+    });
+</script>
+<script>
+
+    $(document).ready(function () {
+
+        //Custom select menu code
+        
+
+        //Show next form selection option
+        var listItemPos = $(".upload-list-items").first();
+        $("#add-new").on('click', function (ev) {
+			ev.preventDefault();
+			console.log(listItemPos);
+            //need to show second item in list
+            listItemPos = $(listItemPos).next();
+            listItemPos.removeClass("hide");
+        });
+
+        //Remove selected doc
+   //     $(".doc-remove-container a").on('click', function (ev) {
+   //         ev.preventDefault();
+   //         $(this).closest(".upload-list-items").remove();
+   //         $(".upload-list-items").each(function () {
+   //             var listItemCount = parseInt($(this).find("span.doc-count").text());
+   //             if (!listItemCount <= 1) {
+   //                 listItemCount = (listItemCount - 1).toString();
+   //                 $(this).find("span.doc-count").text(listItemCount);
+   //             }
+   //         });
+   //         $("#delete-form").trigger('click');
+			//deleteForm();
+   //     });
+
+        $("#refreshModal").on('click', function () {
+            $("#userFrom").trigger('click');
+            $("#form-upload").foundation("close");
+        });
+
+        //Show submit message
+        $("#save-form").on('click', function (ev) {
+            ev.preventDefault();
+            $(".upload-confirm-container").removeClass("hide");
+            $(".upload-pdf-container, .upload-form-title").addClass("hide");
+        });
+
+        $("#form-upload").on("open.zf.reveal", function () {
+            $(".upload-confirm-container").addClass("hide");
+            $(".upload-pdf-container, .upload-form-title").removeClass("hide");
+        });
+
+        @*$("button#delete-form").on('click', function () {
+            var id = $("#formId").val();
+            var fileName = $("#formName").val();
+            $.ajax({
+                url: "@Url.Action("RemovePicture", "Account")",
+                data: { id: id, picture: fileName, source: "Forms"},
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data == 'success') {
+                        $("#delete-form").foundation("close");
+                        $("#userFrom").trigger('click');
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                    RedirectToErrorPage(jqXHR.status);
+                });
+        });*@
+        if ($("#uploaded-forms").val() == $("#total-forms").val()) {
+            $("#upload-button").addClass("hide");
+        }
+    });
+
+    // Drag and drop jquery begins
+    // When user clicks on "Browse File" instead of drag and drop
+    $("input.input-upload").on("change", function (e) {
+        var $listItem = $(this).closest(".upload-list-items");
+        var docName = $listItem.find("span.ui-selectmenu-button").text();
+		$listItem.find("label.doc-title").text(docName);
+        upload_files(docName, e.target.files[0], $listItem);
+    });
+
+   function deleteForm() {
+		var id = $("#formId").val();
+        var fileName = $("#formName").val();
+        $.ajax({
+            url: "@Url.Action("RemovePicture", "Account")",
+            data: { id: id, picture: fileName, source: "Forms"},
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data == 'success') {
+                    //$("#delete-form").foundation("close");
+                    $("#userFrom").trigger('click');
+                    $("#form-delete").foundation("close");
+                    $("#form-upload").foundation("close");
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+	}
+
+    function dragOverHandler(ev) {
+        // Prevent default behavior (Prevent file from being opened)
+        ev.preventDefault();
+    }
+
+    function dropHandler(ev, el) {
+        var $listItem = $(el).closest(".upload-list-items");
+        // Prevent default behavior (Prevent file from being opened)
+        ev.preventDefault();
+        if (ev.dataTransfer.items) {
+            if (ev.dataTransfer.items.length == 1) {
+                if (ev.dataTransfer.items[0].kind === 'file') {
+                    var file = ev.dataTransfer.items[0].getAsFile();
+                    var docName = $listItem.find("span.ui-selectmenu-button").text();
+                    $listItem.find("label.doc-title").text(docName);
+                    upload_files(docName, file, $listItem);
+                }
+            }
+            else {
+                alert("Please upload only one file");
+            }
+        } else {
+            // Use DataTransfer interface to access the file(s)
+            if (ev.dataTransfer.files.length == 1) {
+                if (ev.dataTransfer.files[0].kind === 'file') {
+                    var file = ev.dataTransfer.files[0].getAsFile();
+                    var docName = $listItem.find("span.ui-selectmenu-button").text();
+                    $listItem.find("label.doc-title").text(docName);
+                    upload_files(docName, file, $listItem);
+                }
+            }
+            else {
+                alert("Please upload only one file");
+            }
+        }
+        // Pass event to removeDragData for cleanup
+        removeDragData(ev)
+    }
+
+    function removeDragData(ev) {
+        if (ev.dataTransfer.items) {
+            // Use DataTransferItemList interface to remove the drag data
+            ev.dataTransfer.items.clear();
+        } else {
+            // Use DataTransfer interface to remove the drag data
+            ev.dataTransfer.clearData();
+        }
+    }
+</script>
+<!--Drag and drop jquery ends -->

@@ -1,0 +1,353 @@
+﻿@model Intervent.Web.DTO.GetKitByIdResponse
+@using Intervent.Web.DTO
+@using System.Web;
+@using InterventWebApp
+
+<button class="close-button" data-close aria-label="Close modal" type="button">
+    <span aria-hidden="true">&times;</span>
+</button>
+<section class="main courses @Model.KitColor @(ViewData["readonly"] != null ? "read-only" : "")">
+    <script src="@Url.Content("~/Scripts/Core.js")?v=@CommonUtility.GetRandom()"></script>
+    <div class="grid-container">
+        <div class="grid-x margin-x">
+            <div class="course-header @Model.KitColor small-12 cell">
+                <div class="grid-x grid-margin-x">
+                    <div class="medium-10 cell">
+                        <h1>@Model.EduKit.Name</h1>
+                    </div>
+                    <div class="medium-2 cell text-right">
+                        <div class="progress progress-bar radius">
+                            <span id="meterIcon" class="progress-meter" style="width: 0%"></span>
+                            <div id="meterText" class="meter-text"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="main-column small-12 cell">
+                <div class="course-content">
+                    @if (Model.EduKit.PromptsinKits != null && Model.EduKit.PromptsinKits.Count > 0 && CommonUtility.HasAdminRole(User.RoleCode()) && ViewData["userView"] == null)
+                    {
+                        <h4>Prompts</h4>
+                        <ul class="prompts">
+                            @foreach (var prompt in Model.EduKit.PromptsinKits)
+                            {
+                                var idValue = prompt.RefType == 1 ? string.Format("step{0}", prompt.RefId) : string.Format("activity{0}", prompt.RefId);
+                                bool kitCompleted = false;
+                                var updatedDate = string.Empty;
+                                if (Model.EduKit.PromptsinKitsCompleted != null && Model.EduKit.PromptsinKitsCompleted.Count > 0)
+                                {
+                                    var kitCompletedDto = Model.EduKit.PromptsinKitsCompleted.ToList().Find(d => d.PromptId == prompt.Id);
+                                    if (kitCompletedDto != null)
+                                    {
+                                        kitCompleted = true;
+                                        TimeZoneInfo custTZone = TimeZoneInfo.FindSystemTimeZoneById(User.TimeZone());
+                                        updatedDate = "(" + TimeZoneInfo.ConvertTimeFromUtc(kitCompletedDto.UpdatedDate,custTZone).ToShortDateString() + ")";
+                                    }
+                                }
+                                
+                            <li class='prompt @(kitCompleted ? "complete" : "incomplete")' id="prompt_@prompt.Id">
+                                <a href="#@idValue">@prompt.Description</a> @updatedDate
+                            </li>
+                            }
+                        </ul>
+                    }
+                    <h4>Steps</h4>
+                    @foreach (var step in Model.EduKit.StepsinKits.Where(x => x.IsActive))
+                    {
+                        <div id="@string.Format("step{0}", step.Id)" class="page">
+                            @if (Model.EduKit.PromptsinKits != null && Model.EduKit.PromptsinKits.Count > 0)
+                            {
+                                if (Model.EduKit.PromptsinKitsCompleted != null && Model.EduKit.PromptsinKitsCompleted.Count > 0)
+                                {
+                                    @Html.Partial("_KitStepDetails", new ReadPageResponse { Step = step, Prompts = ViewData["userView"] != null && ViewData["userView"].ToString() == "True" ? null : Model.EduKit.PromptsinKits, PromptsinKitsCompleted = ViewData["userView"] != null && ViewData["userView"].ToString() == "True" ? null : Model.EduKit.PromptsinKitsCompleted, KitsInUserProgramId = Model.KitsInUserProgramId, KitsinUserProgramGoal = Model.KitsinUserProgramGoal })
+                                }
+                                else
+                                {
+                                    @Html.Partial("_KitStepDetails", new ReadPageResponse { Step = step, Prompts = ViewData["userView"] != null && ViewData["userView"].ToString() == "True" ? null : Model.EduKit.PromptsinKits, KitsInUserProgramId = Model.KitsInUserProgramId, KitsinUserProgramGoal = Model.KitsinUserProgramGoal })
+                                }
+                            }
+                            else
+                            {
+                                @Html.Partial("_KitStepDetails", new ReadPageResponse { Step = step, KitsInUserProgramId = Model.KitsInUserProgramId, KitsinUserProgramGoal = Model.KitsinUserProgramGoal })
+                            }
+                        </div>
+
+                        if (step.ActivitiesinSteps.Count > 0)
+                        {
+                            <div class="small-12 cell">
+                                <button class="small" type="button" id="saveKit2" onclick="save('@string.Format("step{0}", step.Id)', false, '@string.Format("alert{0}", step.Id)')">Save</button>
+                                <div id="@string.Format("alert{0}", step.Id)" data-alert class="small-10 cell alert-box radius success right">
+                                    <span>Saved Successfully </span>
+                                    <a href="#" onclick="alertStatus('@string.Format("alert{0}", step.Id)')" class="close">&times;</a>
+                                </div>
+                            </div>
+                        }
+
+                        if (step.QuizInSteps != null && step.QuizInSteps.Count > 0)
+                        {
+                            <br />
+                            <div id="@string.Format("QuizInSteps{0}", step.QuizInSteps[0].Id)" class="page">
+                                @Html.Partial("_KitStepDetails", new ReadPageResponse
+                                {
+                                    Quiz = step.QuizInSteps
+                                })
+                            </div>
+                            <div class="small-12 cell">
+                                <button class="small saveKitQuiz" type="button" id="saveKit" onclick="save('@string.Format("QuizInSteps{0}", step.QuizInSteps[0].Id)', true, '@string.Format("alert{0}", step.QuizInSteps[0].Id)')">Save</button>
+                                <div id="@string.Format("alert{0}", step.QuizInSteps[0].Id)" data-alert class="small-10 cell alert-box radius success right">
+                                    <span>Saved Successfully </span>
+                                    <a href="#" onclick="alertStatus('@string.Format("alert{0}", step.QuizInSteps[0].Id)')" class="close">&times;</a>
+                                </div>
+                            </div>
+                        }
+                        <hr />
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.EduKit.KeyConcepts))
+                    {
+                        <h4>KeyConcepts</h4>
+                        <div id="KC" class="page">
+                            @Html.Partial("_KitStepDetails", new ReadPageResponse
+                            {
+                                KeyConcepts = Model.EduKit.KeyConcepts
+                            })
+                        </div>
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="details-modal" class="reveal large device-chart-container" data-reveal data-close-on-click="false" data-close-on-esc="false">
+    </div>
+    <div id="resource-cholesterol-triglycerides" class="reveal large" data-reveal data-close-on-click="false" data-close-on-esc="false">
+         <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div id="rpe" class="reveal xlarge rec-modal exercise" data-reveal data-close-on-click="false" data-close-on-esc="false">
+        @Html.Partial("_RPE")
+        <a class="close-reveal" href="#" data-open="details-modal" data-modal-path="@Html.Raw(Url.Action("ExerciseRecommendation", "Reports", new { fromKit = true }))">&#215;</a>
+    </div>
+    <div id="modal-audio" class="reveal small" data-reveal>
+        <button id="closeModal" class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <audio controls preload="none" id="audio">
+            <source src="~/Audio/@Model.EduKit.Audio">
+        </audio>
+    </div>
+    @Html.Partial("_GoalsinKits")
+    <script>
+        var PercentCompleted = @Model.PercentCompleted;
+        var KitsInUserProgramId = @Model.KitsInUserProgramId;
+        var hadWrongAnswer = true;
+        var onLoad = true;
+        var validationCount = 0;
+        $('.alert-box').hide();
+
+        $(document).ready(function () {
+            writePercentage(PercentCompleted);
+            $(".saveKitQuiz").each(function () {
+                $(this).trigger("click");
+                $(this).trigger("click");
+            });
+            onLoad = false;
+        });
+
+        function writePercentage(percent){
+            if ($('#meterIcon').width() < percent) {
+                $('#meterIcon').width(percent + "%");
+                $('#meterText').text(percent + "% complete")
+            }
+        }
+
+        function save(SectionId, isQuiz, alertId)
+        {
+            if(hadWrongAnswer == true && validationCount < 2)
+            {
+                hadWrongAnswer = saveKitInfo(SectionId, isQuiz, alertId);
+
+                if (hadWrongAnswer != null && (!onLoad || validationCount == 0)) {
+                    validationCount++;
+                    return;
+                }
+                else if (onLoad || validationCount == 1) {
+                    validationCount = 0;
+                }
+            }
+            else
+            {
+                $('div#' + SectionId + '.page' + ' :input').each(
+                    function(index)
+                    {
+                        $(this).parent().removeClass('correct incorrect');
+                    });
+                $('#'+alertId).removeClass('alert-close');
+                $('#'+alertId).show();
+                setTimeout(function()
+                {
+                    $('#'+alertId).hide();
+                }, 3000);
+            }
+            validationCount = 0;
+            hadWrongAnswer = true;
+        }
+        function saveKitInfo(SectionId, isQuiz, alertId) {
+            var hasWrongAnswer = null;
+            var dict = new Dirctionry();
+            if (typeof bool == 'undefined') {
+                var totalIncorrect = 0;
+
+                $('div#' + SectionId + '.page' + ' :input').each(
+                function (index) {
+                    var input = $(this);
+                    var value = input.val();
+                    var ids = input.attr('id').split('_');
+                    var type = ids[0];
+                    if (type == "checkbox") {
+                        var questionId = input.attr('name').split('_')[1];
+                        if (input.is(":checked")) {
+                            dict.Update(questionId, ids[1] + ",");
+                        }
+                        else {
+                            dict.Update(questionId, "");
+                        }
+                    }
+                    else if (type == "option") {
+                        input.parent().removeClass('incorrect');
+                        if (input.is(":checked")) {
+                            var questionId = input.attr('name').split('_')[1];
+                            dict.Add(questionId, ids[1]);
+                            input.parent().addClass('incorrect');
+                            input.parents('.qOption').addClass('incorrect-single');
+                            if(value == "true" && !hasWrongAnswer) hasWrongAnswer = false;
+                            if(value == "true") {
+                                input.parent().removeClass('incorrect').addClass('correct part-1');
+                                input.parents('.question').removeClass('incorrect');
+                                input.parents('.qOption').removeClass('incorrect-single');
+                            }
+                        }
+                        else if(value == "true") {
+                            hasWrongAnswer = true;
+                            var questionId = input.attr('name').split('_')[1];
+                            if(validationCount == 0) {
+                                input.parents('.qOption').addClass('incorrect-single');
+                                input.parents('.question').addClass('incorrect');
+                                totalIncorrect++;
+                            } else {
+                                input.parent().removeClass('incorrect').addClass('correct part-2');
+                                $("#answer_" + questionId).removeClass('hide');
+                            }
+                        }
+                    }
+                    else if (type == "select") {
+                        var value = input.val();
+                        if(value != "0")
+                            dict.Add(ids[1], value);
+                    }
+                    else if (type == "textbox") {
+                        var value = input.val();
+                        if (value != "")
+                            dict.Add(ids[1], value);
+                    }
+                });
+
+                if(totalIncorrect) {
+                    $('#QuizIncorrect_' + alertId.substring(alertId.lastIndexOf('t') + 1) + '').removeClass('hide');
+                    $('#QuizIncorrect_' + alertId.substring(alertId.lastIndexOf('t') + 1) + ' .total').html(totalIncorrect);
+                    var str = "@Html.Raw(Translate.Message("L3819"))";
+                    if ($('#FirstWrong .incorrect-inline').length) {
+                        $('#FirstWrong .incorrect-inline').html(str.replace("{0}", totalIncorrect) +'.');
+                        $('#SecondWrong .incorrect-inline').html(str.replace("{0}", totalIncorrect) +'.');
+                    }
+                    else
+                    {
+                        $('#FirstWrong').append('<div class="incorrect-inline">' + str.replace("{0}", totalIncorrect) +'.</div>');
+                        $('#SecondWrong').append('<div class="incorrect-inline">' + str.replace("{0}", totalIncorrect) +'.</div>');
+                    }
+                } else {
+                    $('#QuizIncorrect_' + alertId.substring(alertId.lastIndexOf('t') + 1) + '').addClass('hide');
+                }
+            }
+            if( KitsInUserProgramId > 0){
+                var UserAnswer = [];
+                if(typeof isQuiz == 'undefined')
+                    isQuiz = false;
+                if(dict.Count() > 0){
+                    for (var index = 0; index < dict.Count() ; index++) {
+                        var Answer = {};
+                        var item = dict.Get(index);
+                        Answer.Value = escape(item.Value);
+                        Answer.Text = item.Key;
+                        UserAnswer.push(Answer);
+                    }
+                }
+                var request = {};
+                request.KitsInUserProgramsId = KitsInUserProgramId;
+                request.IsQuiz = isQuiz;
+                request.PercentComplete = PercentCompleted;
+                request.UserAnswer = UserAnswer;
+
+                $.ajax({
+                    url: "@Url.Action("SaveUserOptions", "Program")",
+                    data: request,
+                    type: 'POST',
+                    success: function (data) {
+                        if(!isQuiz){
+                            $('#'+alertId).removeClass('alert-close');
+                            $('#'+alertId).show();
+                            setTimeout(function()
+                            {
+                                $('#'+alertId).hide();
+                            }, 3000);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        RedirectToErrorPage(jqXHR.status);
+                    });
+            }
+            return hasWrongAnswer;
+        };
+        function alertStatus(alertId)
+        {
+            $('#'+alertId).hide();
+        }
+
+        $('.reveal-overlay').on('scroll', function () {
+            if ($(this).scrollTop() >= 100) {
+                $('.nav-to-top').removeClass('hide');
+            } else {
+                $('.nav-to-top').addClass('hide');
+            }
+        });
+
+		$('.nav-to-top a.button').on('click', function(ev){
+			ev.preventDefault();
+			$(".reveal-overlay").animate({
+                scrollTop: 0
+            }, "fast");
+		});
+
+        $('#details-modal').on('close', function () {
+            $("#review-kit").foundation('open');
+        });
+        $('#resource-cholesterol-triglycerides').on('close', function () {
+            $("#details-modal").foundation('open');
+        });
+    </script>
+    <div class="nav-to-top in-modal hide">
+        <a href="#" class="button"><i class="fa fa-chevron-up"></i></a>
+    </div>
+</section>
+<script>
+    var isReadOnly = @(ViewData["readonly"] != null ? "true" : "false");
+    var isUserView = @(ViewData["userView"] != null ? "true" : "false");
+    if(isReadOnly) {
+        $('input').prop('disabled', 'disabled');
+    }
+    if (!isUserView) {
+        $('.kit-print').addClass('hide');
+    }
+</script>

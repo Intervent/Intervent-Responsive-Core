@@ -1,0 +1,16 @@
+﻿
+@using InterventWebApp
+@using System.Collections.Generic
+@using Intervent.Web.DTO.Diff
+@model AppointmentCallIntervalModel
+<table class="table">
+    <tr><th class="blue">Call Number</th><th class="blue">Interval(Days)</th></tr>
+    @foreach (var p in Model.CallIntervals)
+    {
+        <tr>
+            <td>@p.CallNumber</td>
+            <td>@p.IntervalInDays</td>
+        </tr>
+    }
+</table>
+<a class="close-button" data-close>&#215;</a>
