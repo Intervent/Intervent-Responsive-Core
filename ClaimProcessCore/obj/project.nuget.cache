@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "PbUXauUcjnVjpus7dw/foDuB4Ct9C5y7T8kT2Y/xW7D/1HlrXec7DTwwrJZ7RFZ3du/F1X5++liGanJgZRBOBQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\ClaimProcessCore\\ClaimProcessCore.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Santhosh\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
+    "C:\\Users\\Santhosh\\.nuget\\packages\\nlog\\5.2.8\\nlog.5.2.8.nupkg.sha512",
+    "C:\\Users\\Santhosh\\.nuget\\packages\\nlog.config\\4.3.4\\nlog.config.4.3.4.nupkg.sha512",
+    "C:\\Users\\Santhosh\\.nuget\\packages\\nlog.schema\\4.3.4\\nlog.schema.4.3.4.nupkg.sha512",
+    "C:\\Users\\Santhosh\\.nuget\\packages\\system.data.datasetextensions\\4.5.0\\system.data.datasetextensions.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

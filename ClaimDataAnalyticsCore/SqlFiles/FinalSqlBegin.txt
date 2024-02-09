@@ -1,0 +1,12 @@
+﻿USE [analytics]
+DECLARE @TranCounter INT; 
+SET @TranCounter = @@TRANCOUNT;
+IF @TranCounter > 0
+SAVE TRANSACTION ProcedureSave;
+ELSE
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+-- Procedure must start its own  transaction.
+BEGIN TRANSACTION;
+BEGIN TRY
+PRINT CONVERT(varchar,SYSDATETIME(),121);
+DECLARE @NewClaimId int;

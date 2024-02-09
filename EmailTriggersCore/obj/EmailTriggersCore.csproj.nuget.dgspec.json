@@ -1,0 +1,221 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EmailTriggersCore\\EmailTriggersCore.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EmailTriggersCore\\EmailTriggersCore.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EmailTriggersCore\\EmailTriggersCore.csproj",
+        "projectName": "Intervent.Services.EmailTriggers",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EmailTriggersCore\\EmailTriggersCore.csproj",
+        "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EmailTriggersCore\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0-windows"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0-windows7.0": {
+            "targetAlias": "net7.0-windows",
+            "projectReferences": {
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Business\\Intervent.Business.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Business\\Intervent.Business.csproj"
+              },
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Framework\\Intervent.Framework.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Framework\\Intervent.Framework.csproj"
+              },
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayer\\Intervent.Web.DataLayer.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayer\\Intervent.Web.DataLayer.csproj"
+              },
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0-windows7.0": {
+          "targetAlias": "net7.0-windows",
+          "dependencies": {
+            "Microsoft.CSharp": {
+              "target": "Package",
+              "version": "[4.7.0, )"
+            },
+            "NLog": {
+              "target": "Package",
+              "version": "[5.2.8, )"
+            },
+            "NLog.Config": {
+              "target": "Package",
+              "version": "[4.3.4, )"
+            },
+            "NLog.Schema": {
+              "target": "Package",
+              "version": "[4.3.4, )"
+            },
+            "System.Data.DataSetExtensions": {
+              "target": "Package",
+              "version": "[4.5.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Business\\Intervent.Business.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Business\\Intervent.Business.csproj",
+        "projectName": "Intervent.Business",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Business\\Intervent.Business.csproj",
+        "frameworks": {
+          "net48": {
+            "projectReferences": {
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DAL\\Intervent.DAL.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DAL\\Intervent.DAL.csproj"
+              },
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Framework\\Intervent.Framework.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Framework\\Intervent.Framework.csproj"
+              },
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWS\\Intervent.HWS.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWS\\Intervent.HWS.csproj"
+              },
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayer\\Intervent.Web.DataLayer.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayer\\Intervent.Web.DataLayer.csproj"
+              },
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj"
+              }
+            }
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {}
+      }
+    },
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DAL\\Intervent.DAL.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DAL\\Intervent.DAL.csproj",
+        "projectName": "Intervent.DAL",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DAL\\Intervent.DAL.csproj",
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {}
+      }
+    },
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Framework\\Intervent.Framework.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Framework\\Intervent.Framework.csproj",
+        "projectName": "Intervent.Framework",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Framework\\Intervent.Framework.csproj",
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {}
+      }
+    },
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWS\\Intervent.HWS.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWS\\Intervent.HWS.csproj",
+        "projectName": "Intervent.HWS",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWS\\Intervent.HWS.csproj",
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {}
+      }
+    },
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayer\\Intervent.Web.DataLayer.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayer\\Intervent.Web.DataLayer.csproj",
+        "projectName": "Intervent.Web.DataLayer",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayer\\Intervent.Web.DataLayer.csproj",
+        "frameworks": {
+          "net48": {
+            "projectReferences": {
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DAL\\Intervent.DAL.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DAL\\Intervent.DAL.csproj"
+              },
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Framework\\Intervent.Framework.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Framework\\Intervent.Framework.csproj"
+              },
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWS\\Intervent.HWS.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWS\\Intervent.HWS.csproj"
+              },
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj"
+              }
+            }
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {}
+      }
+    },
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj",
+        "projectName": "Intervent.Web.DTO",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj",
+        "frameworks": {
+          "net48": {
+            "projectReferences": {
+              "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DAL\\Intervent.DAL.csproj": {
+                "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DAL\\Intervent.DAL.csproj"
+              }
+            }
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {}
+      }
+    }
+  }
+}

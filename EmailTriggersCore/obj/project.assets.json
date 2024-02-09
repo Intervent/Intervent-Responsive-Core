@@ -1,0 +1,394 @@
+{
+  "version": 3,
+  "targets": {
+    "net7.0-windows7.0": {
+      "Microsoft.CSharp/4.7.0": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.0/_._": {}
+        }
+      },
+      "NLog/5.2.8": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/NLog.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/NLog.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "NLog.Config/4.3.4": {
+        "type": "package",
+        "dependencies": {
+          "NLog": "4.3.4",
+          "NLog.Schema": "4.3.4"
+        }
+      },
+      "NLog.Schema/4.3.4": {
+        "type": "package"
+      },
+      "System.Data.DataSetExtensions/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/netstandard2.0/System.Data.DataSetExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Data.DataSetExtensions.dll": {}
+        }
+      },
+      "Intervent.Business/1.0.0": {
+        "type": "project",
+        "dependencies": {
+          "Intervent.DAL": "1.0.0",
+          "Intervent.Framework": "1.0.0",
+          "Intervent.HWS": "1.0.0",
+          "Intervent.Web.DTO": "1.0.0",
+          "Intervent.Web.DataLayer": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Intervent.Business.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Intervent.Business.dll": {}
+        }
+      },
+      "Intervent.DAL/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/Intervent.DAL.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Intervent.DAL.dll": {}
+        }
+      },
+      "Intervent.Framework/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/Intervent.Framework.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Intervent.Framework.dll": {}
+        }
+      },
+      "Intervent.HWS/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/Intervent.HWS.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Intervent.HWS.dll": {}
+        }
+      },
+      "Intervent.Web.DataLayer/1.0.0": {
+        "type": "project",
+        "dependencies": {
+          "Intervent.DAL": "1.0.0",
+          "Intervent.Framework": "1.0.0",
+          "Intervent.HWS": "1.0.0",
+          "Intervent.Web.DTO": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Intervent.Web.DataLayer.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Intervent.Web.DataLayer.dll": {}
+        }
+      },
+      "Intervent.Web.DTO/1.0.0": {
+        "type": "project",
+        "dependencies": {
+          "Intervent.DAL": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Intervent.Web.DTO.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Intervent.Web.DTO.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Microsoft.CSharp/4.7.0": {
+      "sha512": "pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA==",
+      "type": "package",
+      "path": "microsoft.csharp/4.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net45/_._",
+        "lib/netcore50/Microsoft.CSharp.dll",
+        "lib/netcoreapp2.0/_._",
+        "lib/netstandard1.3/Microsoft.CSharp.dll",
+        "lib/netstandard2.0/Microsoft.CSharp.dll",
+        "lib/netstandard2.0/Microsoft.CSharp.xml",
+        "lib/portable-net45+win8+wp8+wpa81/_._",
+        "lib/uap10.0.16299/_._",
+        "lib/win8/_._",
+        "lib/wp80/_._",
+        "lib/wpa81/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "microsoft.csharp.4.7.0.nupkg.sha512",
+        "microsoft.csharp.nuspec",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net45/_._",
+        "ref/netcore50/Microsoft.CSharp.dll",
+        "ref/netcore50/Microsoft.CSharp.xml",
+        "ref/netcore50/de/Microsoft.CSharp.xml",
+        "ref/netcore50/es/Microsoft.CSharp.xml",
+        "ref/netcore50/fr/Microsoft.CSharp.xml",
+        "ref/netcore50/it/Microsoft.CSharp.xml",
+        "ref/netcore50/ja/Microsoft.CSharp.xml",
+        "ref/netcore50/ko/Microsoft.CSharp.xml",
+        "ref/netcore50/ru/Microsoft.CSharp.xml",
+        "ref/netcore50/zh-hans/Microsoft.CSharp.xml",
+        "ref/netcore50/zh-hant/Microsoft.CSharp.xml",
+        "ref/netcoreapp2.0/_._",
+        "ref/netstandard1.0/Microsoft.CSharp.dll",
+        "ref/netstandard1.0/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/de/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/es/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/fr/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/it/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/ja/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/ko/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/ru/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/zh-hans/Microsoft.CSharp.xml",
+        "ref/netstandard1.0/zh-hant/Microsoft.CSharp.xml",
+        "ref/netstandard2.0/Microsoft.CSharp.dll",
+        "ref/netstandard2.0/Microsoft.CSharp.xml",
+        "ref/portable-net45+win8+wp8+wpa81/_._",
+        "ref/uap10.0.16299/_._",
+        "ref/win8/_._",
+        "ref/wp80/_._",
+        "ref/wpa81/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "NLog/5.2.8": {
+      "sha512": "jAIELkWBs1CXFPp986KSGpDFQZHCFccO+LMbKBTTNm42KifaI1mYzFMFQQfuGmGMTrCx0TFPhDjHDE4cLAZWiQ==",
+      "type": "package",
+      "path": "nlog/5.2.8",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "N.png",
+        "lib/net35/NLog.dll",
+        "lib/net35/NLog.xml",
+        "lib/net45/NLog.dll",
+        "lib/net45/NLog.xml",
+        "lib/net46/NLog.dll",
+        "lib/net46/NLog.xml",
+        "lib/netstandard1.3/NLog.dll",
+        "lib/netstandard1.3/NLog.xml",
+        "lib/netstandard1.5/NLog.dll",
+        "lib/netstandard1.5/NLog.xml",
+        "lib/netstandard2.0/NLog.dll",
+        "lib/netstandard2.0/NLog.xml",
+        "nlog.5.2.8.nupkg.sha512",
+        "nlog.nuspec"
+      ]
+    },
+    "NLog.Config/4.3.4": {
+      "sha512": "KrrSY6r6zfwW3kdQarbEdulMmNSLuPguPhQ/A6lgtDI+iKMotLHp6sYgYo1q7c/vEeL9zbLfXZHZSOJ7jYR1gg==",
+      "type": "package",
+      "path": "nlog.config/4.3.4",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "content/NLog.config",
+        "nlog.config.4.3.4.nupkg.sha512",
+        "nlog.config.nuspec",
+        "tools/Install.ps1"
+      ]
+    },
+    "NLog.Schema/4.3.4": {
+      "sha512": "xTRRRVnxj6FZfGLEIgZtx3LowWmkzk9aZmEctOAIJwypLAZ5Zu/fpUL7i/TPERtzF990rnk6iMn+r3SWoRUb7A==",
+      "type": "package",
+      "path": "nlog.schema/4.3.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "content/NLog.xsd",
+        "nlog.schema.4.3.4.nupkg.sha512",
+        "nlog.schema.nuspec"
+      ]
+    },
+    "System.Data.DataSetExtensions/4.5.0": {
+      "sha512": "221clPs1445HkTBZPL+K9sDBdJRB8UN8rgjO3ztB0CQ26z//fmJXtlsr6whGatscsKGBrhJl5bwJuKSA8mwFOw==",
+      "type": "package",
+      "path": "system.data.datasetextensions/4.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net45/_._",
+        "lib/netstandard2.0/System.Data.DataSetExtensions.dll",
+        "ref/net45/_._",
+        "ref/netstandard2.0/System.Data.DataSetExtensions.dll",
+        "system.data.datasetextensions.4.5.0.nupkg.sha512",
+        "system.data.datasetextensions.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "Intervent.Business/1.0.0": {
+      "type": "project",
+      "path": "../Intervent.Business/Intervent.Business.csproj",
+      "msbuildProject": "../Intervent.Business/Intervent.Business.csproj"
+    },
+    "Intervent.DAL/1.0.0": {
+      "type": "project",
+      "path": "../Intervent.DAL/Intervent.DAL.csproj",
+      "msbuildProject": "../Intervent.DAL/Intervent.DAL.csproj"
+    },
+    "Intervent.Framework/1.0.0": {
+      "type": "project",
+      "path": "../Intervent.Framework/Intervent.Framework.csproj",
+      "msbuildProject": "../Intervent.Framework/Intervent.Framework.csproj"
+    },
+    "Intervent.HWS/1.0.0": {
+      "type": "project",
+      "path": "../Intervent.HWS/Intervent.HWS.csproj",
+      "msbuildProject": "../Intervent.HWS/Intervent.HWS.csproj"
+    },
+    "Intervent.Web.DataLayer/1.0.0": {
+      "type": "project",
+      "path": "../Intervent.Web.DataLayer/Intervent.Web.DataLayer.csproj",
+      "msbuildProject": "../Intervent.Web.DataLayer/Intervent.Web.DataLayer.csproj"
+    },
+    "Intervent.Web.DTO/1.0.0": {
+      "type": "project",
+      "path": "../Intervent.Web.DTO/Intervent.Web.DTO.csproj",
+      "msbuildProject": "../Intervent.Web.DTO/Intervent.Web.DTO.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net7.0-windows7.0": [
+      "Intervent.Business >= 1.0.0",
+      "Intervent.Framework >= 1.0.0",
+      "Intervent.Web.DTO >= 1.0.0",
+      "Intervent.Web.DataLayer >= 1.0.0",
+      "Microsoft.CSharp >= 4.7.0",
+      "NLog >= 5.2.8",
+      "NLog.Config >= 4.3.4",
+      "NLog.Schema >= 4.3.4",
+      "System.Data.DataSetExtensions >= 4.5.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Santhosh\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EmailTriggersCore\\EmailTriggersCore.csproj",
+      "projectName": "Intervent.Services.EmailTriggers",
+      "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EmailTriggersCore\\EmailTriggersCore.csproj",
+      "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EmailTriggersCore\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net7.0-windows"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net7.0-windows7.0": {
+          "targetAlias": "net7.0-windows",
+          "projectReferences": {
+            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Business\\Intervent.Business.csproj": {
+              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Business\\Intervent.Business.csproj"
+            },
+            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Framework\\Intervent.Framework.csproj": {
+              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Framework\\Intervent.Framework.csproj"
+            },
+            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayer\\Intervent.Web.DataLayer.csproj": {
+              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayer\\Intervent.Web.DataLayer.csproj"
+            },
+            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj": {
+              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net7.0-windows7.0": {
+        "targetAlias": "net7.0-windows",
+        "dependencies": {
+          "Microsoft.CSharp": {
+            "target": "Package",
+            "version": "[4.7.0, )"
+          },
+          "NLog": {
+            "target": "Package",
+            "version": "[5.2.8, )"
+          },
+          "NLog.Config": {
+            "target": "Package",
+            "version": "[4.3.4, )"
+          },
+          "NLog.Schema": {
+            "target": "Package",
+            "version": "[4.3.4, )"
+          },
+          "System.Data.DataSetExtensions": {
+            "target": "Package",
+            "version": "[4.5.0, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
