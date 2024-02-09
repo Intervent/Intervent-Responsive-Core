@@ -1,0 +1,13 @@
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\bin\Release\net7.0\Intervent.FrameworkCore.deps.json
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\bin\Release\net7.0\Intervent.FrameworkCore.dll
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\bin\Release\net7.0\Intervent.FrameworkCore.pdb
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\obj\Release\net7.0\Intervent.FrameworkCore.csproj.AssemblyReference.cache
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\obj\Release\net7.0\Intervent.FrameworkCore.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\obj\Release\net7.0\Intervent.FrameworkCore.AssemblyInfoInputs.cache
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\obj\Release\net7.0\Intervent.FrameworkCore.AssemblyInfo.cs
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\obj\Release\net7.0\Intervent.FrameworkCore.csproj.CoreCompileInputs.cache
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\obj\Release\net7.0\Intervent.FrameworkCore.sourcelink.json
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\obj\Release\net7.0\Intervent.FrameworkCore.dll
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\obj\Release\net7.0\refint\Intervent.FrameworkCore.dll
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\obj\Release\net7.0\Intervent.FrameworkCore.pdb
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.FrameworkCore\obj\Release\net7.0\ref\Intervent.FrameworkCore.dll
