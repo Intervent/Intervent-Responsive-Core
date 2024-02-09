@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "zUuJcrzwLd1NVrHegaIA2HMGXtx6TJD25SLrMpeLmVejguLFKYJ3Y2wx3ae5r2qBdwBiyJNcj19NH/gk5riKPA==",
+  "dgSpecHash": "iw2c101bP6PyOCYQfMqEjJsTH9UlygWk0hfHGwPYRpBs8rQUuNgzLXAee25kzoOdSDLwrjGvDQodG6idVXtnWw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj",
+  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\Intervent.HWSCore.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Santhosh\\.nuget\\packages\\microsoft.aspnet.webapi.client\\5.2.9\\microsoft.aspnet.webapi.client.5.2.9.nupkg.sha512",
     "C:\\Users\\Santhosh\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",

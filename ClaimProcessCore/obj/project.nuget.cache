@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "PbUXauUcjnVjpus7dw/foDuB4Ct9C5y7T8kT2Y/xW7D/1HlrXec7DTwwrJZ7RFZ3du/F1X5++liGanJgZRBOBQ==",
-  "success": true,
-  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\ClaimProcessCore\\ClaimProcessCore.csproj",
+  "dgSpecHash": "CiTVS+i3x+bvEpswzmnGKaXP1QzLSkreqzNj1A31uakZ+ho7akNHkTy1kpA57KbPh7o58cNdi7JQZvXqFczOUQ==",
+  "success": false,
+  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\ClaimProcessCore\\ClaimProcessCore.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Santhosh\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\Santhosh\\.nuget\\packages\\nlog\\5.2.8\\nlog.5.2.8.nupkg.sha512",
@@ -10,5 +10,33 @@
     "C:\\Users\\Santhosh\\.nuget\\packages\\nlog.schema\\4.3.4\\nlog.schema.4.3.4.nupkg.sha512",
     "C:\\Users\\Santhosh\\.nuget\\packages\\system.data.datasetextensions\\4.5.0\\system.data.datasetextensions.4.5.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1104",
+      "level": "Error",
+      "message": "Unable to find project 'C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Business\\Intervent.Business.csproj'. Check that the project reference is valid and that the project file exists.",
+      "libraryId": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Business\\Intervent.Business.csproj",
+      "targetGraphs": [
+        "net7.0-windows7.0"
+      ]
+    },
+    {
+      "code": "NU1104",
+      "level": "Error",
+      "message": "Unable to find project 'C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj'. Check that the project reference is valid and that the project file exists.",
+      "libraryId": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTO\\Intervent.Web.DTO.csproj",
+      "targetGraphs": [
+        "net7.0-windows7.0"
+      ]
+    },
+    {
+      "code": "NU1104",
+      "level": "Error",
+      "message": "Unable to find project 'C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DataLayer\\Intervent.Web.DataLayer.csproj'. Check that the project reference is valid and that the project file exists.",
+      "libraryId": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DataLayer\\Intervent.Web.DataLayer.csproj",
+      "targetGraphs": [
+        "net7.0-windows7.0"
+      ]
+    }
+  ]
 }

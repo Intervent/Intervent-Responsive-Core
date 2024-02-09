@@ -5092,11 +5092,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\ClaimDataAnalyticsCore\\ClaimDataAnalyticsCore.csproj",
+      "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\ClaimDataAnalyticsCore\\ClaimDataAnalyticsCore.csproj",
       "projectName": "ClaimDataAnalyticsCore",
-      "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\ClaimDataAnalyticsCore\\ClaimDataAnalyticsCore.csproj",
+      "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\ClaimDataAnalyticsCore\\ClaimDataAnalyticsCore.csproj",
       "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\ClaimDataAnalyticsCore\\obj\\",
+      "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\ClaimDataAnalyticsCore\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",

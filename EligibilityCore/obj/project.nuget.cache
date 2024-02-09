@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "YlRywzXCNfHanb2R3HPyzivD6JPERm7XH//qEWgiER033IED/7fX3wErb1v6pYFZKjSrM3PJo2M0Rm3GoFHLMw==",
+  "dgSpecHash": "uizVw9RI7LaVHB5DK7RlGi3gCnNWfQy/ayXfxPd3oecCpvg34zuvOUYVt2EWYdKbxoBUeFmbVGIgPPMBRSFNYQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EligibilityCore\\EligibilityCore.csproj",
+  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\EligibilityCore\\EligibilityCore.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Santhosh\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Santhosh\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",

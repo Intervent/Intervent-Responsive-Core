@@ -12789,11 +12789,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EligibilityConsoleCore\\EligibilityConsoleCore.csproj",
+      "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\EligibilityConsoleCore\\EligibilityConsoleCore.csproj",
       "projectName": "EligibilityConsoleCore",
-      "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EligibilityConsoleCore\\EligibilityConsoleCore.csproj",
+      "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\EligibilityConsoleCore\\EligibilityConsoleCore.csproj",
       "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\EligibilityConsoleCore\\obj\\",
+      "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\EligibilityConsoleCore\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -12810,20 +12810,20 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj": {
-              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj"
+            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj": {
+              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.BusinessCore\\Intervent.BusinessCore.csproj"
             },
-            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj": {
-              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.DALCore\\Intervent.DALCore.csproj"
+            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj": {
+              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.DALCore\\Intervent.DALCore.csproj"
             },
-            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj": {
-              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj"
+            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\Intervent.HWSCore.csproj": {
+              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\Intervent.HWSCore.csproj"
             },
-            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj": {
-              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj"
+            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj": {
+              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DataLayerCore\\Intervent.Web.DataLayerCore.csproj"
             },
-            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj": {
-              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj"
+            "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj": {
+              "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.Web.DTOCore\\Intervent.Web.DTOCore.csproj"
             }
           }
         }

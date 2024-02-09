@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Intervent.Web.DTOCore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+59eab2e1827d76cc1037d9b9013a1eafb2920b85")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+356b389b3602d95708931f53d0d2a36a97119619")]
 [assembly: System.Reflection.AssemblyProductAttribute("Intervent.Web.DTOCore")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Intervent.Web.DTOCore")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

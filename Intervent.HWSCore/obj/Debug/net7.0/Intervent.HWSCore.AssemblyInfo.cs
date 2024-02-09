@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Intervent.HWSCore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+569ab28f16382236fa2cb907756413885f911d35")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+356b389b3602d95708931f53d0d2a36a97119619")]
 [assembly: System.Reflection.AssemblyProductAttribute("Intervent.HWSCore")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Intervent.HWSCore")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

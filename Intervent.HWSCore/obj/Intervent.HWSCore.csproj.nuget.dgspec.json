@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj": {}
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\Intervent.HWSCore.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj": {
+    "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\Intervent.HWSCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj",
+        "projectUniqueName": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\Intervent.HWSCore.csproj",
         "projectName": "Intervent.HWSCore",
-        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\Intervent.HWSCore.csproj",
+        "projectPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\Intervent.HWSCore.csproj",
         "packagesPath": "C:\\Users\\Santhosh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\Intervent.HWSCore\\obj\\",
+        "outputPath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\Intervent.HWSCore\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Santhosh\\AppData\\Roaming\\NuGet\\NuGet.Config",

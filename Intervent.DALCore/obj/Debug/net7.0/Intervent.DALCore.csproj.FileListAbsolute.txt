@@ -15,3 +15,16 @@ C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.DALCor
 C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.DALCore\obj\Debug\net7.0\refint\Intervent.DALCore.dll
 C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.DALCore\obj\Debug\net7.0\Intervent.DALCore.pdb
 C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\Intervent.DALCore\obj\Debug\net7.0\ref\Intervent.DALCore.dll
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\bin\Debug\net7.0\Intervent.DALCore.deps.json
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\bin\Debug\net7.0\Intervent.DALCore.dll
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\bin\Debug\net7.0\Intervent.DALCore.pdb
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\obj\Debug\net7.0\Intervent.DALCore.csproj.AssemblyReference.cache
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\obj\Debug\net7.0\Intervent.DALCore.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\obj\Debug\net7.0\Intervent.DALCore.AssemblyInfoInputs.cache
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\obj\Debug\net7.0\Intervent.DALCore.AssemblyInfo.cs
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\obj\Debug\net7.0\Intervent.DALCore.csproj.CoreCompileInputs.cache
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\obj\Debug\net7.0\Intervent.DALCore.sourcelink.json
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\obj\Debug\net7.0\Intervent.DALCore.dll
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\obj\Debug\net7.0\refint\Intervent.DALCore.dll
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\obj\Debug\net7.0\Intervent.DALCore.pdb
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\Intervent.DALCore\obj\Debug\net7.0\ref\Intervent.DALCore.dll

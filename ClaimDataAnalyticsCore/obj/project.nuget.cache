@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "B+YRH0hl73i9cW9FsS2gtsk3OZ5qp8Mi8rf+ojWVk38p1ygzVmk0K1HIyBzS8pNNGS6szh36SoyiU7HW7nfv2Q==",
+  "dgSpecHash": "uZvxZD+hcR7kdWVV5lCBHJldonyKsSIhBdabd6wQiiJyshrfpZCB+V7h2yYfFKPr4YQHErIgfgQKC20pYcw85g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-version\\ClaimDataAnalyticsCore\\ClaimDataAnalyticsCore.csproj",
+  "projectFilePath": "C:\\Users\\Santhosh\\Documents\\GitHub\\Intervent-Responsive-Core\\ClaimDataAnalyticsCore\\ClaimDataAnalyticsCore.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Santhosh\\.nuget\\packages\\csvhelper\\2.15.0\\csvhelper.2.15.0.nupkg.sha512",
     "C:\\Users\\Santhosh\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
