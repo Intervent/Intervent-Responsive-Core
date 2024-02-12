@@ -1,25 +1,9 @@
 ﻿using Intervent.Business;
-using Intervent.Business.Eligibility;
-using Intervent.Business.EmailTriggers;
-using Intervent.Business.Notification;
-using Intervent.Business.FollowUp;
 using Intervent.Web.DataLayer;
-using NLog;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Intervent.Web.DTO;
-using Intervent.Business.CampaignServices;
-using Intervent.Business.Claims;
-using Intervent.Business.Account;
-using Intervent.Business.Mail;
-using Intervent.Business.Tasks;
 
 namespace EligibilityConsole
 {
@@ -179,7 +163,7 @@ namespace EligibilityConsole
                                         }
                                     }
                                     writer.Close();
-                                    
+
                                     writer = null;
                                     fileSequence++;
                                 }
@@ -204,7 +188,7 @@ namespace EligibilityConsole
 
                             ++count;
                         }
-                        if(writer != null)
+                        if (writer != null)
                         {
                             //write the end of file content
                             using (StreamReader endFile = new System.IO.StreamReader(endFilePath))
@@ -237,7 +221,7 @@ namespace EligibilityConsole
             LabReader reader = new LabReader();
             var result = reader.GetLabsFromOrderNumber(order);
         }
-        
+
 
         static void CheckifExcelInstalled()
         {
@@ -246,15 +230,15 @@ namespace EligibilityConsole
             Console.ReadKey();
         }
 
-        static void saveorderfile()		
-         {
-             string orderNumber = "MOTLE50402636707026";		
-             /*var data = Intervent.HWS.Labcorp.PullOrderConfirmation(orderNumber);		
-             using (var fs = new FileStream(orderNumber + ".pdf", FileMode.Create, FileAccess.Write))		
-             {		
-                 fs.Write(data, 0, data.Length);		
-             }	*/	
-         }
+        static void saveorderfile()
+        {
+            string orderNumber = "MOTLE50402636707026";
+            /*var data = Intervent.HWS.Labcorp.PullOrderConfirmation(orderNumber);		
+            using (var fs = new FileStream(orderNumber + ".pdf", FileMode.Create, FileAccess.Write))		
+            {		
+                fs.Write(data, 0, data.Length);		
+            }	*/
+        }
 
         static void savereportfile()
         {
