@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClaimDataAnalytics.Claims.Model
 {
@@ -104,7 +101,7 @@ namespace ClaimDataAnalytics.Claims.Model
                 //Console.WriteLine($"User enrollment type is {userEnrollmentType}");
                 if (eligibilities.TryGetValue(MemberSSN + userEnrollmentType, out eligibility))
                 {
-                   // Console.WriteLine("came here");
+                    // Console.WriteLine("came here");
                     #region First Pass
                     if (eligibility.FirstName == MemberFirstName)
                     {
@@ -125,7 +122,7 @@ namespace ClaimDataAnalytics.Claims.Model
                         }
                         else
                         {
-                           // extendedLog += "SSN matched. Could not match by DOB.";
+                            // extendedLog += "SSN matched. Could not match by DOB.";
                         }
                     }
                     #endregion
@@ -142,7 +139,7 @@ namespace ClaimDataAnalytics.Claims.Model
                     //get primary elig record
                     if (eligibilities.TryGetValue(MemberSSN + "E", out eligibility))
                     {
-                       // extendedLog += "Matched primary record.";
+                        // extendedLog += "Matched primary record.";
                         var spouseUniqueId = eligibility.UniqueID.Replace("EH9", "EH8");
                         ClaimProcessEligibilityDto eligibilitySpouse = null;
                         if (eligibilitiesUniqueId.TryGetValue(spouseUniqueId, out eligibilitySpouse))
@@ -156,12 +153,12 @@ namespace ClaimDataAnalytics.Claims.Model
                             }
                             else
                             {
-                               // extendedLog += $"Name or DOB did not match.";
+                                // extendedLog += $"Name or DOB did not match.";
                             }
                         }
                         else
                         {
-                           // extendedLog += $"Could not find a match with spouse unique id {spouseUniqueId}.";
+                            // extendedLog += $"Could not find a match with spouse unique id {spouseUniqueId}.";
                         }
                     }
                     #endregion

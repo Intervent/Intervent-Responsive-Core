@@ -3,10 +3,6 @@ using ClaimDataAnalytics.Claims.Converters.AETNA;
 using ClaimDataAnalytics.Claims.Model;
 using CsvHelper.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClaimDataAnalytics.Claims.Classmaps
 {
@@ -58,15 +54,15 @@ namespace ClaimDataAnalytics.Claims.Classmaps
             //Map(m => m.GroupId).Index(1);//Hierarchy Level 2
             Map(m => m.MemberNumber).Index(25);//Member's ID (Assigned in Data Warehouse)
             Map(m => m.MemberGender).ConvertUsing(row => MapGender(row.GetField(29)));//Member's Gender(M = male, F = female or U = unknown.)
-            //Map(m => m.Diagnosis1).Index(152);//	,[Diagnosis Code 1]
-            //Map(m => m.Diagnosis2).Index(153);//	,[Diagnosis Code 2]
-            //Map(m => m.Diagnosis3).Index(154);//	,[Diagnosis Code 3]
-            //Map(m => m.ProcedureCode1).Index(67);//	[Line-Level Procedure Code (CPT, HCPCS, ADA, CDT)]
-            //Map(m => m.RevenueCode).Index(67);//	[Line-Level Procedure Code (CPT, HCPCS, ADA, CDT)]
-           // Map(m => m.PatientPayAmount).ConvertUsing(row => PatientPaymentAmount(row.GetField(93), row.GetField(96)));//[Copayment Amount] + [Coinsurance]
+                                                                                      //Map(m => m.Diagnosis1).Index(152);//	,[Diagnosis Code 1]
+                                                                                      //Map(m => m.Diagnosis2).Index(153);//	,[Diagnosis Code 2]
+                                                                                      //Map(m => m.Diagnosis3).Index(154);//	,[Diagnosis Code 3]
+                                                                                      //Map(m => m.ProcedureCode1).Index(67);//	[Line-Level Procedure Code (CPT, HCPCS, ADA, CDT)]
+                                                                                      //Map(m => m.RevenueCode).Index(67);//	[Line-Level Procedure Code (CPT, HCPCS, ADA, CDT)]
+                                                                                      // Map(m => m.PatientPayAmount).ConvertUsing(row => PatientPaymentAmount(row.GetField(93), row.GetField(96)));//[Copayment Amount] + [Coinsurance]
         }
 
-        decimal? PatientPaymentAmount(string coPaymentAmount , string coInsurance)
+        decimal? PatientPaymentAmount(string coPaymentAmount, string coInsurance)
         {
             return Convert.ToDecimal(coPaymentAmount ?? "0") + Convert.ToDecimal(coInsurance ?? "0");
         }

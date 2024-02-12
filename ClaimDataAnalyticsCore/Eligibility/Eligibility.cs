@@ -3,12 +3,9 @@ using ClaimDataAnalytics.Eligibility.CsvModel;
 using ClaimDataAnalytics.Eligibility.SqlTranslator;
 using CsvHelper;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClaimDataAnalytics.Eligibility
 {
@@ -72,7 +69,7 @@ namespace ClaimDataAnalytics.Eligibility
                         while (reader.Read())
                         {
                             row++;
-                            if(reader.CurrentRecord[0] == "H" || reader.CurrentRecord[0] == "T")
+                            if (reader.CurrentRecord[0] == "H" || reader.CurrentRecord[0] == "T")
                             {
                                 continue;
                             }
@@ -230,7 +227,7 @@ namespace ClaimDataAnalytics.Eligibility
         {
             var SQLinputFilePaths = Directory.GetFiles(_outputDirectory, "*.txt");
             int totalRecords = 0;
-            foreach(var file in SQLinputFilePaths)
+            foreach (var file in SQLinputFilePaths)
             {
                 var lines = File.ReadAllLines(file);
                 totalRecords += lines.Count();

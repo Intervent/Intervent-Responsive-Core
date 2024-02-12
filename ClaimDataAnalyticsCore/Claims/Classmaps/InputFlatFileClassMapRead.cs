@@ -1,11 +1,6 @@
 ﻿using ClaimDataAnalytics.Claims.Converters;
 using ClaimDataAnalytics.Claims.Model;
 using CsvHelper.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClaimDataAnalytics.Claims.Classmaps
 {
@@ -72,7 +67,7 @@ namespace ClaimDataAnalytics.Claims.Classmaps
             //Map(m => m.OrgId);
             //Map(m => m.DrugCategory);
             //Map(m => m.CodeFlag);
-           // Map(m => m.EnrollType);
+            // Map(m => m.EnrollType);
             //Map(m => m.HasHRA);
             //Map(m => m.IncludeInLivongoOutput);
             Map(m => m.NewUniqueId);

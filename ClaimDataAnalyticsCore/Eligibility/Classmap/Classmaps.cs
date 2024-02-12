@@ -1,11 +1,6 @@
 ﻿using ClaimDataAnalytics.Eligibility.Converter;
 using ClaimDataAnalytics.Eligibility.CsvModel;
 using CsvHelper.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClaimDataAnalytics.Eligibility.Classmap
 {
@@ -75,7 +70,7 @@ namespace ClaimDataAnalytics.Eligibility.Classmap
             Map(m => m.UnionFlag).TypeConverter(new YesNoConverter());
             Map(m => m.UserEnrollmentType).TypeConverter(new UserEnrollmentTypeConverter());
             Map(m => m.TobaccoFlag).TypeConverter(new YesNoConverter());
-          //  Map(m => m.EducationalAssociates).TypeConverter(new YesNoConverter());
+            //  Map(m => m.EducationalAssociates).TypeConverter(new YesNoConverter());
             Map(m => m.MedicalPlanStartDate).TypeConverter<CsvHelper.TypeConversion.DateTimeConverter>().TypeConverterOption(dateFormat);
             Map(m => m.MedicalPlanEndDate).TypeConverter<CsvHelper.TypeConversion.DateTimeConverter>().TypeConverterOption(dateFormat);
             Map(m => m.MedicalPlanCode);
@@ -116,12 +111,12 @@ namespace ClaimDataAnalytics.Eligibility.Classmap
             Map(m => m.HomePhone);
             Map(m => m.EmployeeUniqueId).Name("Custom9");
             Map(m => m.HireDate).Name("Custom13").TypeConverter<CsvHelper.TypeConversion.DateTimeConverter>().TypeConverterOption(dateFormat);
-           // Map(m => m.TerminatedDate).TypeConverter<CsvHelper.TypeConversion.DateTimeConverter>().TypeConverterOption(dateFormat);
-          //  Map(m => m.DeathDate).TypeConverter<CsvHelper.TypeConversion.DateTimeConverter>().TypeConverterOption(dateFormat);
+            // Map(m => m.TerminatedDate).TypeConverter<CsvHelper.TypeConversion.DateTimeConverter>().TypeConverterOption(dateFormat);
+            //  Map(m => m.DeathDate).TypeConverter<CsvHelper.TypeConversion.DateTimeConverter>().TypeConverterOption(dateFormat);
             Map(m => m.BusinessUnit).Name("Custom4");
-          //  Map(m => m.RegionCode);
+            //  Map(m => m.RegionCode);
             // Map(m => m.UnionFlag).TypeConverter(new CsvHelper.TypeConversion.EnumConverter(typeof(YesNo)));
-          //  Map(m => m.UnionFlag).TypeConverter(new YesNoConverter());
+            //  Map(m => m.UnionFlag).TypeConverter(new YesNoConverter());
             Map(m => m.UserEnrollmentType).Name("Custom7").TypeConverter(new UserEnrollmentTypeConverter(true));
             //Map(m => m.TobaccoFlag).TypeConverter(new YesNoConverter());
             Map(m => m.MedicalPlanStartDate).Name("Custom22").TypeConverter<CsvHelper.TypeConversion.DateTimeConverter>().TypeConverterOption(dateFormat);

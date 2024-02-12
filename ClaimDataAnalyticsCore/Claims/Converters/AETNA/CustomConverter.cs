@@ -1,11 +1,6 @@
 ﻿using ClaimDataAnalytics.Claims.Model;
 using CsvHelper.TypeConversion;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClaimDataAnalytics.Claims.Converters.AETNA
 {
@@ -59,7 +54,7 @@ namespace ClaimDataAnalytics.Claims.Converters.AETNA
     //        {
     //            return DateTime.ParseExact(text, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyyMMdd");
     //        }
-            
+
     //    }
 
     //    /// <summary>

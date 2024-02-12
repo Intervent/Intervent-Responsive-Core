@@ -1,10 +1,6 @@
 ﻿using ClaimDataAnalytics.Claims.Model;
 using CsvHelper.TypeConversion;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClaimDataAnalytics.Claims.Converters.BCBS
 {
@@ -28,7 +24,7 @@ namespace ClaimDataAnalytics.Claims.Converters.BCBS
                 return ClaimsRelationshipToSubscriberCode.CHILDREN;
             else
                 return null;
-           // return !String.IsNullOrEmpty(text) && text == "SPS";
+            // return !String.IsNullOrEmpty(text) && text == "SPS";
 
         }
 

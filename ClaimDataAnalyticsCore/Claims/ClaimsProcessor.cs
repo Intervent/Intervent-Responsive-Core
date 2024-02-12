@@ -10,7 +10,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ClaimDataAnalytics.Claims
 {
@@ -132,7 +131,7 @@ namespace ClaimDataAnalytics.Claims
                         Console.WriteLine(file);
                         var fileSplit = file.Split(new char[] { '_' });
                         var companyName = fileSplit[2];
-                       
+
                         using (var sr = new StreamReader(file))
                         using (TextWriter sw = new StreamWriter(iffPath, true))
                         {
@@ -189,7 +188,7 @@ namespace ClaimDataAnalytics.Claims
                                         if (claimProvider.SetSSN)
                                         {
                                             if (record.UniqueId.EndsWith("XXX"))
-                                                record.SubscriberSSN = record.UniqueId.Replace("XXX", "EH9"); 
+                                                record.SubscriberSSN = record.UniqueId.Replace("XXX", "EH9");
                                             //just populate the ids
                                             //record.SetSSN(eligibilityUniqueIdKey, childreneligibilityUniqueIdKey);
                                         }
@@ -222,7 +221,7 @@ namespace ClaimDataAnalytics.Claims
                 }
 
                 string iffSqlPath = Path.Combine(folderName, "iff.sql");
-               
+
                 using (var sr = new StreamReader(iffPath))
                 using (var sw = new StreamWriter(iffSqlPath, true))
                 {

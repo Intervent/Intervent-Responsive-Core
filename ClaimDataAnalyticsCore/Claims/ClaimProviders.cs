@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClaimDataAnalytics.Claims
 {
@@ -27,7 +23,7 @@ namespace ClaimDataAnalytics.Claims
 
         public bool SetSSN { get; set; }
 
-       
+
         private ClaimProviderDto(int id, string name, string directoryName, bool isActive, bool isFixedLayout, string fixedLayoutTranformerClassName, string delimiter, bool hasHeader, bool setSSN)
         {
             Id = id;

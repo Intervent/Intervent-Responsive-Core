@@ -1,9 +1,6 @@
 ﻿using ClaimDataAnalytics.Eligibility.CsvModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ClaimDataAnalytics.Eligibility.SqlTranslator
 {
@@ -21,28 +18,28 @@ namespace ClaimDataAnalytics.Eligibility.SqlTranslator
             sb.Append("[EnrollmentStatus],[DentalPlanCode],[DentalPlanStartDate],[DentalPlanEndDate],[VisionPlanCode],");
             sb.Append("[VisionPlanStartDate],[VisionPlanEndDate],[CompanyName],[CreateDate])");
             sb.Append(" VALUES(NULL, ");
-            sb.Append($"'{model.FirstName.Replace("'","''")}', '{model.LastName.Replace("'", "''")}',");
+            sb.Append($"'{model.FirstName.Replace("'", "''")}', '{model.LastName.Replace("'", "''")}',");
             if (model.DOB.HasValue)
                 sb.Append($"'{model.DOB.Value.Date.ToString(DATE_FORMAT)}'");
             else
                 sb.Append("NULL");
             sb.Append(",");
-            if(model.Gender != null)
+            if (model.Gender != null)
                 sb.Append($"'{model.Gender.CsvDescription}', ");
             else
                 sb.Append("NULL , ");
-            if(String.IsNullOrEmpty(model.EmailAddress))
+            if (String.IsNullOrEmpty(model.EmailAddress))
                 sb.Append("NULL , ");
             else
             {
                 sb.Append($"'{model.EmailAddress.Replace("'", "''")}' , ");
             }
-                
+
             if (String.IsNullOrEmpty(model.HomePhone))
                 sb.Append("NULL , ");
             else
                 sb.Append($"'{model.HomePhone}' , ");
-          
+
             sb.Append("NULL , ");//WORK PHONE
             sb.Append("NULL , ");//CELL PHONE
 

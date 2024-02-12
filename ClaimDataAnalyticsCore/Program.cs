@@ -6,8 +6,6 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClaimDataAnalytics
 {
@@ -26,7 +24,7 @@ namespace ClaimDataAnalytics
             //    var folderName = $@"{basePath}\Claims" + @"\" + currentDate.ToString("yyyyMM");
             //    Directory.CreateDirectory(folderName);
             //    Directory.CreateDirectory(Path.Combine(folderName, "FinalFiles"));
-                
+
             //}
             //return;
 
@@ -75,7 +73,7 @@ namespace ClaimDataAnalytics
         static void AutomateScripts(IEnumerable<string> files)
         {
             Console.WriteLine(DateTime.Now.ToString());
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 Console.WriteLine($"File processing is {file}");
                 ProcessStartInfo info = new ProcessStartInfo("sqlcmd", $@" -U claimAnalytics -P pwd! -i {file}");
@@ -118,14 +116,14 @@ namespace ClaimDataAnalytics
                 {
                     if (row > maxLines)
                         break;
-                    if(row > start)
+                    if (row > start)
                     {
                         sw.WriteLine(line);
                     }
                     row++;
                 }
-            } 
-              
+            }
+
         }
 
         static void PrintLines(int startNumber, int endNumber, string filePath, string outputFilePath)
@@ -135,7 +133,7 @@ namespace ClaimDataAnalytics
             using (var sr = new StreamReader(filePath))
             using (var sw = new StreamWriter(outputFilePath))
             {
-                while ( (line = sr.ReadLine()) != null)
+                while ((line = sr.ReadLine()) != null)
                 {
                     i++;
                     if (i < startNumber)
