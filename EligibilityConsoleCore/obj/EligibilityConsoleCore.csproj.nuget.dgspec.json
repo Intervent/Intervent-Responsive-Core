@@ -62,15 +62,15 @@
             },
             "Microsoft.Extensions.Configuration": {
               "target": "Package",
-              "version": "[7.0.0, )"
+              "version": "[8.0.0, )"
             },
             "Microsoft.IdentityModel.Logging": {
               "target": "Package",
-              "version": "[6.24.0, )"
+              "version": "[7.3.1, )"
             },
             "Microsoft.IdentityModel.Tokens": {
               "target": "Package",
-              "version": "[6.24.0, )"
+              "version": "[7.3.1, )"
             },
             "NLog": {
               "target": "Package",
@@ -98,11 +98,11 @@
             },
             "System.Data.SqlClient": {
               "target": "Package",
-              "version": "[4.8.5, )"
+              "version": "[4.8.6, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
-              "version": "[6.24.0, )"
+              "version": "[7.3.1, )"
             },
             "Twilio": {
               "target": "Package",
