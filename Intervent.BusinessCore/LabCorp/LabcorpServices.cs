@@ -84,7 +84,7 @@ namespace Intervent.Business
                 {
                     UpdateLabFromLabCorp(labOrder, lab);
                     LogReader logReader = new LogReader();
-                    var logEvent = new LogEventInfo(LogLevel.Info, "LabService", null, string.Format("Missing LabOrder and found user match {0}", labOrder.UserId), null);
+                    var logEvent = new LogEventInfo(LogLevel.Info, "LabService", null, string.Format("Missing LabOrder and found user match {0}", labOrder.UserId), null, null);
                     logReader.WriteLogMessage(logEvent);
                     return;
                 }

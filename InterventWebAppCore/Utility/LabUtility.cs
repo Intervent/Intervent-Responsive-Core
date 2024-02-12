@@ -86,7 +86,7 @@ namespace InterventWebApp
                 else
                 {
                     LogReader reader = new LogReader();
-                    var logEvent = new LogEventInfo(NLog.LogLevel.Warn, user.Id.ToString(), null, "LabCorp Response:" + response.Error, null);
+                    var logEvent = new LogEventInfo(NLog.LogLevel.Warn, user.Id.ToString(), null, "LabCorp Response:" + response.Error, null, null);
                     reader.WriteLogMessage(logEvent);
                 }
             }

@@ -33,7 +33,7 @@ namespace InterventWebApp.Controllers
                     return BadRequest("Invalid request");
 
                 LogReader reader = new LogReader();
-                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.PostActivityLog_Request:", null, JsonConvert.SerializeObject(request), null);
+                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.PostActivityLog_Request:", null, JsonConvert.SerializeObject(request), null, null);
                 reader.WriteLogMessage(logEvent);
                 ExternalUtility.AddActivity(request, SOURCE, INPUT_METHOD);
                 return Ok();
@@ -57,7 +57,7 @@ namespace InterventWebApp.Controllers
                     return BadRequest("Invalid request");
 
                 LogReader reader = new LogReader();
-                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.PostWeightLog_Request:", null, JsonConvert.SerializeObject(request), null);
+                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.PostWeightLog_Request:", null, JsonConvert.SerializeObject(request), null, null);
                 reader.WriteLogMessage(logEvent);
                 ExternalUtility.AddWeight(request, SOURCE, INPUT_METHOD, _appSettings.SystemAdminId);
                 return Ok();
@@ -81,7 +81,7 @@ namespace InterventWebApp.Controllers
                     return BadRequest("Invalid request");
 
                 LogReader reader = new LogReader();
-                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.PostBloodPressureLog_Request:", null, JsonConvert.SerializeObject(request), null);
+                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.PostBloodPressureLog_Request:", null, JsonConvert.SerializeObject(request), null, null);
                 reader.WriteLogMessage(logEvent);
                 ExternalUtility.AddBloodPressure(request, SOURCE, INPUT_METHOD);
                 return Ok();
@@ -105,7 +105,7 @@ namespace InterventWebApp.Controllers
                     return BadRequest("Invalid request");
 
                 LogReader reader = new LogReader();
-                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.PostSleepLog_Request:", null, JsonConvert.SerializeObject(request), null);
+                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.PostSleepLog_Request:", null, JsonConvert.SerializeObject(request), null, null);
                 reader.WriteLogMessage(logEvent);
                 ExternalUtility.AddSleep(request, SOURCE, INPUT_METHOD);
                 return Ok();
@@ -129,7 +129,7 @@ namespace InterventWebApp.Controllers
                     return BadRequest("Invalid request");
 
                 LogReader reader = new LogReader();
-                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.PostDailiesLog_Request:", null, JsonConvert.SerializeObject(request), null);
+                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.PostDailiesLog_Request:", null, JsonConvert.SerializeObject(request), null, null);
                 reader.WriteLogMessage(logEvent);
                 ExternalUtility.AddSummary(request, SOURCE, INPUT_METHOD);
                 return Ok();
@@ -153,7 +153,7 @@ namespace InterventWebApp.Controllers
                     return BadRequest("Invalid request");
 
                 LogReader reader = new LogReader();
-                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.Deregistration_Request:", null, JsonConvert.SerializeObject(request), null);
+                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "GarminController.Deregistration_Request:", null, JsonConvert.SerializeObject(request), null, null);
                 reader.WriteLogMessage(logEvent);
                 ExternalUtility.GarminDeregistration(request);
                 return Ok();
