@@ -93,3 +93,6 @@ ipch/
 
 # Visual Studio 2015 temp folder
 /.vs/
+*.v2
+*.dll
+*.pak

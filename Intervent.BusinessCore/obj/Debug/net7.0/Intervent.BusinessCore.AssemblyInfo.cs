@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Intervent.BusinessCore")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bc2251d30c373badb526e49f1bb80ba0a1605cfe")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd0910afa111a2381bc524cd2b838b542508de0f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Intervent.BusinessCore")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Intervent.BusinessCore")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

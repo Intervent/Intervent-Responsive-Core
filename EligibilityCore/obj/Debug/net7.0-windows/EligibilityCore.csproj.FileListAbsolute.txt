@@ -4,3 +4,9 @@ C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\EligibilityCore\
 C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\EligibilityCore\obj\Debug\net7.0-windows\EligibilityCore.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\EligibilityCore\obj\Debug\net7.0-windows\EligibilityCore.csproj.CoreCompileInputs.cache
 C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-version\EligibilityCore\obj\Debug\net7.0-windows\EligibilityCore.sourcelink.json
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\EligibilityCore\obj\Debug\net7.0-windows\EligibilityCore.csproj.AssemblyReference.cache
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\EligibilityCore\obj\Debug\net7.0-windows\Intervent.Services.Eligibility.ProjectInstaller.resources
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\EligibilityCore\obj\Debug\net7.0-windows\EligibilityCore.csproj.GenerateResource.cache
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\EligibilityCore\obj\Debug\net7.0-windows\EligibilityCore.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\EligibilityCore\obj\Debug\net7.0-windows\EligibilityCore.csproj.CoreCompileInputs.cache
+C:\Users\Santhosh\Documents\GitHub\Intervent-Responsive-Core\EligibilityCore\obj\Debug\net7.0-windows\EligibilityCore.sourcelink.json
