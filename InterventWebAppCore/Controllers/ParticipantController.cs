@@ -122,7 +122,6 @@ namespace InterventWebApp
                 HttpContext.Session.SetString(SessionContext.TermsAccepted, partResponse.user.TermsAccepted.ToString());
                 if (HttpContext.Session.GetString(SessionContext.DateFormat) == null)
                     HttpContext.Session.SetString(SessionContext.DateFormat, partResponse.user.Country1 != null ? partResponse.user.Country1.DateFormat : "MM/dd/yyyy");
-                //#TODO
                 HttpContext.Session.SetInt32(SessionContext.SessionTimeout, _appSettings.SessionTimeOut);
                 int hraId = partResponse.HRA != null ? partResponse.HRA.Id : 0;
                 HttpContext.Session.SetString(SessionContext.isPregnant, CommonUtility.GetPregancyStatus(hraId, UserId, DateTime.Now).isPregnant.ToString());

@@ -330,8 +330,7 @@ namespace Intervent.Web.DataLayer
                         Total = serviceType.Where(x => x.Id == request.Type).Select(x => x.Price).FirstOrDefault(),
                         CreatedOn = DateTime.UtcNow,
                     };
-                    //TODO
-                    //invoiceBilling = context.InvoiceBilledDetails.Add(invoiceBilling);
+                    invoiceBilling = context.InvoiceBilledDetails.Add(invoiceBilling).Entity;
                     context.SaveChanges();
                 }
                 else

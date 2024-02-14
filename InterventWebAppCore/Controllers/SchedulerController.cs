@@ -381,8 +381,6 @@ namespace InterventWebApp
         {
             var response = SchedulerUtility.GetCoachAvailability(coachId);
             var jsonResult = Json(response);
-            //TODO
-            // jsonResult.MaxJsonLength = int.MaxValue;
             return jsonResult;
         }
 
@@ -456,8 +454,6 @@ namespace InterventWebApp
         {
             var response = SchedulerUtility.GetCoachCalendar(coachId, userTimeZone, HttpContext.Session.GetString(SessionContext.ParticipantTimeZone));
             var jsonResult = Json(response);
-            //TODO
-            //jsonResult.MaxJsonLength = int.MaxValue;
             return jsonResult;
         }
 
