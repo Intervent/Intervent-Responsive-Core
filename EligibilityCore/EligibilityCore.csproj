@@ -20,17 +20,18 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="ProjectInstaller.cs" />
+    <Compile Remove="ProjectInstaller.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="ProjectInstaller.resx" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="EligibilityService.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Update="EligibilityService.Designer.cs">
       <DependentUpon>EligibilityService.cs</DependentUpon>
-    </Compile>
-    <Compile Update="ProjectInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="ProjectInstaller.Designer.cs">
-      <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -38,14 +39,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
     <None Update="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="ProjectInstaller.resx">
-      <DependentUpon>ProjectInstaller.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Intervent.BusinessCore\Intervent.BusinessCore.csproj" />
@@ -54,21 +51,5 @@
     <ProjectReference Include="..\Intervent.HWSCore\Intervent.HWSCore.csproj" />
     <ProjectReference Include="..\Intervent.Web.DataLayerCore\Intervent.Web.DataLayerCore.csproj" />
     <ProjectReference Include="..\Intervent.Web.DTOCore\Intervent.Web.DTOCore.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <!--<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Logging" Version="6.24.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.24.0" />
-    <PackageReference Include="NLog" Version="5.2.8" />
-    <PackageReference Include="NLog.Schema" Version="4.3.4" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.24.0" />
-    <PackageReference Include="Twilio" Version="6.11.0" />
-    <PackageReference Include="EntityFramework" Version="6.4.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />-->
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
   </ItemGroup>
 </Project>
