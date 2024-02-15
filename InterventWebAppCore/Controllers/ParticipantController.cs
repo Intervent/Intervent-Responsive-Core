@@ -1513,7 +1513,8 @@ namespace InterventWebApp
             if (!string.IsNullOrEmpty(response.participant.UniqueId))
                 HttpContext.Session.SetString(SessionContext.UniqueId, response.participant.UniqueId);
             HttpContext.Session.SetString(SessionContext.ParticipantName, response.user.FirstName + " " + response.user.LastName);
-            HttpContext.Session.SetString(SessionContext.ParticipantLanguagePreference, response.participant.LanguagePreference);
+            if (!string.IsNullOrEmpty(response.participant.LanguagePreference)) 
+                HttpContext.Session.SetString(SessionContext.ParticipantLanguagePreference, response.participant.LanguagePreference);
             HttpContext.Session.SetInt32(SessionContext.Unit, response.participant.Unit.HasValue ? (int)response.participant.Unit.Value : (int)Unit.Imperial);
             if (!string.IsNullOrEmpty(response.participant.UserStatus))
                 HttpContext.Session.SetString(SessionContext.UserStatus, response.participant.UserStatus);
@@ -1911,7 +1912,7 @@ namespace InterventWebApp
         [HttpPost]
         public JsonResult AddEditNotes(NotesDto note)
         {
-            var response = ParticipantUtility.AddEditNotes(note, HttpContext.Session.GetInt32(SessionContext.AdminId).Value, HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue ? HttpContext.Session.GetInt32(SessionContext.HRAId).Value : null, HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, User.TimeZone(), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetString(SessionContext.OrganizationCode), HttpContext.Session.GetString(SessionContext.UniqueId), HttpContext.Session.GetInt32(SessionContext.ProgramType).HasValue ? HttpContext.Session.GetInt32(SessionContext.ProgramType).Value : null, HttpContext.Session.GetInt32(SessionContext.UserinProgramId).HasValue ? HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value : null, HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue ? HttpContext.Session.GetInt32(SessionContext.HRAId).Value : null, _appSettings.SouthUniversityOrgId);
+            var response = ParticipantUtility.AddEditNotes(note, HttpContext.Session.GetInt32(SessionContext.AdminId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).HasValue ? HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value : null, HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, User.TimeZone(), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetString(SessionContext.OrganizationCode), HttpContext.Session.GetString(SessionContext.UniqueId), HttpContext.Session.GetInt32(SessionContext.ProgramType).HasValue ? HttpContext.Session.GetInt32(SessionContext.ProgramType).Value : null, HttpContext.Session.GetInt32(SessionContext.UserinProgramId).HasValue ? HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value : null, HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue ? HttpContext.Session.GetInt32(SessionContext.HRAId).Value : null, _appSettings.SouthUniversityOrgId);
             if (TempData["notesPage"] != null && TempData["notesPage"].ToString() == "True")
                 response.notesPage = true;
             return Json(response);

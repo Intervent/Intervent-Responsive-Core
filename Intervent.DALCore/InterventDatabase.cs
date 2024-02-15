@@ -44,8 +44,8 @@ namespace Intervent.DAL
         public virtual DbSet<AppointmentFeedback> AppointmentFeedbacks { get; set; }
         public virtual DbSet<AppointmentType> AppointmentTypes { get; set; }
         public virtual DbSet<FollowUpType> FollowUpTypes { get; set; }
-        public virtual DbSet<ApptCallInterval> ApptCallIntervals { get; set; }
-        public virtual DbSet<ApptCallTemplate> ApptCallTemplates { get; set; }
+        public virtual DbSet<ApptCallInterval> ApptCallInterval { get; set; }
+        public virtual DbSet<ApptCallTemplate> ApptCallTemplate { get; set; }
         public virtual DbSet<AssignedRecipe> AssignedRecipes { get; set; }
         public virtual DbSet<Availability> Availabilities { get; set; }
         public virtual DbSet<AWV> AWVs { get; set; }

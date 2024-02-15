@@ -1105,11 +1105,12 @@ namespace Intervent.Web.DataLayer
 
         public int ClonePortal(int portalId)
         {
-            Portal clonedPortal = context.Portals.Include("Languages").Include("Specializations").Include("Kits").Include("NotificationEventTypes").Where(p => p.Id == portalId).FirstOrDefault();
+            Portal clonedPortal = context.Portals.Where(p => p.Id == portalId).FirstOrDefault();
             clonedPortal.Name = clonedPortal.Name + "_Cloned";
             clonedPortal.Active = false;
             clonedPortal.StartDate = DateTime.UtcNow.Date;
             clonedPortal.EndDate = DateTime.UtcNow.Date.AddYears(1).AddDays(-1);
+            clonedPortal.Id = 0;
             context.Portals.Add(clonedPortal);
             context.SaveChanges();
 
@@ -1117,6 +1118,7 @@ namespace Intervent.Web.DataLayer
             foreach (var portalPrograms in proginportallist)
             {
                 portalPrograms.PortalId = clonedPortal.Id;
+                portalPrograms.Id = 0;
                 context.ProgramsinPortals.Add(portalPrograms);
             }
             context.SaveChanges();
@@ -1125,6 +1127,7 @@ namespace Intervent.Web.DataLayer
             foreach (var portalIncentives in incentiveInPortalList)
             {
                 portalIncentives.PortalId = clonedPortal.Id;
+                portalIncentives.Id = 0;
                 context.PortalIncentives.Add(portalIncentives);
             }
             context.SaveChanges();
@@ -1133,6 +1136,7 @@ namespace Intervent.Web.DataLayer
             foreach (var rafflesIncentives in rafflesInPortalList)
             {
                 rafflesIncentives.PortalId = clonedPortal.Id;
+                rafflesIncentives.Id = 0;
                 context.RafflesinPortals.Add(rafflesIncentives);
             }
             context.SaveChanges();
@@ -1155,6 +1159,7 @@ namespace Intervent.Web.DataLayer
             foreach (var portalFollowUps in portalFollowupsList)
             {
                 portalFollowUps.PortalId = clonedPortal.Id;
+                portalFollowUps.Id = 0;
                 context.PortalFollowUps.Add(portalFollowUps);
             }
             context.SaveChanges();
@@ -1183,6 +1188,7 @@ namespace Intervent.Web.DataLayer
             foreach (var portalLabProcedure in portalLabProcedureList)
             {
                 portalLabProcedure.PortalId = clonedPortal.Id;
+                portalLabProcedure.Id = 0;
                 context.PortalLabProcedures.Add(portalLabProcedure);
             }
             context.SaveChanges();
@@ -1191,6 +1197,7 @@ namespace Intervent.Web.DataLayer
             foreach (var portalCoachingCond in portalCoachingCondList)
             {
                 portalCoachingCond.PortalId = clonedPortal.Id;
+                portalCoachingCond.Id = 0;
                 context.PortalCoachingConditions.Add(portalCoachingCond);
             }
             context.SaveChanges();

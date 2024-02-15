@@ -287,7 +287,7 @@ namespace InterventWebApp
                 request.adminView = false;
             else
                 request.adminView = true;
-            if (day != "")
+            if (!string.IsNullOrEmpty(day))
                 request.day = day.Split('-');
             request.thirtyMinutes = thirtyMinutes;
             if (video.HasValue && video.Value == true)

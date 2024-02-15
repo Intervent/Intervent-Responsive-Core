@@ -285,7 +285,7 @@
                             return false;
         };
         Foundation.Abide.defaults.validators['validateFasting'] = function ($el, required, parent) {
-            if ($("input[name='lab.DidYouFast']:checked").length == 0) {
+            if ($("input[name='Lab.DidYouFast']:checked").length == 0) {
                 if ($.isNumeric($("#TotalChol").val()) || $.isNumeric($("#HDL").val()) || $.isNumeric($("#LDL").val()) || $.isNumeric($("#Glucose").val()) || $.isNumeric($("#A1C").val()))
                     return false;
                 else

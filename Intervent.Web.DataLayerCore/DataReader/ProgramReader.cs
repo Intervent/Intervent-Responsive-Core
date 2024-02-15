@@ -637,7 +637,7 @@ namespace Intervent.Web.DataLayer
         public AddOrEditAppointmentTemplateResponse ReadAppointmentTemplate(AddOrEditAppointmentTemplateRequest request)
         {
             AddOrEditAppointmentTemplateResponse response = new AddOrEditAppointmentTemplateResponse();
-            var lst = context.ApptCallTemplates.Include("ApptCallIntervals").Where(x => x.Id == request.templateid).FirstOrDefault();
+            var lst = context.ApptCallTemplate.Include("ApptCallIntervals").Where(x => x.Id == request.templateid).FirstOrDefault();
             response.CallTemplate = Utility.mapper.Map<DAL.ApptCallTemplate, AppointmentCallTemplateDto>(lst);
             response.CallIntervals = Utility.mapper.Map<ICollection<DAL.ApptCallInterval>, ICollection<AppointmentCallIntervalDto>>(lst.ApptCallIntervals);
             return response;
@@ -654,7 +654,7 @@ namespace Intervent.Web.DataLayer
             int? templateId = null;
             if (!String.IsNullOrEmpty(request.AppointmentTemplateId))
                 templateId = Int32.Parse(request.AppointmentTemplateId);
-            var lst = context.ApptCallTemplates.Where(x => String.IsNullOrEmpty(request.AppointmentTemplateId) || x.Id == templateId.Value).ToList();
+            var lst = context.ApptCallTemplate.Where(x => String.IsNullOrEmpty(request.AppointmentTemplateId) || x.Id == templateId.Value).ToList();
             response.CallTemplates = Utility.mapper.Map<IList<DAL.ApptCallTemplate>, IList<AppointmentCallTemplateDto>>(lst);
             return response;
         }
@@ -663,7 +663,7 @@ namespace Intervent.Web.DataLayer
         {
             AddOrEditAppointmentIntervalResponse response = new AddOrEditAppointmentIntervalResponse();
             int templateId = Int32.Parse(request.AppointmentTemplateId);
-            var lst = context.ApptCallIntervals.Where(x => x.ApptCallTemplateId == templateId).ToList();
+            var lst = context.ApptCallInterval.Where(x => x.ApptCallTemplateId == templateId).ToList();
             response.CallIntervals = Utility.mapper.Map<IList<DAL.ApptCallInterval>, IList<AppointmentCallIntervalDto>>(lst);
             return response;
         }
@@ -681,26 +681,26 @@ namespace Intervent.Web.DataLayer
                 template.UpdatedDate = request.Template.UpdatedDate;
                 template.UpdatedBy = request.Template.UpdatedBy;
 
-                context.ApptCallTemplates.Add(template);
-
+                context.ApptCallTemplate.Add(template);
+                context.SaveChanges();
                 foreach (var intervalDto in request.Template.CallIntervals)
                 {
                     DAL.ApptCallInterval interval = new DAL.ApptCallInterval();
                     interval.ApptCallTemplateId = template.Id;
                     interval.CallNumber = intervalDto.CallNumber;
                     interval.IntervalInDays = intervalDto.IntervalInDays;
-                    context.ApptCallIntervals.Add(interval);
+                    context.ApptCallInterval.Add(interval);
                 }
                 context.SaveChanges();
                 response.status = true;
-            }
+                }
             else
             {
                 ProgramsinPortal programsinPortal = new ProgramsinPortal();
                 programsinPortal = context.ProgramsinPortals.Where(x => x.ApptCallTemplateId == request.templateid).FirstOrDefault();
                 if (programsinPortal == null)
                 {
-                    var template = context.ApptCallTemplates.Where(x => x.Id == request.templateid).FirstOrDefault();
+                    var template = context.ApptCallTemplate.Where(x => x.Id == request.templateid).FirstOrDefault();
                     template.TemplateName = request.Template.TemplateName;
                     template.NoOfWeeks = request.Template.NoOfWeeks;
                     template.NoOfCalls = request.Template.NoOfCalls;
