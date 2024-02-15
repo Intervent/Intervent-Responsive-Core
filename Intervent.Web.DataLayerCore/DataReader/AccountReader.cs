@@ -53,28 +53,7 @@ namespace Intervent.Web.DataLayer
             dbcontext = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption());
         }
 
-        public static string GenerateRandomPassword(int length = 12)
-        {
-            const string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?";
-
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                byte[] randomBytes = new byte[length];
-                rng.GetBytes(randomBytes);
-
-                StringBuilder password = new StringBuilder(length);
-
-                for (int i = 0; i < length; i++)
-                {
-                    int index = randomBytes[i] % validChars.Length;
-                    password.Append(validChars[index]);
-                }
-
-                return password.ToString();
-            }
-        }
-
-        public async Task<RegisterUserResponse> CreateUserFromEligibility(EligibilityDto eligibility, int orgId, bool fromFile)
+        public async Task<RegisterUserResponse> CreateUserFromEligibility(EligibilityDto eligibility, int orgId, bool fromFile, string passwordHash = null)
         {
             RegisterUserResponse response = new RegisterUserResponse();
             CommonReader commonReader = new CommonReader();
@@ -108,7 +87,7 @@ namespace Intervent.Web.DataLayer
                 user.PasswordHash = eligibility.FirstName.Substring(0, 1).ToUpper() + (eligibility.FirstName.Length >= 4 ? eligibility.FirstName.Substring(1, 3).ToLower() : eligibility.FirstName.Substring(1, eligibility.FirstName.Length - 1).ToLower()) +
                                         eligibility.LastName.Substring(0, 1).ToUpper() + (eligibility.LastName.Length >= 4 ? eligibility.LastName.Substring(1, 3).ToLower() : eligibility.LastName.Substring(1, eligibility.LastName.Length - 1).ToLower()) + eligibility.UniqueId;
             else
-                user.PasswordHash = GenerateRandomPassword(10);
+                user.PasswordHash = passwordHash;
             user.FirstName = eligibility.FirstName;
             user.LastName = eligibility.LastName;
             user.MiddleName = eligibility.MiddleName;

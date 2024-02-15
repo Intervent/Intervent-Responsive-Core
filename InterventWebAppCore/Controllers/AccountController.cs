@@ -18,7 +18,6 @@ using Newtonsoft.Json;
 using NLog;
 using System.Globalization;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace InterventWebApp
@@ -28,15 +27,13 @@ namespace InterventWebApp
         protected Logger Log = LogManager.GetLogger(typeof(AccountController).FullName);
         private readonly AppSettings _appSettings;
         private readonly IHostEnvironment _environment;
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountController(UserManager<ApplicationUser> userManager, IOptions<AppSettings> appSettings, IHostEnvironment environment, IWebHostEnvironment webHostEnvironment)
+        public AccountController(UserManager<ApplicationUser> userManager, IOptions<AppSettings> appSettings, IHostEnvironment environment)
         {
             _userManager = userManager;
             _appSettings = appSettings.Value;
             _environment = environment;
-            _webHostEnvironment = webHostEnvironment;
         }
 
         string GetCryptoPassword()
@@ -211,7 +208,7 @@ namespace InterventWebApp
                 user.UserDoctorInfoes.Add(new UserDoctorInfoDto { ProviderId = model.ProviderId });
             }
             request.user = user;
-            request.rootPath = _webHostEnvironment.ContentRootPath;
+            request.rootPath = _environment.ContentRootPath;
             request.InfoEmail = _appSettings.InfoEmail;
             request.SecureEmail = _appSettings.SecureEmail;
             request.SMPTAddress = _appSettings.SMPTAddress;
@@ -431,26 +428,6 @@ namespace InterventWebApp
                 return Json(new { Success = false, ErrorMessage = errMsg3 });
 
         }
-        public static string GenerateRandomPassword(int length = 12)
-        {
-            const string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?";
-
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                byte[] randomBytes = new byte[length];
-                rng.GetBytes(randomBytes);
-
-                StringBuilder password = new StringBuilder(length);
-
-                for (int i = 0; i < length; i++)
-                {
-                    int index = randomBytes[i] % validChars.Length;
-                    password.Append(validChars[index]);
-                }
-
-                return password.ToString();
-            }
-        }
 
         [HttpPost]
         public async Task<JsonResult> TelephonicRegistration(int eligibilityId, string emailAddress)
@@ -462,7 +439,7 @@ namespace InterventWebApp
             {
                 return Json(new { Success = false, ErrorMessage = errMsg1 });
             }
-            string password = GenerateRandomPassword(10);
+            string password = CommonUtility.GeneratePassword(10, 3);
             var eligibility = ParticipantUtility.GetEligibility(eligibilityId, null, null).Eligibility;
             if (eligibility.DOB.HasValue)
             {
@@ -551,7 +528,7 @@ namespace InterventWebApp
             }
             request.welcomeEmail = welcomeEmail;
             request.user = user;
-            request.rootPath = _webHostEnvironment.ContentRootPath;
+            request.rootPath = _environment.ContentRootPath;
             request.InfoEmail = _appSettings.InfoEmail;
             request.SecureEmail = _appSettings.SecureEmail;
             request.SMPTAddress = _appSettings.SMPTAddress;
@@ -661,14 +638,14 @@ namespace InterventWebApp
         [HttpPost]
         public async Task<JsonResult> ForgotPassword(string email, string OrgContactEmail)
         {
-            var response = await AccountUtility.ForgotPassword(_userManager, _webHostEnvironment.ContentRootPath, email, OrgContactEmail, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
+            var response = await AccountUtility.ForgotPassword(_userManager, _environment.ContentRootPath, email, OrgContactEmail, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
             return Json(response);
         }
 
         [HttpPost]
         public async Task<JsonResult> ResendConfirmEmail(string email, string OrgContactEmail)
         {
-            var response = await AccountUtility.ResendConfirmEmail(_userManager, _webHostEnvironment.ContentRootPath, email, OrgContactEmail, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
+            var response = await AccountUtility.ResendConfirmEmail(_userManager, _environment.ContentRootPath, email, OrgContactEmail, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
             return Json(response);
         }
 
@@ -909,7 +886,7 @@ namespace InterventWebApp
                 request.user.Complete = true;
                 request.user.TermsAccepted = true;
                 request.welcomeEmail = true;
-                request.rootPath = _webHostEnvironment.ContentRootPath;
+                request.rootPath = _environment.ContentRootPath;
                 request.InfoEmail = _appSettings.InfoEmail;
                 request.SecureEmail = _appSettings.SecureEmail;
                 request.SMPTAddress = _appSettings.SMPTAddress;
@@ -1072,7 +1049,7 @@ namespace InterventWebApp
                 bool sent;
 
                 if (throughEmail)
-                    sent = AccountUtility.SendSecurityCodeToEmail(_webHostEnvironment.ContentRootPath, user.User.FirstName, user.User.Email, code, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
+                    sent = AccountUtility.SendSecurityCodeToEmail(_environment.ContentRootPath, user.User.FirstName, user.User.Email, code, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
                 else
                     sent = AccountUtility.SendSecurityCodeToPhone(user.User.Id, user.User.CellNumber, code);
 

@@ -26,14 +26,14 @@ namespace InterventWebApp.Controllers
     public class OAuthController : Controller
     {
         private readonly AppSettings _appSettings;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHostEnvironment _environment;
         private readonly ApplicationUserManager _userManager;
 
-        public OAuthController(ApplicationUserManager userManager, IOptions<AppSettings> appSettings, IWebHostEnvironment webHostEnvironment)
+        public OAuthController(ApplicationUserManager userManager, IOptions<AppSettings> appSettings, IHostEnvironment environment)
         {
             _appSettings = appSettings.Value;
             _userManager = userManager;
-            _webHostEnvironment = webHostEnvironment;
+            _environment = environment;
         }
 
         [HttpGet]
@@ -327,27 +327,6 @@ namespace InterventWebApp.Controllers
             return RedirectToAction("NotAuthorized", "Account");
         }
 
-        public static string GenerateRandomPassword(int length = 12)
-        {
-            const string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?";
-
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                byte[] randomBytes = new byte[length];
-                rng.GetBytes(randomBytes);
-
-                StringBuilder password = new StringBuilder(length);
-
-                for (int i = 0; i < length; i++)
-                {
-                    int index = randomBytes[i] % validChars.Length;
-                    password.Append(validChars[index]);
-                }
-
-                return password.ToString();
-            }
-        }
-
         public async Task<ActionResult> MediOrbisCallback()
         {
             LogReader reader = new LogReader();
@@ -428,7 +407,7 @@ namespace InterventWebApp.Controllers
                                             userProfile.email = userProfile.refId + orgId + "@mediorbisnoemail.com";
                                         createUser.Email = userProfile.email;
                                         // TODO ASP.NET membership should be replaced with ASP.NET Core identity. For more details see https://docs.microsoft.com/aspnet/core/migration/proper-to-2x/membership-to-core-identity.
-                                        createUser.PasswordHash = GenerateRandomPassword(12);
+                                        createUser.PasswordHash = CommonUtility.GeneratePassword(10, 3);
                                         createUser.FirstName = userProfile.firstname;
                                         createUser.MiddleName = userProfile.middlename;
                                         createUser.LastName = userProfile.lastname;
@@ -475,7 +454,7 @@ namespace InterventWebApp.Controllers
                                         createUser.EmailConfirmed = false;
                                         createUser.TermsAccepted = true;
                                         request.user = createUser;
-                                        request.rootPath = _webHostEnvironment.ContentRootPath;
+                                        request.rootPath = _environment.ContentRootPath;
                                         request.InfoEmail = _appSettings.InfoEmail;
                                         request.SecureEmail = _appSettings.SecureEmail;
                                         request.SMPTAddress = _appSettings.SMPTAddress;

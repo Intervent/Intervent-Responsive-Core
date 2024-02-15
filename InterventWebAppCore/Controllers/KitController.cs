@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Data.OleDb;
 using System.Web;
 
 namespace InterventWebApp
@@ -210,7 +211,7 @@ namespace InterventWebApp
 
         [ModuleControl(Modules.Kits)]
         [HttpPost]
-        public JsonResult UploadKitFile(HttpPostedFileBase FileUpload, string language)
+        public JsonResult UploadKitFile(IFormFile FileUpload, string language)
         {
             var count = 0;
             var filerror = "";
@@ -232,7 +233,7 @@ namespace InterventWebApp
         }
 
         [ModuleControl(Modules.Kits)]
-        public Tuple<int, string> LoadAndSaveExcelKitData(HttpPostedFileBase FileUpload, string lang)
+        public Tuple<int, string> LoadAndSaveExcelKitData(IFormFile FileUpload, string lang)
         {
             List<KitsDto> kits = new List<KitsDto>();
             List<StepsinKitsDto> steps = new List<StepsinKitsDto>();
@@ -242,17 +243,18 @@ namespace InterventWebApp
             List<QuizinStepDto> quizList = new List<QuizinStepDto>();
             List<OptionsforQuizDto> quizChoices = new List<OptionsforQuizDto>();
             string fileerror = "";
-            //
             string filename = FileUpload.FileName;
-            //TODO
-            /* if (filename.EndsWith(".xlsx"))
+            if (filename.EndsWith(".xlsx"))
              {
                  string targetpath = environment.ContentRootPath + "~/temp/";
                  if (!Directory.Exists(targetpath))
                      Directory.CreateDirectory(targetpath);
-                 string pathToExcelFile = targetpath + filename;
-                 FileUpload.SaveAs(pathToExcelFile);
-                 string con = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0;HDR=yes;IMEX=1'", pathToExcelFile);
+                string pathToExcelFile = Path.Combine(targetpath, filename);
+                using (var fileStream = new FileStream(pathToExcelFile, FileMode.Create))
+                {
+                    FileUpload.CopyToAsync(fileStream);
+                }
+                string con = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0;HDR=yes;IMEX=1'", pathToExcelFile);
                  using (OleDbConnection connection = new OleDbConnection(con))
                  {
                      connection.Open();
@@ -403,7 +405,7 @@ namespace InterventWebApp
                      System.IO.File.Delete(pathToExcelFile);
                  }
              }
- */
+
             #region Save Kit Data
 
             #region ErrorIds

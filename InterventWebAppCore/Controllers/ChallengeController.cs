@@ -93,6 +93,7 @@ namespace InterventWebApp.Controllers
             model.DateFormat = HttpContext.Session.GetString(SessionContext.DateFormat);
             model.HasActivePortal = Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.HasActivePortal));
             model.OrganizationName = HttpContext.Session.GetString(SessionContext.OrganizationName);
+            model.Path = environment.ContentRootPath;
             return View(model);
         }
 

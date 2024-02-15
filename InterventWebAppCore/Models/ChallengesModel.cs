@@ -35,6 +35,8 @@ namespace InterventWebApp
         public bool HasActivePortal { get; set; }
 
         public string DateFormat { get; set; }
+
+        public string Path { get; set; }
     }
 
     public class RafflesTrackModel

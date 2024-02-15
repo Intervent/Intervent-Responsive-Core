@@ -21,14 +21,14 @@ namespace InterventWebApp.Controllers
     public class MobileAPIController : ControllerBase
     {
         private readonly AppSettings _appSettings;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHostEnvironment _environment;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public MobileAPIController(UserManager<ApplicationUser> userManager, IOptions<AppSettings> appSettings, IWebHostEnvironment webHostEnvironment)
+        public MobileAPIController(UserManager<ApplicationUser> userManager, IOptions<AppSettings> appSettings, IHostEnvironment environment)
         {
             _userManager = userManager;
             _appSettings = appSettings.Value;
-            _webHostEnvironment = webHostEnvironment;
+            _environment = environment;
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -246,7 +246,7 @@ namespace InterventWebApp.Controllers
         {
             if (request != null && !string.IsNullOrEmpty(request.email))
             {
-                var response = await AccountUtility.ForgotPassword(_userManager, _webHostEnvironment.ContentRootPath, request.email, "info@myintervent.com", _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
+                var response = await AccountUtility.ForgotPassword(_userManager, _environment.ContentRootPath, request.email, "info@myintervent.com", _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
                 return Ok(new { status = response.Contains("success"), message = response });
             }
             else
@@ -437,8 +437,7 @@ namespace InterventWebApp.Controllers
                 {
                     if (file != null)
                     {
-                        //TODO
-                        /* var targetpath = System.Web.Hosting.HostingEnvironment.MapPath("~/Messageuploads/");
+                         var targetpath = _environment.ContentRootPath + "~/Messageuploads/";
                          string fileName = file.Headers.ContentDisposition.FileName;
                          if (fileName.StartsWith("\"") && fileName.EndsWith("\""))
                              fileName = fileName.Trim('"');
@@ -448,7 +447,7 @@ namespace InterventWebApp.Controllers
                          if (postedFileExtension.ToLower().Equals(".pdf") || postedFileExtension.ToLower().Equals(".jpg") || postedFileExtension.ToLower().Equals(".png") || postedFileExtension.ToLower().Equals(".jpeg") || postedFileExtension.ToLower().Equals(".gif"))
                          {
                              var fileNameNew = DateTime.Now.ToString("_ddMMyyhhmmssFFF") + postedFileExtension;
-                             File.Move(file.LocalFileName, Path.Combine(targetpath, fileNameNew));
+                             System.IO.File.Move(file.LocalFileName, Path.Combine(targetpath, fileNameNew));
                              request.attachement_name = fileNameNew;
                              if (string.IsNullOrEmpty(request.message))
                                  request.message = fileNameNew;
@@ -456,8 +455,8 @@ namespace InterventWebApp.Controllers
                          else
                          {
                              if (file != null && !string.IsNullOrEmpty(file.LocalFileName))
-                                 File.Delete(file.LocalFileName);
-                         }*/
+                                System.IO.File.Delete(file.LocalFileName);
+                         }
                     }
                 }
 
@@ -501,7 +500,7 @@ namespace InterventWebApp.Controllers
                 return BadRequest("Invalid request");
         }
 
-        /*[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ActionName("UploadProfilePicture")]
         [HttpPost]
         public async Task<IActionResult> UploadProfilePicture()
@@ -509,17 +508,18 @@ namespace InterventWebApp.Controllers
             var userIdentity = MobileUtility.GetUserSession((ClaimsIdentity)User.Identity);
             try
             {
-                if (userIdentity != null && userIdentity.UserId != 0*//* && Request.Content.IsMimeMultipartContent()*//*)
+                if (userIdentity != null && userIdentity.UserId != 0 && Request.Form.Files.Any())
                 {
-                   *//* string filePath = System.Web.Hosting.HostingEnvironment.MapPath("~/ProfilePictures/");
+                    string filePath = _environment.ContentRootPath + "~/ProfilePictures/";
                     var provider = new MultipartFormDataStreamProvider(filePath);
-                    await Request.Content.ReadAsMultipartAsync(provider);
+                    //await Request.Content.ReadAsMultipartAsync(provider);
+
                     if (provider.FileData.Count > 0)
                     {
                         var file = provider.FileData[0];
                         if (file != null && CheckIfImage(file))
                         {
-                            var targetpath = System.Web.Hosting.HostingEnvironment.MapPath("~/ProfilePictures/");
+                            var targetpath = _environment.ContentRootPath + "~/ProfilePictures/";
                             string fileName = file.Headers.ContentDisposition.FileName;
                             if (fileName.StartsWith("\"") && fileName.EndsWith("\""))
                                 fileName = fileName.Trim('"');
@@ -527,17 +527,17 @@ namespace InterventWebApp.Controllers
                                 fileName = Path.GetFileName(fileName);
                             var postedFileExtension = Path.GetExtension(fileName);
                             var fileNameNew = DateTime.Now.ToString("_ddMMyyhhmmssFFF") + postedFileExtension;
-                            File.Move(file.LocalFileName, Path.Combine(targetpath, fileNameNew));
-                            await AccountUtility.UploadPicture(userIdentity.UserId, fileNameNew, targetpath);
+                            System.IO.File.Move(file.LocalFileName, Path.Combine(targetpath, fileNameNew));
+                            await AccountUtility.UploadPicture(_userManager, userIdentity.UserId, fileNameNew, targetpath);
                             return Ok(new { status = true, message = "Successfully updated" });
                         }
                         else
                         {
                             if (file != null && !string.IsNullOrEmpty(file.LocalFileName))
-                                File.Delete(file.LocalFileName);
-                        }*//*
+                                System.IO.File.Delete(file.LocalFileName);
+                        }
                     }
-                    return BadRequest("Invalid request");*//*
+                    return BadRequest("Invalid request");
                 }
                 else
                     return BadRequest("Invalid request");
@@ -549,7 +549,7 @@ namespace InterventWebApp.Controllers
                 logReader.WriteLogMessage(logEvent);
                 return StatusCode(500, "An internal server error occurred.");
             }
-        }*/
+        }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ActionName("WatchVideo")]
@@ -685,12 +685,12 @@ namespace InterventWebApp.Controllers
             }
         }
 
-        /*public static bool IsFileLocked(string filePath)
+        public static bool IsFileLocked(string filePath)
         {
             bool lockStatus = false;
             try
             {
-                using (FileStream fileStream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                using (FileStream fileStream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
                 {
                     lockStatus = !fileStream.CanWrite;
                 }
@@ -701,8 +701,8 @@ namespace InterventWebApp.Controllers
             }
             return lockStatus;
         }
-*/
-        /*private bool CheckIfImage(MultipartFileData postedFile)
+
+        private bool CheckIfImage(MultipartFileData postedFile)
         {
             int ImageMinimumBytes = 512;
             string fileName = postedFile.Headers.ContentDisposition.FileName;
@@ -727,7 +727,7 @@ namespace InterventWebApp.Controllers
                 }
                 try
                 {
-                    var fileBuf = File.ReadAllBytes(postedFile.LocalFileName);
+                    var fileBuf = System.IO.File.ReadAllBytes(postedFile.LocalFileName);
                     if (postedFile.Headers.ContentDisposition.Size < ImageMinimumBytes)
                     {
                         return false;
@@ -763,6 +763,6 @@ namespace InterventWebApp.Controllers
                 return true;
             }
             return true;
-        }*/
+        }
     }
 }

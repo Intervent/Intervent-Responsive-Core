@@ -6,12 +6,35 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using NLog;
 using System.Net;
 using System.Net.Mail;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace InterventWebApp
 {
     public static class CommonUtility
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
+
+        public static string GeneratePassword(int length, int minNonAlphanumericChars)
+        {
+            const string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+";
+            var random = new Random();
+
+            var nonAlphanumericChars = new char[minNonAlphanumericChars];
+            for (int i = 0; i < minNonAlphanumericChars; i++)
+            {
+                nonAlphanumericChars[i] = allowedChars[random.Next(allowedChars.Length)];
+            }
+
+            var passwordChars = Enumerable.Repeat(allowedChars, length - minNonAlphanumericChars)
+                                           .Select(s => s[random.Next(s.Length)])
+                                           .ToArray();
+
+            passwordChars = passwordChars.Concat(nonAlphanumericChars).ToArray();
+            Array.Sort(passwordChars);
+
+            return new string(passwordChars);
+        }
 
         public static int GetRandom()
         {
@@ -1398,4 +1421,6 @@ namespace InterventWebApp
         InProgress = 1,
         Completed = 2
     }
+
+
 }

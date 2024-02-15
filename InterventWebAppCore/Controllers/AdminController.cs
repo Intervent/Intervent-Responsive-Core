@@ -11,12 +11,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Data.OleDb;
 using System.Security.Claims;
 
 namespace InterventWebApp
 {
     public class AdminController : BaseController
     {
+        private readonly IOptions<AppSettings> iOptionAppSettings;
         private readonly AppSettings _appSettings;
         private readonly IHostEnvironment environment;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -25,6 +27,7 @@ namespace InterventWebApp
         {
             _userManager = userManager;
             _appSettings = appSettings.Value;
+            iOptionAppSettings = appSettings;
             this.environment = environment;
         }
 
@@ -1013,24 +1016,23 @@ namespace InterventWebApp
             Dictionary<string, string> uploaderror = new Dictionary<string, string>();
             List<LabResponse> labResponse = new List<LabResponse>();
             var portal = PortalUtility.ReadOrganization("", orgId).organization.Portals.Where(x => x.Active == true).FirstOrDefault();
-
-            // Save the file to the server
-            /*using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
             if (FileUpload != null)
             {
                 if (filetype == 1)
                 {
                     string hl7Value = "";
-                    using (BinaryReader b = new BinaryReader(FileUpload.InputStream))
+                    using (var memoryStream = new MemoryStream())
                     {
-                        byte[] binData = b.ReadBytes(FileUpload.ContentLength);
+                        await FileUpload.CopyToAsync(memoryStream);
+                        byte[] fileBytes = memoryStream.ToArray();
+                    }
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await FileUpload.CopyToAsync(memoryStream);
+                        byte[] binData = memoryStream.ToArray();
                         hl7Value = System.Text.Encoding.UTF8.GetString(binData);
                     }
-                    labResponse = Intervent.HWS.Labcorp.LoadHL7File(hl7Value, "Quest");
+                    labResponse = Labcorp.LoadHL7File(hl7Value, "Quest");
                 }
                 else
                 {
@@ -1048,13 +1050,13 @@ namespace InterventWebApp
                         if (registered.User == null)
                         {
                             #region User Registration
-                            AccountController controller = new AccountController();
+                            AccountController controller = new AccountController(_userManager, iOptionAppSettings, environment);
                             var email = eligibility.Eligibility.Email;
-                            if (String.IsNullOrEmpty(eligibility.Eligibility.Email))
+                            if (string.IsNullOrEmpty(eligibility.Eligibility.Email))
                             {
                                 email = eligibility.Eligibility.FirstName + eligibility.Eligibility.LastName + "@noemail.myintervent.com";
                             }
-                            var register = await controller.CreateAccount(eligibility.Eligibility, email, Membership.GeneratePassword(10, 3), false, false, false);
+                            var register = await controller.CreateAccount(eligibility.Eligibility, email, CommonUtility.GeneratePassword(10, 3), false, false, false);
                             if (register.Succeeded)
                             {
                                 userId = register.userId;
@@ -1068,7 +1070,7 @@ namespace InterventWebApp
                         }
                         else
                         {
-                            var user = ParticipantUtility.ReadParticipantInfo(registered.User.Id, Convert.ToInt32(HttpContext.Session.GetInt32(SessionContext.UserId).Value));
+                            var user = ParticipantUtility.ReadParticipantInfo(registered.User.Id, HttpContext.Session.GetInt32(SessionContext.UserId).Value);
                             userId = user.user.Id;
                             if (user.hra != null)
                             {
@@ -1077,7 +1079,7 @@ namespace InterventWebApp
                         }
                         if (portal.HasHRA.Value == (int)HRAStatus.Yes && !hraId.HasValue)
                         {
-                            hraId = HRAUtility.CreateHRA(userId.Value, portal.Id, true);
+                            hraId = HRAUtility.CreateHRA(userId.Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, _appSettings.SystemAdminId, HttpContext.Session.GetInt32(SessionContext.UserinProgramId), portal.Id, true);
                         }
                         PostLabData(lab, userId.Value, portal.Id, portal.HRAValidity);
                         count++;
@@ -1090,7 +1092,7 @@ namespace InterventWebApp
                 }
 
             }
-            */
+            
             if (uploaderror.Count > 0)
             {
                 LogReader reader = new LogReader();
@@ -1111,8 +1113,11 @@ namespace InterventWebApp
                 string targetpath = environment.ContentRootPath + "~/temp/";
                 if (!Directory.Exists(targetpath))
                     Directory.CreateDirectory(targetpath);
-                string pathToExcelFile = targetpath + filename;
-                /*TODO FileUpload.SaveAs(pathToExcelFile);
+                string pathToExcelFile = Path.Combine(targetpath, filename);
+                using (var fileStream = new FileStream(pathToExcelFile, FileMode.Create))
+                {
+                    FileUpload.CopyToAsync(fileStream);
+                }
                 string con = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0;HDR=yes;IMEX=1'", pathToExcelFile);
                 using (OleDbConnection connection = new OleDbConnection(con))
                 {
@@ -1176,7 +1181,7 @@ namespace InterventWebApp
                     }
                     connection.Close();
                     System.IO.File.Delete(pathToExcelFile);
-                }*/
+                }
             }
             return labResponse;
         }

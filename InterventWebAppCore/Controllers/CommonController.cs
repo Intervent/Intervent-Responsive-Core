@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NLog;
+using System.Drawing;
 using System.Text.RegularExpressions;
 
 namespace InterventWebApp
@@ -138,6 +139,7 @@ namespace InterventWebApp
             var response = CheckIfImage(image) ? "Success" : "Failed";
             return Json(new { data = response });
         }
+
         private bool CheckIfImage(IFormFile postedFile)
         {
             var postedFileExtension = Path.GetExtension(postedFile.FileName);
@@ -157,22 +159,20 @@ namespace InterventWebApp
                 }
                 try
                 {
-                    //TODO
-                    /*if (!postedFile.InputStream.CanRead)
+                    if (!postedFile.OpenReadStream().CanRead)
                     {
                         return false;
                     }
                     //------------------------------------------
                     //   Check whether the image size exceeding the limit or not
                     //------------------------------------------ 
-                    if (postedFile.ContentLength < ImageMinimumBytes)
+                    if (postedFile.Length < ImageMinimumBytes)
                     {
                         return false;
-                    }*/
+                    }
 
                     byte[] buffer = new byte[ImageMinimumBytes];
-                    //TODO
-                    // postedFile.InputStream.Read(buffer, 0, ImageMinimumBytes);
+                    postedFile.OpenReadStream().Read(buffer, 0, ImageMinimumBytes);
                     string content = System.Text.Encoding.UTF8.GetString(buffer);
                     if (Regex.IsMatch(content, @"<script|<html|<head|<title|<body|<pre|<table|<a\s+href|<img|<plaintext|<cross\-domain\-policy",
                         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline))
@@ -192,10 +192,10 @@ namespace InterventWebApp
 
                 try
                 {
-                    //TODO
-                    /*using (var bitmap = new System.Drawing.Bitmap(postedFile.InputStream))
+                    using (var stream = postedFile.OpenReadStream())
                     {
-                    }*/
+                        new Bitmap(stream);
+                    }
                 }
                 catch (Exception)
                 {
@@ -203,8 +203,7 @@ namespace InterventWebApp
                 }
                 finally
                 {
-                    //TODO
-                    //  postedFile.InputStream.Position = 0;
+                    postedFile.OpenReadStream().Position = 0;
                 }
             }
             else

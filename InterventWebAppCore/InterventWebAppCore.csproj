@@ -998,4 +998,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Messageuploads\" />
+  </ItemGroup>
+
 </Project>

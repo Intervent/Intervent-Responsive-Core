@@ -46,9 +46,11 @@ namespace InterventWebApp
                     {
                         if (!Directory.Exists(targetpath))
                             Directory.CreateDirectory(targetpath);
-                        string pathToFile = targetpath + filename;
-                        //TODO
-                        //FileUpload.SaveAs(pathToFile);
+                        string pathToFile = Path.Combine(targetpath, filename);
+                        using (var fileStream = new FileStream(pathToFile, FileMode.Create))
+                        {
+                            FileUpload.CopyToAsync(fileStream);
+                        }
                     }
                 }
                 var response = NewsLetterUtility.AddEditNewsletter(id, name, pdf);

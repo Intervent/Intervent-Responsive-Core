@@ -7,15 +7,12 @@ namespace InterventWebApp.Controllers
     public class SamlController : Controller
     {
         private readonly AppSettings _appSettings;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHostEnvironment _environment;
 
-        public SamlController(IOptions<AppSettings> appSettings)
+        public SamlController(IOptions<AppSettings> appSettings, IHostEnvironment environment)
         {
             _appSettings = appSettings.Value;
-        }
-        public SamlController(IWebHostEnvironment webHostEnvironment)
-        {
-            _webHostEnvironment = webHostEnvironment;
+            _environment = environment;
         }
 
         public string debug = string.Empty;
@@ -461,7 +458,7 @@ namespace InterventWebApp.Controllers
                                     email = uniqueid + orgId + "@samlnoemail.com";
                                 }
                                 var terms = (Organization.organization.TermsForSSO.HasValue && Organization.organization.TermsForSSO.Value) ? false : true;
-                                var accountResponse = await controller.CreateAccount(eligibility, email, GeneratePassword(10, 3), false, false, terms);
+                                var accountResponse = await controller.CreateAccount(eligibility, email, CommonUtility.GeneratePassword(10, 3), false, false, terms);
                                 if (accountResponse != null && accountResponse.Succeeded)
                                 {
                                     var userresponse = await AccountUtility.GetUser(email, null, null, false, null);
@@ -473,7 +470,7 @@ namespace InterventWebApp.Controllers
                                 CreateUserModel request = new CreateUserModel();
                                 UserDto user = new UserDto();
                                 user.Email = userName;
-                                user.PasswordHash = GeneratePassword(10, 3);
+                                user.PasswordHash = CommonUtility.GeneratePassword(10, 3);
                                 user.FirstName = firstName;
                                 user.LastName = lastName;
                                 user.UserName = userName;

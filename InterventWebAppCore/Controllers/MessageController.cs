@@ -85,7 +85,7 @@ namespace InterventWebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddEditMessage(HttpPostedFileBase FileUpload, int messageId, int recipientId, string subject,
+        public JsonResult AddEditMessage(IFormFile FileUpload, int messageId, int recipientId, string subject,
             string messageBody, bool isSent, int? parentMessageId, bool? infoPage)
         {
             GetMessageDetailsResponse messageDetails = new GetMessageDetailsResponse();
@@ -101,8 +101,12 @@ namespace InterventWebApp.Controllers
 
                     if (!Directory.Exists(targetpath))
                         Directory.CreateDirectory(targetpath);
-                    string pathToFile = targetpath + fileName;
-                    // FileUpload.SaveAs(pathToFile);
+                    string filePath = Path.Combine(targetpath, fileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        FileUpload.CopyToAsync(fileStream);
+                    }
+
                     attachement = fileName;
                     if (FileUpload.FileName == messageBody)
                         messageBody = fileName;
