@@ -604,6 +604,10 @@ namespace Intervent.Web.DataLayer
 
                 cfg.CreateMap<CRM_PogoMeterNumbersDto, DAL.CRM_PogoMeterNumbers>();
 
+                cfg.CreateMap<DAL.QADOrders, QADOrdersDto>();
+
+                cfg.CreateMap<QADOrdersDto, DAL.QADOrders>();
+
                 cfg.CreateMap<HCPListsDto, DAL.HCPList>();
 
                 cfg.CreateMap<DAL.HCPList, HCPListsDto>();

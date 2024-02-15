@@ -78,6 +78,9 @@
             <li class="profile-detais hide">
                 <span><a href="#" data-open="profile-change-log-modal" onclick="ViewProfileChangeLog(@Model.CRM_Contact.Id, '@Model.CRM_Contact.FirstName', '@Model.CRM_Contact.LastName');"><b>View Profile Change Log</b></a></span>
             </li>
+            <li>
+                <span><a href="#" data-open="qad-order-log-modal" onclick="ViewQADOrderHistory(@Model.CRM_Contact.Id);"><b>QAD order history</b></a></span>
+            </li>
         </ul>
         <div class="show-more-profile">
             <span>More details</span>

@@ -122,6 +122,9 @@ namespace Intervent.DAL
 
         public int? InquiryType { get; set; }
 
+        [StringLength(10)]
+        public string Language { get; set; }
+
         public virtual CRM_AccountType CRM_AccountTypes { get; set; }
 
         public virtual CRM_CallerProfileType CRM_CallerProfileTypes { get; set; }

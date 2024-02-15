@@ -263,7 +263,8 @@ namespace Intervent.Web.DataLayer
                 CRM_Note.Notes = request.crm_Note.Notes;
                 CRM_Note.CouponCode = request.crm_Note.CouponCode;
                 CRM_Note.CartridgePrescriptions = request.crm_Note.CartridgePrescriptions;
-                CRM_Note.HCPId = request.crm_Note.HCPId;
+                CRM_Note.HCPId = request.crm_Note.HCPId; 
+                CRM_Note.Language = request.crm_Note.Language;
                 CRM_Note.UpdatedBy = request.userId;
                 CRM_Note.UpdatedOn = DateTime.UtcNow;
                 context.CRM_Notes.Attach(CRM_Note);
@@ -540,6 +541,41 @@ namespace Intervent.Web.DataLayer
         {
             var crm_Contacts = context.CRM_Contacts.Where(x => x.UniqueId == uniqueId && x.OrganizationId == organizationId).FirstOrDefault();
             return Utility.mapper.Map<DAL.CRM_Contact, CRM_ContactDto>(crm_Contacts);
+        }
+
+        public AddQADOrdersResponse BulkAddQADOrders(AddQADOrdersRequest request)
+        {
+            AddQADOrdersResponse response = new AddQADOrdersResponse();
+            using (var scope = new System.Transactions.TransactionScope())
+            {
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
+                {
+                    context1.ChangeTracker.AutoDetectChangesEnabled = false;
+                    foreach (QADOrdersDto qadOreder in request.qadOrders)
+                    {
+                        var QADOreder = context1.QADOrders.Where(x => x.Order == qadOreder.Order && x.OrderDate == qadOreder.OrderDate && x.ItemNumber == qadOreder.ItemNumber && x.QtyOrdered == qadOreder.QtyOrdered).FirstOrDefault();
+                        if (QADOreder == null && !string.IsNullOrEmpty(qadOreder.Order))
+                        {
+                            QADOrders result = Utility.mapper.Map<QADOrdersDto, DAL.QADOrders>(qadOreder);
+                            context1.QADOrders.Add(result);
+                            response.count++;
+                        }
+                    }
+                    context1.SaveChanges();
+                    response.success = true;
+                }
+                scope.Complete();
+            }
+            return response;
+        }
+
+        public GetQADOrderHistoryResponse GetQADOrderHistory(GetQADOrderHistoryRequest request)
+        {
+            GetQADOrderHistoryResponse response = new GetQADOrderHistoryResponse();
+            var qadNumbers = context.CRM_Notes.Where(x => x.ContactId == request.contactId && !string.IsNullOrEmpty(x.QADNumber)).Select(y => y.QADNumber).ToList();
+            var QADOrders = context.QADOrders.Where(x => qadNumbers.Contains(x.Order)).ToList();
+            response.qadOrders = Utility.mapper.Map<List<DAL.QADOrders>, IList<QADOrdersDto>>(QADOrders).ToList();
+            return response;
         }
     }
 }

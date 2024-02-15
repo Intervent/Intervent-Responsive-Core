@@ -103,6 +103,7 @@ namespace InterventWebApp
                 crm_Notes.Type = (byte)CRMNoteTypes.WebForm;
                 crm_Notes.InquiryType = request.in_inquiry_type;
                 crm_Notes.Notes = request.in_feedback;
+                crm_Notes.Language = "en-us";
                 noteRequest.crm_Note = crm_Notes;
                 noteRequest.intuityOrgId = intuityOrgId;
                 reader.AddEditCRMNotes(noteRequest);
@@ -226,6 +227,12 @@ namespace InterventWebApp
             return response;
         }
 
+        public static GetQADOrderHistoryResponse GetQADOrderHistory(int contactId)
+        {
+            CRMReader reader = new CRMReader();
+            return reader.GetQADOrderHistory(new GetQADOrderHistoryRequest { contactId = contactId }); ;
+        }
+
         public static GetDispositionsListResponse GetDispositionsList()
         {
             CRMReader reader = new CRMReader();
@@ -275,6 +282,10 @@ namespace InterventWebApp
             return crmReader.GetCRMContactByUniqueId(uniqueId, organizationId);
         }
 
-
+        public static AddQADOrdersResponse AddToQADOrders(AddQADOrdersRequest request)
+        {
+            CRMReader crmReader = new CRMReader();
+            return crmReader.BulkAddQADOrders(request);
+        }
     }
 }

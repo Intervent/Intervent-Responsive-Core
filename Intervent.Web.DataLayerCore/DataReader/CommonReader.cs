@@ -1,13 +1,18 @@
-﻿using Intervent.DAL;
+﻿using Google.Apis.Auth.OAuth2;
+using Intervent.DAL;
+using Intervent.HWS.Model.FCM;
 using Intervent.Web.DTO;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Hosting;
 using NLog;
 using OfficeOpenXml;
+using System;
 using System.Configuration;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace Intervent.Web.DataLayer
 {
@@ -538,52 +543,56 @@ namespace Intervent.Web.DataLayer
         public bool SendNotification(int userId, string deviceId, string DeviceToken, string title, string msg, int msgId)
         {
             LogReader logreader = new LogReader();
-            string serverKey = "AAAA38InkWc:APA91bFoTMV6tlsCVEPU4SalHmpPqS6LxurpWnZRpNgRrTBSg0QPI-8NNW1kqvjWVBx0Rbe5q0uqyxlEH5y38DW7JSWbSjISIHa0lUwXqIaHv0UGJlPUdIdwGXpQr0c5a5WIxYbRoUZe";
-            string senderId = "961035080039";
-            string FireBaseAPIURL = "https://fcm.googleapis.com/fcm/send";
-            var result = "-1";
             try
             {
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(FireBaseAPIURL);
-                httpWebRequest.ContentType = "application/json";
-                httpWebRequest.Headers.Add(string.Format("Authorization: key={0}", serverKey));
-                httpWebRequest.Headers.Add(string.Format("Sender: id={0}", senderId));
-                httpWebRequest.Method = "POST";
-
-                var payload = new
+                string fileName = "";//System.Web.Hosting.HostingEnvironment.MapPath("~/intervent-mobile-apps-firebase-adminsdk-9k8vh-d3a3410a49.json"); string scopes = "https://www.googleapis.com/auth/firebase.messaging";
+                string scopes = "https://www.googleapis.com/auth/firebase.messaging"; 
+                var bearertoken = "";
+                using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
                 {
-                    to = DeviceToken,
-                    priority = "high",
-                    content_available = true,
-                    notification = new
-                    {
-                        body = msg,
-                        title = title
-                    },
-                };
-                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-                {
-                    string json = JsonConvert.SerializeObject(payload);
-                    streamWriter.Write(json);
-                    streamWriter.Flush();
+                    bearertoken = GoogleCredential
+                      .FromStream(stream)
+                      .CreateScoped(scopes)
+                      .UnderlyingCredential
+                      .GetAccessTokenForRequestAsync().Result;
                 }
 
-                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                FCMSendNotification fcmMsg = new FCMSendNotification();
+                fcmMsg.message = new HWS.Model.FCM.Message();
+                fcmMsg.message.token = DeviceToken;
+                fcmMsg.message.data = new Data();
+                fcmMsg.message.data.title = title;
+                fcmMsg.message.data.body = msg;
+                fcmMsg.message.notification = new Notification();
+                fcmMsg.message.notification.title = title;
+                fcmMsg.message.notification.body = msg;
+
+                var jsonObj = JsonSerializer.Serialize(fcmMsg);
+                var data = new StringContent(jsonObj, Encoding.UTF8, "application/json");
+
+                var clientHandler = new HttpClientHandler();
+                var client = new HttpClient(clientHandler);
+                client.BaseAddress = new Uri("https://fcm.googleapis.com/v1/projects/intervent-mobile-apps/messages:send");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearertoken);
+                data.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                var response = client.PostAsync("https://fcm.googleapis.com/v1/projects/intervent-mobile-apps/messages:send", data).Result;
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    result = streamReader.ReadToEnd();
+                    return new ParticipantReader().UpdateDashboardMessage(new UpdateDashboardMessageRequest { id = msgId, Status = (byte)MessageStatus.Sent }).success;
                 }
+                var jsonResponse = response.Content.ReadAsStringAsync().Result;
+                logreader.WriteLogMessage(new LogEventInfo(LogLevel.Error, "Send Notification Service", null, "Error while send notification to user (" + userId + ") device : " + deviceId + ", Message : " + jsonResponse, null, null));
             }
             catch (Exception ex)
             {
                 var logEvent = new LogEventInfo(LogLevel.Error, "Send Notification Service", null, "Error while send notification to user (" + userId + ") device : " + deviceId, null, ex);
                 logreader.WriteLogMessage(logEvent);
             }
-            if (result != "-1")
-                logreader.WriteLogMessage(new LogEventInfo(LogLevel.Error, "Send Notification Service", null, "Error while send notification to user (" + userId + ") device : " + deviceId + ", Message : " + result, null, null));
-            return result == "-1" ? false : new ParticipantReader().UpdateDashboardMessage(new UpdateDashboardMessageRequest { id = msgId, Status = (byte)MessageStatus.Sent }).success;
+            return false;
         }
-
         public GetExercisePlanResponse GetExercisePlan(GetExercisePlanRequest request)
         {
 

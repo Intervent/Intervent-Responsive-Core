@@ -6,13 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
+using System.Data;
+using System.Data.OleDb;
 using System.Globalization;
+using System.Web;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace InterventWebApp
 {
     public class CRMController : BaseController
     {
         private readonly AppSettings _appSettings;
+        private readonly IHostEnvironment environment;
 
         public CRMController(IOptions<AppSettings> appSettings)
         {
@@ -51,7 +57,102 @@ namespace InterventWebApp
             return Json(new { response = response });
         }
 
+        [HttpPost]
+        public async Task<JsonResult> UploadQADOrder(IFormFile FileUpload)
+        {
+            AddQADOrdersRequest request = new AddQADOrdersRequest();
+            request.qadOrders = LoadQADOrder(FileUpload);
+            var response = CRMUtility.AddToQADOrders(request);
+            return Json(new { Response = response });
 
+        }
+
+        [Authorize]
+        public List<QADOrdersDto> LoadQADOrder(IFormFile FileUpload)
+        {
+            List<QADOrdersDto> qadOrderResponse = new List<QADOrdersDto>();
+            string filename = FileUpload.FileName;
+            if (filename.EndsWith(".csv"))
+            {
+                string targetpath = environment.ContentRootPath +"~/temp/";
+                if (!Directory.Exists(targetpath))
+                    Directory.CreateDirectory(targetpath);
+                string pathToFile = Path.Combine(targetpath, filename);
+                using (var fileStream = new FileStream(pathToFile, FileMode.Create))
+                {
+                    FileUpload.CopyToAsync(fileStream);
+                }
+                string connectionString = $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={System.IO.Path.GetDirectoryName(pathToFile)};Extended Properties='Text;HDR=YES;'";
+                using (OleDbConnection connection = new OleDbConnection(connectionString))
+                {
+                    connection.Open();
+                    var tables = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                    if (tables == null)
+                        return qadOrderResponse;
+                    var sheet = tables.Rows[0]["TABLE_NAME"];
+                    OleDbCommand command = new OleDbCommand($"SELECT * FROM [{Path.GetFileName(pathToFile)}]", connection);
+                    using (OleDbDataReader dr = command.ExecuteReader(CommandBehavior.SchemaOnly))
+                    {
+                        var schema = dr.GetSchemaTable();
+                        Dictionary<int, string> columns = new Dictionary<int, string>();
+                        for (int i = 0; i < schema.Rows.Count; i++)
+                        {
+                            columns.Add(i, schema.Rows[i].ItemArray[0].ToString().ToLower());
+                        }
+                        while (dr.Read())
+                        {
+                            QADOrdersDto qadOrder = new QADOrdersDto();
+                            #region CSV Conversion
+                            if (!String.IsNullOrWhiteSpace(dr[columns.FirstOrDefault(x => x.Value == "order").Key].ToString()))
+                                qadOrder.Order = dr[columns.FirstOrDefault(x => x.Value == "order").Key].ToString();
+                            if (!String.IsNullOrWhiteSpace(dr[columns.FirstOrDefault(x => x.Value == "order date").Key].ToString()))
+                                qadOrder.OrderDate = DateTime.Parse(dr[columns.FirstOrDefault(x => x.Value == "order date").Key].ToString());
+                            if (!String.IsNullOrWhiteSpace(dr[columns.FirstOrDefault(x => x.Value == "meter quantity").Key].ToString()))
+                                qadOrder.MeterQuantity = Convert.ToInt16(dr[columns.FirstOrDefault(x => x.Value == "meter quantity").Key].ToString());
+                            if (!String.IsNullOrWhiteSpace(dr[columns.FirstOrDefault(x => x.Value == "item number").Key].ToString()))
+                                qadOrder.ItemNumber = dr[columns.FirstOrDefault(x => x.Value == "item number").Key].ToString();
+                            if (!String.IsNullOrWhiteSpace(dr[columns.FirstOrDefault(x => x.Value == "qty ordered").Key].ToString()))
+                                qadOrder.QtyOrdered = (dr[columns.FirstOrDefault(x => x.Value == "qty ordered").Key]).ToString();
+                            qadOrderResponse.Add(qadOrder);
+                            #endregion
+                        }
+                    }
+                    connection.Close();
+                    System.IO.File.Delete(pathToFile);
+                }
+            }
+            return qadOrderResponse;
+        }
+
+        [Authorize]
+        public JsonResult GetQADOrderHistory(int contactId)
+        {
+            var response = CRMUtility.GetQADOrderHistory(contactId);
+            var qadOrderGroup = response.qadOrders.GroupBy(p => p.Order, p => p.OrderDate).ToList();
+            List<QADOrdersDto> QADOrdersList = new List<QADOrdersDto>();
+            foreach (var group in qadOrderGroup)
+            {
+                QADOrdersDto qad = new QADOrdersDto();
+                qad.Order = group.Key;
+                qad.OrderDate = response.qadOrders.Where(x => x.Order == group.Key).FirstOrDefault().OrderDate;
+                qad.ItemNumber = string.Join(" | ", response.qadOrders.Where(p => p.Order == group.Key)
+                                 .Select(p => p.ItemNumber.ToString()));
+                qad.QtyOrdered = string.Join(" | ", response.qadOrders.Where(p => p.Order == group.Key)
+                                 .Select(p => p.QtyOrdered.ToString()));
+                QADOrdersList.Add(qad);
+            }
+
+
+            var qadOrders = QADOrdersList.Select(x => new
+            {
+                Order = x.Order,
+                OrderDate = x.OrderDate.Value.ToString(HttpContext.Session.GetString(SessionContext.DateFormat)),
+                Comments = x.ItemNumber,
+                QtyOrdered = x.QtyOrdered
+            });
+
+            return Json(new { Result = "OK", qadOrders = qadOrders });
+        }
         [Authorize]
         [HttpPost]
         public JsonResult AddEditNotes(CRMProfileModel model)
@@ -121,6 +222,7 @@ namespace InterventWebApp
             model.AccountTypes = CRMUtility.GetAccountTypes().CRM_AccountTypes.Where(x => x.IsActive).Select(x => new SelectListItem { Text = x.Type, Value = x.Id.ToString() }).OrderBy(x => x.Text);
             model.InquiryTypes = CRMUtility.GetInquiryTypes().InquiryTypes.Select(x => new SelectListItem { Text = x.Type, Value = x.Id.ToString() });
             model.CallerProfileTypes = CRMUtility.CallerProfileTypes().CRM_CallerProfileTypes.Where(x => x.IsActive).Select(x => new SelectListItem { Text = x.Type, Value = x.Id.ToString() }).OrderBy(x => x.Text);
+            model.Languages = CommonUtility.GetPortalLanguages().Where(x => x.LanguageCode == "en-us" || x.LanguageCode == "es").Select(x => new SelectListItem { Text = Translate.Message(x.LanguageItem), Value = x.LanguageCode });
             model.ComplaintClassificationTypes = CRMUtility.ComplaintClassificationTypes().CRM_ComplaintClassificationTypes.Where(x => x.IsActive).Select(x => new SelectListItem { Text = x.Type, Value = x.Id.ToString() });
             model.PogoMeterNumbers = CRMUtility.GetPogoMeterNumbers(contactId).Where(x => x.Id == model.CRM_Note.PogoMeterNumber || x.IsActive).Select(x => new SelectListItem { Text = x.PogoMeterNumber, Value = x.Id.ToString() });
             model.Dispositions = CRMUtility.GetDispositionsList().CRM_Dispositions.Where(d => d.Disposition == "Inbound email" || d.Disposition == "Outbound email" || d.Disposition == "Email Complaint" || d.Disposition == "Handled" || d.Disposition == "Complaint Follow up").Select(x => new SelectListItem { Text = x.Disposition, Value = x.Id.ToString() });

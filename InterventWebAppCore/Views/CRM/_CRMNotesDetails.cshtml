@@ -64,6 +64,9 @@
                                         <p>Inquiry Type <span>@note.InquiryType1.Type</span></p>
                                     </div>
                                 }
+                                <div class="cell small-6 large-4">
+                                    <p>Language <span>@(note.Language == "en-us" ? "English" : note.Language == "es" ? "Spanish" : "")</span></p>
+                                </div>
                             </div>
                         </div>
 

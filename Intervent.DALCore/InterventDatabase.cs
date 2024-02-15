@@ -290,6 +290,7 @@ namespace Intervent.DAL
         public virtual DbSet<TeamsBP_PPR> TeamsBP_PPR { get; set; }
         public virtual DbSet<SecurityCode> SecurityCodes { get; set; }
         public virtual DbSet<Provider> Providers { get; set; }
+        public virtual DbSet<QADOrders> QADOrders { get; set; }
         public virtual DbSet<HealthData> HealthDatas { get; set; }
         public virtual DbSet<AssignedMotivationMessage> AssignedMotivationMessages { get; set; }
         public virtual DbSet<MotivationMessage> MotivationMessages { get; set; }

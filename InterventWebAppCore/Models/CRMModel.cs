@@ -22,6 +22,8 @@ namespace InterventWebApp
 
         public IEnumerable<SelectListItem> CallerProfileTypes { get; set; }
 
+        public IEnumerable<SelectListItem> Languages { get; set; }
+
         public IEnumerable<SelectListItem> InquiryTypes { get; set; }
 
         public IEnumerable<SelectListItem> ComplaintClassificationTypes { get; set; }

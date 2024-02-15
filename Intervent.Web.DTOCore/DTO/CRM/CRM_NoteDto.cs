@@ -136,6 +136,8 @@
 
         public int? InquiryType { get; set; }
 
+        public string Language { get; set; }
+
         public virtual CRM_AccountTypesDto CRM_AccountTypes { get; set; }
 
         public virtual CRM_CallerProfileTypesDto CRM_CallerProfileTypes { get; set; }

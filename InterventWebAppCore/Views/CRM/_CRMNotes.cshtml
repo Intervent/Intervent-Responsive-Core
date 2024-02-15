@@ -61,6 +61,13 @@
 							</label>
                         </div>
                         <div class="cell medium-6">
+                            <label for="">
+                                Language
+                                @Html.DropDownListFor(m => m.CRM_Note.Language, Model.Languages, "----Select----", new { @required = "required", @id = "languages" })
+                                <small class="form-error">Language is required</small>
+                            </label>
+                        </div>
+                        <div class="cell medium-6">
 							<label for="">
 								Caller Profile
 								@Html.DropDownListFor(m => m.CRM_Note.CallerProfileType, Model.CallerProfileTypes, "----Select----", new { @required = "required", @id = "caller-profile" })
@@ -418,6 +425,10 @@
     };
     $(document).ready(function () {
         $('#newContactId').val(@Model.CRM_Contact.Id);
+        if (@Model.CRM_Note.Id == 0)
+        {
+            $('#languages').val("en-us");
+        }
 		$("#notes-from, #doctor-details").foundation();
         $('#notes-from')
             .on('forminvalid.zf.abide', function () {

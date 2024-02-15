@@ -31,6 +31,10 @@
 								<img src="~/Images/crm/delete-list-icon.svg" width="23" height="26" alt="" />
 								<span>Deleted</span>
 							</li>
+                            <li data-tab-target="uploads">
+                                <img src="~/Images/crm/upload.svg" width="23" height="26" alt="" />
+                                <span>Uploads</span>
+                            </li>
 						</ul>
 					</div>
 				</div>
@@ -178,6 +182,14 @@ Number">
 						</div>
 					</div>
 					<!-- Deleted records container ends  -->
+                    <div class="uploads-tab tab-panel hide" id="uploads">
+                        <div class="small-12 medium-4 cell text-center">
+                            <div class="file-upload file-upload-new button">
+                                <span>Upload the QAD file</span>
+                                <input type="file" id="imageUpload" class="upload" name="files" onchange="Upload();" />
+                            </div>
+                        </div>
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -229,7 +241,15 @@ Number">
     </button>
 </div>
 
+<div id="qad-order-log-modal" class="reveal large order-log-modal" data-reveal>
+    <h2>QAD Order History</h2>
 
+    <div id="qad-log-table" class="log-table">
+    </div>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 <script type="text/javascript" src="@Url.Content("~/Scripts/NoZipCountries.js")?v=@CommonUtility.GetRandom()"></script>
 <script src="@Url.Content("../Scripts/NewPager.js")?v=@CommonUtility.GetRandom()"></script>
 
@@ -504,6 +524,41 @@ Number">
             });
     }
 
+    function ViewQADOrderHistory(contactId) {
+        $.ajax({
+            data: { contactId : contactId },
+            dataType: "json",
+            type: 'POST',
+            url: '@Url.Action("GetQADOrderHistory", "CRM")',
+            success: function (data) {
+                 if (data.qadOrders.length > 0) {
+                    var logHtml = "<table><thead><tr><th>QAD Number</th><th>Date</th><th>Order Notes</th></tr></thead><tbody>";
+                    for (var i = 0; i < data.qadOrders.length; i++) {
+                        var qadOrder = data.qadOrders[i];
+                        logHtml += "<tr><td></p> " + qadOrder.Order
+                            + "</p> </td><td><p>" + qadOrder.OrderDate + "</p></td>";
+                        var comments = qadOrder.Comments.split('|');
+                        var qtyOrdered = qadOrder.QtyOrdered.split('|');
+                        logHtml += "<td><p>";
+                        for (j = 0; j < comments.length; j++) {
+                            logHtml += "<br/>";
+                            logHtml += "" + comments[j] + "(" + qtyOrdered[j] + ")";
+                        }
+                        logHtml += "</p></td></tr>";
+                    }
+                    $("#qad-log-table").html(logHtml);
+                }
+                else
+                {
+                    var logHtml = "<div class='text-center empty-data'><div><img src='/Images/crm/empty-data-image.svg' alt=''></div><p>No data were found.</p><div class='text-center new-button'></div></div>";
+                    $("#qad-log-table").html(logHtml);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
+
     function ProcessLogData(changeLog) {
          var logHtml = "";
          if (changeLog.length > 0) {
@@ -527,6 +582,31 @@ Number">
         $(".create-profile-container, .add-new-records-container").toggleClass('hide');
     }
 
+    function Upload() {        
+        $("#loader-wrapper").fadeIn();
+        var formData = new FormData();
+        var file = document.getElementById("imageUpload").files[0];
+        if (!file) {
+            return false;
+        }
+        formData.append("FileUpload", file);
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("UploadQADOrder", "CRM")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                $("#unhandled-form-alert a").trigger("click");
+                $("#loader-wrapper").fadeOut();
+                if(response.Response.success)
+                    showAlertMessage("Processed record count :" + response.Response.count +"");
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+                RedirectToErrorPage(jqXHR.status);
+            });
+    }
 </script>
 
 <script>

@@ -392,6 +392,7 @@ namespace Intervent.Business
                             labforHRA.LDL = firstLipid.LDL;
                             labforHRA.TotalChol = firstLipid.TotalChol;
                             labforHRA.Trig = firstLipid.Trig;
+                            labforHRA.A1C = firstLipid.A1C;
                             labforHRA.BloodTestDate = firstLipid.AssessmentDate;
                             if (firstLipid.DidYouFast != null)
                                 labforHRA.DidYouFast = (byte)(firstLipid.DidYouFast == YesNoDto.Yes ? 1 : 2);
