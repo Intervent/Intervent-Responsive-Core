@@ -337,14 +337,14 @@ namespace InterventWebApp
             }
         }
 
-        public static void CreateDirectMail(NotificationEventTypeDto evt, int userId)
+        public static void CreateDirectMail(NotificationEventTypeDto evt, int userId, string InfoEmail, string SecureEmail, string SMPTAddress, string PortNumber, string SecureEmailPassword, string MailAttachmentPath)
         {
             try
             {
                 NotificationReader notificationReader = new NotificationReader();
                 var userdata = new AccountReader().ReadUser(new GetUserRequest { id = userId });
                 var notificationTemplate = notificationReader.GetNotificationTemplate(new GetNotificationTemplateRequest() { NotificationTemplateId = evt.Id }).NotificationTemplate;
-                //CommonUtility.SendEmail(userdata.User.Email, notificationTemplate.TemplateSource, notificationTemplate.EmailSubject);
+                CommonUtility.SendEmail(userdata.User.Email, notificationTemplate.TemplateSource, notificationTemplate.EmailSubject, InfoEmail, SecureEmail, SMPTAddress, PortNumber, SecureEmailPassword, MailAttachmentPath);
             }
             catch (Exception ex)
             {

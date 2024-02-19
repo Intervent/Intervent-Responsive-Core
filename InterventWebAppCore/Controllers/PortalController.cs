@@ -153,7 +153,7 @@ namespace InterventWebApp
         [ModuleControl(Modules.Organizations)]
         public JsonResult SendEmail(int typeId)
         {
-            NotificationUtility.CreateDirectMail(NotificationEventTypeDto.GetByKey(typeId), HttpContext.Session.GetInt32(SessionContext.UserId).Value);
+            NotificationUtility.CreateDirectMail(NotificationEventTypeDto.GetByKey(typeId), HttpContext.Session.GetInt32(SessionContext.UserId).Value, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
             return Json(new { Result = "OK" });
         }
 

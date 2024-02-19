@@ -296,7 +296,7 @@ namespace InterventWebApp
             if (model.user.Id > 0)
             {
                 bool adminAccess = false;
-                if (CommonUtility.HasSuperAdminRole(User.RoleCode()))
+                if (CommonUtility.IsSuperAdmin(User.RoleCode()))
                 {
                     adminAccess = true;
                 }

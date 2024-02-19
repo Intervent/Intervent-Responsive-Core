@@ -67,7 +67,7 @@ namespace InterventWebApp
                         if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
                         {
                             path = Path.Combine(environment.ContentRootPath, "~/Lab", fileName);
-                            LabUtility.UpdateLabResultFile(id, fileName, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.AdminId).HasValue ? HttpContext.Session.GetInt32(SessionContext.AdminId).Value : null, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), null, true);
+                            LabUtility.UpdateLabResultFile(id, fileName, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.AdminId).HasValue ? HttpContext.Session.GetInt32(SessionContext.AdminId).Value : null, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), User.RoleCode(), null, true);
                             if (!string.IsNullOrWhiteSpace(path))
                             {
                                 using (var stream = new FileStream(path, FileMode.Create))

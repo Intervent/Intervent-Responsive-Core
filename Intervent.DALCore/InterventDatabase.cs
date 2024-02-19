@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Intervent.DAL
 {
@@ -10,10 +11,8 @@ namespace Intervent.DAL
 
         public static DbContextOptions<InterventDatabase> GetInterventDatabaseOption()
         {
-            //var connectionString = Constants.getDefaultConnection();
-            var connectionString = "data source=.;initial catalog=master;integrated security=True;MultipleActiveResultSets=True;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False;";
-
-            return new DbContextOptionsBuilder<InterventDatabase>().UseSqlServer(connectionString).Options;
+			IConfigurationRoot configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+			return new DbContextOptionsBuilder<InterventDatabase>().UseSqlServer(configuration.GetConnectionString("DefaultConnection")).Options;
         }
 
         public virtual DbSet<IncentiveReportSP_Result> IncentiveReportSP_Result { get; set; }

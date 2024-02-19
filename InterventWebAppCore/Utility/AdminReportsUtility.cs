@@ -110,6 +110,43 @@ namespace InterventWebApp
             return reader.ListIncentiveReport(request);
         }
 
+        public static ListLabAlertResponse ListLabAlert(ReportListModel model, DateTime? StartDate, DateTime? EndDate, int? userId, string timezone, int alertType, int labsource, int? status, int? organization, bool download, int adminId)
+        {
+            AdminReportsReader reader = new AdminReportsReader();
+            ListLabAlertRequest request = new ListLabAlertRequest();
+            request.AdminId = adminId;
+            request.userId = userId;
+            request.StartDate = StartDate;
+            request.EndDate = EndDate;
+            request.alerttype = alertType;
+            request.labsource = labsource;
+            request.status = status;
+            request.timezone = timezone;
+            if (download)
+            {
+                request.Page = 1;
+                request.PageSize = 0;
+                request.TotalRecords = 0;
+            }
+            else
+            {
+                request.Page = model.page;
+                request.PageSize = model.pageSize;
+                request.TotalRecords = model.totalRecords;
+            }
+            request.Organization = organization;
+            return reader.ListLabAlert(request);
+        }
+
+        public static ReviewNoShowResponse ReviewNoShow(string appIds, int adminId)
+        {
+            AdminReportsReader reader = new AdminReportsReader();
+            ReviewNoShowRequest request = new ReviewNoShowRequest();
+            request.ApptIds = appIds;
+            request.AdminId = adminId;
+            return reader.ReviewNoShow(request);
+        }
+
         public static NoShowApptReportResponse ListNoShowReport(int? orgId, int? ApptType, string language, DateTime? StartDate, DateTime? EndDate, string timezone, string timeZoneDefault, bool? isReviewed, ReportListModel model, bool download, int userId)
         {
             AdminReportsReader reader = new AdminReportsReader();
@@ -220,41 +257,6 @@ namespace InterventWebApp
             }
             return reader.ListUnapprovedCarePlans(request);
         }
-        public static ListLabAlertResponse ListLabAlert(ReportListModel model, DateTime? StartDate, DateTime? EndDate, int? userId, string timezone, int alertType, int labsource, int? status, int? organization, bool download, int adminId)
-        {
-            AdminReportsReader reader = new AdminReportsReader();
-            ListLabAlertRequest request = new ListLabAlertRequest();
-            request.AdminId = adminId;
-            request.userId = userId;
-            request.StartDate = StartDate;
-            request.EndDate = EndDate;
-            request.alerttype = alertType;
-            request.labsource = labsource;
-            request.status = status;
-            request.timezone = timezone;
-            if (download)
-            {
-                request.Page = 1;
-                request.PageSize = 0;
-                request.TotalRecords = 0;
-            }
-            else
-            {
-                request.Page = model.page;
-                request.PageSize = model.pageSize;
-                request.TotalRecords = model.totalRecords;
-            }
-            request.Organization = organization;
-            return reader.ListLabAlert(request);
-        }
-
-        public static ReviewNoShowResponse ReviewNoShow(string appIds, int adminId)
-        {
-            AdminReportsReader reader = new AdminReportsReader();
-            ReviewNoShowRequest request = new ReviewNoShowRequest();
-            request.ApptIds = appIds;
-            request.AdminId = adminId;
-            return reader.ReviewNoShow(request);
-        }
+        
     }
 }

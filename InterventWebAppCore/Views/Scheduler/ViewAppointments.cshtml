@@ -60,7 +60,7 @@
                                 </button>
                             </div>
 							<div class="small-6 cell text-right">
-								@if (CommonUtility.HasSuperAdminRole(User.RoleCode()))
+                                    @if (CommonUtility.IsSuperAdmin(User.RoleCode()))
 								{
 									<button type="button" id="moveAppointmentPopup" class="button hollow" data-open="move-appointment-modal">
 										<i class="fa fa-arrow-circle-right"></i>Move

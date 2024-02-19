@@ -295,7 +295,7 @@
 						</div>
 					</div>
 					<div class="grid-x grid-padding-x">
-						@if (CommonUtility.HasSuperAdminRole(User.RoleCode()))
+						@if (CommonUtility.IsSuperAdmin(User.RoleCode()))
 						{
 							<div class="medium-4 cell">
 								<!--Roles-->
@@ -320,7 +320,7 @@
 						}
 					</div>
 					<div class="grid-x grid-padding-x">
-						@if (CommonUtility.HasSuperAdminRole(User.RoleCode()) && (Model.user.Organization.IntegrationWith == (byte)Integrations.LMC || Model.user.OrganizationId == 2))
+						@if (CommonUtility.IsSuperAdmin(User.RoleCode()) && (Model.user.Organization.IntegrationWith == (byte)Integrations.LMC || Model.user.OrganizationId == 2))
 						{
 							<div class="medium-4 cell" id="coachstatesdropdown">
 								<label>
@@ -339,7 +339,7 @@
 						</div>
 					</div>
 				</fieldset>
-				@if (CommonUtility.HasSuperAdminRole(User.RoleCode()))
+				@if (CommonUtility.IsSuperAdmin(User.RoleCode()))
 				{
 					<fieldset>
 						<legend>Properties</legend>

@@ -791,7 +791,7 @@ namespace InterventWebApp
         [HttpPost]
         public JsonResult AssignKit([FromBody] AssignKitModel model)
         {
-            var response = KitUtility.AddKittoPrograms(model.KitId, model.OrganizationIds, HttpContext.Session.GetString(SessionContext.LanguagePreference), HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetString(SessionContext.OrgContactEmail), HttpContext.Session.GetString(SessionContext.OrgContactNumber), Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.KitAlert) != null ? HttpContext.Session.GetString(SessionContext.KitAlert) : false));
+            var response = KitUtility.AddKittoPrograms(model.KitId, model.OrganizationIds, HttpContext.Session.GetString(SessionContext.LanguagePreference), HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetString(SessionContext.OrgContactEmail), HttpContext.Session.GetString(SessionContext.OrgContactNumber), !string.IsNullOrEmpty(HttpContext.Session.GetString(SessionContext.KitAlert)) ? Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.KitAlert)) : false);
             return Json(new { Result = "OK", Record = response });
         }
 

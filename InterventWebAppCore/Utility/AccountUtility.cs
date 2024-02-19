@@ -189,7 +189,7 @@ namespace InterventWebApp
                 && user.Country.HasValue && (!reader.ListCountries(new ListCountriesRequest()).Countries.Where(x => x.Id == user.Country).FirstOrDefault().HasZipCode || !string.IsNullOrEmpty(user.Zip)) && user.Unit.HasValue
                 && user.ContactMode.HasValue && ((user.ContactMode.Value == 1 && !string.IsNullOrEmpty(user.HomeNumber)) || (user.ContactMode.Value == 2 && !string.IsNullOrEmpty(user.WorkNumber)) || user.ContactMode.Value == 3 && !string.IsNullOrEmpty(user.CellNumber))
                 && !string.IsNullOrEmpty(user.Email) && user.TimeZoneId.HasValue && !string.IsNullOrEmpty(user.LanguagePreference)
-                && (!coachingProgram && selfHelpProgram == false || (user.Text.HasValue && ((user.Text == 1 && !string.IsNullOrEmpty(user.CellNumber)) || user.Text == 2)))
+                && (!coachingProgram && !selfHelpProgram || (user.Text.HasValue && ((user.Text == 1 && !string.IsNullOrEmpty(user.CellNumber)) || user.Text == 2)))
                 && (PortalUtility.ReadPortal(participantPortalId).portal.ProviderDetails == (byte)ProviderDetails.DropDown
                 || (user.PrimaryCarePhysician.HasValue && ((user.PrimaryCarePhysician == 1 && user.UserDoctorInfoes.Count > 0 && user.UserDoctorInfoes[0].ContactPermission.HasValue) || user.PrimaryCarePhysician == 2))))
                 return true;

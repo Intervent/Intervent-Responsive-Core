@@ -2,45 +2,18 @@
 using Intervent.Web.DTO;
 using Intervent.Web.DTO.Diff;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Configuration;
 using System.Data;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Intervent.Web.DataLayer
 {
-    public class AccountReader
+	public class AccountReader
     {
         private UserManager<ApplicationUser> userManager;
         private readonly InterventDatabase dbcontext;
-
-        public UserManager<ApplicationUser> InitializeUserManager()
-        {
-            var serviceProvider = new ServiceCollection().AddLogging(builder => builder.AddConsole()).BuildServiceProvider();
-            var userStore = new UserStore<ApplicationUser, IdentityRole<int>, InterventDatabase, int, IdentityUserClaim<int>, IdentityUserRole<int>, IdentityUserLogin<int>, IdentityUserToken<int>, IdentityRoleClaim<int>>(dbcontext);
-            var passwordHasher = new PasswordHasher<ApplicationUser>();
-            var userValidators = new[] { new UserValidator<ApplicationUser>() };
-            var passwordValidators = new[] { new PasswordValidator<ApplicationUser> { } };
-            var keyNormalizer = new UpperInvariantLookupNormalizer();
-            var errors = new IdentityErrorDescriber();
-            var logger = serviceProvider.GetService<ILogger<ApplicationUserManager>>();
-
-            return new UserManager<ApplicationUser>(
-                userStore,
-                optionsAccessor: null,
-                passwordHasher: passwordHasher,
-                userValidators: userValidators,
-                passwordValidators: passwordValidators,
-                keyNormalizer: keyNormalizer,
-                errors: errors,
-                services: serviceProvider,
-                logger: logger ?? throw new ArgumentNullException(nameof(logger)));
-        }
 
         public AccountReader(UserManager<ApplicationUser> _userManager)
         {

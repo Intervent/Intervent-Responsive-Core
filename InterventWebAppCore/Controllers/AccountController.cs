@@ -962,7 +962,7 @@ namespace InterventWebApp
                         string emailReason = ListOptions.GetLabRejectionReasons().FirstOrDefault(x => x.Value == reason).Text;
                         NotificationUtility.CreateRejectedLabNotificationEvent(NotificationEventTypeDto.RejectedLabs, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetString(SessionContext.OrgContactNumber), emailReason);
                     }
-                    LabUtility.UpdateLabResultFile(id.Value, null, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.AdminId).HasValue ? HttpContext.Session.GetInt32(SessionContext.AdminId).Value : null, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), reason, null);
+                    LabUtility.UpdateLabResultFile(id.Value, null, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.AdminId).HasValue ? HttpContext.Session.GetInt32(SessionContext.AdminId).Value : null, HttpContext.Session.GetInt32(SessionContext.IntegrationWith),User.RoleCode(), reason, null);
                     return Json(new { Result = "OK", AdminView = TempData["AdminView"] != null ? TempData["AdminView"].ToString() : "False" });
                 }
                 else if (uri.Contains("Recipe"))

@@ -156,7 +156,7 @@ namespace InterventWebApp
             return true;
         }
 
-        public static void UpdateLabResultFile(int? id, string file, int participantId, int participantPortalId, int userId, int? adminId, int? integrationWith, string reason = null, bool? addLabRecord = null)
+        public static void UpdateLabResultFile(int? id, string file, int participantId, int participantPortalId, int userId, int? adminId, int? integrationWith, string roleCode, string reason = null, bool? addLabRecord = null)
         {
             LabReader reader = new LabReader();
             if ((!id.HasValue || id == 0) && addLabRecord.HasValue && addLabRecord.Value)
@@ -194,16 +194,13 @@ namespace InterventWebApp
             addTaskRequest.task.Owner = addTaskRequest.task.UserId = participantId;
             addTaskRequest.task.UpdatedBy = addTaskRequest.task.CreatedBy = addTaskRequest.task.UpdatedBy = adminId.HasValue ? adminId.Value : participantId;
             if (CommonUtility.IsIntegratedWithLMC(integrationWith))
-                addTaskRequest.task.Owner = addTaskRequest.task.UserId = participantId;
-            addTaskRequest.task.UpdatedBy = addTaskRequest.task.CreatedBy = addTaskRequest.task.UpdatedBy = adminId.HasValue ? adminId.Value : participantId;
-            if (CommonUtility.IsIntegratedWithLMC(integrationWith))
                 addTaskRequest.task.TaskTypeId = (int)TaskTypes.CDPP_Doctor_Labs;
             else
                 addTaskRequest.task.TaskTypeId = (int)TaskTypes.Know_Your_Numbers;
             if (!string.IsNullOrEmpty(file))
             {
                 //Create Task
-                /* if (!CommonUtility.HasAdminRole(User.RoleCode()))
+                 if (!CommonUtility.HasAdminRole(roleCode))
                  {
                      if (CommonUtility.IsIntegratedWithLMC(integrationWith))
                      {
@@ -216,7 +213,7 @@ namespace InterventWebApp
                          addTaskRequest.task.Comment = "Please process the uploaded lab.";
                          adminReader.AddEditTask(addTaskRequest);
                      }
-                 }*/
+                 }
             }
             else
             {
