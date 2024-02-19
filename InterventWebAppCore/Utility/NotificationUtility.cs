@@ -342,9 +342,17 @@ namespace InterventWebApp
             try
             {
                 NotificationReader notificationReader = new NotificationReader();
-                var userdata = new AccountReader().ReadUser(new GetUserRequest { id = userId });
+                var user = new AccountReader().GetUserById(userId);
                 var notificationTemplate = notificationReader.GetNotificationTemplate(new GetNotificationTemplateRequest() { NotificationTemplateId = evt.Id }).NotificationTemplate;
-                CommonUtility.SendEmail(userdata.User.Email, notificationTemplate.TemplateSource, notificationTemplate.EmailSubject, InfoEmail, SecureEmail, SMPTAddress, PortNumber, SecureEmailPassword, MailAttachmentPath);
+                string attachment = "";
+                if (notificationTemplate.HasAttachment)
+                {
+                    if (notificationTemplate.NotificationEventTypeId == NotificationEventTypeDto.CompleteLabswithLabCorp.Id)
+                        attachment = user.Organization.Portals.Where(x => x.Active).FirstOrDefault().LabCorpAttachment;
+                    if (notificationTemplate.NotificationEventTypeId == NotificationEventTypeDto.SubmitLabResults.Id)
+                        attachment = user.Organization.Portals.Where(x => x.Active).FirstOrDefault().DoctorOfficeAttachment;
+                }
+                CommonUtility.SendEmail(user.Email, notificationTemplate.TemplateSource, notificationTemplate.EmailSubject, InfoEmail, SecureEmail, SMPTAddress, PortNumber, SecureEmailPassword, MailAttachmentPath, attachment);
             }
             catch (Exception ex)
             {
