@@ -21,6 +21,7 @@ namespace Intervent.DAL
             NotificationEventTypes = new HashSet<NotificationEventType>();
             Kits = new HashSet<Kit>();
             Languages = new HashSet<Languages>();
+            Specializations = new HashSet<Specialization>();
             PortalFollowUps = new HashSet<PortalFollowUp>();
             PortalCoachingConditions = new HashSet<PortalCoachingConditions>();
             PortalLabProcedures = new HashSet<PortalLabProcedure>();

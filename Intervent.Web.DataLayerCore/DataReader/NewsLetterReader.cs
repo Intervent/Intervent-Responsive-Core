@@ -14,7 +14,7 @@ namespace Intervent.Web.DataLayer
             var totalRecords = request.TotalRecords.HasValue ? request.TotalRecords.Value : 0;
             if (totalRecords == 0)
             {
-                totalRecords = dbcontext.Newsletter.Count();
+                totalRecords = dbcontext.Newsletters.Count();
 
             }
             if (request.PageSize == 0)
@@ -22,7 +22,7 @@ namespace Intervent.Web.DataLayer
                 request.PageSize = totalRecords;
             }
             var newsletters = new List<Newsletter>();
-            newsletters = dbcontext.Newsletter.OrderByDescending(x => x.Id).Skip(request.Page * request.PageSize).Take(request.PageSize).ToList();
+            newsletters = dbcontext.Newsletters.OrderByDescending(x => x.Id).Skip(request.Page * request.PageSize).Take(request.PageSize).ToList();
             response.Newsletters = Utility.mapper.Map<IList<DAL.Newsletter>, IList<NewsletterDto>>(newsletters);
             response.TotalRecords = totalRecords;
             return response;
@@ -41,7 +41,7 @@ namespace Intervent.Web.DataLayer
             DAL.Newsletter newsletterDAL = new DAL.Newsletter();
             if (request.newsletter.Id > 0)
             {
-                newsletterDAL = dbcontext.Newsletter.Where(x => x.Id == request.newsletter.Id).FirstOrDefault();
+                newsletterDAL = dbcontext.Newsletters.Where(x => x.Id == request.newsletter.Id).FirstOrDefault();
                 oldPDF = newsletterDAL.Pdf;
                 if (newsletterDAL != null)
                 {
@@ -55,7 +55,7 @@ namespace Intervent.Web.DataLayer
             {
                 newsletterDAL.Name = request.newsletter.Name;
                 newsletterDAL.Pdf = request.newsletter.Pdf;
-                dbcontext.Newsletter.Add(newsletterDAL);
+                dbcontext.Newsletters.Add(newsletterDAL);
                 dbcontext.SaveChanges();
             }
             response.NewsletterId = newsletterDAL.Id;
@@ -84,7 +84,7 @@ namespace Intervent.Web.DataLayer
 
         public string GetNewsletterPath(int newsletterId)
         {
-            string strNewsletterPath = "~/Pdf/" + dbcontext.Newsletter.Where(x => x.Id == newsletterId).Select(x => x.Pdf).FirstOrDefault();
+            string strNewsletterPath = "~/Pdf/" + dbcontext.Newsletters.Where(x => x.Id == newsletterId).Select(x => x.Pdf).FirstOrDefault();
             return strNewsletterPath;
         }
         public int AddNewsletterToUserDashbaord()

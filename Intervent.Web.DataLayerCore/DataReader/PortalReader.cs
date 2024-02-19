@@ -1201,7 +1201,21 @@ namespace Intervent.Web.DataLayer
                 context.PortalCoachingConditions.Add(portalCoachingCond);
             }
             context.SaveChanges();
-
+            var oldPortalValues = context.Portals.Include("Languages").Include("Specializations").Include("Kits").Include("NotificationEventTypes").Where(p => p.Id == portalId).FirstOrDefault();
+            Portal portal = context.Portals.Where(x => x.Id == clonedPortal.Id).FirstOrDefault();
+            foreach (var lang in oldPortalValues.Languages)
+            {
+                portal.Languages.Add(lang);
+            }
+            foreach (var specialization in oldPortalValues.Specializations)
+            {
+                portal.Specializations.Add(specialization);
+            }
+            portal.Kits = oldPortalValues.Kits;
+            portal.NotificationEventTypes = oldPortalValues.NotificationEventTypes;
+            context.Portals.Attach(portal);
+            context.Entry(portal).State = EntityState.Modified;
+            context.SaveChanges();
             return clonedPortal.Id;
         }
     }

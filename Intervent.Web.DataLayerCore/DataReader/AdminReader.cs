@@ -329,7 +329,7 @@ namespace Intervent.Web.DataLayer
             var totalRecords = request.TotalRecords.HasValue ? request.TotalRecords.Value : 0;
             if (totalRecords == 0)
             {
-                totalRecords = dbcontext.Newsletter.Count();
+                totalRecords = dbcontext.Newsletters.Count();
 
             }
             if (request.PageSize == 0)
@@ -337,7 +337,7 @@ namespace Intervent.Web.DataLayer
                 request.PageSize = totalRecords;
             }
             var newsletters = new List<Newsletter>();
-            newsletters = dbcontext.Newsletter.OrderByDescending(x => x.Id).Skip(request.Page * request.PageSize).Take(request.PageSize).ToList();
+            newsletters = dbcontext.Newsletters.OrderByDescending(x => x.Id).Skip(request.Page * request.PageSize).Take(request.PageSize).ToList();
             response.Newsletters = Utility.mapper.Map<IList<DAL.Newsletter>, IList<NewsletterDto>>(newsletters);
             response.TotalRecords = totalRecords;
             return response;

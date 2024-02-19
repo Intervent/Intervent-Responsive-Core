@@ -238,7 +238,7 @@ namespace Intervent.DAL
         public virtual DbSet<CanriskPostalCode> CanriskPostalCodes { get; set; }
         public virtual DbSet<CanriskTracking> CanriskTrackings { get; set; }
         public virtual DbSet<Languages> Languages { get; set; }
-        public virtual DbSet<Newsletter> Newsletter { get; set; }
+        public virtual DbSet<Newsletter> Newsletters { get; set; }
         public virtual DbSet<AssignedNewsletter> AssignedNewsletters { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<MessageRecipient> MessageRecipients { get; set; }
