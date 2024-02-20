@@ -31,7 +31,7 @@ namespace InterventWebApp
         /// <param name="date">Current System Date for request validation</param>
         /// <param name="assessmentDate">AWV Assessment Date</param>
         /// <returns>Reports the one time token</returns>      
-        //[RequireHttps]
+        [RequireHttps]
         [HttpGet("{clientId?}/{userId?}")]
         public GetTokenResponse GetLinkId(string clientId, string userId, [FromQuery] string date, [FromQuery] string assessmentDate)
         {
@@ -46,7 +46,7 @@ namespace InterventWebApp
         /// <param name="date">Current System Date for request validation</param>
         /// <param name="data">Post data (from request body) with wellness visit information</param>
         /// <returns>Response Status</returns>
-        //[RequireHttps]
+        [RequireHttps]
         [HttpPost("{clientId?}/{userId?}")]
         public AnnualWellnessVisitStatus Post(string clientId, string userId, [FromQuery] string date, [FromBody] PostAnualWellnessVisitDto data)
         {

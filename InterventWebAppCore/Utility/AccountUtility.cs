@@ -407,7 +407,7 @@ namespace InterventWebApp
                             programRequest.PortalId = participantPortalId;
                             programRequest.systemAdminId = systemAdminId;
                             programReader.UpdateUserinProgram(programRequest);
-                            ProgramUtility.ClearProgramRelatedSessions();
+                            response.isClearProgramRelatedSessions = true;
                         }
                     }
                 }

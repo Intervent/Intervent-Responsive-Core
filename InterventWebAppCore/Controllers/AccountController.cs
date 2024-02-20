@@ -259,11 +259,11 @@ namespace InterventWebApp
             if (!model.SignUpDate.HasValue)
                 model.SignUpDate = DateTime.Now;
             GetEligibilityResponse eligibilityResponse = new GetEligibilityResponse();
-            if (model.OrganizationId != _appSettings.CityofPoolerOrgId.ToString())
+            if (Convert.ToInt32(model.OrganizationId) != _appSettings.CityofPoolerOrgId)
             {
                 errMsg1 = Translate.Message("L4260");
             }
-            if (model.OrganizationId != _appSettings.MetLifeGulfOrgId.ToString())
+            if (Convert.ToInt32(model.OrganizationId) != _appSettings.MetLifeGulfOrgId)
             {
                 var portal = new AccountManager().CurrentPortalId(Convert.ToInt32(model.OrganizationId));
                 var portalId = portal.PortalId;
@@ -833,7 +833,11 @@ namespace InterventWebApp
                 bool coachingProgram = Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.CoachingProgram) != null ? HttpContext.Session.GetString(SessionContext.CoachingProgram) : false);
                 bool selfHelpProgram = Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.SelfHelpProgram) != null ? HttpContext.Session.GetString(SessionContext.SelfHelpProgram) : false);
                 var response = await AccountUtility.UpdateUser(_userManager, model, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetString(SessionContext.UniqueId), portalId, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.UserinProgramId), coachingProgram, selfHelpProgram, _appSettings.SystemAdminId);
-                if (model.user.Gender.HasValue)
+                
+                if (response.isClearProgramRelatedSessions)
+                    ClearProgramRelatedSessions();
+
+				if (model.user.Gender.HasValue)
                     HttpContext.Session.SetInt32(SessionContext.Gender, model.user.Gender.Value);
                 if (model.user.OrganizationId > 0)
                     HttpContext.Session.SetInt32(SessionContext.OrganizationId, model.user.OrganizationId);

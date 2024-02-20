@@ -558,14 +558,6 @@ namespace InterventWebApp
             return Json(response);
         }
 
-        /*private Microsoft.Owin.Security.IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }*/
-
         [HttpGet]
         [ModuleControl(null, RoleCode.Administrator, RoleCode.Coach, RoleCode.CSR)]
         public ActionResult ParticipantHistorySearch(int id)
@@ -1021,11 +1013,6 @@ namespace InterventWebApp
                 if (filetype == 1)
                 {
                     string hl7Value = "";
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        await FileUpload.CopyToAsync(memoryStream);
-                        byte[] fileBytes = memoryStream.ToArray();
-                    }
                     using (var memoryStream = new MemoryStream())
                     {
                         await FileUpload.CopyToAsync(memoryStream);

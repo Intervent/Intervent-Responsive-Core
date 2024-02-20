@@ -150,19 +150,6 @@ namespace InterventWebApp
             return response;
         }
 
-        public static void ClearProgramRelatedSessions()
-        {
-
-            //Note: Need to Clear Sessions
-            //HttpContext.Current.Session[SessionContext.UserinProgramId] = null;
-            //HttpContext.Current.Session[SessionContext.FollowUpId] = null;
-            //HttpContext.Current.Session[SessionContext.FollowUpCompleteDate] = null;
-            //HttpContext.Current.Session[SessionContext.ProgramsInPortalId] = null;
-            //HttpContext.Current.Session[SessionContext.ProgramType] = null;
-            //if (HttpContext.Current.Session[SessionContext.AssignedFollowUp] != null && Convert.ToByte(HttpContext.Current.Session[SessionContext.AssignedFollowUp].ToString()) > 0)
-            //    HttpContext.Current.Session[SessionContext.AssignedFollowUp] = Convert.ToByte(HttpContext.Current.Session[SessionContext.AssignedFollowUp].ToString()) - 1;
-        }
-
         public static UpdateUserinProgramResponse ActivateUserinProgram(int UsersinProgramId, int LoginId, int participantId, int participantPortalId)
         {
             ProgramReader reader = new ProgramReader();

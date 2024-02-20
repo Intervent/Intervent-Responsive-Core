@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using NLog;
 using System.Drawing;
 using System.Text.RegularExpressions;
+using System.Web.Helpers;
 
 namespace InterventWebApp
 {
@@ -58,7 +59,6 @@ namespace InterventWebApp
                             {
                                 await image.CopyToAsync(stream);
                             }
-                            //image.SaveAs(path);
                             return Json(new { data = pdfFiles });
                         }
                     }
@@ -74,7 +74,6 @@ namespace InterventWebApp
                                 {
                                     await image.CopyToAsync(stream);
                                 }
-                                //image.SaveAs(path);
                                 return Json(new { data = fileName, AdminView = TempData["AdminView"] != null ? TempData["AdminView"].ToString() : "False" });
                             }
                         }
@@ -115,7 +114,6 @@ namespace InterventWebApp
                         {
                             await image.CopyToAsync(stream);
                         }
-                        //image.SaveAs(path);
                         return Json(new { data = absolutePath });
                     }
                     else
@@ -296,7 +294,7 @@ namespace InterventWebApp
 
         public async Task<JsonResult> RotateImage(string image, int direction, int userId)
         {
-            /*WebImage photo = new WebImage("../ProfilePictures/" + image);
+            WebImage photo = new WebImage("../ProfilePictures/" + image);
             if (photo != null)
             {
                 var imagePath = "~/ProfilePictures/" + image;
@@ -314,8 +312,8 @@ namespace InterventWebApp
                 image = System.DateTime.Now.ToString("_ddMMyyhhmmss") + image.Substring(13);
                 imagePath = "~/ProfilePictures/" + image;
                 photo.Save(imagePath);
-                await AccountUtility.UploadPicture(userId, image, environment.ContentRootPath + "~/ProfilePictures");
-            }*/
+                await AccountUtility.UploadPicture(_userManager, userId, image, environment.ContentRootPath + "~/ProfilePictures");
+            }
             return Json(new { Image = image });
         }
     }

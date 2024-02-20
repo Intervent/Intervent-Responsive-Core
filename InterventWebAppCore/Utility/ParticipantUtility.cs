@@ -811,7 +811,7 @@ namespace InterventWebApp
             return reader.ApproveForm(request);
         }
 
-        public static string SubmitCanriskQuestionnaire(CanriskModel modelDto, int OrganizationId, bool isEligible, string languagePreference)
+        public static string SubmitCanriskQuestionnaire1(CanriskModel modelDto, int OrganizationId, bool isEligible, string languagePreference)
         {
             ParticipantReader reader = new ParticipantReader();
             SubmitCanriskQuestionnaireRequest request = new SubmitCanriskQuestionnaireRequest();
@@ -858,7 +858,65 @@ namespace InterventWebApp
                     UniqueId = uniqueId,
                     OrganizationId = OrganizationId,
                     Language = !string.IsNullOrEmpty(languagePreference) ? languagePreference : "en-us"
-                };
+				};
+				reader.UpdateUserEligibilitySetting(new UpdateUserEligibilitySettingRequest { UserEligibilitySetting = settingDto });
+			}
+			request.canriskAnswers = model;
+			request.canriskAnswers.isEligible = isEligible;
+			request.canriskAnswers.CompletedOn = DateTime.UtcNow;
+			reader.SubmitCanriskQuestionnaire(request);
+			return uniqueId;
+		}
+
+
+		public static string SubmitCanriskQuestionnaire(CanriskModel modelDto, int OrganizationId, bool isEligible, string languagePreference)
+		{
+			ParticipantReader reader = new ParticipantReader();
+			SubmitCanriskQuestionnaireRequest request = new SubmitCanriskQuestionnaireRequest();
+			CommonReader commonReader = new CommonReader();
+			var model = modelDto.canrisk;
+			var uniqueId = "";
+			if (!model.EligibilityId.HasValue)
+			{
+				AddEditEligibilityRequest eligRequest = new AddEditEligibilityRequest();
+				EligibilityDto eligDto = new EligibilityDto();
+				var names = model.Name.Split(' ');
+				var lastName = names.Length > 1 ? (names.Length > 2 ? names[1] + " " + names[2] : names[1]) : "";
+				if (!String.IsNullOrEmpty(lastName))
+				{
+					var uniqueName = lastName.Length >= 4 ? lastName.Substring(0, 4) : lastName;
+					eligDto.UniqueId = uniqueName + model.DOB.GetValueOrDefault().Year.ToString() + DateTime.UtcNow.ToString("MMddHHmmss");
+				}
+				else if (!String.IsNullOrEmpty(names[0]))
+				{
+					var uniqueName = names[0].Length >= 4 ? names[0].Substring(0, 4) : names[0];
+					eligDto.UniqueId = uniqueName.Substring(0, 4) + model.DOB.GetValueOrDefault().Year.ToString() + DateTime.UtcNow.ToString("MMddHHmmss");
+				}
+				eligDto.FirstName = names[0];
+				eligDto.LastName = !String.IsNullOrEmpty(lastName) ? lastName : "BLANK";
+				eligDto.DOB = model.DOB;
+				eligDto.Gender = model.Gender.HasValue ? (model.Gender == 1 ? GenderDto.Male : GenderDto.Female) : null;
+				eligDto.Zip = model.Zip;
+				eligDto.Email = model.Email.Trim();
+				eligDto.HomeNumber = model.PhoneNumber;
+				eligDto.UserEnrollmentType = EligibilityUserEnrollmentTypeDto.Patient;
+				eligDto.UserStatus = EligibilityUserStatusDto.Active;
+				eligDto.PortalId = new AccountManager().CurrentPortalId(OrganizationId).PortalId ?? 0;
+				eligDto.CreateDate = DateTime.UtcNow;
+				eligRequest.Eligibility = eligDto;
+				var eligResponse = reader.AddEditEligibility(eligRequest);
+				if (!eligResponse.success)
+				{
+					return "";
+				}
+				model.EligibilityId = eligResponse.Eligibility.Id;
+				uniqueId = eligDto.UniqueId;
+				UserEligibilitySettingDto settingDto = new UserEligibilitySettingDto
+				{
+					UniqueId = uniqueId,
+					OrganizationId = OrganizationId,
+					Language = languagePreference
+				};
                 reader.UpdateUserEligibilitySetting(new UpdateUserEligibilitySettingRequest { UserEligibilitySetting = settingDto });
             }
             request.canriskAnswers = model;

@@ -338,7 +338,7 @@ namespace InterventWebApp
             var response = ProgramUtility.UpdateUserinProgram(PrograminPortalId, CoachId, LoginId, InactiveReasonId, Language, AssignedFollowUp, HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetString(SessionContext.OrgContactEmail), HttpContext.Session.GetString(SessionContext.OrgContactNumber), _appSettings.SystemAdminId, UpdateSubscriptionRenewal);
             if (InactiveReasonId.HasValue)
             {
-                ProgramUtility.ClearProgramRelatedSessions();
+                ClearProgramRelatedSessions();
                 var PortalId = Convert.ToInt16(HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value);
                 var participantId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
                 ParticipantUtility.UpdateUserTrackingStatus(participantId, PortalId, true, null, null);   //marking user "Do Not Track" 

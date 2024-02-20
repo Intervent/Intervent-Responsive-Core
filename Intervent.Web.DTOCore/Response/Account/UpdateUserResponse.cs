@@ -13,5 +13,7 @@ namespace Intervent.Web.DTO
         public IEnumerable<IdentityError> error { get; set; }
 
         public string updateUniqueIdResponse { get; set; }
-    }
+
+		public bool isClearProgramRelatedSessions { get; set; }
+	}
 }

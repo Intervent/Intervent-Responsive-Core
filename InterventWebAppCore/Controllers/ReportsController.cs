@@ -838,32 +838,32 @@ namespace InterventWebApp
             switch (view)
             {
                 case "DrSummary":
-                    //viewData = new ViewDataDictionary(GetDrSummaryModel());
+                    viewData = new ViewDataDictionary(GetDrSummaryModel());
                     type = (int)ReportTypes.HRA;
                     refId = HttpContext.Session.GetInt32(SessionContext.HRAId).ToString();
                     break;
                 case "FollowupReportDashboard":
-                    //viewData = new ViewDataDictionary(GetFollowupReportModel());
+                    viewData = new ViewDataDictionary(GetFollowupReportModel());
                     type = (int)ReportTypes.FollowUp;
                     refId = HttpContext.Session.GetInt32(SessionContext.FollowUpId).ToString();
                     break;
                 case "PrintableDetailedPlan":
-                    //viewData = new ViewDataDictionary(GetPrintableDetailedPlan());
+                    viewData = new ViewDataDictionary(GetPrintableDetailedPlan());
                     type = (int)ReportTypes.HRA;
                     refId = HttpContext.Session.GetInt32(SessionContext.HRAId).ToString();
                     break;
                 case "MyActionPlan":
-                    //viewData = new ViewDataDictionary(GetRecommendationsDashboardModel());
+                    viewData = new ViewDataDictionary(GetRecommendationsDashboardModel());
                     break;
                 case "AWVReport":
-                    //viewData = new ViewDataDictionary(GetAWVReportDetails(awvReportId.Value));
+                    viewData = new ViewDataDictionary(GetAWVReportDetails(awvReportId.Value));
                     break;
                 case "KitStepDetails":
-                    //viewData = new ViewDataDictionary(KitUtility.GetKitByIdentifier(HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, kitId.Value, pageIdentifier, kitsInUserProgramsId.Value, languageCode));
+                    viewData = new ViewDataDictionary(KitUtility.GetKitByIdentifier(HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, kitId.Value, pageIdentifier, kitsInUserProgramsId.Value, languageCode));
                     break;
 
                 default:
-                    //viewData = new ViewDataDictionary();
+                    viewData = new ViewDataDictionary();
                     break;
             }
             // The string writer where to render the HTML code of the view

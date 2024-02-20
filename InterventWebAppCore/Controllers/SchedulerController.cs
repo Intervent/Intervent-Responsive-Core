@@ -128,7 +128,7 @@ namespace InterventWebApp
                     HttpContext.Session.SetInt32(SessionContext.NextApptId, response.apptId);
                 }
             }
-            if (response.enrollinProgramResponse != null)
+            if (response.enrollinProgramResponse != null && response.enrollinProgramResponse.success)
             {
                 HttpContext.Session.SetInt32(SessionContext.UserinProgramId, response.enrollinProgramResponse.UsersinProgramId);
                 HttpContext.Session.SetInt32(SessionContext.ProgramsInPortalId, response.enrollinProgramResponse.ProgramsInPortalId);

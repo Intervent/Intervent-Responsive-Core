@@ -1,5 +1,6 @@
 ﻿using Intervent.Web.DataLayer;
 using Intervent.Web.DTO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Net.Http.Headers;
@@ -108,7 +109,19 @@ namespace InterventWebApp
             return false;
         }
 
-        public void ClearParticipantSession()
+		//#NOTE : This method is dupilicated in AccountBaseController (if there is any change here, copy the same to AccountBaseController)
+		public void ClearProgramRelatedSessions()
+		{
+			HttpContext.Session.Remove(SessionContext.UserinProgramId);
+			HttpContext.Session.Remove(SessionContext.FollowUpId);
+			HttpContext.Session.Remove(SessionContext.FollowUpCompleteDate);
+			HttpContext.Session.Remove(SessionContext.ProgramsInPortalId);
+			HttpContext.Session.Remove(SessionContext.ProgramType);
+            if (HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp).HasValue && HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp).Value > 0)
+                HttpContext.Session.SetInt32(SessionContext.AssignedFollowUp, HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp).Value - 1);
+		}
+
+		public void ClearParticipantSession()
         {
             //HttpContext.Session.Clear();
             //HttpContext.Session.Remove(SessionContext.UserId);
@@ -268,7 +281,19 @@ namespace InterventWebApp
         {
             return HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).HasValue ? HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value : (HttpContext.Session.GetInt32(SessionContext.InActiveParticipantPortalId).HasValue ? HttpContext.Session.GetInt32(SessionContext.InActiveParticipantPortalId).Value : 0);
         }
-    }
+
+		//#NOTE : This method is dupilicated in BaseController (if there is any change here, copy the same to BaseController)
+		public void ClearProgramRelatedSessions()
+		{
+			HttpContext.Session.Remove(SessionContext.UserinProgramId);
+			HttpContext.Session.Remove(SessionContext.FollowUpId);
+			HttpContext.Session.Remove(SessionContext.FollowUpCompleteDate);
+			HttpContext.Session.Remove(SessionContext.ProgramsInPortalId);
+			HttpContext.Session.Remove(SessionContext.ProgramType);
+			if (HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp).HasValue && HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp).Value > 0)
+				HttpContext.Session.SetInt32(SessionContext.AssignedFollowUp, HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp).Value - 1);
+		}
+	}
 
     public class AccountExceptionFilter : IExceptionFilter
     {
