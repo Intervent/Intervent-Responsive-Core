@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.1" />
     <PackageReference Include="NLog" Version="5.2.8" />
     <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
@@ -31,11 +32,4 @@
     <ProjectReference Include="..\Intervent.DALCore\Intervent.DALCore.csproj" />
     <ProjectReference Include="..\Intervent.FrameworkCore\Intervent.FrameworkCore.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.Office.Interop.Excel">
-      <HintPath>..\..\..\..\..\..\WINDOWS\assembly\GAC_MSIL\Microsoft.Office.Interop.Excel\15.0.0.0__71e9bce111e9429c\Microsoft.Office.Interop.Excel.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
