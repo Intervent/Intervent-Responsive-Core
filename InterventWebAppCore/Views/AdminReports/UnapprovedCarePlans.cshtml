@@ -84,7 +84,7 @@
 <script src="@Url.Content("../Scripts/downloadcsv.js")?v=@CommonUtility.GetRandom()"></script>
 <script>
     var startIndex = 1;
-    var pageSize = 10;
+    var pageSize = 15;
     var totalRecords = 0;
     var currentPage = 0;
     var totalPages = 0;
@@ -107,7 +107,7 @@
         $('[show-if-submitting]').parent().prop('disabled', 'disabled');
         $('[show-if-submitting]').removeClass('hide');
         startIndex = 0;
-        pageSize = 10;
+        pageSize = 15;
         totalRecords = 0;
         currentPage = 0;
         totalPages = 0;

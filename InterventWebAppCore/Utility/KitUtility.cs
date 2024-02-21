@@ -579,7 +579,7 @@ namespace InterventWebApp
             return reader.GetKitsActionGoals(request);
         }
 
-        public static bool AddKittoPrograms(int kitId, string organizationIds, string participantLanguagePreference, int participantId, string orgContactEmail, string orgContactNumber, bool kitAlert)
+        public static bool AddKittoPrograms(int kitId, string organizationIds)
         {
             AccountReader _accountReader = new AccountReader();
             var userlist = _accountReader.FindUsers(new FindUsersRequest() { OrganizationIds = organizationIds?.Split(',')?.Select(Int32.Parse)?.ToList() }).Users.Where(x => x.IsActive && x.UsersinPrograms.Any(y => y.IsActive)).ToList();
@@ -589,7 +589,10 @@ namespace InterventWebApp
                 {
                     var usersinProgram = user.UsersinPrograms.Where(x => x.IsActive).FirstOrDefault();
                     if (usersinProgram != null && !usersinProgram.KitsinUserPrograms.Any(x => x.KitId == kitId))
-                        ProgramUtility.AddKittoUserProgram(usersinProgram.Id, kitId, participantLanguagePreference, participantId, orgContactEmail, orgContactNumber, kitAlert);
+                    {
+                        bool kitAlert = user.Organization.Portals.Where(x => x.Active).FirstOrDefault().KitAlert;
+                        ProgramUtility.AddKittoUserProgram(usersinProgram.Id, kitId, user.LanguagePreference, user.Id, user.Organization.ContactEmail, user.Organization.ContactNumber, kitAlert);
+                    }
                 }
             }
             return true;

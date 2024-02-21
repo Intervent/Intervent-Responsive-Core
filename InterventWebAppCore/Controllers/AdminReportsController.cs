@@ -192,7 +192,7 @@ namespace InterventWebApp
             model.IsSuperAdmin = CommonUtility.IsSuperAdmin(User.RoleCode());
             if (BackToReport.HasValue && BackToReport.Value)
             {
-                JsonConvert.DeserializeObject<FilterReportTempData>(TempData["filterReportData"] as string);
+                model.tempData = JsonConvert.DeserializeObject<FilterReportTempData>(TempData["filterReportData"] as string);
             }
             model.OrganizationList = PortalUtility.GetFilteredOrganizationsList(HttpContext.Session.GetInt32(SessionContext.UserId).Value).Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() }).OrderBy(x => x.Text);
             model.DateFormat = model.DateFormat = HttpContext.Session.GetString(SessionContext.DateFormat);
@@ -246,7 +246,7 @@ namespace InterventWebApp
         {
             if (BackToReport.HasValue && BackToReport.Value)
             {
-                JsonConvert.DeserializeObject<FilterReportTempData>(TempData["filterReportData"] as string);
+                model.tempData = JsonConvert.DeserializeObject<FilterReportTempData>(TempData["filterReportData"] as string);
             }
             model.IsSuperAdmin = CommonUtility.IsSuperAdmin(User.RoleCode());
             model.OrganizationList = PortalUtility.GetFilteredOrganizationsList(HttpContext.Session.GetInt32(SessionContext.UserId).Value).Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() }).OrderBy(x => x.Text);
@@ -389,7 +389,7 @@ namespace InterventWebApp
         {
             if (BackToReport.HasValue && BackToReport.Value)
             {
-                JsonConvert.DeserializeObject<FilterReportTempData>(TempData["filterReportData"] as string);
+                model.tempData = JsonConvert.DeserializeObject<FilterReportTempData>(TempData["filterReportData"] as string);
             }
             model.IsSuperAdmin = CommonUtility.IsSuperAdmin(User.RoleCode());
             model.OrganizationList = PortalUtility.GetFilteredOrganizationsList(HttpContext.Session.GetInt32(SessionContext.UserId).Value).Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() }).OrderBy(x => x.Text);

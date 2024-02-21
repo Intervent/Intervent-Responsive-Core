@@ -121,6 +121,16 @@ namespace InterventWebApp
         }
 
         [Authorize]
+        public ActionResult RecipesNew()
+        {
+            RecipeModel model = new RecipeModel();
+            model.foodGroups = RecipeUtility.ListTags().Where(x => x.TagTypeId == 1).Select(x => new SelectListItem { Text = Translate.Message(x.LanguageCode), Value = x.Id.ToString() });
+            model.courses = RecipeUtility.ListTags().Where(x => x.TagTypeId == 2).Select(x => new SelectListItem { Text = Translate.Message(x.LanguageCode), Value = x.Id.ToString() });
+            model.features = RecipeUtility.ListTags().Where(x => x.TagTypeId == 3).Select(x => new SelectListItem { Text = Translate.Message(x.LanguageCode), Value = x.Id.ToString() });
+            return View(model);
+        }
+
+        [Authorize]
         public JsonResult SearchRecipes(string recipeName, int? foodGroup, int? course, int? feature, int page, int pageSize, int? totalRecords)
         {
             RecipeModel model = new RecipeModel();

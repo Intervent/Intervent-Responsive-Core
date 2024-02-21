@@ -770,11 +770,11 @@ namespace Intervent.Web.DataLayer
                 stepinKit.IsSubStep = request.stepsinKits.IsSubStep;
                 stepinKit.IsAppendix = request.stepsinKits.IsAppendix;
                 stepinKit.IsGoal = request.stepsinKits.IsGoal;
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     context1.StepsinKits.Add(stepinKit);
                     context1.SaveChanges();
-                }*/
+                }
                 response.StepId = stepinKit.Id;
             }
             response.success = true;
@@ -1575,11 +1575,11 @@ namespace Intervent.Web.DataLayer
                 questioninActivity.IsActive = request.activityinStep.IsActive;
                 questioninActivity.AllowUpdate = request.activityinStep.AllowUpdate;
                 questioninActivity.SequenceNo = short.Parse(request.activityinStep.SequenceNo.ToString());
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     context1.ActivitiesinSteps.Add(questioninActivity);
                     context1.SaveChanges();
-                }*/
+                }
                 response.activityId = questioninActivity.Id;
             }
             response.success = true;
@@ -1632,11 +1632,11 @@ namespace Intervent.Web.DataLayer
                 questioninActivity.ShowVertical = request.questioninActivity.ShowVertical;
                 questioninActivity.ParentId = request.questioninActivity.ParentId;
                 questioninActivity.OptionsforActivityQuestion = null;
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     context1.QuestionsinActivities.Add(questioninActivity);
                     context1.SaveChanges();
-                }*/
+                }
                 response.QuestionId = questioninActivity.Id;
             }
             response.success = true;
@@ -1727,11 +1727,11 @@ namespace Intervent.Web.DataLayer
                 {
                     options.IsActive = true;
                 }
-                /* using (var context1 = new InterventDatabase())
+                 using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                  {
                      context1.OptionsforActivityQuestions.Add(options);
                      context1.SaveChanges();
-                 }*/
+                 }
                 response.id = options.Id;
             }
             response.success = true;
@@ -1898,11 +1898,11 @@ namespace Intervent.Web.DataLayer
                 quizinKit.QuizType = request.quizinKit.QuizType;
                 quizinKit.StepId = request.quizinKit.StepId;
                 quizinKit.IsActive = request.quizinKit.IsActive;
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     context1.QuizinSteps.Add(quizinKit);
                     context1.SaveChanges();
-                }*/
+                }
                 response.QuizId = quizinKit.Id;
             }
             response.success = true;
@@ -1963,11 +1963,11 @@ namespace Intervent.Web.DataLayer
                 options.QuizId = request.optionforQuiz.QuizId;
                 options.IsActive = request.optionforQuiz.IsActive;
                 options.IsDefault = request.optionforQuiz.IsDefault;
-                /* using (var context1 = new InterventDatabase())
+                 using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                  {
                      context1.OptionsforQuizs.Add(options);
                      context1.SaveChanges();
-                 }*/
+                 }
             }
             response.success = true;
             var optionList = context.OptionsforQuizs.Where(x => x.QuizId == request.optionforQuiz.QuizId).ToList();
