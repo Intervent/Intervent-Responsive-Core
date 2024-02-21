@@ -12,7 +12,8 @@ namespace Intervent.Business
     public class CRMManager : BaseManager
     {
         private static List<CRM_DispositionsDto> dispositions;
-        private static string _intuityOrgId = ConfigurationManager.AppSettings["IntuityOrgId"];
+        private static int _intuityOrgId = Convert.ToInt32(ConfigurationManager.AppSettings["IntuityOrgId"]);
+        private static int SystemAdminId = Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]);
 
         public int GetIntuityInboundOutboundCallData()
         {
@@ -300,7 +301,7 @@ namespace Intervent.Business
                     note.CRM_Contacts.OptedIn = 3;
                 addRequest.crm_Contact = note.CRM_Contacts;
                 addRequest.userId = SystemAdminId;
-                addRequest.intuityOrgId = int.Parse(_intuityOrgId);
+                addRequest.intuityOrgId = _intuityOrgId;
                 return reader.AddEditCRMProfile(addRequest).contactId;
             }
             return contact.Id;

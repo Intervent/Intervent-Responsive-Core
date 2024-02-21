@@ -26,7 +26,9 @@ namespace Intervent.Business
 
         public static string ClientSecret = ConfigurationManager.AppSettings["GoogleFitClientSecret"];
 
-        public GoogleFitManager() { }
+        public int SystemAdminId = Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]);
+
+		public GoogleFitManager() { }
 
         public GoogleFitManager(int systemAdminId)
         {

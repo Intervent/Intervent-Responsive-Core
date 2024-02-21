@@ -264,7 +264,7 @@ namespace Intervent.Business
                     if (weightList.weight.Count() > 0)
                     {
                         foreach (var weight in weightList.weight)
-                            externalReader.AddExtWeight(AddWeight(device.UserId, weight), SystemAdminId);
+                            externalReader.AddExtWeight(AddWeight(device.UserId, weight), Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]));
                     }
                 }
                 else

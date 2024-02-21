@@ -21,6 +21,7 @@ namespace Intervent.Business
 
         private readonly string _captivaFolderPath = ConfigurationManager.AppSettings["CaptivaFolderPath"];
         private readonly int captivaOrgId = Convert.ToInt16(ConfigurationManager.AppSettings["captivaOrgId"]);
+        private readonly int SystemAdminId = Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]);
 
         public void ProcessCaptivaSubjectFiles()
         {

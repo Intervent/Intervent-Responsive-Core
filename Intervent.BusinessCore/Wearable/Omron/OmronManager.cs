@@ -26,7 +26,9 @@ namespace Intervent.Business
 
         public static string ClientSecret = ConfigurationManager.AppSettings["OmronClientSecret"];
 
-        public OmronManager() { }
+		public int SystemAdminId = Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]);
+
+		public OmronManager() { }
 
         public OmronManager(int systemAdminId, string omronApiUrl, string omronClientId, string omronClientSecret, string omronRedirectUrl)
         {
@@ -190,7 +192,7 @@ namespace Intervent.Business
                         {
                             int offsetFromUTC = device.OffsetFromUTC.HasValue ? device.OffsetFromUTC.Value : 0;
                             foreach (var weight in logList.result.weight)
-                                externalReader.AddExtWeight(AddWeight(device.UserId, weight), SystemAdminId);
+                                externalReader.AddExtWeight(AddWeight(device.UserId, weight), Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]));
                         }
 
                         if (logList.result != null && logList.result.bloodPressure != null && logList.result.bloodPressure.Count() > 0)

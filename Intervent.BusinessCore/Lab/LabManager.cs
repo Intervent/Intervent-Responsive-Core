@@ -10,7 +10,7 @@ using static Intervent.Web.DTO.ListOptions;
 
 namespace Intervent.Business
 {
-    public class LabManager : BaseManager
+    public class LabManager
     {
         const int LMCPortalId = 46;
         public int ProcessDynacareLabs()
@@ -164,7 +164,7 @@ namespace Intervent.Business
                     labRequest.SaveNew = true;
                     labRequest.Id = labDto.Id;
                     labRequest.HRAValidity = portal.portal.HRAValidity ?? 45;
-                    labRequest.updatedBy = SystemAdminId;
+                    labRequest.updatedBy = Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]);
                     if (userParticipation.usersinProgram != null)
                         labRequest.userinprogramId = userParticipation.usersinProgram.Id;
                     labRequest.overrideCurrentValue = true;

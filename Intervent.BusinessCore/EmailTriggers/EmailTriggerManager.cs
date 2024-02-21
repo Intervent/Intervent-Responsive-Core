@@ -12,7 +12,7 @@ namespace Intervent.Business.EmailTriggers
         NotificationManager _NotificationManager;
         AccountReader _AccountReader;
         CommonReader commonReader = new CommonReader();
-        private static string EmailUrl = ConfigurationManager.AppSettings["EmailUrl"];
+        private static string BaseUrl = ConfigurationManager.AppSettings["EmailUrl"];
 
         public EmailTriggerManager()
         {
@@ -142,7 +142,7 @@ namespace Intervent.Business.EmailTriggers
                 notifyEventDto.UserId = user.Id;
                 NotificationXsltDataPacketDto xsltDto = new NotificationXsltDataPacketDto();
                 string token = user.Id + ";" + user.Email;
-                xsltDto.UnsubscribeURL = EmailUrl + "/Account/EmailSubscription?token=" + commonReader.Encrypt(token);
+                xsltDto.UnsubscribeURL = BaseUrl + "/Account/EmailSubscription?token=" + commonReader.Encrypt(token);
                 notifyEventDto.DataPacket = DTOUtil.SerializeObjectToXml<NotificationXsltDataPacketDto>(xsltDto);
                 notificationRequest.NotificationEvent = notifyEventDto;
                 var notificationResponse = _notificationManager.AddOrEditNotificationEvent(notificationRequest);

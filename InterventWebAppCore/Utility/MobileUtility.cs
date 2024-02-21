@@ -9,7 +9,6 @@ namespace InterventWebApp
 {
     public class MobileUtility
     {
-        public static string EmailUrl = "http://uat.myintervent.com/InterventWebApp";
         public static UserIdentity GetUserSession(ClaimsIdentity identity)
         {
             try
@@ -44,13 +43,12 @@ namespace InterventWebApp
             }
         }
 
-        public static object GetUserNotifications(int participantId, string timeZone, string timeZoneName)
+        public static object GetUserNotifications(int participantId, string timeZone, string timeZoneName, string baseUrl)
         {
             try
             {
                 AccountReader accountReader = new AccountReader();
                 NotificationsResponse response = new NotificationsResponse();
-                string baseUrl = EmailUrl;
                 var user = accountReader.GetBasicUserInfo(participantId);
                 var dateFormat = user.Country1 != null ? user.Country1.DateFormat : "MM/dd/yyyy";
                 var notification = ParticipantUtility.GetDashboadMessages(participantId, 0, 10, null, user.Organization.Portals.Where(x => x.Active == true).FirstOrDefault().StartDate.ToString(), true, timeZone, timeZoneName, dateFormat, (int)NotificationTypes.Notification, true);
@@ -107,7 +105,7 @@ namespace InterventWebApp
             }
         }
 
-        public static DashBoardModel GetDashBoardModel(int participantId, string timeZone, string expirationUrl)
+        public static DashBoardModel GetDashBoardModel(int participantId, string timeZone, string expirationUrl, string baseUrl)
         {
             AccountReader accountReader = new AccountReader();
             DeviceReader reader = new DeviceReader();
@@ -117,7 +115,6 @@ namespace InterventWebApp
             string hraCompleteDate = "";
             try
             {
-                string baseUrl = EmailUrl;
                 string picturePath = baseUrl + "/Images/mobile/";
                 string profilePicturePath = "/ProfilePictures/";
                 var connectedDevices = WearableUtility.GetUserWearableDevices(participantId);
@@ -455,14 +452,13 @@ namespace InterventWebApp
             }
         }
 
-        public static UserProfile GetUserProfile(int participantId, string deviceId)
+        public static UserProfile GetUserProfile(int participantId, string deviceId, string baseUrl)
         {
             try
             {
                 AccountReader accountReader = new AccountReader();
                 CommonReader commonReader = new CommonReader();
                 MobileReader mobileReader = new MobileReader();
-                string baseUrl = EmailUrl;
                 string picturePath = "/ProfilePictures/";
                 var user = accountReader.GetBasicUserInfo(participantId, false, true);
                 var dateFormat = user.Country1 != null ? user.Country1.DateFormat : "MM/dd/yyyy";
@@ -570,13 +566,12 @@ namespace InterventWebApp
             }
         }
 
-        public static FeedsResponse GetUserFeeds(int participantId, string timeZone, string timeZoneName)
+        public static FeedsResponse GetUserFeeds(int participantId, string timeZone, string timeZoneName, string baseUrl)
         {
             try
             {
                 AccountReader accountReader = new AccountReader();
                 FeedsResponse response = new FeedsResponse();
-                string baseUrl = EmailUrl;
                 var user = accountReader.GetBasicUserInfo(participantId);
                 var dateFormat = user.Country1 != null ? user.Country1.DateFormat : "MM/dd/yyyy";
                 var feeds = ParticipantUtility.GetDashboadMessages(participantId, 0, 10, null, user.Organization.Portals.Where(x => x.Active == true).FirstOrDefault().StartDate.ToString(), true, timeZone, timeZoneName, dateFormat, (int)NotificationTypes.Feed, false);
@@ -608,12 +603,11 @@ namespace InterventWebApp
             }
         }
 
-        public static WearableResponse GetWearableDetails(int participantId, string deviceId)
+        public static WearableResponse GetWearableDetails(int participantId, string deviceId, string baseUrl)
         {
             try
             {
                 WearableResponse response = new WearableResponse();
-                string baseUrl = EmailUrl;
                 var deviceTypes = WearableUtility.GetWearableDevices(null);
                 var allConnectedDevices = WearableUtility.GetUserWearableDevices(participantId);
                 var webConnectedDevices = allConnectedDevices.Where(x => x.WearableDevice.Type == (int)WearableDeviceType.Web).ToList();
@@ -999,11 +993,10 @@ namespace InterventWebApp
             }
         }
 
-        public static List<Message> GetMessages(int userId, int messageId, string timeZone, int systemAdminId)
+        public static List<Message> GetMessages(int userId, int messageId, string timeZone, int systemAdminId, string baseUrl)
         {
             try
             {
-                string baseUrl = EmailUrl;
                 List<Message> model = new List<Message>();
                 var messages = MessageUtility.GetMessageDetails(userId, 0, messageId, true, false, timeZone, false, systemAdminId);
                 if (messages.Messages != null)
@@ -1048,11 +1041,10 @@ namespace InterventWebApp
             }
         }
 
-        public static List<Message> AddMessage(int userId, int systemAdminId, AddMessageRequest request, string timeZone, string role)
+        public static List<Message> AddMessage(int userId, int systemAdminId, AddMessageRequest request, string timeZone, string role, string baseUrl)
         {
             try
             {
-                string baseUrl = EmailUrl;
                 int? parentMessageId = null;
                 if (request.parent_message_id != 0)
                     parentMessageId = request.parent_message_id;
@@ -1060,7 +1052,7 @@ namespace InterventWebApp
                 if (updateResponse.updatedId != 0)
                 {
                     int msgId = parentMessageId != null ? request.parent_message_id : updateResponse.updatedId;
-                    return GetMessages(userId, msgId, timeZone, systemAdminId);
+                    return GetMessages(userId, msgId, timeZone, systemAdminId, baseUrl);
                 }
                 return new List<Message>();
             }
@@ -1106,11 +1098,10 @@ namespace InterventWebApp
             }
         }
 
-        public static string GetWatchVideo(int userId)
+        public static string GetWatchVideo(int userId, string baseUrl)
         {
             try
             {
-                string baseUrl = EmailUrl;
                 return baseUrl + "/WatchVideo/testVideo.mp4";
             }
             catch (Exception ex)

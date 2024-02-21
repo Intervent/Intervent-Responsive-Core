@@ -163,7 +163,7 @@ namespace Intervent.Business
                         healthDataRequest.HealthData.UserId = lab.UserId;
                         healthDataRequest.HealthData.Weight = lab.Weight.Value;
                         healthDataRequest.HealthData.Source = (int)HealthDataSource.HRA;
-                        healthDataRequest.HealthData.CreatedBy = SystemAdminId;
+                        healthDataRequest.HealthData.CreatedBy = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["SystemAdminId"]);
                         healthDataRequest.HealthData.CreatedOn = DateTime.UtcNow;
                     }
                 }
@@ -188,7 +188,7 @@ namespace Intervent.Business
             var portal = portalReader.ReadPortal(new ReadPortalRequest { portalId = lab.PortalId }).portal;
             if (lab.BloodTestDate.HasValue)
             {
-                hraReader.UpdateHealthNumbersFromLab(new UpdateHealthNumbersFromLabRequest { lab = lab, HRAValidity = portal.HRAValidity.HasValue ? portal.HRAValidity.Value : 30, overrideCurrentValue = true, updatedBy = SystemAdminId });
+                hraReader.UpdateHealthNumbersFromLab(new UpdateHealthNumbersFromLabRequest { lab = lab, HRAValidity = portal.HRAValidity.HasValue ? portal.HRAValidity.Value : 30, overrideCurrentValue = true, updatedBy = Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]) });
             }
         }
 
@@ -198,7 +198,7 @@ namespace Intervent.Business
             ParticipantReader part_reader = new ParticipantReader();
             var user = part_reader.ReadUserParticipation(new ReadUserParticipationRequest { UserId = lab.UserId });
             if (user.usersinProgram != null)
-                followUpReader.UpdateFUHealthNumbersfromLab(new UpdateFUHealthNumbersfromLabRequest { Lab = lab, UsersInProgramsId = user.usersinProgram.Id, updatedBy = SystemAdminId });
+                followUpReader.UpdateFUHealthNumbersfromLab(new UpdateFUHealthNumbersfromLabRequest { Lab = lab, UsersInProgramsId = user.usersinProgram.Id, updatedBy = Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]) });
         }
 
         public void LabReminder()

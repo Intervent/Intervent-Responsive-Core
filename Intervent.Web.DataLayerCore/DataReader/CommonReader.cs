@@ -4,6 +4,7 @@ using Intervent.HWS.Model.FCM;
 using Intervent.Web.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
 using NLog;
 using OfficeOpenXml;
 using System;
@@ -497,10 +498,8 @@ namespace Intervent.Web.DataLayer
                 context.UserDashboardMessages.Add(userMessage);
                 context.SaveChanges();
 
-                bool requiresHttps;
-                bool.TryParse(ConfigurationManager.AppSettings["RequiresHttps"], out requiresHttps);
-                /* if (requiresHttps && userMessage.Status == (byte)MessageStatus.NotSent && userMessage.DashboardMessageType.NotificationType != (int)NotificationTypes.Feed)
-                 {
+                if (userMessage.Status == (byte)MessageStatus.NotSent && userMessage.DashboardMessageType.NotificationType != (int)NotificationTypes.Feed)
+                {
                      var user = deviceDetails.FirstOrDefault().User;
                      string language = string.IsNullOrEmpty(user.LanguagePreference) ? "en-US" : user.LanguagePreference.ToLower();
                      if (userMessage.RelatedId.HasValue && userMessage.DashboardMessageType.Type == "Appointment")
@@ -536,7 +535,7 @@ namespace Intervent.Web.DataLayer
                      {
                          SendNotification(userId, device.DeviceId, device.Token, userMessage.DashboardMessageType.Subject, userMessage.Message, userMessage.Id);
                      }
-                 }*/
+                 }
             }
         }
 
@@ -545,7 +544,7 @@ namespace Intervent.Web.DataLayer
             LogReader logreader = new LogReader();
             try
             {
-                string fileName = "";//System.Web.Hosting.HostingEnvironment.MapPath("~/intervent-mobile-apps-firebase-adminsdk-9k8vh-d3a3410a49.json"); string scopes = "https://www.googleapis.com/auth/firebase.messaging";
+                string fileName = AppDomain.CurrentDomain.BaseDirectory + "~/intervent-mobile-apps-firebase-adminsdk-9k8vh-d3a3410a49.json";
                 string scopes = "https://www.googleapis.com/auth/firebase.messaging"; 
                 var bearertoken = "";
                 using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
@@ -593,6 +592,7 @@ namespace Intervent.Web.DataLayer
             }
             return false;
         }
+
         public GetExercisePlanResponse GetExercisePlan(GetExercisePlanRequest request)
         {
 

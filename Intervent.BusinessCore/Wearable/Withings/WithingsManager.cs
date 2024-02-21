@@ -432,7 +432,7 @@ namespace Intervent.Business
                     if (logList.body != null && logList.body.measuregrps != null)
                     {
                         foreach (var weight in logList.body.measuregrps)
-                            externalReader.AddExtWeight(AddWeightLog(device.UserId, weight), SystemAdminId);
+                            externalReader.AddExtWeight(AddWeightLog(device.UserId, weight), Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]));
                     }
                 }
                 else

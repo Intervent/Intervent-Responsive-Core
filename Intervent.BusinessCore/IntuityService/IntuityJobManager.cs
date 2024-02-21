@@ -361,7 +361,7 @@ namespace Intervent.Business
                         {
                             VerifyIntuityUserRequest request = new VerifyIntuityUserRequest();
                             request.emailId = elig.Email2.ToLower(); //Patterns email
-                            if (org.Code == "DTCOrgCode")
+                            if (org.Code == ConfigurationManager.AppSettings["DTCOrgCode"])
                                 request.shopifyCustomerNumber = elig.UniqueId;
                             else
                                 request.UniqueId = elig.UniqueId;

@@ -197,7 +197,7 @@ namespace Intervent.Business
                         {
                             reportRunning = client.isReportRunning(res, 0);
                         }
-                        /*if (!reportRunning)
+                        if (!reportRunning)
                         {
                             reportRowData response = client.getReportResult(res);
                             var records = response.records.Where(x => (x.values[2].ToLower().Contains("outreach") ||
@@ -240,7 +240,7 @@ namespace Intervent.Business
                                     }
                                 }
                             }
-                        }*/
+                        }
                     }
                 }
             }

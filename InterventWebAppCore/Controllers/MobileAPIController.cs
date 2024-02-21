@@ -39,7 +39,7 @@ namespace InterventWebApp.Controllers
             var userIdentity = MobileUtility.GetUserSession((ClaimsIdentity)User.Identity);
             if (userIdentity != null && userIdentity.UserId != 0)
             {
-                var response = MobileUtility.GetDashBoardModel(userIdentity.UserId, userIdentity.TimeZone, userIdentity.ExpirationUrl);
+                var response = MobileUtility.GetDashBoardModel(userIdentity.UserId, userIdentity.TimeZone, userIdentity.ExpirationUrl, _appSettings.EmailUrl);
                 if (response != null)
                     return Ok(response);
                 else
@@ -57,7 +57,7 @@ namespace InterventWebApp.Controllers
             var userIdentity = MobileUtility.GetUserSession((ClaimsIdentity)User.Identity);
             if (userIdentity != null && userIdentity.UserId != 0)
             {
-                var response = MobileUtility.GetUserProfile(userIdentity.UserId, userIdentity.DeviceId);
+                var response = MobileUtility.GetUserProfile(userIdentity.UserId, userIdentity.DeviceId, _appSettings.EmailUrl);
                 if (response != null)
                     return Ok(response);
                 else
@@ -75,7 +75,7 @@ namespace InterventWebApp.Controllers
             var userIdentity = MobileUtility.GetUserSession((ClaimsIdentity)User.Identity);
             if (userIdentity != null && userIdentity.UserId != 0)
             {
-                var response = MobileUtility.GetUserFeeds(userIdentity.UserId, userIdentity.TimeZone, userIdentity.TimeZoneName);
+                var response = MobileUtility.GetUserFeeds(userIdentity.UserId, userIdentity.TimeZone, userIdentity.TimeZoneName, _appSettings.EmailUrl);
                 if (response != null)
                     return Ok(response);
                 else
@@ -107,7 +107,7 @@ namespace InterventWebApp.Controllers
             var userIdentity = MobileUtility.GetUserSession((ClaimsIdentity)User.Identity);
             if (userIdentity != null && userIdentity.UserId != 0)
             {
-                var response = MobileUtility.GetWearableDetails(userIdentity.UserId, userIdentity.DeviceId);
+                var response = MobileUtility.GetWearableDetails(userIdentity.UserId, userIdentity.DeviceId, _appSettings.EmailUrl);
                 if (response != null)
                     return Ok(response);
                 else
@@ -125,7 +125,7 @@ namespace InterventWebApp.Controllers
             var userIdentity = MobileUtility.GetUserSession((ClaimsIdentity)User.Identity);
             if (userIdentity != null && userIdentity.UserId != 0)
             {
-                var response = MobileUtility.GetUserNotifications(userIdentity.UserId, userIdentity.TimeZone, userIdentity.TimeZoneName);
+                var response = MobileUtility.GetUserNotifications(userIdentity.UserId, userIdentity.TimeZone, userIdentity.TimeZoneName, _appSettings.EmailUrl);
                 if (response != null)
                     return Ok(response);
                 else
@@ -383,7 +383,7 @@ namespace InterventWebApp.Controllers
             var userIdentity = MobileUtility.GetUserSession((ClaimsIdentity)User.Identity);
             if (userIdentity != null && userIdentity.UserId != 0 && request != null && request.message_id != 0)
             {
-                var response = MobileUtility.GetMessages(userIdentity.UserId, request.message_id, userIdentity.TimeZone, _appSettings.SystemAdminId);
+                var response = MobileUtility.GetMessages(userIdentity.UserId, request.message_id, userIdentity.TimeZone, _appSettings.SystemAdminId, _appSettings.EmailUrl);
                 if (response != null)
                     return Ok(response);
                 else
@@ -403,9 +403,9 @@ namespace InterventWebApp.Controllers
             if (userIdentity != null && userIdentity.UserId != 0 /*&& Request.Content.IsMimeMultipartContent()*/)
             {
                 AddMessageRequest request = new AddMessageRequest();
-                //string filePath = MapPath("~/Messageuploads/");
+                string filePath = _environment.ContentRootPath + "~/Messageuploads/";
                 var provider = new MultipartFormDataStreamProvider("filePath");
-                //await Request.Content.ReadAsMultipartAsync(provider);
+               // await Request.Content.ReadAsMultipartAsync(provider);
                 foreach (var data in provider.Contents)
                 {
                     foreach (var p in data.Headers.ContentDisposition.Parameters)
@@ -463,7 +463,7 @@ namespace InterventWebApp.Controllers
                 if (string.IsNullOrEmpty(request.message))
                     return BadRequest("Message body can't be empty");
 
-                var response = MobileUtility.AddMessage(userIdentity.UserId, _appSettings.SystemAdminId, request, userIdentity.TimeZone, userIdentity.RoleCode);
+                var response = MobileUtility.AddMessage(userIdentity.UserId, _appSettings.SystemAdminId, request, userIdentity.TimeZone, userIdentity.RoleCode, _appSettings.EmailUrl);
                 if (response != null)
                     return Ok(response);
                 else
@@ -559,7 +559,7 @@ namespace InterventWebApp.Controllers
             var userIdentity = MobileUtility.GetUserSession((ClaimsIdentity)User.Identity);
             if (userIdentity != null && userIdentity.UserId != 0)
             {
-                var response = MobileUtility.GetWatchVideo(userIdentity.UserId);
+                var response = MobileUtility.GetWatchVideo(userIdentity.UserId, _appSettings.EmailUrl);
                 if (response != null)
                     return Ok(response);
                 else

@@ -15,7 +15,7 @@ namespace Intervent.Business.FollowUp
             var count = 0;
             try
             {
-                List<UserDto> users = reader.TriggerFollowUp(SystemAdminId);
+                List<UserDto> users = reader.TriggerFollowUp(Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]));
                 NotificationManager _notificationManager = new NotificationManager();
                 count = users.Count();
                 foreach (var user in users)

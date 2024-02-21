@@ -23,6 +23,7 @@ namespace Intervent.Business.Eligibility
         const string UniqueIdColNameFor6 = "SubjectID";
         private readonly string FromINTERVENT = "FromINTERVENT";
 
+
         public IEnumerable<OrganizationDto> GetOrganizationsEligibleForImport()
         {
             return new PortalReader().ListOrganizations(new ListOrganizationsRequest()).Organizations.Where(x => x.Active && (x.Portals.Where(y => y.Active && y.EligibilityImportLoadFlag).Count() > 0));
@@ -336,7 +337,7 @@ namespace Intervent.Business.Eligibility
                                                             if (cellNumberChange != null)
                                                                 phoneNumberText = phoneNumberText + "Cell Number #" + cellNumberChange.NewValue;
                                                             NotesDto noteDto = new NotesDto();
-                                                            noteDto.Admin = SystemAdminId;
+                                                            noteDto.Admin = Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]);
                                                             noteDto.PortalId = newParticipant.PortalId;
                                                             noteDto.userId = user.User.Id;
                                                             noteDto.NotesDate = DateTime.MinValue;
@@ -457,7 +458,7 @@ namespace Intervent.Business.Eligibility
                         {
                             try
                             {
-                                IntuityManager mgr = new IntuityManager();
+                                IntuityManager mgr = new IntuityManager(ConfigurationManager.AppSettings["DTCOrgCode"], ConfigurationManager.AppSettings["EbenOrgCode"], Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]));
                                 mgr.SendEligibilityUpdate(portalId.Value);
                             }
                             catch (Exception ex)

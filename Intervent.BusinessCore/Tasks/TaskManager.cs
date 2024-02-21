@@ -1,4 +1,5 @@
 ﻿using Intervent.Web.DataLayer;
+using System.Configuration;
 
 namespace Intervent.Business.Tasks
 {
@@ -7,7 +8,7 @@ namespace Intervent.Business.Tasks
         public void CreateTaskforMissedAppt()
         {
             AdminReader reader = new AdminReader();
-            reader.CreateTaskforMissedAppt(SystemAdminId);
+            reader.CreateTaskforMissedAppt(Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]));
         }
 
     }

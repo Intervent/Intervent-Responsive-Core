@@ -483,7 +483,7 @@ namespace InterventWebApp.Controllers
                                         var identity = new ClaimsIdentity("InterventOauthLogin");
                                         HttpContext.Session.SetInt32(SessionContext.UserId, user.Id);
                                         HttpContext.Session.SetString(SessionContext.TermsSSO, user.Organization.TermsForSSO.ToString());
-                                        //HttpContext.Session.SetString(SessionContext.TermsAccepted, user.Organization.TermsAccepted.ToString());
+                                        HttpContext.Session.SetString(SessionContext.TermsAccepted, user.TermsAccepted.ToString());
                                         identity.AddClaim(new Claim("UserId", user.Id.ToString()));
                                         identity.AddClaim(new Claim("FullName", user.FirstName + " " + user.LastName));
                                         identity.AddClaim(new Claim("Module", AccountController.GetGroups(user)));

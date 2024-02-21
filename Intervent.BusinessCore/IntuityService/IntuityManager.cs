@@ -11,8 +11,8 @@ namespace Intervent.Business
 {
     public class IntuityManager : BaseManager
     {
+		public const int InvalidReading = 999;
         public int systemAdminId;
-        public const int InvalidReading = 999;
         public string DTCOrgCode;
         public string EbenOrgCode;
 
@@ -20,8 +20,6 @@ namespace Intervent.Business
         IntuityReader _intuityReader = new IntuityReader();
         CommonReader commonReader = new CommonReader();
         PortalReader _portalReader = new PortalReader();
-
-        public IntuityManager() { }
 
         public IntuityManager(string dtcOrgCode, string ebenOrgCode, int systemAdminId)
         {

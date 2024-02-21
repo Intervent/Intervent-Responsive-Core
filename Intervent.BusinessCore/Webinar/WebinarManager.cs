@@ -16,8 +16,9 @@ namespace Intervent.Business
         public static string ClientId = ConfigurationManager.AppSettings["ZoomClientId"];
         public static string ClientSecret = ConfigurationManager.AppSettings["ZoomClientSecret"];
         public static string AccountId = ConfigurationManager.AppSettings["ZoomAccountId"];
+		public static int SystemAdminId = Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]);
 
-        public void GetWebinarDetails()
+		public void GetWebinarDetails()
         {
             LogReader reader = new LogReader();
             try
