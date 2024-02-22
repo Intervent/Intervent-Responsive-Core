@@ -23,10 +23,10 @@ jobs:
           include-prerelease: true
 
       - name: Build with dotnet
-        run: dotnet build InterventWebAppCore.csproj --configuration Release
+        run: dotnet build InterventWebAppCore --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish InterventWebAppCore.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish InterventWebAppCore -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
