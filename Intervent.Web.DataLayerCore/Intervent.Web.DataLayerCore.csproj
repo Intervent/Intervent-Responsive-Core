@@ -7,17 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Remove="Properties\ar-AE.resx" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <CodeAnalysisDictionary Include="Properties\ar-AE.resx">
-      <LastGenOutput>ar-AE.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
-    </CodeAnalysisDictionary>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="EPPlus" Version="7.0.8" />
     <PackageReference Include="Google.Apis.Auth" Version="1.66.0" />
@@ -25,7 +14,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.15" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    
     <PackageReference Include="NLog" Version="5.2.8" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
   </ItemGroup>
@@ -41,6 +29,13 @@
     <ProjectReference Include="..\Intervent.DALCore\Intervent.DALCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="Properties\ar-AE.resx">
+      <LastGenOutput>ar-AE.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  
   <ItemGroup>
     <Compile Update="Properties\ar-AE.Designer.cs">
       <DesignTime>True</DesignTime>

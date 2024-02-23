@@ -8,14 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Antlr4 Remove="Areas\**" />
-    <Compile Remove="Areas\**" />
-    <Content Remove="Areas\**" />
-    <EmbeddedResource Remove="Areas\**" />
-    <None Remove="Areas\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Controllers\PaypalController.cs" />
   </ItemGroup>
 
@@ -989,14 +981,6 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="wwwroot\Scripts\js\foundation.d.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\en-US.resx">
-      <SubType>Designer</SubType>
-      <LastGenOutput>en-US.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
