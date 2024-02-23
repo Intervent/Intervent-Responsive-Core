@@ -2335,11 +2335,6 @@ namespace Intervent.DAL
                 .WithOne(e => e.HCPList)
                 .HasForeignKey(e => e.HCPId);
 
-            modelBuilder.Entity<CRM_Contact>()
-                .HasMany(e => e.InsuranceTypes)
-                .WithMany(e => e.CRM_Contacts);
-            // //.Map(m => m.ToTable("CRM_InsuranceTypes")//.MapLeftKey("CRMId")//.MapRightKey("InsuranceType"));
-
             modelBuilder.Entity<IntuityEventType>()
                  .HasMany(e => e.IntuityEvents)
                  .WithOne(e => e.IntuityEventType)
@@ -2913,6 +2908,29 @@ namespace Intervent.DAL
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Drug_ProductsForm_Drug_Products");
             });
-        }
+
+			modelBuilder.Entity<CRM_Contact>(entity =>
+			{
+				entity.ToTable("CRM_Contacts");
+
+				entity.HasMany(d => d.InsuranceTypes).WithMany(p => p.CRM_Contacts)
+					.UsingEntity<Dictionary<string, object>>(
+						"CrmInsuranceType",
+						r => r.HasOne<InsuranceType>().WithMany()
+							.HasForeignKey("InsuranceType")
+							.OnDelete(DeleteBehavior.ClientSetNull)
+							.HasConstraintName("FK_CRM_InsuranceTypes_InsuranceTypes"),
+						l => l.HasOne<CRM_Contact>().WithMany()
+							.HasForeignKey("Crmid")
+							.OnDelete(DeleteBehavior.ClientSetNull)
+							.HasConstraintName("FK_CRM_InsuranceTypes_CRM_Contacts"),
+						j =>
+						{
+							j.HasKey("Crmid", "InsuranceType").HasName("PK_CRMInsuranceTypes");
+							j.ToTable("CRM_InsuranceTypes");
+							j.IndexerProperty<int>("Crmid").HasColumnName("CRMId");
+						});
+			});
+		}
     }
 }

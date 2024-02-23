@@ -26,7 +26,7 @@ namespace Intervent.DAL
 
         public int? CountryId { get; set; }
 
-        public virtual Country Country { get; set; }
+        public virtual Country? Country { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserDoctorInfo> UserDoctorInfoes { get; set; }
