@@ -1006,15 +1006,15 @@ namespace InterventWebApp
                     {
                         if (!(!message.IsSent && !string.IsNullOrEmpty(message.CreatorName)))
                         {
-                            var fileExist = !string.IsNullOrEmpty(message.Attachment) && File.Exists("~/Messageuploads/" + message.Attachment);
+                            var fileExist = !string.IsNullOrEmpty(message.Attachment) && File.Exists(Directory.GetCurrentDirectory().Replace("\\", "/") + "/Messageuploads/" + message.Attachment);
                             if (parent_message_id == 0)
                                 parent_message_id = message.Id;
                             Message newMsg = new Message();
                             newMsg.date = message.CreateDate.ToString("dddd, MMM dd, yyyy, hh:mm tt");
                             newMsg.parent_message_id = parent_message_id;
                             newMsg.attachment_name = fileExist ? message.Attachment : null;
-                            newMsg.attachment_url = fileExist ? baseUrl + "/Messageuploads/" + message.Attachment : null;
-                            newMsg.attachment_size = fileExist ? FileSizeFormatter.FormatSize(new FileInfo("~/Messageuploads/" + message.Attachment).Length) : null;
+                            newMsg.attachment_url = fileExist ? Path.Combine(baseUrl, "/Messageuploads/" + message.Attachment) : null;
+                            newMsg.attachment_size = fileExist ? FileSizeFormatter.FormatSize(("/Messageuploads/" + message.Attachment).Length) : null;
                             newMsg.id = message.Id;
                             newMsg.is_draft = !message.IsSent;
                             newMsg.is_read = message.IsSent && message.MessageRecipients.FirstOrDefault().IsRead;
@@ -1069,8 +1069,8 @@ namespace InterventWebApp
         {
             try
             {
-                if (File.Exists(Path.Combine("~/Messageuploads", request.attachement_name)))
-                    File.Delete(Path.Combine("~/Messageuploads", request.attachement_name));
+                if (File.Exists(Directory.GetCurrentDirectory().Replace("\\", "/") + "/Messageuploads/" + request.attachement_name))
+                    File.Delete(Directory.GetCurrentDirectory().Replace("\\", "/") + "/Messageuploads/" + request.attachement_name);
                 MessageUtility.DeleteAttachment(request.message_id, systemAdminId);
                 return true;
             }

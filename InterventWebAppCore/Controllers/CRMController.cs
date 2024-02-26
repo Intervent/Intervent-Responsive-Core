@@ -2,27 +2,27 @@
 using Intervent.Web.DTO.Diff;
 using InterventWebApp.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System;
 using System.Data;
 using System.Data.OleDb;
 using System.Globalization;
 using System.Web;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace InterventWebApp
 {
-    public class CRMController : BaseController
+	public class CRMController : BaseController
     {
         private readonly AppSettings _appSettings;
         private readonly IHostEnvironment environment;
 
-        public CRMController(IOptions<AppSettings> appSettings)
-        {
-            _appSettings = appSettings.Value;
+        public CRMController(IOptions<AppSettings> appSettings, IHostEnvironment environment)
+		{
+			_appSettings = appSettings.Value;
+			this.environment = environment;
         }
 
         [Authorize]
