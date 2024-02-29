@@ -960,7 +960,7 @@ namespace InterventWebApp
             {
                 if (!string.IsNullOrEmpty(source) && source == "Lab")
                 {
-                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath, "~/Lab", picture));
+                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath + "/Lab", picture));
                     if (CommonUtility.HasAdminRole(User.RoleCode()) && sendEmail.HasValue && sendEmail.Value && !string.IsNullOrEmpty(reason))
                     {
                         string emailReason = ListOptions.GetLabRejectionReasons().FirstOrDefault(x => x.Value == reason).Text;
@@ -972,18 +972,18 @@ namespace InterventWebApp
                 else if (uri.Contains("Recipe"))
                 {
                     var recipeId = uri.Substring(uri.LastIndexOf("/") + 1);
-                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath, "~/images/upload", picture));
+                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath + "/images/upload", picture));
                     RecipeUtility.UpdateImageUrl(int.Parse(recipeId), string.Empty);
                 }
                 else if (!string.IsNullOrEmpty(source) && source.Contains("Forms"))
                 {
                     var userId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
-                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath, "~/FormUploads", picture));
+                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath + "/FormUploads", picture));
                     ParticipantUtility.DeleteUserForm(id.Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value);
                 }
                 else
                 {
-                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath, "~/ProfilePictures", picture));
+                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath + "/ProfilePictures", picture));
                     AccountUtility.DeletePicture(_userManager, id.Value);
                 }
                 return Json("success");

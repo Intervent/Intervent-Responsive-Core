@@ -42,15 +42,15 @@ namespace InterventWebApp
                     if (action.ToLower().Contains("recipe") && image.ContentType.Contains("image"))
                     {
                         var recipeId = uri.Substring(uri.LastIndexOf("/") + 1);
-                        path = Path.Combine(environment.ContentRootPath, "~/images/upload", fileName);
-                        absolutePath = Url.Content("~/images/upload/" + fileName);
+                        path = Path.Combine(environment.ContentRootPath + "/images/upload", fileName);
+                        absolutePath = Url.Content("/images/upload/" + fileName);
                         RecipeUtility.UpdateImageUrl(int.Parse(recipeId), fileName);
                     }
                     else if (action.ToLower().Contains("kit") && image.ContentType.Contains("pdf"))
                     {
                         var kitId = uri.Substring(uri.LastIndexOf("/") + 1);
-                        path = Path.Combine(environment.ContentRootPath, "~/Pdf", image.FileName);
-                        absolutePath = Url.Content("~/Pdf/" + image.FileName);
+                        path = Path.Combine(environment.ContentRootPath + "/Pdf", image.FileName);
+                        absolutePath = Url.Content("/Pdf/" + image.FileName);
                         string pdfFiles = KitUtility.UploadPdf(int.Parse(kitId), image.FileName, langCode).UploadedPdf;
 
                         if (!string.IsNullOrWhiteSpace(path))
@@ -66,7 +66,7 @@ namespace InterventWebApp
                     {
                         if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
                         {
-                            path = Path.Combine(environment.ContentRootPath, "~/Lab", fileName);
+                            path = Path.Combine(environment.ContentRootPath + "/Lab", fileName);
                             LabUtility.UpdateLabResultFile(id, fileName, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.AdminId).HasValue ? HttpContext.Session.GetInt32(SessionContext.AdminId).Value : null, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), User.RoleCode(), null, true);
                             if (!string.IsNullOrWhiteSpace(path))
                             {
@@ -83,7 +83,7 @@ namespace InterventWebApp
                         if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
                         {
                             var userId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
-                            path = Path.Combine(environment.ContentRootPath, "~/IncentiveUploads", fileName);
+                            path = Path.Combine(environment.ContentRootPath + "/IncentiveUploads", fileName);
                             PortalUtility.AddTobaccoIncentive(fileName, userId, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.ProgramsInPortalId).HasValue ? HttpContext.Session.GetInt32(SessionContext.ProgramsInPortalId).Value : null);
                         }
                     }
@@ -92,7 +92,7 @@ namespace InterventWebApp
                         if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
                         {
                             var userId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
-                            path = Path.Combine(environment.ContentRootPath, "~/FormUploads", fileName);
+                            path = Path.Combine(environment.ContentRootPath + "/FormUploads", fileName);
                             absolutePath = fileName;
                             ParticipantUtility.AddUserForm(fileName, userId, formType.Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value);
                         }
@@ -104,9 +104,9 @@ namespace InterventWebApp
                     }
                     else if (image.ContentType.Contains("image"))
                     {
-                        path = Path.Combine(environment.ContentRootPath, "~/ProfilePictures", fileName);
+                        path = Path.Combine(environment.ContentRootPath + "/ProfilePictures", fileName);
                         absolutePath = fileName;
-                        await AccountUtility.UploadPicture(_userManager, id.Value, fileName, environment.ContentRootPath + "~/ProfilePictures");
+                        await AccountUtility.UploadPicture(_userManager, id.Value, fileName, environment.ContentRootPath + "/ProfilePictures");
                     }
                     if (!string.IsNullOrWhiteSpace(path))
                     {
@@ -297,7 +297,7 @@ namespace InterventWebApp
             WebImage photo = new WebImage("../ProfilePictures/" + image);
             if (photo != null)
             {
-                var imagePath = "~/ProfilePictures/" + image;
+                var imagePath = "/ProfilePictures/" + image;
                 if (direction == 1)
                 {
                     photo.FileName = imagePath;
@@ -307,12 +307,12 @@ namespace InterventWebApp
                 {
                     photo.RotateRight();
                 }
-                System.IO.File.Delete(Path.Combine(environment.ContentRootPath, "~/ProfilePictures", image));
+                System.IO.File.Delete(Path.Combine(environment.ContentRootPath + "/ProfilePictures", image));
 
                 image = System.DateTime.Now.ToString("_ddMMyyhhmmss") + image.Substring(13);
-                imagePath = "~/ProfilePictures/" + image;
+                imagePath = "/ProfilePictures/" + image;
                 photo.Save(imagePath);
-                await AccountUtility.UploadPicture(_userManager, userId, image, environment.ContentRootPath + "~/ProfilePictures");
+                await AccountUtility.UploadPicture(_userManager, userId, image, environment.ContentRootPath + "/ProfilePictures");
             }
             return Json(new { Image = image });
         }

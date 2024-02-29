@@ -544,7 +544,7 @@ namespace Intervent.Web.DataLayer
             LogReader logreader = new LogReader();
             try
             {
-                string fileName = AppDomain.CurrentDomain.BaseDirectory + "~/intervent-mobile-apps-firebase-adminsdk-9k8vh-d3a3410a49.json";
+                string fileName = Directory.GetCurrentDirectory().Replace("\\", "/") + "/intervent-mobile-apps-firebase-adminsdk-9k8vh-d3a3410a49.json";
                 string scopes = "https://www.googleapis.com/auth/firebase.messaging"; 
                 var bearertoken = "";
                 using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))

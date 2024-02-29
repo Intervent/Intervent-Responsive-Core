@@ -36,7 +36,7 @@ namespace InterventWebApp
         public JsonResult AddEditNewsLetter(IFormFile FileUpload, int id, string name, string pdf)
         {
             bool Status = false;
-            string targetpath = environment.ContentRootPath + "../Pdf/";
+            string targetpath = environment.ContentRootPath + "/Pdf/";
             if (FileUpload != null || id != 0)
             {
                 if (FileUpload != null)

@@ -1492,7 +1492,7 @@ namespace InterventWebApp
         }
         /*public ActionResult GetPdf(string fileName)
         {
-            var path = environment.ContentRootPath,"~/pdf");
+            var path = environment.ContentRootPath,"/pdf");
             var file = Path.Combine(path, fileName);
             file = Path.GetFullPath(file);
             if (!file.StartsWith(path))

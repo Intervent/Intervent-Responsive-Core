@@ -1097,7 +1097,7 @@ namespace InterventWebApp
             string filename = FileUpload.FileName;
             if (filename.EndsWith(".xlsx"))
             {
-                string targetpath = environment.ContentRootPath + "~/temp/";
+                string targetpath = environment.ContentRootPath + "/temp/";
                 if (!Directory.Exists(targetpath))
                     Directory.CreateDirectory(targetpath);
                 string pathToExcelFile = Path.Combine(targetpath, filename);

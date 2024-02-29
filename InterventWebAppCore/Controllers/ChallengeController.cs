@@ -65,7 +65,7 @@ namespace InterventWebApp.Controllers
 
         public void deleteTobaccoFile(string fileName)
         {
-            string filePath = Path.Combine(environment.ContentRootPath, "~/IncentiveUploads", fileName);
+            string filePath = Path.Combine(environment.ContentRootPath + "/IncentiveUploads", fileName);
             if (System.IO.File.Exists(filePath))
             {
                 System.IO.File.Delete(filePath);

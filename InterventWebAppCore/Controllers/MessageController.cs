@@ -139,7 +139,7 @@ namespace InterventWebApp.Controllers
 
         public JsonResult DeleteAttachment(int MessageId, string AttachmentName)
         {
-            System.IO.File.Delete(Path.Combine(environment.ContentRootPath, "~/Messageuploads", AttachmentName));
+            System.IO.File.Delete(Path.Combine(environment.ContentRootPath + "/Messageuploads", AttachmentName));
             MessageUtility.DeleteAttachment(MessageId, _appSettings.SystemAdminId);
             return Json(new { Result = "OK" });
         }
