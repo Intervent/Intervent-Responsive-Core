@@ -410,13 +410,11 @@
         var organizationIds = selectIds.join(',');
         var modeldata = {};
         modeldata.OrganizationIds = organizationIds;
-        var strData = JSON.stringify({ webinarId: webinarId, organizationIds: organizationIds });
         $.ajax({
             url: "@Url.Action("AssignWebinar", "Webinar")",
+            data: { webinarId: webinarId, organizationIds: organizationIds},
             type: 'POST',
             dataType: "json",
-            contentType: 'application/json, charset=utf-8',
-            data: strData,
             success: function (data) {
                 if (data.Record == true) {
                     GetAssignedWebinarList();

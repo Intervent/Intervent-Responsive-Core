@@ -438,7 +438,7 @@ namespace InterventWebApp
         {
             List<int> taskTypeIndexes = new List<int>();
             List<int?> organizationIndexes = new List<int?>();
-            taskTypeId = taskTypeId != null ? taskTypeId : new int[] { 0 };
+            taskTypeId = taskTypeId != null && taskTypeId.Count() > 0 ? taskTypeId : new int[] { 0 };
             var response = AdminUtility.GetTaskList(startDate, endDate, taskTypeId, ownerId, status, page, pageSize, totalRecords, organizationIds, download, HttpContext.Session.GetInt32(SessionContext.UserId).Value, User.TimeZone());
             TimeZoneInfo custTZone = TimeZoneInfo.FindSystemTimeZoneById(User.TimeZone());
             int?[] OrganizatoinLst = !string.IsNullOrEmpty(organizationIds) ? organizationIds.Split(',').Select(str => (int?)int.Parse(str)).ToArray() : null;

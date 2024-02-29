@@ -66,7 +66,7 @@ namespace Intervent.HWS
                     var content = new FormUrlEncodedContent(new[]
                     {
                         new KeyValuePair<string, string>("grant_type", "account_credentials"),
-                        new KeyValuePair<string, string>("account_id", zoomOAuthURL)
+                        new KeyValuePair<string, string>("account_id", zoomAccountId)
                     });
 
                     HttpResponseMessage response = await client.PostAsync("/oauth/token", content);
