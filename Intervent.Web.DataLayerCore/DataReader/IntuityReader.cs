@@ -502,7 +502,7 @@ namespace Intervent.Web.DataLayer
                 ?? value.ToString();
         }
 
-        public int ProcessFutureAppointmentEvent(int systemAdminId)
+        public int ProcessFutureAppointmentEvent(int systemAdminId, string DTCOrgCode)
         {
             ExternalReader externalReader = new ExternalReader();
             var appointments = context.Appointments.Include("User").Include("User.Organization").Include("User.Organization.Portals")
@@ -520,20 +520,20 @@ namespace Intervent.Web.DataLayer
                     intuityEventRequest.intuityEvent.UniqueId = appointment.User.UniqueId;
                     intuityEventRequest.intuityEvent.EventDate = DateTime.UtcNow;
                     intuityEventRequest.intuityEvent.CreatedBy = systemAdminId;
-                    AddIntuityEvent(intuityEventRequest);
+                    AddIntuityEvent(intuityEventRequest, DTCOrgCode);
                 }
             }
             return appointments.Count;
         }
 
-        public List<IntuityActivityCsvModel> GetIntuityActivityList(int systemAdminId)
+        public List<IntuityActivityCsvModel> GetIntuityActivityList(int systemAdminId, string DTCOrgCode)
         {
             List<IntuityActivityCsvModel> activityList = new List<IntuityActivityCsvModel>();
             //Process records
             var intuityEvents = context.IntuityEvents.Include("IntuityEventType").Where(x => x.Processed == false).ToList();
             foreach (var intuityEvent in intuityEvents)
             {
-                if (!IsOptedOut(intuityEvent.UniqueId))
+                if (!IsOptedOut(intuityEvent.UniqueId, DTCOrgCode))
                 {
                     IntuityActivityCsvModel intuityActivity = new IntuityActivityCsvModel();
                     intuityActivity.EventType = intuityEvent.IntuityEventType.Type;
@@ -552,18 +552,17 @@ namespace Intervent.Web.DataLayer
             return activityList;
         }
 
-        public void AddIntuityEvent(AddIntuityEventRequest request)
+        public void AddIntuityEvent(AddIntuityEventRequest request, string  DTCOrgCode)
         {
-
             string externalUserId = "";
-            if (request.organizationCode == "DTCOrgCode")
+            if (request.organizationCode == DTCOrgCode)
             {
                 ExternalReader externalReader = new ExternalReader();
                 var intuityUser = externalReader.GetIntuityUsersByUserId(request.intuityEvent.UserId);
                 externalUserId = "-" + intuityUser.ExternalUserId;
             }
             request.intuityEvent.UniqueId = request.organizationCode + "-" + request.intuityEvent.UniqueId + externalUserId;
-            if (!IsOptedOut(request.intuityEvent.UniqueId))
+            if (!IsOptedOut(request.intuityEvent.UniqueId, DTCOrgCode))
             {
                 IntuityEvent intuityEvent = new IntuityEvent();
                 intuityEvent.UserId = request.intuityEvent.UserId;
@@ -577,7 +576,7 @@ namespace Intervent.Web.DataLayer
             }
         }
 
-        public bool IsOptedOut(string orgCodeAndUniqueId)
+        public bool IsOptedOut(string orgCodeAndUniqueId, string DTCOrgCode)
         {
             PortalReader portalReader = new PortalReader();
             string uniqueId = orgCodeAndUniqueId.Split('-')[1];
@@ -588,7 +587,7 @@ namespace Intervent.Web.DataLayer
                 var eligibility = context.Eligibilities.Where(x => x.UniqueId == uniqueId && x.PortalId == response.PortalId).FirstOrDefault();
                 if (eligibility == null || eligibility.UserStatus == EligibilityUserStatusDto.Terminated.Key)
                     return true;
-                if (orgCodeAndUniqueId.Split('-').First() == "DTCOrgCode")
+                if (orgCodeAndUniqueId.Split('-').First() == DTCOrgCode)
                     return false;
                 var intuityEligibility = context.IntuityEligibilities.Where(x => x.UniqueId == uniqueId && x.OrganizationId == organizationId && !string.IsNullOrEmpty(x.SerialNumber) && !x.OptingOut.HasValue).FirstOrDefault();
                 if (intuityEligibility != null)

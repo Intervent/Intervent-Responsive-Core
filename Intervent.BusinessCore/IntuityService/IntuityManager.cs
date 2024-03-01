@@ -396,7 +396,7 @@ namespace Intervent.Business
         public void SendEligibilityUpdate(int portalId)
         {
             ExternalReader extReader = new ExternalReader();
-            var uptUserresponse = extReader.GetIntuityUser(portalId, false);
+            var uptUserresponse = extReader.GetIntuityUser(portalId, false, DTCOrgCode);
             if (uptUserresponse != null)
             {
                 foreach (var intUser in uptUserresponse.UserList)

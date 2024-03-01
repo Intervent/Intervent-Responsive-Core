@@ -178,8 +178,8 @@ namespace InterventWebApp
             model.hraPageSeq = HttpContext.Session.GetString(SessionContext.HRAPageSeq);
             model.hraPageSeqDone = HttpContext.Session.GetString(SessionContext.HRAPageSeqDone);
             model.systemAdminId = _appSettings.SystemAdminId;
-
-            var response = HRAUtility.AddEditMedicalCondition(model);
+			model.DTCOrgCode = _appSettings.DTCOrgCode;
+			var response = HRAUtility.AddEditMedicalCondition(model);
             updateHRASessions(response);
             return Json("success");
         }
@@ -248,6 +248,7 @@ namespace InterventWebApp
             model.hraPageSeq = HttpContext.Session.GetString(SessionContext.HRAPageSeq);
             model.hraPageSeqDone = HttpContext.Session.GetString(SessionContext.HRAPageSeqDone);
             model.systemAdminId = _appSettings.SystemAdminId;
+            model.DTCOrgCode = _appSettings.DTCOrgCode;
 
             var response = HRAUtility.AddEditOtherRisks(model);
             updateHRASessions(response);
@@ -300,8 +301,9 @@ namespace InterventWebApp
             model.hraPageSeq = HttpContext.Session.GetString(SessionContext.HRAPageSeq);
             model.hraPageSeqDone = HttpContext.Session.GetString(SessionContext.HRAPageSeqDone);
             model.systemAdminId = _appSettings.SystemAdminId;
+			model.DTCOrgCode = _appSettings.DTCOrgCode;
 
-            var response = HRAUtility.AddEditHSP(model);
+			var response = HRAUtility.AddEditHSP(model);
             updateHRASessions(response);
             return Json("success");
         }
@@ -381,8 +383,9 @@ namespace InterventWebApp
             model.hraPageSeq = HttpContext.Session.GetString(SessionContext.HRAPageSeq);
             model.hraPageSeqDone = HttpContext.Session.GetString(SessionContext.HRAPageSeqDone);
             model.systemAdminId = _appSettings.SystemAdminId;
+			model.DTCOrgCode = _appSettings.DTCOrgCode;
 
-            var response = HRAUtility.AddEditExams(model);
+			var response = HRAUtility.AddEditExams(model);
             updateHRASessions(response);
             return Json("success");
         }
@@ -433,8 +436,8 @@ namespace InterventWebApp
             model.hraPageSeq = HttpContext.Session.GetString(SessionContext.HRAPageSeq);
             model.hraPageSeqDone = HttpContext.Session.GetString(SessionContext.HRAPageSeqDone);
             model.systemAdminId = _appSettings.SystemAdminId;
-
-            var response = HRAUtility.AddEditInterest(model);
+			model.DTCOrgCode = _appSettings.DTCOrgCode;
+			var response = HRAUtility.AddEditInterest(model);
             updateHRASessions(response);
 
             return Json("success");
@@ -725,7 +728,8 @@ namespace InterventWebApp
             model.hraPageSeqDone = HttpContext.Session.GetString(SessionContext.HRAPageSeqDone);
             model.systemAdminId = _appSettings.SystemAdminId;
             model.OrganizationId = HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value;
-            var response = HRAUtility.AddEditHealthNumbers(model, bloodwork);
+			model.DTCOrgCode = _appSettings.DTCOrgCode;
+			var response = HRAUtility.AddEditHealthNumbers(model, bloodwork);
             updateHRASessions(response);
 
             return Json(new { Result = "success" });

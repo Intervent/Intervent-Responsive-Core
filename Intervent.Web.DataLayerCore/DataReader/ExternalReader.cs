@@ -16,19 +16,19 @@ namespace Intervent.Web.DataLayer
             {
                 using (var scope = new System.Transactions.TransactionScope())
                 {
-                    /*using (var context1 = new InterventDatabase())
+                    using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                     {
                         //context1.Configuration.AutoDetectChangesEnabled = false;
                         foreach (EXT_Glucose dal in request)
                         {
                             if (!Exists(dal))
                             {
-                                var response = context1.EXT_Glucose.Add(dal);
-                               // reader.CheckforGlucoseAlert(response);
+                                var response = context1.EXT_Glucose.Add(dal).Entity;
+                                reader.CheckforGlucoseAlert(response);
                                 context1.SaveChanges();
                             }
                         }
-                    }*/
+                    }
 
                     scope.Complete();
                 }
@@ -49,10 +49,10 @@ namespace Intervent.Web.DataLayer
 
                 if (extGlucose == null)
                 {
-                    var response = context.EXT_Glucose.Add(request);
+                    var response = context.EXT_Glucose.Add(request).Entity;
                     context.SaveChanges();
-                    //reader.CheckforGlucoseAlert(response);
-                    //request.Id = response.Id;
+                    reader.CheckforGlucoseAlert(response);
+                    request.Id = response.Id;
                 }
                 else
                 {
@@ -201,7 +201,7 @@ namespace Intervent.Web.DataLayer
             }
         }
 
-        public GetIntuityUserResponse GetIntuityUser(int portalId, bool onlyNew)
+        public GetIntuityUserResponse GetIntuityUser(int portalId, bool onlyNew, string DTCOrgCode)
         {
             GetIntuityUserResponse response = new GetIntuityUserResponse();
             response.UserList = new List<IntuityUserWrapper>();
@@ -224,7 +224,7 @@ namespace Intervent.Web.DataLayer
                 {
                     if (intUser == null)
                     {
-                        if (elig.Portal.Organization.Code == "DTCOrgCode")
+                        if (elig.Portal.Organization.Code == DTCOrgCode)
                         {
                             if (!string.IsNullOrEmpty(elig.Portal.Organization.Code) && elig.CoachingEnabled.HasValue && elig.CoachingEnabled.Value
                                 && elig.CoachingExpirationDate.HasValue && elig.CoachingExpirationDate > DateTime.UtcNow && (!string.IsNullOrEmpty(elig.Email2)
@@ -307,7 +307,7 @@ namespace Intervent.Web.DataLayer
             if (food != null && !string.IsNullOrEmpty(food.Meal))
             {
                 var foodDAL = context.EXT_Nutrition.Where(x => x.UserId == food.UserId && x.ExternalId == food.ExternalId).FirstOrDefault();
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     if (foodDAL != null)
                     {
@@ -322,28 +322,29 @@ namespace Intervent.Web.DataLayer
                         context1.EXT_Nutrition.Add(food);
                     }
                     context1.SaveChanges();
-                }*/
+                }
             }
         }
-
 
         public void AddExtSummary(EXT_Summaries summary)
         {
             var summaryDAL = context.EXT_Summaries.Where(x => x.UserId == summary.UserId && x.ExternalId == summary.ExternalId).FirstOrDefault();
 
-
-            if (summaryDAL != null)
+            using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
-                summary.Id = summaryDAL.Id;
-                summaryDAL = summary;
-                context.EXT_Summaries.Attach(summaryDAL);
-                context.Entry(summaryDAL).State = EntityState.Modified;
+                if (summaryDAL != null)
+                {
+                    summary.Id = summaryDAL.Id;
+                    summaryDAL = summary;
+                    context1.EXT_Summaries.Attach(summaryDAL);
+                    context1.Entry(summaryDAL).State = EntityState.Modified;
+                }
+                else
+                {
+                    context1.EXT_Summaries.Add(summary);
+                }
+                context1.SaveChanges();
             }
-            else
-            {
-                context.EXT_Summaries.Add(summary);
-            }
-            context.SaveChanges();
         }
 
         public void AddExtWeight(EXT_Weights weight, int systemAdminId)
@@ -352,19 +353,22 @@ namespace Intervent.Web.DataLayer
             {
                 var weighDAL = context.EXT_Weights.Where(x => x.UserId == weight.UserId && x.ExternalId == weight.ExternalId).FirstOrDefault();
 
-                if (weighDAL != null)
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
-                    weight.Id = weighDAL.Id;
-                    weighDAL = weight;
-                    context.EXT_Weights.Attach(weighDAL);
-                    context.Entry(weighDAL).State = EntityState.Modified;
+                    if (weighDAL != null)
+                    {
+                        weight.Id = weighDAL.Id;
+                        weighDAL = weight;
+                        context1.EXT_Weights.Attach(weighDAL);
+                        context1.Entry(weighDAL).State = EntityState.Modified;
+                    }
+                    else
+                    {
+                        //context1.Configuration.AutoDetectChangesEnabled = false;
+                        context1.EXT_Weights.Add(weight);
+                    }
+                    context1.SaveChanges();
                 }
-                else
-                {
-                    //context1.Configuration.AutoDetectChangesEnabled = false;
-                    context.EXT_Weights.Add(weight);
-                }
-                context.SaveChanges();
 
                 ParticipantReader participantReader = new ParticipantReader();
                 AddtoHealthDataRequest healthDataRequest = new AddtoHealthDataRequest();
@@ -399,27 +403,27 @@ namespace Intervent.Web.DataLayer
             {
                 if (nutritions != null && nutritions.Count > 0)
                 {
-                    /*using (var context1 = new InterventDatabase())
+                    using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                     {
                         //context1.Configuration.AutoDetectChangesEnabled = false;
                         foreach (var nutrition in nutritions)
                         {
-                            var nutritionDAL = context.EXT_Nutritions.Where(x => x.ExternalId == nutrition.ExternalId && x.Meal == nutrition.Meal && x.Name == nutrition.Name).AsNoTracking().FirstOrDefault();
+                            var nutritionDAL = context.EXT_Nutrition.Where(x => x.ExternalId == nutrition.ExternalId && x.Meal == nutrition.Meal && x.Name == nutrition.Name).FirstOrDefault();
 
                             if (nutritionDAL == null)
                             {
-                                context1.EXT_Nutritions.Add(nutrition);
+                                context1.EXT_Nutrition.Add(nutrition);
                             }
                             else
                             {
                                 nutrition.Id = nutritionDAL.Id;
                                 nutritionDAL = nutrition;
-                                context1.EXT_Nutritions.Attach(nutritionDAL);
+                                context1.EXT_Nutrition.Attach(nutritionDAL);
                                 context1.Entry(nutritionDAL).State = EntityState.Modified;
                             }
                         }
                         context1.SaveChanges();
-                    }*/
+                    }
                 }
             }
             catch (Exception ex)
@@ -433,38 +437,45 @@ namespace Intervent.Web.DataLayer
         public void AddExtWorkout(EXT_Workouts workout)
         {
             var workoutDAL = context.EXT_Workouts.Where(x => x.UserId == workout.UserId && x.ExternalId == workout.ExternalId).FirstOrDefault();
-            if (workoutDAL != null)
+
+            using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
-                workout.Id = workoutDAL.Id;
-                workoutDAL = workout;
-                context.EXT_Workouts.Attach(workoutDAL);
-                context.Entry(workoutDAL).State = EntityState.Modified;
+                if (workoutDAL != null)
+                {
+                    workout.Id = workoutDAL.Id;
+                    workoutDAL = workout;
+                    context1.EXT_Workouts.Attach(workoutDAL);
+                    context1.Entry(workoutDAL).State = EntityState.Modified;
+                }
+                else
+                {
+                    //context1.Configuration.AutoDetectChangesEnabled = false;
+                    context1.EXT_Workouts.Add(workout);
+                }
+                context1.SaveChanges();
             }
-            else
-            {
-                //context.Configuration.AutoDetectChangesEnabled = false;
-                context.EXT_Workouts.Add(workout);
-            }
-            context.SaveChanges();
         }
 
         public void AddExtSleep(EXT_Sleeps sleep)
         {
             var sleepDAL = context.EXT_Sleeps.Where(x => x.UserId == sleep.UserId && x.ExternalId == sleep.ExternalId).FirstOrDefault();
 
-            if (sleepDAL != null)
+            using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
-                sleep.Id = sleepDAL.Id;
-                sleepDAL = sleep;
-                context.EXT_Sleeps.Attach(sleepDAL);
-                context.Entry(sleepDAL).State = EntityState.Modified;
+                if (sleepDAL != null)
+                {
+                    sleep.Id = sleepDAL.Id;
+                    sleepDAL = sleep;
+                    context1.EXT_Sleeps.Attach(sleepDAL);
+                    context1.Entry(sleepDAL).State = EntityState.Modified;
+                }
+                else
+                {
+                    //context1.Configuration.AutoDetectChangesEnabled = false;
+                    context1.EXT_Sleeps.Add(sleep);
+                }
+                context1.SaveChanges();
             }
-            else
-            {
-                //context.Configuration.AutoDetectChangesEnabled = false;
-                context.EXT_Sleeps.Add(sleep);
-            }
-            context.SaveChanges();
         }
 
         public void AddExtBloodPressure(EXT_BloodPressures bloodPressure)
@@ -473,20 +484,22 @@ namespace Intervent.Web.DataLayer
             {
                 var bloodPressureDAL = context.EXT_BloodPressures.Where(x => x.UserId == bloodPressure.UserId && x.ExternalId == bloodPressure.ExternalId).FirstOrDefault();
 
-
-                if (bloodPressureDAL != null)
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
-                    bloodPressure.Id = bloodPressureDAL.Id;
-                    bloodPressureDAL = bloodPressure;
-                    context.EXT_BloodPressures.Attach(bloodPressureDAL);
-                    context.Entry(bloodPressureDAL).State = EntityState.Modified;
+                    if (bloodPressureDAL != null)
+                    {
+                        bloodPressure.Id = bloodPressureDAL.Id;
+                        bloodPressureDAL = bloodPressure;
+                        context1.EXT_BloodPressures.Attach(bloodPressureDAL);
+                        context1.Entry(bloodPressureDAL).State = EntityState.Modified;
+                    }
+                    else
+                    {
+                        //context1.Configuration.AutoDetectChangesEnabled = false;
+                        context1.EXT_BloodPressures.Add(bloodPressure);
+                    }
+                    context1.SaveChanges();
                 }
-                else
-                {
-                    //context1.Configuration.AutoDetectChangesEnabled = false;
-                    context.EXT_BloodPressures.Add(bloodPressure);
-                }
-                context.SaveChanges();
             }
         }
 

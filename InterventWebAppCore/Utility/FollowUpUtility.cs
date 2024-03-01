@@ -24,7 +24,7 @@ namespace InterventWebApp
             return reader.ReadFollowUp(request);
         }
 
-        public static FollowUpResponse AddEditMedicalCondition(FollowUp_MedicalConditionsDto model, int? integrationWith, string organizationCode, string uniqueId, int followUpId, int userId, int participantId, int participantPortalId)
+        public static FollowUpResponse AddEditMedicalCondition(FollowUp_MedicalConditionsDto model, int? integrationWith, string organizationCode, string uniqueId, int followUpId, int userId, int participantId, int participantPortalId, string DTCOrgCode)
         {
             AddEditFUMedicalConditionsRequest request = new AddEditFUMedicalConditionsRequest();
             if (integrationWith.HasValue && integrationWith == (int)Integrations.Intuity && ParticipantUtility.IsIntuityUser(participantId))
@@ -39,7 +39,7 @@ namespace InterventWebApp
             request.ParticipantId = participantId;
             request.UserId = userId;
             request.PortalId = participantPortalId;
-            return reader.AddEditMedicalCondition(request);
+            return reader.AddEditMedicalCondition(request, DTCOrgCode);
 
         }
 
@@ -52,7 +52,7 @@ namespace InterventWebApp
             return reader.ReadMedicalCondition(request);
         }
 
-        public static FollowUpResponse AddEditOtherRisks(FollowUp_OtherRiskFactorsDto model, int? integrationWith, string organizationCode, string uniqueId, int followUpId, int userId, int participantId, int participantPortalId)
+        public static FollowUpResponse AddEditOtherRisks(FollowUp_OtherRiskFactorsDto model, int? integrationWith, string organizationCode, string uniqueId, int followUpId, int userId, int participantId, int participantPortalId, string DTCOrgCode)
         {
             AddEditFUOtherRisksRequest request = new AddEditFUOtherRisksRequest();
             if (integrationWith.HasValue && integrationWith == (int)Integrations.Intuity && ParticipantUtility.IsIntuityUser(participantId))
@@ -67,7 +67,7 @@ namespace InterventWebApp
             request.ParticipantId = participantId;
             request.UserId = userId;
             request.PortalId = participantPortalId;
-            return reader.AddEditOtherRiskFactors(request);
+            return reader.AddEditOtherRiskFactors(request, DTCOrgCode);
         }
 
         public static ReadFollowUpOtherRiskFactorsResponse ReadOtherRisk(int followupid, int hraId)
@@ -85,7 +85,7 @@ namespace InterventWebApp
             return response;
         }
 
-        public static FollowUpResponse AddEditHealthConditions(FollowUp_HealthConditionsDto model, int? integrationWith, string organizationCode, string uniqueId, int followUpId, int userId, int participantId, int participantPortalId)
+        public static FollowUpResponse AddEditHealthConditions(FollowUp_HealthConditionsDto model, int? integrationWith, string organizationCode, string uniqueId, int followUpId, int userId, int participantId, int participantPortalId, string DTCOrgCode)
         {
             AddEditFUHealthConditionRequest request = new AddEditFUHealthConditionRequest();
             if (integrationWith.HasValue && integrationWith == (int)Integrations.Intuity && ParticipantUtility.IsIntuityUser(participantId))
@@ -100,7 +100,7 @@ namespace InterventWebApp
             request.ParticipantId = participantId;
             request.UserId = userId;
             request.PortalId = participantPortalId;
-            return reader.AddEditHealthConditions(request);
+            return reader.AddEditHealthConditions(request, DTCOrgCode);
         }
 
         public static FollowUpHealthConditionsResponse ReadHealthConditions(int followupid)
@@ -111,7 +111,7 @@ namespace InterventWebApp
             return reader.ReadHealthCondition(request);
         }
 
-        public static FollowUpResponse AddEditHealthNumbers(FollowUp_HealthNumbersDto model, bool bloodwork, int? integrationWith, string organizationCode, string uniqueId, int followUpId, int userId, int participantId, int participantPortalId)
+        public static FollowUpResponse AddEditHealthNumbers(FollowUp_HealthNumbersDto model, bool bloodwork, int? integrationWith, string organizationCode, string uniqueId, int followUpId, int userId, int participantId, int participantPortalId, string DTCOrgCode)
         {
             AddEditFUHealthNumbersRequest request = new AddEditFUHealthNumbersRequest();
             if (integrationWith.HasValue && integrationWith.Value == (int)Integrations.Intuity && ParticipantUtility.IsIntuityUser(participantId))
@@ -132,7 +132,7 @@ namespace InterventWebApp
             request.ParticipantId = participantId;
             request.UserId = userId;
             request.PortalId = participantPortalId;
-            return reader.AddEditHealthNumbers(request);
+            return reader.AddEditHealthNumbers(request, DTCOrgCode);
         }
 
         public static ReadFUHealthNumberResponse ReadFUHealthNumber(int followupid)

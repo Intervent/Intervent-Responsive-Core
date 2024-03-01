@@ -211,7 +211,7 @@ namespace InterventWebApp
             return reader.DeleteWellnessDataRecord(Id);
         }
 
-        public static AddNotesResponse AddEditNotes(NotesDto note, int adminId, int? participantPortalId, int organizationId, int participantId, string timeZone, int? integrationWith, string organizationCode, string uniqueId, int? programType, int? userinProgramId, int? hraId, int southUniversityOrgId)
+        public static AddNotesResponse AddEditNotes(NotesDto note, int adminId, int? participantPortalId, int organizationId, int participantId, string timeZone, int? integrationWith, string organizationCode, string uniqueId, int? programType, int? userinProgramId, int? hraId, int southUniversityOrgId, string DTCOrgCode)
         {
             PortalReader portalReader = new PortalReader();
             ParticipantReader reader = new ParticipantReader();
@@ -250,7 +250,7 @@ namespace InterventWebApp
                     intuityEventRequest.intuityEvent.EventType = (int)IntuityEventTypes.Coaching_Call_Completion;
                     intuityEventRequest.intuityEvent.EventDate = DateTime.UtcNow;
                     intuityEventRequest.intuityEvent.CreatedBy = noteDto.Admin;
-                    intuityReader.AddIntuityEvent(intuityEventRequest);
+                    intuityReader.AddIntuityEvent(intuityEventRequest, DTCOrgCode);
                 }
                 if (userinProgramId.HasValue && programType.HasValue && programType.Value == (int)ProgramTypes.Coaching)
                 {

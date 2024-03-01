@@ -24,7 +24,7 @@ namespace InterventWebApp
             return reader.ReadProgram(id);
         }
 
-        public static AddUserChoiceResponse AddUserOptions(AddUserChoiceRequest request, int userId, int participantId, int? integrationWith)
+        public static AddUserChoiceResponse AddUserOptions(AddUserChoiceRequest request, int userId, int participantId, int? integrationWith, string DTCOrgCode)
         {
             KitReader reader = new KitReader();
             request.UpdatedBy = userId;
@@ -39,7 +39,7 @@ namespace InterventWebApp
                         option.Value = WebUtility.UrlDecode(option.Value);
                 }
             }
-            return reader.AddUserOptions(request);
+            return reader.AddUserOptions(request, DTCOrgCode);
         }
 
         public static GetKitsinProgramResponse GetKitsinProgram(int programId)

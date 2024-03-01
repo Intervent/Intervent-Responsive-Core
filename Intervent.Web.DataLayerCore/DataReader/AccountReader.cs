@@ -929,7 +929,7 @@ namespace Intervent.Web.DataLayer
             var result = await userManager.ChangePasswordAsync(new ApplicationUser { Id = request.UserId }, request.oldPassword, request.newPassword);
             response.success = result.Succeeded;
             if (!response.success)
-                response.error = "";// result.Errors.FirstOrDefault();
+                response.error = result.Errors.FirstOrDefault().Description;
             return response;
         }
 

@@ -612,7 +612,7 @@ namespace InterventWebApp
         [Authorize]
         public JsonResult SaveUserOptions(AddUserChoiceRequest request)
         {
-            ProgramUtility.AddUserOptions(request, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.IntegrationWith));
+            ProgramUtility.AddUserOptions(request, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), _appSettings.DTCOrgCode);
             if (request.PercentComplete == 100)
             {
                 var UsersinProgramId = HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value;

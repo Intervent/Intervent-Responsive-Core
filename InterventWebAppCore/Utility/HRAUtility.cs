@@ -79,7 +79,7 @@ namespace InterventWebApp
             request.StoreHistory = true;
 
             HRAReader reader = new HRAReader();
-            var response = reader.AddEditMedicalCondition(request);
+            var response = reader.AddEditMedicalCondition(request, model.DTCOrgCode);
 
             return request.medicalCondition.HRA;
         }
@@ -119,7 +119,7 @@ namespace InterventWebApp
                 UserId = model.userId
             });
 
-            reader.AddEditOtherRisks(request);
+            reader.AddEditOtherRisks(request, model.DTCOrgCode);
             return request.OtherRiskFactors.HRA;
         }
 
@@ -146,7 +146,7 @@ namespace InterventWebApp
 
 
             HRAReader reader = new HRAReader();
-            reader.AddEditHSP(request);
+            reader.AddEditHSP(request, model.DTCOrgCode);
 
             return request.HSP.HRA;
         }
@@ -198,7 +198,7 @@ namespace InterventWebApp
             request.StoreHistory = true;
 
             HRAReader reader = new HRAReader();
-            reader.AddEditExams(request);
+            reader.AddEditExams(request, model.DTCOrgCode);
 
             return request.exams.HRA;
         }
@@ -224,7 +224,7 @@ namespace InterventWebApp
             request.StoreHistory = true;
 
             HRAReader reader = new HRAReader();
-            reader.AddEditInterest(request);
+            reader.AddEditInterest(request, model.DTCOrgCode);
 
             return request.interest.HRA;
         }
@@ -257,7 +257,7 @@ namespace InterventWebApp
             request.HealthNumbers.HRA = UpdateHRADetails("YN.", model.hraCompleteDate, model.hraPageSeqDone, model.hraPageSeq);
             request.HealthNumbers.HRA.UserId = model.participantId;
             HRAReader reader = new HRAReader();
-            reader.AddEditHealthNumbers(request);
+            reader.AddEditHealthNumbers(request, model.DTCOrgCode);
 
             return request.HealthNumbers.HRA;
         }

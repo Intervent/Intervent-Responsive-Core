@@ -1,14 +1,23 @@
 ﻿using Intervent.Web.DataLayer;
 using Intervent.Web.DTO;
+using InterventWebApp.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Options;
 
 namespace InterventWebApp
 {
-    public class FollowUpController : BaseController
+	public class FollowUpController : BaseController
     {
-        [Authorize]
+		private readonly AppSettings _appSettings;
+
+		public FollowUpController(IOptions<AppSettings> appSettings)
+		{
+			_appSettings = appSettings.Value;
+		}
+
+		[Authorize]
         public ActionResult FollowUpDashboard()
         {
             if (!(HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp).HasValue && Convert.ToByte(HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp)) > 0))
@@ -83,7 +92,7 @@ namespace InterventWebApp
                 var followUp = FollowUpUtility.CreateFollowUp(model.Id, HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value);
                 HttpContext.Session.SetInt32(SessionContext.FollowUpId, followUp.FollowUpDto.Id);
             }
-            var response = FollowUpUtility.AddEditMedicalCondition(model, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetString(SessionContext.OrganizationCode), HttpContext.Session.GetString(SessionContext.UniqueId), HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value);
+            var response = FollowUpUtility.AddEditMedicalCondition(model, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetString(SessionContext.OrganizationCode), HttpContext.Session.GetString(SessionContext.UniqueId), HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, _appSettings.DTCOrgCode);
             if (response.FollowUpDto != null)
                 HttpContext.Session.SetString(SessionContext.FollowUpPageSeqDone, response.FollowUpDto.PageSeqDone);
             return Json(response.FollowUpDto);
@@ -125,7 +134,7 @@ namespace InterventWebApp
                 var followUp = FollowUpUtility.CreateFollowUp(model.otherRisks.Id, HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value);
                 HttpContext.Session.SetInt32(SessionContext.FollowUpId, followUp.FollowUpDto.Id);
             }
-            var response = FollowUpUtility.AddEditOtherRisks(model.otherRisks, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetString(SessionContext.OrganizationCode), HttpContext.Session.GetString(SessionContext.UniqueId), HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value);
+            var response = FollowUpUtility.AddEditOtherRisks(model.otherRisks, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetString(SessionContext.OrganizationCode), HttpContext.Session.GetString(SessionContext.UniqueId), HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, _appSettings.DTCOrgCode);
             if (response.FollowUpDto != null)
                 HttpContext.Session.SetString(SessionContext.FollowUpPageSeqDone, response.FollowUpDto.PageSeqDone);
             return Json(response.FollowUpDto);
@@ -156,7 +165,7 @@ namespace InterventWebApp
                 var followUp = FollowUpUtility.CreateFollowUp(model.HealthCondition.Id, HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value);
                 HttpContext.Session.SetInt32(SessionContext.FollowUpId, followUp.FollowUpDto.Id);
             }
-            var response = FollowUpUtility.AddEditHealthConditions(model.HealthCondition, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetString(SessionContext.OrganizationCode), HttpContext.Session.GetString(SessionContext.UniqueId), HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value);
+            var response = FollowUpUtility.AddEditHealthConditions(model.HealthCondition, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetString(SessionContext.OrganizationCode), HttpContext.Session.GetString(SessionContext.UniqueId), HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, _appSettings.DTCOrgCode);
             if (response.FollowUpDto != null)
                 HttpContext.Session.SetString(SessionContext.FollowUpPageSeqDone, response.FollowUpDto.PageSeqDone);
             return Json(response.FollowUpDto);
@@ -403,7 +412,7 @@ namespace InterventWebApp
                     var followUp = FollowUpUtility.CreateFollowUp(model.HealthNumbers.Id, HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value);
                     HttpContext.Session.SetInt32(SessionContext.FollowUpId, followUp.FollowUpDto.Id);
                 }
-                var response = FollowUpUtility.AddEditHealthNumbers(model.HealthNumbers, bloodwork, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetString(SessionContext.OrganizationCode), HttpContext.Session.GetString(SessionContext.UniqueId), HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value);
+                var response = FollowUpUtility.AddEditHealthNumbers(model.HealthNumbers, bloodwork, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetString(SessionContext.OrganizationCode), HttpContext.Session.GetString(SessionContext.UniqueId), HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, _appSettings.DTCOrgCode);
                 if (response.FollowUpDto != null)
                     HttpContext.Session.SetString(SessionContext.FollowUpPageSeqDone, response.FollowUpDto.PageSeqDone);
                 return Json(response.FollowUpDto);

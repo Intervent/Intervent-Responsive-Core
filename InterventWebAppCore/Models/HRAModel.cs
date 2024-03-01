@@ -150,7 +150,8 @@ namespace InterventWebApp
             set { medicalConditions.NoPrescMed = value ? Convert.ToByte(1) : Convert.ToByte(2); }
         }
         public float hracompletion { get; set; }
-    }
+		public string DTCOrgCode { get; internal set; }
+	}
 
     public class OtherRisksModel
     {
@@ -380,7 +381,8 @@ namespace InterventWebApp
             set { otherRisks.NoAerobic = value ? Convert.ToByte(1) : Convert.ToByte(2); }
         }
 
-    }
+		public string DTCOrgCode { get; set; }
+	}
 
     public class ExamsModel
     {
@@ -455,7 +457,8 @@ namespace InterventWebApp
         public byte? Gender { get; set; }
 
         public bool readOnly { get; set; }
-    }
+		public string DTCOrgCode { get; set; }
+	}
 
     public class InterestModel
     {
@@ -486,7 +489,8 @@ namespace InterventWebApp
         public bool readOnly { get; set; }
 
         public byte? isPregnant { get; set; }
-    }
+		public string DTCOrgCode { get; set; }
+	}
 
     public class HealthNumbersModel
     {
@@ -577,7 +581,8 @@ namespace InterventWebApp
         public bool ShowLabDetails { get; set; }
 
         public IEnumerable<SelectListItem> LabList { get; set; }
-    }
+		public string DTCOrgCode { get; set; }
+	}
     public class HSPModel
     {
         public int participantId { get; set; }
@@ -625,7 +630,8 @@ namespace InterventWebApp
         public IEnumerable<SelectListItem> ProductivityLossList { get; set; }
 
         public bool readOnly { get; set; }
-    }
+		public string DTCOrgCode { get; set; }
+	}
 
     public class GenericIdText
     {

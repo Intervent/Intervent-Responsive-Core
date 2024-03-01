@@ -14,6 +14,7 @@ namespace Intervent.Business
         private static List<CRM_DispositionsDto> dispositions;
         private static int _intuityOrgId = Convert.ToInt32(ConfigurationManager.AppSettings["IntuityOrgId"]);
         private static int SystemAdminId = Convert.ToInt32(ConfigurationManager.AppSettings["SystemAdminId"]);
+        private static string DTCOrgCode = ConfigurationManager.AppSettings["DTCOrgCode"];
 
         public int GetIntuityInboundOutboundCallData()
         {
@@ -152,7 +153,7 @@ namespace Intervent.Business
                             AddUpdateCRMNoteRequest addUpdateNote = new AddUpdateCRMNoteRequest();
                             addUpdateNote.CRM_Note = note;
                             addUpdateNote.systemAdminId = SystemAdminId;
-                            reader.AddOrUpdateCRMNotes(addUpdateNote);
+                            reader.AddOrUpdateCRMNotes(addUpdateNote, DTCOrgCode);
                             updatedCount++;
                         }
                     }

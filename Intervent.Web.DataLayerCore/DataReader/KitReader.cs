@@ -998,7 +998,7 @@ namespace Intervent.Web.DataLayer
                        .Where(x => x.Id == kitsInUserProgramId).FirstOrDefault();
         }
 
-        public AddUserChoiceResponse AddUserOptions(AddUserChoiceRequest request)
+        public AddUserChoiceResponse AddUserOptions(AddUserChoiceRequest request, string DTCOrgCode)
         {
             AddUserChoiceResponse response = new AddUserChoiceResponse();
             if (request.KitsInUserProgramsId > 0)
@@ -1090,7 +1090,7 @@ namespace Intervent.Web.DataLayer
                                 intuityEventRequest.intuityEvent.EventType = (int)IntuityEventTypes.Educational_Module_Update;
                                 intuityEventRequest.intuityEvent.CreatedBy = request.UpdatedBy;
                                 intuityEventRequest.intuityEvent.EventDate = kitsinUserProgram.UpdatedOn;
-                                intuityReader.AddIntuityEvent(intuityEventRequest);
+                                intuityReader.AddIntuityEvent(intuityEventRequest, DTCOrgCode);
                             }
                         }
                         context.KitsinUserPrograms.Attach(kitsinUserProgram);

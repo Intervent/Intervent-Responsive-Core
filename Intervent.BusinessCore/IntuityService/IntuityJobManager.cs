@@ -21,6 +21,7 @@ namespace Intervent.Business
         PortalReader _portalReader = new PortalReader();
         CommonReader _commonReader = new CommonReader();
         string _intuityFolderPath = ConfigurationManager.AppSettings["IntuityFolderPath"];
+        string DTCOrgCode = ConfigurationManager.AppSettings["DTCOrgCode"];
 
         //Folder structure
         public const string ShipmentFolder = "Shipment";
@@ -354,14 +355,14 @@ namespace Intervent.Business
             {
                 if (org != null && org.Portals.Where(x => x.Active == true).Count() > 0)
                 {
-                    var uptUserresponse = externalReader.GetIntuityUser(org.Portals.Where(x => x.Active == true).FirstOrDefault().Id, true);
+                    var uptUserresponse = externalReader.GetIntuityUser(org.Portals.Where(x => x.Active == true).FirstOrDefault().Id, true, DTCOrgCode);
                     foreach (var elig in uptUserresponse.NewUsers)
                     {
                         try
                         {
                             VerifyIntuityUserRequest request = new VerifyIntuityUserRequest();
                             request.emailId = elig.Email2.ToLower(); //Patterns email
-                            if (org.Code == ConfigurationManager.AppSettings["DTCOrgCode"])
+                            if (org.Code == DTCOrgCode)
                                 request.shopifyCustomerNumber = elig.UniqueId;
                             else
                                 request.UniqueId = elig.UniqueId;

@@ -124,6 +124,7 @@
         public string TwilioFrom { get; set; }
         public int SessionTimeOut { get; set; }
         public string MailAttachmentPath { get; set; }
+        public string DTCOrgCode { get; set; }
         public int RetailOrgId { get; set; }
     }
 }

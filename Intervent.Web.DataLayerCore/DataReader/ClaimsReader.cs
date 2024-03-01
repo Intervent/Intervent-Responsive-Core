@@ -103,7 +103,7 @@ namespace Intervent.Web.DataLayer
             userEnrollmentTypes.Add("E");
             userEnrollmentTypes.Add("S");
             userEnrollmentTypes.Add("C");
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.Eligibility = (from e in ctx.Eligibilities.Where(x => request.PortalId == x.PortalId && userEnrollmentTypes.Contains(x.UserEnrollmentType) && x.UserStatus != "T")
                                         join p in ctx.Portals on e.PortalId equals p.Id
@@ -131,7 +131,7 @@ namespace Intervent.Web.DataLayer
                                             Zip = e.Zip,
                                             OrgName = o.Name
                                         }).Distinct().ToList();
-            }*/
+            }
             return response;
         }
 
@@ -145,10 +145,10 @@ namespace Intervent.Web.DataLayer
             userEnrollmentTypes.Add("S");
             userEnrollmentTypes.Add("C");
             var create = Convert.ToDateTime("2019-07-01");
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.Eligibility = (from e in ctx.Eligibilities.Where(x => userEnrollmentTypes.Contains(x.UserEnrollmentType)
-                                        && x.UserStatus != "T" *//*&& x.CreateDate == create*//*) //add create date when running claim analytics
+                                        && x.UserStatus != "T" /*&& x.CreateDate == create*/) //add create date when running claim analytics
                                         select new ClaimProcessEligibilityDto()
                                         {
                                             UniqueID = e.UniqueId,
@@ -170,7 +170,7 @@ namespace Intervent.Web.DataLayer
                                             Zip = e.Zip,
                                             OrgName = "Compass Group"
                                         }).Distinct().ToList();
-            }*/
+            }
             return response;
         }
 
@@ -178,7 +178,7 @@ namespace Intervent.Web.DataLayer
         public ListClaimProcessCrothalIDResponse GetClaimsCrothalIDs()
         {
             ListClaimProcessCrothalIDResponse response = new ListClaimProcessCrothalIDResponse();
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.CrothalIds = (from c in ctx.CrothalIDChange
                                        select new CrothalIdDto()
@@ -189,14 +189,14 @@ namespace Intervent.Web.DataLayer
                                            OldUniqueId = c.OldUniqueId
                                        }).ToHashSet();
 
-            }*/
+            }
             return response;
         }
 
         public ListClaimProcessClaimCodeResponse GetClaimsCodes()
         {
             ListClaimProcessClaimCodeResponse response = new ListClaimProcessClaimCodeResponse();
-            /*using (InterventDatabase ctx =  InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.ClaimCodes = (from c in ctx.ClaimCodes.Where(x => x.Code != null && x.Code != "")
                                        select new ClaimCodeDto()
@@ -207,7 +207,7 @@ namespace Intervent.Web.DataLayer
                                            CodeDescription = c.CodeDescription
                                        }).Distinct().ToHashSet();
 
-            }*/
+            }
             return response;
         }
 
@@ -215,7 +215,7 @@ namespace Intervent.Web.DataLayer
         {
             ListClaimProcessInsuranceSummaryResponse response = new ListClaimProcessInsuranceSummaryResponse();
 
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.InsuranceSummaries = (from irs in ctx.InsuranceSummaries.Include("CandidateReasonForLastChanges")
                                                join p in ctx.Portals on irs.OrganizationId equals p.OrganizationId
@@ -242,7 +242,7 @@ namespace Intervent.Web.DataLayer
                                                    LatestPregnancyDate = irs.CandidateReasonForLastChanges.Any(x => x.ConditionType == "PREG") ? irs.CandidateReasonForLastChanges.Where(x => x.ConditionType == "PREG").OrderByDescending(x => x.ID).FirstOrDefault().ConditionDate : null,
                                                    HRA = irs.HRA
                                                }).ToHashSet();
-            }*/
+            }
             return response;
         }
 
@@ -252,7 +252,7 @@ namespace Intervent.Web.DataLayer
             List<string> userEnrollmentTypes = new List<string>();
             userEnrollmentTypes.Add("E");
             userEnrollmentTypes.Add("S");
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.EnrolledDatas = (from e in ctx.Eligibilities.Where(x => portalId == x.PortalId && userEnrollmentTypes.Contains(x.UserEnrollmentType) && x.UserStatus != "T")
                                           join u in ctx.Users on e.UniqueId equals u.UniqueId
@@ -265,14 +265,14 @@ namespace Intervent.Web.DataLayer
                                               EnrollType = p.ProgramType == 1 ? "S" : "C",
                                               PortalId = e.PortalId
                                           }).Distinct().ToHashSet();
-            }*/
+            }
             return response;
         }
 
         public ListClaimProcessEnrolledDataResponse GetEbenClaimProcessEnrolledDataUniqueIds(int portalId)
         {
             ListClaimProcessEnrolledDataResponse response = new ListClaimProcessEnrolledDataResponse();
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.EnrolledDatas = (from e in ctx.Eligibilities.Where(x => portalId == x.PortalId && x.UserStatus != "T")
                                           join u in ctx.Users on e.UniqueId equals u.UniqueId
@@ -285,7 +285,7 @@ namespace Intervent.Web.DataLayer
                                               EnrollType = p.ProgramType == 1 ? "S" : "C",
                                               PortalId = e.PortalId
                                           }).Distinct().ToHashSet();
-            }*/
+            }
             return response;
         }
 
@@ -295,7 +295,7 @@ namespace Intervent.Web.DataLayer
             List<string> userEnrollmentTypes = new List<string>();
             userEnrollmentTypes.Add("E");
             userEnrollmentTypes.Add("S");
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.HRAs = (from e in ctx.Eligibilities.Where(x => portalId == x.PortalId && userEnrollmentTypes.Contains(x.UserEnrollmentType) && x.UserStatus != "T")
                                  join u in ctx.Users on e.UniqueId equals u.UniqueId
@@ -305,14 +305,14 @@ namespace Intervent.Web.DataLayer
                                      UniqueId = e.UniqueId,
                                      PortalId = e.PortalId
                                  }).Distinct().ToHashSet();
-            }*/
+            }
             return response;
         }
 
         public ListClaimProcessHRAResponse GetEbenClaimProcessHRAUniqueIds(int portalId)
         {
             ListClaimProcessHRAResponse response = new ListClaimProcessHRAResponse();
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.HRAs = (from e in ctx.Eligibilities.Where(x => portalId == x.PortalId && x.UserStatus != "T")
                                  join u in ctx.Users on e.UniqueId equals u.UniqueId
@@ -322,14 +322,14 @@ namespace Intervent.Web.DataLayer
                                      UniqueId = e.UniqueId,
                                      PortalId = e.PortalId
                                  }).Distinct().ToHashSet();
-            }*/
+            }
             return response;
         }
 
         public ListClaimProcessTherapeuticClassCodeResponse GetTherapeuticClassCodes()
         {
             ListClaimProcessTherapeuticClassCodeResponse response = new ListClaimProcessTherapeuticClassCodeResponse();
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.TherapeuticClassCodes = (from t in ctx.TherapeuticClassCodes
                                                   select new ClaimProcessTherapeuticClassCodeDto()
@@ -338,14 +338,14 @@ namespace Intervent.Web.DataLayer
                                                       DrugCategory = t.DrugCategory
                                                   }).ToHashSet();
 
-            }*/
+            }
             return response;
         }
         //
         public ListClaimProcessLivongoICDCodeResponse GetLivongoICDCodes()
         {
             ListClaimProcessLivongoICDCodeResponse response = new ListClaimProcessLivongoICDCodeResponse();
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.ICDCodes = (from t in ctx.LivongoICDCodess.Where(x => x.IsActive == true)
                                      select new LivongoICDCodesDto()
@@ -355,14 +355,14 @@ namespace Intervent.Web.DataLayer
                                          CodeDescription = t.LvCodeDescription
                                      }).ToHashSet();
 
-            }*/
+            }
             return response;
         }
 
         public ListClaimProcessLivongoNDCCodeResponse GetLivongoNDCCodes()
         {
             ListClaimProcessLivongoNDCCodeResponse response = new ListClaimProcessLivongoNDCCodeResponse();
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.NDCCodes = (from t in ctx.LivongoNDCCodes.Where(x => x.IsActive == true)
                                      select new LivongoNDCCodesDto()
@@ -370,14 +370,14 @@ namespace Intervent.Web.DataLayer
                                          Code = t.LvNDCCode
                                      }).ToHashSet();
 
-            }*/
+            }
             return response;
         }
 
         public ClaimConditionCodeResponse GetClaimConditionCodes()
         {
             ClaimConditionCodeResponse response = new ClaimConditionCodeResponse();
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.ClaimConditionCodes = (from t in ctx.ClaimConditionCodes
                                                 select new ClaimConditionCodeDto()
@@ -387,14 +387,14 @@ namespace Intervent.Web.DataLayer
                                                     Condition = t.Condition
                                                 }).Distinct().ToHashSet();
 
-            }*/
+            }
             return response;
         }
 
         public ListClaimProcessClaimCodeResponse GetIVICDCodes()
         {
             ListClaimProcessClaimCodeResponse response = new ListClaimProcessClaimCodeResponse();
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.ClaimCodes = (from t in ctx.IVICDCodes
                                        select new ClaimCodeDto()
@@ -405,14 +405,14 @@ namespace Intervent.Web.DataLayer
                                            CodeDescription = t.CodeDescription
                                        }).ToHashSet();
 
-            }*/
+            }
             return response;
         }
 
         public ListClaimProcessClaimCodeResponse GetIVNDCCodes()
         {
             ListClaimProcessClaimCodeResponse response = new ListClaimProcessClaimCodeResponse();
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 response.ClaimCodes = (from t in ctx.IVNDCCodes
                                        select new ClaimCodeDto()
@@ -422,7 +422,7 @@ namespace Intervent.Web.DataLayer
                                            CodeDescription = t.CodeDescription
                                        }).ToHashSet();
 
-            }*/
+            }
             return response;
         }
 
@@ -467,12 +467,12 @@ namespace Intervent.Web.DataLayer
         {
             using (var scope = new System.Transactions.TransactionScope())
             {
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
-                    //context1.Configuration.AutoDetectChangesEnabled = false;
+                    ////context1.Configuration.AutoDetectChangesEnabled = false;
                     foreach (InsuranceSummaryDto request in insuranceSummaryDtoList)
                     {
-                        var insuranceSummaries = context1.InsuranceSummaries.Where(x => x.UniqueID == request.UniqueID && x.OrganizationId == request.OrganizationId).AsNoTracking().FirstOrDefault();
+                        var insuranceSummaries = context1.InsuranceSummaries.Where(x => x.UniqueID == request.UniqueID && x.OrganizationId == request.OrganizationId).FirstOrDefault();
                         if (insuranceSummaries == null)
                         {
                             InsuranceSummary result = Utility.mapper.Map<InsuranceSummaryDto, InsuranceSummary>(request);
@@ -501,7 +501,7 @@ namespace Intervent.Web.DataLayer
                         }
                     }
                     context1.SaveChanges();
-                }*/
+                }
                 scope.Complete();
             }
 
@@ -511,12 +511,12 @@ namespace Intervent.Web.DataLayer
         {
             using (var scope = new System.Transactions.TransactionScope())
             {
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     //context1.Configuration.AutoDetectChangesEnabled = false;
                     foreach (ClaimConditionCodeDto request in list)
                     {
-                        var condition = context1.ClaimConditionCodes.Where(x => x.ClaimsID == request.ClaimsID && x.Code == request.Code && x.Condition == request.Condition && x.ConditionDate == request.ConditionDate && x.CodeDescription == request.CodeDescription).AsNoTracking().FirstOrDefault();
+                        var condition = context1.ClaimConditionCodes.Where(x => x.ClaimsID == request.ClaimsID && x.Code == request.Code && x.Condition == request.Condition && x.ConditionDate == request.ConditionDate && x.CodeDescription == request.CodeDescription).FirstOrDefault();
                         if (condition == null)
                         {
                             ClaimConditionCode result = Utility.mapper.Map<ClaimConditionCodeDto, ClaimConditionCode>(request);
@@ -524,7 +524,7 @@ namespace Intervent.Web.DataLayer
                         }
                     }
                     context1.SaveChanges();
-                }*/
+                }
                 scope.Complete();
             }
         }
@@ -533,12 +533,12 @@ namespace Intervent.Web.DataLayer
         {
             using (var scope = new System.Transactions.TransactionScope())
             {
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     //context1.Configuration.AutoDetectChangesEnabled = false;
                     foreach (CandidateMedicationsDto request in list)
                     {
-                        var medic = context1.CandidateMedications.Where(x => x.ClaimsID == request.ClaimsId && x.MedicationName == request.MedicationName && x.MedicationDate == request.MedicationDate).AsNoTracking().FirstOrDefault();
+                        var medic = context1.CandidateMedications.Where(x => x.ClaimsID == request.ClaimsId && x.MedicationName == request.MedicationName && x.MedicationDate == request.MedicationDate).FirstOrDefault();
                         if (medic == null)
                         {
                             CandidateMedication result = Utility.mapper.Map<CandidateMedicationsDto, CandidateMedication>(request);
@@ -555,7 +555,7 @@ namespace Intervent.Web.DataLayer
                         }
                     }
                     context1.SaveChanges();
-                }*/
+                }
                 scope.Complete();
             }
         }
@@ -564,12 +564,12 @@ namespace Intervent.Web.DataLayer
         {
             using (var scope = new System.Transactions.TransactionScope())
             {
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     //context1.Configuration.AutoDetectChangesEnabled = false;
                     foreach (CandidateConditionsDto request in list)
                     {
-                        var cc = context1.CandidateConditions.Where(x => x.ClaimsID == request.ClaimsID && x.ConditionType == request.ConditionType).AsNoTracking().FirstOrDefault();
+                        var cc = context1.CandidateConditions.Where(x => x.ClaimsID == request.ClaimsID && x.ConditionType == request.ConditionType).FirstOrDefault();
                         if (cc == null)
                         {
                             CandidateCondition result = Utility.mapper.Map<CandidateConditionsDto, CandidateCondition>(request);
@@ -577,7 +577,7 @@ namespace Intervent.Web.DataLayer
                         }
                     }
                     context1.SaveChanges();
-                }*/
+                }
                 scope.Complete();
             }
         }
@@ -585,12 +585,12 @@ namespace Intervent.Web.DataLayer
         {
             using (var scope = new System.Transactions.TransactionScope())
             {
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     //context1.Configuration.AutoDetectChangesEnabled = false;
                     foreach (CandidateReasonForLastChangeDto request in reasonForLastChange)
                     {
-                        var cc = context1.CandidateReasonForLastChanges.Where(x => x.ClaimsId == request.ClaimsId && x.ConditionType == request.ConditionType).AsNoTracking().FirstOrDefault();
+                        var cc = context1.CandidateReasonForLastChanges.Where(x => x.ClaimsId == request.ClaimsId && x.ConditionType == request.ConditionType).FirstOrDefault();
                         if (cc == null)
                         {
                             CandidateReasonForLastChange result = Utility.mapper.Map<CandidateReasonForLastChangeDto, CandidateReasonForLastChange>(request);
@@ -598,7 +598,7 @@ namespace Intervent.Web.DataLayer
                         }
                     }
                     context1.SaveChanges();
-                }*/
+                }
                 scope.Complete();
             }
 

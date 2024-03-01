@@ -403,7 +403,7 @@ namespace Intervent.Web.DataLayer
             .OrderByDescending(x => x.CreatedOn).ToList();
         }
 
-        public void AddOrUpdateCRMNotes(AddUpdateCRMNoteRequest request)
+        public void AddOrUpdateCRMNotes(AddUpdateCRMNoteRequest request, string DTCOrgCode)
         {
             var crm_note = context.CRM_Notes.Where(x => x.Id == request.CRM_Note.Id).FirstOrDefault();
             if (crm_note == null)
@@ -523,7 +523,7 @@ namespace Intervent.Web.DataLayer
                         intuityEventRequest.intuityEvent.EventType = (int)IntuityEventTypes.Call_Center_Interaction;
                         intuityEventRequest.intuityEvent.EventDate = DateTime.UtcNow;
                         intuityEventRequest.intuityEvent.CreatedBy = request.CRM_Note.CreatedBy;
-                        intuityReader.AddIntuityEvent(intuityEventRequest);
+                        intuityReader.AddIntuityEvent(intuityEventRequest, DTCOrgCode);
                     }
                 }
             }
@@ -573,7 +573,8 @@ namespace Intervent.Web.DataLayer
         {
             GetQADOrderHistoryResponse response = new GetQADOrderHistoryResponse();
             var qadNumbers = context.CRM_Notes.Where(x => x.ContactId == request.contactId && !string.IsNullOrEmpty(x.QADNumber)).Select(y => y.QADNumber).ToList();
-            var QADOrders = context.QADOrders.Where(x => qadNumbers.Contains(x.Order)).ToList();
+            var rmaNumbers = context.CRM_Notes.Where(x => x.ContactId == request.contactId && !string.IsNullOrEmpty(x.RMANumber)).Select(y => y.RMANumber).ToList();
+            var QADOrders = context.QADOrders.Where(x => qadNumbers.Contains(x.Order) || rmaNumbers.Contains(x.Order)).ToList();
             response.qadOrders = Utility.mapper.Map<List<DAL.QADOrders>, IList<QADOrdersDto>>(QADOrders).ToList();
             return response;
         }

@@ -14,12 +14,14 @@ namespace Intervent.Business
         HRAReader hraReader;
         ParticipantReader reader;
         AccountReader accountReader;
+		string DTCOrgCode;
 
-        public HraManager(UserManager<ApplicationUser> userManager)
+        public HraManager(UserManager<ApplicationUser> userManager, string dTCOrgCode)
         {
             hraReader = new HRAReader();
             reader = new ParticipantReader();
             accountReader = new AccountReader(userManager);
+            DTCOrgCode = dTCOrgCode;
         }
 
         public String livongoHRAFileName = "LivongoHRAData-" + DateTime.Now.ToString("yyyyMMdd") + ".csv";
@@ -695,7 +697,7 @@ namespace Intervent.Business
                         CompletedDate = HRA.CompleteDate = DateTime.UtcNow;
                     medicalConditionsrequest.medicalCondition.HRA = HRA;
                 }
-                var response = hraReader.AddEditMedicalCondition(medicalConditionsrequest);
+                var response = hraReader.AddEditMedicalCondition(medicalConditionsrequest, DTCOrgCode);
                 pageSequence.Add(1);
             }
             if (otherRiskFactors != null)
@@ -713,7 +715,7 @@ namespace Intervent.Business
                         CompletedDate = HRA.CompleteDate = DateTime.UtcNow;
                     otherRiskFactorsrequest.OtherRiskFactors.HRA = HRA;
                 }
-                var response = hraReader.AddEditOtherRisks(otherRiskFactorsrequest);
+                var response = hraReader.AddEditOtherRisks(otherRiskFactorsrequest, DTCOrgCode);
                 pageSequence.Add(2);
             }
             if (hsp != null)
@@ -731,7 +733,7 @@ namespace Intervent.Business
                         CompletedDate = HRA.CompleteDate = DateTime.UtcNow;
                     HSPrequest.HSP.HRA = HRA;
                 }
-                var response = hraReader.AddEditHSP(HSPrequest);
+                var response = hraReader.AddEditHSP(HSPrequest, DTCOrgCode);
                 pageSequence.Add(3);
             }
             if (examsandShots != null)
@@ -749,7 +751,7 @@ namespace Intervent.Business
                         CompletedDate = HRA.CompleteDate = DateTime.UtcNow;
                     examsandShotsrequest.exams.HRA = HRA;
                 }
-                var response = hraReader.AddEditExams(examsandShotsrequest);
+                var response = hraReader.AddEditExams(examsandShotsrequest, DTCOrgCode);
                 pageSequence.Add(4);
             }
             if (interests != null)
@@ -767,7 +769,7 @@ namespace Intervent.Business
                         CompletedDate = HRA.CompleteDate = DateTime.UtcNow;
                     interestsrequest.interest.HRA = HRA;
                 }
-                var response = hraReader.AddEditInterest(interestsrequest);
+                var response = hraReader.AddEditInterest(interestsrequest, DTCOrgCode);
                 pageSequence.Add(5);
             }
             if (healthNumbers != null)
@@ -791,7 +793,7 @@ namespace Intervent.Business
                     if (healthNumbers.HeightInch.HasValue && healthNumbers.HeightInch.Value > 0)
                         healthNumbers.Height = healthNumbers.HeightInch + healthNumbers.Height;
                 }
-                var response = hraReader.AddEditHealthNumbers(healthNumbersrequest);
+                var response = hraReader.AddEditHealthNumbers(healthNumbersrequest, DTCOrgCode);
                 pageSequence.Add(6);
             }
             saveResponse.PageSequenceDone = pageSequence.ToArray();

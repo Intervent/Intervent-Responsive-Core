@@ -33,17 +33,11 @@ namespace Intervent.Web.DataLayer
             }
             catch (DbException e)
             {
-                /* foreach (var eve in e.EntityValidationErrors)
-                 {
-                     foreach (var ve in eve.ValidationErrors)
-                     {
-                         LogReader logReader = new LogReader();
-                         var logEvent = new LogEventInfo(LogLevel.Error, string.Format("Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage), null, "AddtoStressDiary", null, e);
-                         logReader.WriteLogMessage(logEvent);
-                     }
-                 }*/
-                throw;
-            }
+                LogReader logReader = new LogReader();
+                var logEvent = new LogEventInfo(LogLevel.Error, e.Message, null, "AddtoStressDiary", null, e);
+                logReader.WriteLogMessage(logEvent);
+			    return false;
+			}
         }
 
         public ListStressDiaryResponse ListStress(ListStressDiaryRequest request)
@@ -577,7 +571,7 @@ namespace Intervent.Web.DataLayer
                     dto.sleptHours = Convert.ToDouble(tSpan.TotalHours.ToString("#.##"));
                     sleepLogList.Add(dto);
                 }
-                response.sleepLogLists = sleepLogList; //Utility.mapper.Map<IList<DAL.SleepLog>, IList<SleepLogDto>>(sleepLogList);
+                response.sleepLogLists = sleepLogList;
             }
             var totalRecords = request.TotalRecords.HasValue ? request.TotalRecords.Value : 0;
             if (totalRecords == 0)

@@ -44,7 +44,7 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public AddEditMedicalConditionsResponse AddEditMedicalCondition(AddEditMedicalConditionsRequest request)
+        public AddEditMedicalConditionsResponse AddEditMedicalCondition(AddEditMedicalConditionsRequest request, string DTCOrgCode)
         {
             AddEditMedicalConditionsResponse response = new AddEditMedicalConditionsResponse();
             var dataUpdated = false;
@@ -207,7 +207,7 @@ namespace Intervent.Web.DataLayer
 
             if (request.medicalCondition.HRA != null)
             {
-                UpdateHRADetails(request.medicalCondition.HRA.HAPageSeqDone, request.medicalCondition.HRAId, request.medicalCondition.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, dataUpdated);
+                UpdateHRADetails(request.medicalCondition.HRA.HAPageSeqDone, request.medicalCondition.HRAId, request.medicalCondition.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, DTCOrgCode, dataUpdated);
 
                 if (request.medicalCondition.HRA.CompleteDate.HasValue)
                     StratifyHRA(request.medicalCondition.HRAId);
@@ -220,7 +220,7 @@ namespace Intervent.Web.DataLayer
             return context.HRA_OtherRiskFactors.Where(hra => hra.Id == hraId).First().SmokeCig == 1;
         }
 
-        public AddEditOtherRiskFactorsResponse AddEditOtherRisks(AddEditOtherRiskFactorsRequest request)
+        public AddEditOtherRiskFactorsResponse AddEditOtherRisks(AddEditOtherRiskFactorsRequest request, string DTCOrgCode)
         {
             AddEditOtherRiskFactorsResponse response = new AddEditOtherRiskFactorsResponse();
             var dataUpdated = false;
@@ -460,7 +460,7 @@ namespace Intervent.Web.DataLayer
 
             if (request.OtherRiskFactors.HRA != null)
             {
-                UpdateHRADetails(request.OtherRiskFactors.HRA.HAPageSeqDone, request.OtherRiskFactors.HRAId, request.OtherRiskFactors.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, dataUpdated);
+                UpdateHRADetails(request.OtherRiskFactors.HRA.HAPageSeqDone, request.OtherRiskFactors.HRAId, request.OtherRiskFactors.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, DTCOrgCode, dataUpdated);
 
                 if (request.OtherRiskFactors.HRA.CompleteDate.HasValue)
                     StratifyHRA(request.OtherRiskFactors.HRAId);
@@ -468,7 +468,7 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public AddEditHSPResponse AddEditHSP(AddEditHSPRequest request)
+        public AddEditHSPResponse AddEditHSP(AddEditHSPRequest request, string DTCOrgCode)
         {
             AddEditHSPResponse response = new AddEditHSPResponse();
             var dataUpdated = false;
@@ -538,7 +538,7 @@ namespace Intervent.Web.DataLayer
 
             if (request.HSP.HRA != null)
             {
-                UpdateHRADetails(request.HSP.HRA.HAPageSeqDone, request.HSP.HRAId, request.HSP.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, dataUpdated);
+                UpdateHRADetails(request.HSP.HRA.HAPageSeqDone, request.HSP.HRAId, request.HSP.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, DTCOrgCode, dataUpdated);
 
                 if (request.HSP.HRA.CompleteDate.HasValue)
                     StratifyHRA(request.HSP.HRAId);
@@ -546,7 +546,7 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public AddEditExamsandShotsResponse AddEditExams(AddEditExamsandShotsRequest request)
+        public AddEditExamsandShotsResponse AddEditExams(AddEditExamsandShotsRequest request, string DTCOrgCode)
         {
             AddEditExamsandShotsResponse response = new AddEditExamsandShotsResponse();
             var dataUpdated = false;
@@ -624,7 +624,7 @@ namespace Intervent.Web.DataLayer
 
             if (request.exams.HRA != null)
             {
-                UpdateHRADetails(request.exams.HRA.HAPageSeqDone, request.exams.HRAId, request.exams.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, dataUpdated);
+                UpdateHRADetails(request.exams.HRA.HAPageSeqDone, request.exams.HRAId, request.exams.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, DTCOrgCode, dataUpdated);
 
                 if (request.exams.HRA.CompleteDate.HasValue)
                     StratifyHRA(request.exams.HRAId);
@@ -632,7 +632,7 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public AddEditInterestsResponse AddEditInterest(AddEditInterestsRequest request)
+        public AddEditInterestsResponse AddEditInterest(AddEditInterestsRequest request, string DTCOrgCode)
         {
             AddEditInterestsResponse response = new AddEditInterestsResponse();
             var dataUpdated = false;
@@ -675,7 +675,7 @@ namespace Intervent.Web.DataLayer
 
             if (request.interest.HRA != null)
             {
-                UpdateHRADetails(request.interest.HRA.HAPageSeqDone, request.interest.HRAId, request.interest.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, dataUpdated);
+                UpdateHRADetails(request.interest.HRA.HAPageSeqDone, request.interest.HRAId, request.interest.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, DTCOrgCode, dataUpdated);
 
                 if (request.interest.HRA.CompleteDate.HasValue)
                     StratifyHRA(request.interest.HRAId);
@@ -824,7 +824,7 @@ namespace Intervent.Web.DataLayer
             }
         }
 
-        public AddEditHealthNumbersResponse AddEditHealthNumbers(AddEditHealthNumbersRequest request)
+        public AddEditHealthNumbersResponse AddEditHealthNumbers(AddEditHealthNumbersRequest request, string DTCOrgCode)
         {
             AddEditHealthNumbersResponse response = new AddEditHealthNumbersResponse();
             var dataUpdated = false;
@@ -904,7 +904,7 @@ namespace Intervent.Web.DataLayer
             context.SaveChanges();
             if (request.HealthNumbers.HRA != null)
             {
-                UpdateHRADetails(request.HealthNumbers.HRA.HAPageSeqDone, request.HealthNumbers.HRAId, request.HealthNumbers.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, dataUpdated);
+                UpdateHRADetails(request.HealthNumbers.HRA.HAPageSeqDone, request.HealthNumbers.HRAId, request.HealthNumbers.HRA.CompleteDate, request.UpdatedByUserId, request.IsIntuityUser, DTCOrgCode, dataUpdated);
                 if (request.HealthNumbers.HRA.CompleteDate.HasValue)
                     StratifyHRA(request.HealthNumbers.HRAId);
             }
@@ -933,7 +933,7 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public void UpdateHRADetails(string page, int haId, DateTime? completeDate, int UpdatedBy, bool isIntuityUser, bool? dataUpdated = null)
+        public void UpdateHRADetails(string page, int haId, DateTime? completeDate, int UpdatedBy, bool isIntuityUser, string DTCOrgCode, bool? dataUpdated = null)
         {
             MedicalPlanEligbilityResponse response = new MedicalPlanEligbilityResponse();
             var HRA = context.HRAs.Include("User").Include("User.Organization").Where(x => x.Id == haId).FirstOrDefault();
@@ -955,7 +955,7 @@ namespace Intervent.Web.DataLayer
                         intuityEventRequest.intuityEvent.EventType = (int)IntuityEventTypes.HRA_Completion;
                         intuityEventRequest.intuityEvent.CreatedBy = UpdatedBy;
                         intuityEventRequest.intuityEvent.EventDate = HRA.CompleteDate;
-                        intuityReader.AddIntuityEvent(intuityEventRequest);
+                        intuityReader.AddIntuityEvent(intuityEventRequest, DTCOrgCode);
                     }
                 }
                 context.HRAs.Attach(HRA);

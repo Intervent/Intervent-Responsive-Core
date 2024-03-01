@@ -95,7 +95,67 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public NoShowApptReportResponse ListNoShowReport(NoShowApptReportRequest request)
+		public ListLabAlertResponse ListLabAlert(ListLabAlertRequest request)
+		{
+			ListLabAlertResponse response = new ListLabAlertResponse();
+			PortalReader reader = new PortalReader();
+			TimeZoneInfo custTZone = TimeZoneInfo.FindSystemTimeZoneById(request.timezone);
+			var download = false;
+			var organizationsList = reader.GetFilteredOrganizationsList(request.AdminId).Organizations.Select(x => x.Id).ToArray();
+			var startdate = request.StartDate.HasValue ? TimeZoneInfo.ConvertTimeToUtc(request.StartDate.Value, custTZone) : System.DateTime.MinValue;
+			var enddate = request.EndDate.HasValue ? TimeZoneInfo.ConvertTimeToUtc(request.EndDate.Value, custTZone).AddDays(1) : System.DateTime.MaxValue;
+			var totalRecords = request.TotalRecords.HasValue ? request.TotalRecords.Value : 0;
+			if (totalRecords == 0)
+			{
+				totalRecords = context.Labs.Include("User2").Include("User2.Notes").Where(x => (!request.Organization.HasValue || x.User2.OrganizationId == request.Organization)
+								&& ((request.alerttype == 1 && (!String.IsNullOrEmpty(x.CoachAlert) || !String.IsNullOrEmpty(x.CriticalAlert))) || (request.alerttype == 2 && !String.IsNullOrEmpty(x.CoachAlert)) || (request.alerttype == 3 && !String.IsNullOrEmpty(x.CriticalAlert)))
+								&& (request.labsource == 1 || (request.labsource == 2 && x.HL7 != null) || (request.labsource == 3 && x.HL7 == null))
+								&& (organizationsList.Count() != 0 && (!request.userId.HasValue || x.UserId == request.userId.Value) && (x.DateCompleted > startdate && x.DateCompleted < enddate) && organizationsList.Contains(x.User2.OrganizationId))
+								&& (!request.status.HasValue || ((request.status == 3 && x.User2.Notes.Where(y => y.RefId == x.Id && y.Type == (int)NoteTypes.Critical_Alert).Count() > 0 && !x.ReviewedBy.HasValue)
+								   || (request.status == 1 && x.ReviewedBy.HasValue)
+								   || (request.status == 2 && !(x.ReviewedBy.HasValue) && x.User2.Notes.Where(y => y.RefId == x.Id && y.Type == (int)NoteTypes.Critical_Alert).Count() == 0)))).OrderByDescending(x => x.UserId).Count();
+				if (request.PageSize == 0)
+				{
+					request.PageSize = totalRecords;
+					download = true;
+				}
+			}
+			List<Lab> LabAlertDAL = null;
+			if (totalRecords > 0)
+			{
+				LabAlertDAL = context.Labs.Include("User").Include("User1").Include("User2").Include("User2.Notes").Where(x => (!request.Organization.HasValue || x.User2.OrganizationId == request.Organization)
+					  && ((request.alerttype == 1 && (!String.IsNullOrEmpty(x.CoachAlert) || !String.IsNullOrEmpty(x.CriticalAlert))) || (request.alerttype == 2 && !String.IsNullOrEmpty(x.CoachAlert)) || (request.alerttype == 3 && !String.IsNullOrEmpty(x.CriticalAlert)))
+					  && (request.labsource == 1 || (request.labsource == 2 && x.HL7 != null) || (request.labsource == 3 && x.HL7 == null))
+					  && (organizationsList.Count() != 0 && (!request.userId.HasValue || x.UserId == request.userId.Value) && (x.DateCompleted > startdate && x.DateCompleted < enddate) && organizationsList.Contains(x.User2.OrganizationId))
+					  && (!request.status.HasValue || ((request.status == 3 && x.User2.Notes.Where(y => y.RefId == x.Id && y.Type == (int)NoteTypes.Critical_Alert).Count() > 0 && !x.ReviewedBy.HasValue)
+						  || (request.status == 1 && x.ReviewedBy.HasValue)
+						  || (request.status == 2 && !(x.ReviewedBy.HasValue) && x.User2.Notes.Where(y => y.RefId == x.Id && y.Type == (int)NoteTypes.Critical_Alert).Count() == 0)))).OrderByDescending(x => x.UserId).Skip((download ? 0 : request.Page * request.PageSize)).Take(request.PageSize).ToList();
+			}
+			response.listLabAlertReportResponse = Utility.mapper.Map<IList<DAL.Lab>, IList<LabDto>>(LabAlertDAL);
+			response.totalRecords = totalRecords;
+			return response;
+		}
+
+		public ReviewNoShowResponse ReviewNoShow(ReviewNoShowRequest request)
+		{
+			ReviewNoShowResponse response = new ReviewNoShowResponse();
+			int[] ApptIdList = request.ApptIds.Split(',').Select(str => int.Parse(str)).ToArray();
+			foreach (int ApptId in ApptIdList)
+			{
+				var appointment = context.Appointments.Where(x => x.Id == ApptId).FirstOrDefault();
+				if (appointment != null)
+				{
+					appointment.NSHandledBy = request.AdminId;
+					context.Appointments.Attach(appointment);
+					context.Entry(appointment).State = EntityState.Modified;
+					context.SaveChanges();
+				}
+			}
+			response.success = true;
+			return response;
+		}
+
+		public NoShowApptReportResponse ListNoShowReport(NoShowApptReportRequest request)
         {
             NoShowApptReportResponse response = new NoShowApptReportResponse();
             PortalReader reader = new PortalReader();
@@ -130,7 +190,7 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public SmokingCessationIncentiveResponse ListSmokingCessationIncentive(SmokingCessationIncentiveRequest request)
+		public SmokingCessationIncentiveResponse ListSmokingCessationIncentive(SmokingCessationIncentiveRequest request)
         {
             SmokingCessationIncentiveResponse response = new SmokingCessationIncentiveResponse();
             List<GetTobaccoIncentive_Result> result = null;
@@ -190,8 +250,8 @@ namespace Intervent.Web.DataLayer
             KitUserReportResponse response = new KitUserReportResponse();
             StoredProcedures sp = new StoredProcedures();
             //var kitsPortalList = sp.KitsPortalReport(request.portalId, request.kitId);
-            //response.KitsPortalReport = ConvertToCSVFormat(kitsPortalList, request.kitId);  //Utility.mapper.Map<List<DAL.KitsPortalReport_Result>, List<KitsPortalReport_ResultDto>>(kitsPortalList);
-            response.KitsPortalReport = GetKitReport(request.kitId, request.portalId, request.timezone);  //Utility.mapper.Map<List<DAL.KitsPortalReport_Result>, List<KitsPortalReport_ResultDto>>(kitsPortalList);
+            //response.KitsPortalReport = ConvertToCSVFormat(kitsPortalList, request.kitId);
+            response.KitsPortalReport = GetKitReport(request.kitId, request.portalId, request.timezone);
             return response;
         }
 
@@ -488,64 +548,5 @@ namespace Intervent.Web.DataLayer
             return text;
         }
 
-        public ListLabAlertResponse ListLabAlert(ListLabAlertRequest request)
-        {
-            ListLabAlertResponse response = new ListLabAlertResponse();
-            PortalReader reader = new PortalReader();
-            TimeZoneInfo custTZone = TimeZoneInfo.FindSystemTimeZoneById(request.timezone);
-            var download = false;
-            var organizationsList = reader.GetFilteredOrganizationsList(request.AdminId).Organizations.Select(x => x.Id).ToArray();
-            var startdate = request.StartDate.HasValue ? TimeZoneInfo.ConvertTimeToUtc(request.StartDate.Value, custTZone) : System.DateTime.MinValue;
-            var enddate = request.EndDate.HasValue ? TimeZoneInfo.ConvertTimeToUtc(request.EndDate.Value, custTZone).AddDays(1) : System.DateTime.MaxValue;
-            var totalRecords = request.TotalRecords.HasValue ? request.TotalRecords.Value : 0;
-            if (totalRecords == 0)
-            {
-                totalRecords = context.Labs.Include("User2").Include("User2.Notes").Where(x => (!request.Organization.HasValue || x.User2.OrganizationId == request.Organization)
-                                && ((request.alerttype == 1 && (!String.IsNullOrEmpty(x.CoachAlert) || !String.IsNullOrEmpty(x.CriticalAlert))) || (request.alerttype == 2 && !String.IsNullOrEmpty(x.CoachAlert)) || (request.alerttype == 3 && !String.IsNullOrEmpty(x.CriticalAlert)))
-                                && (request.labsource == 1 || (request.labsource == 2 && x.HL7 != null) || (request.labsource == 3 && x.HL7 == null))
-                                && (organizationsList.Count() != 0 && (!request.userId.HasValue || x.UserId == request.userId.Value) && (x.DateCompleted > startdate && x.DateCompleted < enddate) && organizationsList.Contains(x.User2.OrganizationId))
-                                && (!request.status.HasValue || ((request.status == 3 && x.User2.Notes.Where(y => y.RefId == x.Id && y.Type == (int)NoteTypes.Critical_Alert).Count() > 0 && !x.ReviewedBy.HasValue)
-                                   || (request.status == 1 && x.ReviewedBy.HasValue)
-                                   || (request.status == 2 && !(x.ReviewedBy.HasValue) && x.User2.Notes.Where(y => y.RefId == x.Id && y.Type == (int)NoteTypes.Critical_Alert).Count() == 0)))).OrderByDescending(x => x.UserId).Count();
-                if (request.PageSize == 0)
-                {
-                    request.PageSize = totalRecords;
-                    download = true;
-                }
-            }
-            List<Lab> LabAlertDAL = null;
-            if (totalRecords > 0)
-            {
-                LabAlertDAL = context.Labs.Include("User").Include("User1").Include("User2").Include("User2.Notes").Where(x => (!request.Organization.HasValue || x.User2.OrganizationId == request.Organization)
-                      && ((request.alerttype == 1 && (!String.IsNullOrEmpty(x.CoachAlert) || !String.IsNullOrEmpty(x.CriticalAlert))) || (request.alerttype == 2 && !String.IsNullOrEmpty(x.CoachAlert)) || (request.alerttype == 3 && !String.IsNullOrEmpty(x.CriticalAlert)))
-                      && (request.labsource == 1 || (request.labsource == 2 && x.HL7 != null) || (request.labsource == 3 && x.HL7 == null))
-                      && (organizationsList.Count() != 0 && (!request.userId.HasValue || x.UserId == request.userId.Value) && (x.DateCompleted > startdate && x.DateCompleted < enddate) && organizationsList.Contains(x.User2.OrganizationId))
-                      && (!request.status.HasValue || ((request.status == 3 && x.User2.Notes.Where(y => y.RefId == x.Id && y.Type == (int)NoteTypes.Critical_Alert).Count() > 0 && !x.ReviewedBy.HasValue)
-                          || (request.status == 1 && x.ReviewedBy.HasValue)
-                          || (request.status == 2 && !(x.ReviewedBy.HasValue) && x.User2.Notes.Where(y => y.RefId == x.Id && y.Type == (int)NoteTypes.Critical_Alert).Count() == 0)))).OrderByDescending(x => x.UserId).Skip((download ? 0 : request.Page * request.PageSize)).Take(request.PageSize).ToList();
-            }
-            response.listLabAlertReportResponse = Utility.mapper.Map<IList<DAL.Lab>, IList<LabDto>>(LabAlertDAL);
-            response.totalRecords = totalRecords;
-            return response;
-        }
-
-        public ReviewNoShowResponse ReviewNoShow(ReviewNoShowRequest request)
-        {
-            ReviewNoShowResponse response = new ReviewNoShowResponse();
-            int[] ApptIdList = request.ApptIds.Split(',').Select(str => int.Parse(str)).ToArray();
-            foreach (int ApptId in ApptIdList)
-            {
-                var appointment = context.Appointments.Where(x => x.Id == ApptId).FirstOrDefault();
-                if (appointment != null)
-                {
-                    appointment.NSHandledBy = request.AdminId;
-                    context.Appointments.Attach(appointment);
-                    context.Entry(appointment).State = EntityState.Modified;
-                    context.SaveChanges();
-                }
-            }
-            response.success = true;
-            return response;
-        }
     }
 }

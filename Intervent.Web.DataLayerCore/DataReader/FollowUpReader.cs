@@ -130,7 +130,7 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public FollowUpResponse UpdateFollowUp(UpdateFollowUpRequest request)
+        public FollowUpResponse UpdateFollowUp(UpdateFollowUpRequest request, string DTCOrgCode)
         {
             FollowUpResponse response = new FollowUpResponse();
             CommonReader commonReader = new CommonReader();
@@ -170,7 +170,7 @@ namespace Intervent.Web.DataLayer
                         intuityEventRequest.intuityEvent.EventType = (int)IntuityEventTypes.FollowUp_Completion;
                         intuityEventRequest.intuityEvent.CreatedBy = request.updatedBy;
                         intuityEventRequest.intuityEvent.EventDate = followUp.CompleteDate;
-                        intuityReader.AddIntuityEvent(intuityEventRequest);
+                        intuityReader.AddIntuityEvent(intuityEventRequest, DTCOrgCode);
                     }
                 }
                 context.FollowUps.Attach(followUp);
@@ -192,7 +192,7 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public FollowUpResponse AddEditMedicalCondition(AddEditFUMedicalConditionsRequest request)
+        public FollowUpResponse AddEditMedicalCondition(AddEditFUMedicalConditionsRequest request, string DTCOrgCode)
         {
             FollowUpResponse response = new FollowUpResponse();
             var medicalCondition = Utility.mapper.Map<FollowUp_MedicalConditionsDto, DAL.FollowUp_MedicalConditions>(request.medicalCondition);
@@ -206,7 +206,7 @@ namespace Intervent.Web.DataLayer
             else
                 context.FollowUp_MedicalConditions.Add(medicalCondition);
             context.SaveChanges();
-            response.FollowUpDto = UpdateFollowUp(new UpdateFollowUpRequest { pageName = PageName.MC, followUpId = request.medicalCondition.Id, userId = request.ParticipantId, portalId = request.PortalId, updatedBy = request.UserId, isIntuityUser = request.IsIntuityUser, uniqueId = request.UniqueId, OrganizationCode = request.OrganizationCode }).FollowUpDto;
+            response.FollowUpDto = UpdateFollowUp(new UpdateFollowUpRequest { pageName = PageName.MC, followUpId = request.medicalCondition.Id, userId = request.ParticipantId, portalId = request.PortalId, updatedBy = request.UserId, isIntuityUser = request.IsIntuityUser, uniqueId = request.UniqueId, OrganizationCode = request.OrganizationCode }, DTCOrgCode).FollowUpDto;
             return response;
         }
 
@@ -226,7 +226,7 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public FollowUpResponse AddEditHealthConditions(AddEditFUHealthConditionRequest request)
+        public FollowUpResponse AddEditHealthConditions(AddEditFUHealthConditionRequest request, string DTCOrgCode)
         {
             FollowUpResponse response = new FollowUpResponse();
             var healthCondition = Utility.mapper.Map<FollowUp_HealthConditionsDto, DAL.FollowUp_HealthConditions>(request.healthConditionsDto);
@@ -241,7 +241,7 @@ namespace Intervent.Web.DataLayer
                 context.FollowUp_HealthConditions.Add(healthCondition);
 
             context.SaveChanges();
-            response.FollowUpDto = UpdateFollowUp(new UpdateFollowUpRequest { pageName = PageName.YL, followUpId = request.healthConditionsDto.Id, userId = request.ParticipantId, portalId = request.PortalId, updatedBy = request.UserId, isIntuityUser = request.IsIntuityUser, uniqueId = request.UniqueId, OrganizationCode = request.OrganizationCode }).FollowUpDto;
+            response.FollowUpDto = UpdateFollowUp(new UpdateFollowUpRequest { pageName = PageName.YL, followUpId = request.healthConditionsDto.Id, userId = request.ParticipantId, portalId = request.PortalId, updatedBy = request.UserId, isIntuityUser = request.IsIntuityUser, uniqueId = request.UniqueId, OrganizationCode = request.OrganizationCode }, DTCOrgCode).FollowUpDto;
             return response;
         }
 
@@ -253,7 +253,7 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public FollowUpResponse AddEditHealthNumbers(AddEditFUHealthNumbersRequest request)
+        public FollowUpResponse AddEditHealthNumbers(AddEditFUHealthNumbersRequest request, string DTCOrgCode)
         {
             FollowUpResponse response = new FollowUpResponse();
             var healthNumbers = Utility.mapper.Map<FollowUp_HealthNumbersDto, DAL.FollowUp_HealthNumbers>(request.healthNumbersDto);
@@ -333,7 +333,7 @@ namespace Intervent.Web.DataLayer
                 context.FollowUp_HealthNumbers.Add(newHealthNumbers);
             }
             context.SaveChanges();
-            response.FollowUpDto = UpdateFollowUp(new UpdateFollowUpRequest { pageName = PageName.YN, followUpId = request.healthNumbersDto.Id, userId = request.ParticipantId, portalId = request.PortalId, updatedBy = request.UserId, isIntuityUser = request.IsIntuityUser, uniqueId = request.UniqueId, OrganizationCode = request.OrganizationCode }).FollowUpDto;
+            response.FollowUpDto = UpdateFollowUp(new UpdateFollowUpRequest { pageName = PageName.YN, followUpId = request.healthNumbersDto.Id, userId = request.ParticipantId, portalId = request.PortalId, updatedBy = request.UserId, isIntuityUser = request.IsIntuityUser, uniqueId = request.UniqueId, OrganizationCode = request.OrganizationCode }, DTCOrgCode).FollowUpDto;
             ParticipantReader participantReader = new ParticipantReader();
             if (!request.bloodwork)
             {
@@ -367,7 +367,7 @@ namespace Intervent.Web.DataLayer
             return response;
         }
 
-        public FollowUpResponse AddEditOtherRiskFactors(AddEditFUOtherRisksRequest request)
+        public FollowUpResponse AddEditOtherRiskFactors(AddEditFUOtherRisksRequest request, string DTCOrgCode)
         {
             FollowUpResponse response = new FollowUpResponse();
             var RiskFactors = Utility.mapper.Map<FollowUp_OtherRiskFactorsDto, DAL.FollowUp_OtherRiskFactors>(request.otherRiskFactors);
@@ -382,7 +382,7 @@ namespace Intervent.Web.DataLayer
                 context.FollowUp_OtherRiskFactors.Add(RiskFactors);
 
             context.SaveChanges();
-            response.FollowUpDto = UpdateFollowUp(new UpdateFollowUpRequest { pageName = PageName.OR, followUpId = request.otherRiskFactors.Id, userId = request.ParticipantId, portalId = request.PortalId, updatedBy = request.UserId, isIntuityUser = request.IsIntuityUser, uniqueId = request.UniqueId, OrganizationCode = request.OrganizationCode }).FollowUpDto;
+            response.FollowUpDto = UpdateFollowUp(new UpdateFollowUpRequest { pageName = PageName.OR, followUpId = request.otherRiskFactors.Id, userId = request.ParticipantId, portalId = request.PortalId, updatedBy = request.UserId, isIntuityUser = request.IsIntuityUser, uniqueId = request.UniqueId, OrganizationCode = request.OrganizationCode }, DTCOrgCode).FollowUpDto;
             return response;
         }
 

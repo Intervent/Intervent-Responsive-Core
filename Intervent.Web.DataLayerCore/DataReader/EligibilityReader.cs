@@ -16,7 +16,7 @@ namespace Intervent.Web.DataLayer
             {
                 using (var scope = new System.Transactions.TransactionScope())
                 {
-                    /*using (var context1 = new InterventDatabase())
+                    using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                     {
                         //context1.Configuration.AutoDetectChangesEnabled = false;
                         foreach (IntuityEligibilityDto req in request.Where(x => x.Id.HasValue))
@@ -26,7 +26,7 @@ namespace Intervent.Web.DataLayer
                             context1.Entry(intuityeligibilityDbModel).CurrentValues.SetValues(intuityeligibility);
                         }
                         context1.SaveChanges();
-                    }*/
+                    }
 
                     scope.Complete();
                 }
@@ -37,7 +37,7 @@ namespace Intervent.Web.DataLayer
             {
                 using (var scope = new System.Transactions.TransactionScope())
                 {
-                    /*using (var context1 = new InterventDatabase())
+                    using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                     {
                         //context1.Configuration.AutoDetectChangesEnabled = false;
                         foreach (IntuityEligibilityDto req in request.Where(x => !x.Id.HasValue))
@@ -46,7 +46,7 @@ namespace Intervent.Web.DataLayer
                             context1.IntuityEligibilities.Add(intuityeligibility);
                         }
                         context1.SaveChanges();
-                    }*/
+                    }
                     scope.Complete();
                 }
             }
@@ -66,23 +66,23 @@ namespace Intervent.Web.DataLayer
             //edit
             using (var scope = new System.Transactions.TransactionScope())
             {
-                /* using (var context1 = new InterventDatabase())
-                 {
-                     //context1.Configuration.AutoDetectChangesEnabled = false;
-                     foreach (IntuityFulfillments req in fulfillmentList.Where(x => x.Id != 0))
-                     {
-                         var intuityfulfillmentDbModel = context1.IntuityFulfillments.Where(x => x.Id == req.Id).FirstOrDefault();
-                         context1.Entry(intuityfulfillmentDbModel).CurrentValues.SetValues(req);
-                     }
-                     context1.SaveChanges();
-                 }*/
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
+                {
+                    //context1.Configuration.AutoDetectChangesEnabled = false;
+                    foreach (IntuityFulfillments req in fulfillmentList.Where(x => x.Id != 0))
+                    {
+                        var intuityfulfillmentDbModel = context1.IntuityFulfillments.Where(x => x.Id == req.Id).FirstOrDefault();
+                        context1.Entry(intuityfulfillmentDbModel).CurrentValues.SetValues(req);
+                    }
+                    context1.SaveChanges();
+                }
                 scope.Complete();
             }
 
             //insert
             using (var scope = new System.Transactions.TransactionScope())
             {
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     //context1.Configuration.AutoDetectChangesEnabled = false;
                     IntuityFulfillmentsDto intuityFulfillment = new IntuityFulfillmentsDto();
@@ -92,7 +92,7 @@ namespace Intervent.Web.DataLayer
                         context1.IntuityFulfillments.Add(fulfillment);
                     }
                     context1.SaveChanges();
-                }*/
+                }
                 scope.Complete();
             }
         }
@@ -102,7 +102,7 @@ namespace Intervent.Web.DataLayer
             //insert
             using (var scope = new System.Transactions.TransactionScope())
             {
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     //context1.Configuration.AutoDetectChangesEnabled = false;
                     foreach (IntuityEligibility req in eligibilityList)
@@ -112,7 +112,7 @@ namespace Intervent.Web.DataLayer
                         context1.Entry(intuityeligibilityDbModel).CurrentValues.SetValues(req);
                     }
                     context1.SaveChanges();
-                }*/
+                }
                 scope.Complete();
             }
         }

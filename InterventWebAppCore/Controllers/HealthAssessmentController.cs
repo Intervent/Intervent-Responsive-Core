@@ -26,7 +26,7 @@ namespace InterventWebApp.Controllers
         [HttpGet("{clientId?}/{userId?}")]
         public IActionResult GetCategories(string clientId, string userId, [FromQuery] string date)
         {
-            HraManager hraManager = new HraManager(_userManager);
+            HraManager hraManager = new HraManager(_userManager, _appSettings.DTCOrgCode);
             string UserId = userId.Substring(3);
             // var UserId = Request.Headers.GetValues("UserId").FirstOrDefault();
             var categories = hraManager.GetHRAAssessment(UserId, _appSettings.SalesForceOrgId);
@@ -37,7 +37,7 @@ namespace InterventWebApp.Controllers
         [HttpGet("{clientId?}/{userId?}")]
         public IActionResult GetProfile(string clientId, string userId, [FromQuery] string date)
         {
-            HraManager hraManager = new HraManager(_userManager);
+            HraManager hraManager = new HraManager(_userManager, _appSettings.DTCOrgCode);
             string UserId = null;
             if (userId.Length > 3)
                 UserId = userId.Substring(3);
@@ -48,7 +48,7 @@ namespace InterventWebApp.Controllers
         [RequireHttps]
         public IActionResult SaveProfile(string clientId, string userId, [FromQuery] string date, [FromBody] APISaveUserProfileRequest data)
         {
-            HraManager hraManager = new HraManager(_userManager);
+            HraManager hraManager = new HraManager(_userManager, _appSettings.DTCOrgCode);
             string UserId = null;
             if (userId.Length > 3)
                 UserId = userId.Substring(3);
@@ -58,7 +58,7 @@ namespace InterventWebApp.Controllers
         [RequireHttps]
         public IActionResult SaveHRA(string clientId, string userId, [FromQuery] string date, [FromBody] APISaveHRAQuestionRequest data)
         {
-            HraManager hraManager = new HraManager(_userManager);
+            HraManager hraManager = new HraManager(_userManager, _appSettings.DTCOrgCode);
             string UserId = userId.Substring(3);
             return Ok(hraManager.SaveHRAQuestion(data, _appSettings.SalesForceOrgId));
         }
