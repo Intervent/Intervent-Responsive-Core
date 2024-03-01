@@ -1148,7 +1148,7 @@ namespace InterventWebApp
 
         [HttpPost]
         [ModuleControl(Modules.Eligibility, RoleCode.Administrator, RoleCode.Coach, RoleCode.CSR)]
-        public JsonResult AddEditEligibilityNotes(EligibilityNotesDto model)
+        public JsonResult AddEditEligibilityNotes([FromBody] EligibilityNotesModel model)
         {
             var result = ParticipantUtility.AddEditEligibilityNotes(model, HttpContext.Session.GetInt32(SessionContext.UserId).Value);
             return Json(new { Result = "OK", Record = result });

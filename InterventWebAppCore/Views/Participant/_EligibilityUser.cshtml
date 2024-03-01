@@ -1003,7 +1003,7 @@
             'NoteType': noteType,
             'Notes': notes,
             'OrganizationId': '@Model.OrganizationId',
-            'Id': noteId
+            'Id': noteId == '' ? 0 : noteId
         };
         model.eligibilityNotes = (data);
         var strModelData = JSON.stringify(model);
