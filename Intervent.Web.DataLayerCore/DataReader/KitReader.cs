@@ -450,7 +450,7 @@ namespace Intervent.Web.DataLayer
             ListColumnResponse response = new ListColumnResponse();
             LanguageReader langReader = new LanguageReader();
             List<ColumnDto> columns = new List<ColumnDto>();
-            /*using (var newContext = new InterventDatabase())
+            using (var newContext = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 var questions = newContext.QuestionsinActivities.Where(x => x.ParentId == rowId).ToList();
                 foreach (var question in questions)
@@ -486,7 +486,7 @@ namespace Intervent.Web.DataLayer
                     columns.Add(column);
                 }
                 response.Columns = columns;
-            }*/
+            }
             response.Columns = columns;
             return response;
         }

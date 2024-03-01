@@ -93,10 +93,10 @@ namespace Intervent.Web.DataLayer
                 labWork.CreatedOn = labWork.ModifiedOn = DateTime.UtcNow;
                 labWork.SwitchCount = request.switchCount;
                 labWork.AdditionalLab = request.additionalLab;
-                var lab = context.Labs.Add(labWork);
+                var lab = context.Labs.Add(labWork).Entity;
                 context.SaveChanges();
                 CommonReader commonReader = new CommonReader();
-                //response.labId = lab.Id;
+                response.labId = lab.Id;
                 response.OrderId = labWork.OrderNo;
             }
             response.status = true;

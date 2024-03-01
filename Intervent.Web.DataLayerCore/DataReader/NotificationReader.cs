@@ -52,7 +52,7 @@ namespace Intervent.Web.DataLayer
             DAL.NotificationEvent notifyEvent = null;
             using (var scope = new System.Transactions.TransactionScope())
             {
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     //context1.Configuration.AutoDetectChangesEnabled = false;
                     foreach (NotificationEventDto dto in request.NotificationEvents)
@@ -73,7 +73,7 @@ namespace Intervent.Web.DataLayer
                     }
 
                     context1.SaveChanges();
-                }*/
+                }
 
                 scope.Complete();
 

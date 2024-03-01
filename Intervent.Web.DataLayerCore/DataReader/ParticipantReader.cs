@@ -244,14 +244,14 @@ namespace Intervent.Web.DataLayer
                     {
                         CompIntroKitsOnTime = true;
                     }
-                    /*using (InterventDatabase ctx = new InterventDatabase())
+                    using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                     {
                         var usersinPrograms = ctx.UsersinPrograms.Where(y => y.Id == userinPrograms.Id).FirstOrDefault();
                         usersinPrograms.CompIntroKitsOnTime = CompIntroKitsOnTime;
                         ctx.UsersinPrograms.Attach(usersinPrograms);
                         ctx.Entry(usersinPrograms).State = EntityState.Modified;
                         ctx.SaveChanges();
-                    }*/
+                    }
                 }
             }
             return count;
@@ -965,7 +965,7 @@ namespace Intervent.Web.DataLayer
 
         public void UpdateUserEligibilitySetting(UpdateUserEligibilitySettingRequest request)
         {
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
                 var userSetting = ctx.UserEligibilitySettings.FirstOrDefault(x => x.UniqueId == request.UserEligibilitySetting.UniqueId && x.OrganizationId == request.UserEligibilitySetting.OrganizationId);
                 if (userSetting == null)
@@ -984,14 +984,14 @@ namespace Intervent.Web.DataLayer
                     userSetting.Language = request.UserEligibilitySetting.Language;
                     ctx.SaveChanges();
                 }
-            }*/
+            }
         }
 
         public GetUserEligibilitySettingResponse GetUserEligibilitySetting(GetUserEligibilitySettingRequest request)
         {
-            var response = new GetUserEligibilitySettingResponse();
-            /*using (InterventDatabase ctx = new InterventDatabase())
+            using (InterventDatabase ctx = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
             {
+                var response = new GetUserEligibilitySettingResponse();
                 var userSetting = ctx.UserEligibilitySettings.FirstOrDefault(x => x.UniqueId == request.UniqueID && x.OrganizationId == request.OrgID);
                 if (userSetting != null)
                 {
@@ -1000,8 +1000,8 @@ namespace Intervent.Web.DataLayer
                     response.UserEligibilitySetting.OrganizationId = userSetting.OrganizationId;
                     response.UserEligibilitySetting.Language = userSetting.Language;
                 }
-            }*/
-            return response;
+                return response;
+            }
         }
 
         public int TerminateNotSentEligibilityRecords(int portalId)
@@ -1141,7 +1141,7 @@ namespace Intervent.Web.DataLayer
             DAL.EligibilityImportLog log = null;
             using (var scope = new System.Transactions.TransactionScope())
             {
-                /*using (var context1 = new InterventDatabase())
+                using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     //context1.Configuration.AutoDetectChangesEnabled = false;
                     foreach (EligibilityImportLogDto dto in request.EligibilityImportLogs)
@@ -1161,7 +1161,7 @@ namespace Intervent.Web.DataLayer
                         context1.EligibilityImportLogs.Add(log);
                     }
                     context1.SaveChanges();
-                }*/
+                }
                 scope.Complete();
             }
         }
@@ -1209,7 +1209,7 @@ namespace Intervent.Web.DataLayer
             {
                 using (var scope = new System.Transactions.TransactionScope())
                 {
-                    /*using (var context1 = new InterventDatabase())
+                    using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                     {
                         //context1.Configuration.AutoDetectChangesEnabled = false;
                         foreach (EligibilityDto req in request.Eligibilities.Where(x => x.Id.HasValue))
@@ -1238,7 +1238,7 @@ namespace Intervent.Web.DataLayer
                             context1.Entry(eligibilityDbModel).CurrentValues.SetValues(eligibility);
                         }
                         context1.SaveChanges();
-                    }*/
+                    }
                     scope.Complete();
                 }
             }
@@ -1254,9 +1254,9 @@ namespace Intervent.Web.DataLayer
                 //insert
                 using (var scope = new System.Transactions.TransactionScope())
                 {
-                    /*using (var context1 = new InterventDatabase())
+                    using (var context1 = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                     {
-                       // context1.Configuration.AutoDetectChangesEnabled = false;
+                        //context1.Configuration.AutoDetectChangesEnabled = false;
                         foreach (EligibilityDto req in request.Eligibilities.Where(x => x.Id.HasValue == false))
                         {
                             var eligibilityDbModel = new DAL.Eligibility();
@@ -1265,7 +1265,7 @@ namespace Intervent.Web.DataLayer
                             context1.Eligibilities.Add(MapToEligibilityDAL(req, eligibilityDbModel));
                         }
                         context1.SaveChanges();
-                    }*/
+                    }
                     scope.Complete();
                 }
             }

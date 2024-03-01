@@ -335,7 +335,7 @@ namespace Intervent.Web.DataLayer
         {
             using (var scope = new System.Transactions.TransactionScope())
             {
-                /*using (var dbContext = new InterventDatabase())
+                using (var dbContext = new InterventDatabase(InterventDatabase.GetInterventDatabaseOption()))
                 {
                     //dbContext.Configuration.AutoDetectChangesEnabled = false;
                     foreach (UserDashboardMessageDto req in request)
@@ -344,7 +344,7 @@ namespace Intervent.Web.DataLayer
                         dbContext.UserDashboardMessages.Add(CommonReader.MapToUserDashboardDAL(req, eligibilityDbModel));
                     }
                     dbContext.SaveChanges();
-                }*/
+                }
                 scope.Complete();
             }
         }
