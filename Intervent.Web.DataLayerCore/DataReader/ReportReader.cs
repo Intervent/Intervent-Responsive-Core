@@ -78,20 +78,11 @@ namespace Intervent.Web.DataLayer
         {
             //select top 5 records
             ConditionsNeedHelpResponse response = new ConditionsNeedHelpResponse();
-            var conditions = context.HRA_ActionSteps.Include("ActionStepType").Where(x => x.HRAId == request.hraId
-            && ((x.ActionStepType.RiskFactor == "Diabetes") || !x.IsNull) && !string.IsNullOrEmpty(x.ActionStepType.HelpStatement)).ToList();
-            var filteredConditions = conditions.Where(x => x.ActionStepType.RiskFactor == "Diabetes").ToList().Union(conditions.Where(x => x.ActionStepType.RiskFactor != "Diabetes").OrderBy(x => x.Score).Take(4).ToList());
-            List<HRA_ActionStepsDto> actionSteps = new List<HRA_ActionStepsDto>();
-            foreach (var cond in filteredConditions)
+            var conditions = context.HRA_ActionSteps.Include("ActionStepType").Where(x => x.HRAId == request.hraId && !string.IsNullOrEmpty(x.ActionStepType.HelpStatement) && !x.IsNull).OrderBy(x => x.Score).Take(5).ToList();
+            if (conditions != null)
             {
-                HRA_ActionStepsDto actionStep = new HRA_ActionStepsDto();
-                ActionStepTypeDto actionStepType = new ActionStepTypeDto();
-                actionStep.HRAId = cond.HRAId;
-                actionStepType.HelpStatement = cond.ActionStepType.HelpStatement;
-                actionStep.ActionStepType = actionStepType;
-                actionSteps.Add(actionStep);
+                response.actionSteps = Utility.mapper.Map<IList<DAL.HRA_ActionSteps>, IList<HRA_ActionStepsDto>>(conditions).ToList();
             }
-            response.actionSteps = actionSteps;
             return response;
         }
 

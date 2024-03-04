@@ -324,6 +324,17 @@ namespace Intervent.Web.DTO
             return values;
         }
 
+        public static IEnumerable<ControlValue> GetUserStatusList()
+        {
+            List<ControlValue> values = new List<ControlValue>();
+            values.Add(new ControlValue() { Text = EligibilityUserStatusDto.Active.Description, DisplayText = EligibilityUserStatusDto.Active.Description, Value = EligibilityUserStatusDto.Active.Key });
+            values.Add(new ControlValue() { Text = EligibilityUserStatusDto.Retired.Description, DisplayText = EligibilityUserStatusDto.Retired.Description, Value = EligibilityUserStatusDto.Retired.Key });
+            values.Add(new ControlValue() { Text = EligibilityUserStatusDto.Terminated.Description, DisplayText = EligibilityUserStatusDto.Terminated.Description, Value = EligibilityUserStatusDto.Terminated.Key });
+            values.Add(new ControlValue() { Text = EligibilityUserStatusDto.LoA.Description, DisplayText = EligibilityUserStatusDto.LoA.Description, Value = EligibilityUserStatusDto.LoA.Key });
+            values.Add(new ControlValue() { Text = EligibilityUserStatusDto.Cobra.Description, DisplayText = EligibilityUserStatusDto.Cobra.Description, Value = EligibilityUserStatusDto.Cobra.Key });
+            return values;
+        }
+
         public static IEnumerable<ControlValue> GetEligibilityReasonsList()
         {
             List<ControlValue> values = new List<ControlValue>();
@@ -340,17 +351,6 @@ namespace Intervent.Web.DTO
             values.Add(new ControlValue() { Text = EligibilityReason.Terminated.ToString(), Value = ((int)EligibilityReason.Terminated).ToString(), DisplayText = GetDescription(EligibilityReason.Terminated) });
             values.Add(new ControlValue() { Text = EligibilityReason.Retired.ToString(), Value = ((int)EligibilityReason.Retired).ToString(), DisplayText = GetDescription(EligibilityReason.Retired) });
             values.Add(new ControlValue() { Text = EligibilityReason.LoA.ToString(), Value = ((int)EligibilityReason.LoA).ToString(), DisplayText = GetDescription(EligibilityReason.LoA) });
-            return values;
-        }
-
-        public static IEnumerable<ControlValue> GetUserStatusList()
-        {
-            List<ControlValue> values = new List<ControlValue>();
-            values.Add(new ControlValue() { Text = EligibilityUserStatusDto.Active.Description, DisplayText = EligibilityUserStatusDto.Active.Description, Value = EligibilityUserStatusDto.Active.Key });
-            values.Add(new ControlValue() { Text = EligibilityUserStatusDto.Retired.Description, DisplayText = EligibilityUserStatusDto.Retired.Description, Value = EligibilityUserStatusDto.Retired.Key });
-            values.Add(new ControlValue() { Text = EligibilityUserStatusDto.Terminated.Description, DisplayText = EligibilityUserStatusDto.Terminated.Description, Value = EligibilityUserStatusDto.Terminated.Key });
-            values.Add(new ControlValue() { Text = EligibilityUserStatusDto.LoA.Description, DisplayText = EligibilityUserStatusDto.LoA.Description, Value = EligibilityUserStatusDto.LoA.Key });
-            values.Add(new ControlValue() { Text = EligibilityUserStatusDto.Cobra.Description, DisplayText = EligibilityUserStatusDto.Cobra.Description, Value = EligibilityUserStatusDto.Cobra.Key });
             return values;
         }
 

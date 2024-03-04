@@ -7,8 +7,6 @@ namespace Intervent.HWS
 {
     public static class Dexcom
     {
-        public static string DexcomApiUrl = "test";
-
         public static async Task<DexcomOAuth2> GetOAuth2Async(string DexcomApiUrl, FormUrlEncodedContent content)
         {
             DexcomOAuth2 processResponse = new DexcomOAuth2();
