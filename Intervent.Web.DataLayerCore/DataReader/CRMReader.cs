@@ -237,6 +237,8 @@ namespace Intervent.Web.DataLayer
                 request.crm_Note.HCPId = HCPList.Id;
 
             }
+            if (string.IsNullOrEmpty(request.crm_Note.Language))
+                request.crm_Note.Language = "en-us";
             var CRM_Note = context.CRM_Notes.Where(x => x.Id == request.crm_Note.Id).FirstOrDefault();
             if (CRM_Note != null)
             {

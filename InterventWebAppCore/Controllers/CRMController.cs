@@ -11,6 +11,8 @@ using System.Data;
 using System.Data.OleDb;
 using System.Globalization;
 using System.Web;
+using OfficeOpenXml;
+using System.Text.RegularExpressions;
 
 namespace InterventWebApp
 {
@@ -82,16 +84,20 @@ namespace InterventWebApp
                 {
                     FileUpload.CopyToAsync(fileStream);
                 }
-                string connectionString = $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={System.IO.Path.GetDirectoryName(pathToFile)};Extended Properties='Text;HDR=YES;'";
-                using (OleDbConnection connection = new OleDbConnection(connectionString))
+                string excelFilePath = targetpath + filename.Split('.')[0] + ".xlsx";
+
+                ConvertCsvToExcel(pathToFile, excelFilePath);
+                System.IO.File.Delete(pathToFile);
+                string con = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0;HDR=yes;IMEX=1'", excelFilePath);
+                using (OleDbConnection connection = new OleDbConnection(con))
                 {
                     connection.Open();
                     var tables = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
                     if (tables == null)
                         return qadOrderResponse;
                     var sheet = tables.Rows[0]["TABLE_NAME"];
-                    OleDbCommand command = new OleDbCommand($"SELECT * FROM [{Path.GetFileName(pathToFile)}]", connection);
-                    using (OleDbDataReader dr = command.ExecuteReader(CommandBehavior.SchemaOnly))
+                    OleDbCommand command = new OleDbCommand("select * from [" + sheet + "]", connection);
+                    using (OleDbDataReader dr = command.ExecuteReader())
                     {
                         var schema = dr.GetSchemaTable();
                         Dictionary<int, string> columns = new Dictionary<int, string>();
@@ -104,7 +110,7 @@ namespace InterventWebApp
                             QADOrdersDto qadOrder = new QADOrdersDto();
                             #region CSV Conversion
                             if (!String.IsNullOrWhiteSpace(dr[columns.FirstOrDefault(x => x.Value == "order").Key].ToString()))
-                                qadOrder.Order = dr[columns.FirstOrDefault(x => x.Value == "order").Key].ToString();
+                                qadOrder.Order = Regex.Replace(dr[columns.FirstOrDefault(x => x.Value == "order").Key].ToString(), " ", "");
                             if (!String.IsNullOrWhiteSpace(dr[columns.FirstOrDefault(x => x.Value == "order date").Key].ToString()))
                                 qadOrder.OrderDate = DateTime.Parse(dr[columns.FirstOrDefault(x => x.Value == "order date").Key].ToString());
                             if (!String.IsNullOrWhiteSpace(dr[columns.FirstOrDefault(x => x.Value == "meter quantity").Key].ToString()))
@@ -118,10 +124,35 @@ namespace InterventWebApp
                         }
                     }
                     connection.Close();
-                    System.IO.File.Delete(pathToFile);
+                    System.IO.File.Delete(excelFilePath);
                 }
             }
             return qadOrderResponse;
+        }
+
+        static void ConvertCsvToExcel(string csvFilePath, string excelFilePath)
+        {
+            FileInfo csvFile = new FileInfo(csvFilePath);
+            using (ExcelPackage package = new ExcelPackage(new FileInfo(excelFilePath)))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Sheet1");
+                int row = 1;
+
+                // Read the CSV file and write its content to Excel
+                using (var reader = new StreamReader(csvFile.FullName))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        string[] fields = reader.ReadLine().Split(',');
+                        for (int i = 0; i < fields.Length; i++)
+                        {
+                            worksheet.Cells[row, i + 1].Value = fields[i];
+                        }
+                        row++;
+                    }
+                }
+                package.Save();
+            }
         }
 
         [Authorize]

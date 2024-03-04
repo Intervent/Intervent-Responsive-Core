@@ -56,7 +56,7 @@ namespace InterventWebApp.Controllers
         [HttpPost]
         public JsonResult ListPhysicalActivityData(int days, string startDate, string endDate)
         {
-            RoutineData routineData = DevicesUtility.ListPhysicalActivityData(days, startDate, endDate, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value);
+            RoutineData routineData = DevicesUtility.ListPhysicalActivityData(days, startDate, endDate, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, !string.IsNullOrEmpty(HttpContext.Session.GetString(SessionContext.ParticipantTimeZoneName)) ? HttpContext.Session.GetString(SessionContext.ParticipantTimeZoneName) : "Eastern Standard Time");
             return Json(routineData);
         }
 

@@ -119,7 +119,7 @@ namespace InterventWebApp
                 string profilePicturePath = "/ProfilePictures/";
                 var connectedDevices = WearableUtility.GetUserWearableDevices(participantId);
                 response.blood_pressure = GetBloodPressureResponse(DevicesUtility.ListBiometricsData(7, null, null, participantId));
-                response.physical_activity = GetPhysicalActivityResponse(DevicesUtility.ListPhysicalActivityData(7, null, null, participantId));
+                response.physical_activity = GetPhysicalActivityResponse(DevicesUtility.ListPhysicalActivityData(7, null, null, participantId, timeZone));
                 response.terms_and_conditions = baseUrl + "/Home/ServiceAgreement?modal=false&closeModal=true&mobileView=true";
                 response.about_app_url = baseUrl + "/Home/AboutApp";
                 response.webview_oauth_url = baseUrl + "/MobileOAuth/AuthenticateUser";

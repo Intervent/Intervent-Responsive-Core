@@ -222,19 +222,20 @@ namespace InterventWebApp
             return reader.GetWorkoutsData(request);
         }
 
-        public static RoutineData ListPhysicalActivityData(int days, string startDate, string endDate, int participantId)
+        public static RoutineData ListPhysicalActivityData(int days, string startDate, string endDate, int participantId, string participantTimeZone)
         {
             DateTime? startDateFilter = null, endDateFilter = null;
+            TimeZoneInfo custTZone = TimeZoneInfo.FindSystemTimeZoneById(participantTimeZone);
             if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
             {
-                startDateFilter = Convert.ToDateTime(startDate);
-                endDateFilter = Convert.ToDateTime(endDate).AddDays(1);
+                startDateFilter = TimeZoneInfo.ConvertTimeToUtc(Convert.ToDateTime(startDate), custTZone);
+                endDateFilter = TimeZoneInfo.ConvertTimeToUtc(Convert.ToDateTime(endDate), custTZone);
                 days = (int)(endDateFilter.Value - startDateFilter.Value).TotalDays;
             }
             else if (days > 0)
             {
-                endDateFilter = DateTime.UtcNow;
-                startDateFilter = endDateFilter.Value.AddDays(-(days - 1));
+                endDateFilter = TimeZoneInfo.ConvertTimeToUtc(DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified), custTZone);
+                startDateFilter = TimeZoneInfo.ConvertTimeToUtc(DateTime.SpecifyKind(endDateFilter.Value.AddDays(-days), DateTimeKind.Unspecified), custTZone);
             }
             var response = GetWorkoutData(startDateFilter, endDateFilter, participantId);
             //Time data
@@ -296,7 +297,7 @@ namespace InterventWebApp
             if (stepData.Count > 0)
             {
                 var daysWithoutSteps = days - stepData.Count;
-                if (daysWithoutSteps == 0)
+                if (daysWithoutSteps <= 0)
                 {
                     routineData.leastActiveDayValue = stepData.Min(x => x.distance ?? 0);
                     routineData.leastActiveDay = stepData.OrderBy(x => x.distance).FirstOrDefault().dateTime.ToString("MMMM d");
