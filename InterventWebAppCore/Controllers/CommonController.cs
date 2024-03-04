@@ -42,14 +42,16 @@ namespace InterventWebApp
                     if (action.ToLower().Contains("recipe") && image.ContentType.Contains("image"))
                     {
                         var recipeId = uri.Substring(uri.LastIndexOf("/") + 1);
-                        path = Path.Combine(environment.ContentRootPath + "/images/upload", fileName);
+						var rootpath = Path.Combine(environment.ContentRootPath, "images/upload");
+                        path = Path.Combine(rootpath, fileName);
                         absolutePath = Url.Content("/images/upload/" + fileName);
                         RecipeUtility.UpdateImageUrl(int.Parse(recipeId), fileName);
                     }
                     else if (action.ToLower().Contains("kit") && image.ContentType.Contains("pdf"))
                     {
                         var kitId = uri.Substring(uri.LastIndexOf("/") + 1);
-                        path = Path.Combine(environment.ContentRootPath + "/Pdf", image.FileName);
+						var rootpath = Path.Combine(environment.ContentRootPath, "Pdf");
+                        path = Path.Combine(rootpath, image.FileName);
                         absolutePath = Url.Content("/Pdf/" + image.FileName);
                         string pdfFiles = KitUtility.UploadPdf(int.Parse(kitId), image.FileName, langCode).UploadedPdf;
 
@@ -66,7 +68,8 @@ namespace InterventWebApp
                     {
                         if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
                         {
-                            path = Path.Combine(environment.ContentRootPath + "/Lab", fileName);
+							var rootpath = Path.Combine(environment.ContentRootPath, "Lab");
+                            path = Path.Combine(rootpath, fileName);
                             LabUtility.UpdateLabResultFile(id, fileName, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.AdminId).HasValue ? HttpContext.Session.GetInt32(SessionContext.AdminId).Value : null, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), User.RoleCode(), null, true);
                             if (!string.IsNullOrWhiteSpace(path))
                             {
@@ -83,7 +86,8 @@ namespace InterventWebApp
                         if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
                         {
                             var userId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
-                            path = Path.Combine(environment.ContentRootPath + "/IncentiveUploads", fileName);
+							var rootpath = Path.Combine(environment.ContentRootPath, "IncentiveUploads");
+                            path = Path.Combine(rootpath, fileName);
                             PortalUtility.AddTobaccoIncentive(fileName, userId, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.ProgramsInPortalId).HasValue ? HttpContext.Session.GetInt32(SessionContext.ProgramsInPortalId).Value : null);
                         }
                     }
@@ -92,7 +96,8 @@ namespace InterventWebApp
                         if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
                         {
                             var userId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
-                            path = Path.Combine(environment.ContentRootPath + "/FormUploads", fileName);
+							var rootpath = Path.Combine(environment.ContentRootPath, "FormUploads");
+                            path = Path.Combine(rootpath, fileName);
                             absolutePath = fileName;
                             ParticipantUtility.AddUserForm(fileName, userId, formType.Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value);
                         }
@@ -104,9 +109,10 @@ namespace InterventWebApp
                     }
                     else if (image.ContentType.Contains("image"))
                     {
-                        path = Path.Combine(environment.ContentRootPath + "/ProfilePictures", fileName);
+                        var rootpath = Path.Combine(environment.ContentRootPath , "ProfilePictures");
+                        path = Path.Combine(rootpath, fileName);
                         absolutePath = fileName;
-                        await AccountUtility.UploadPicture(_userManager, id.Value, fileName, environment.ContentRootPath + "/ProfilePictures");
+                        await AccountUtility.UploadPicture(_userManager, id.Value, fileName, rootpath);
                     }
                     if (!string.IsNullOrWhiteSpace(path))
                     {

@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Messageuploads\**" />
+    <Content Remove="Messageuploads\**" />
+    <EmbeddedResource Remove="Messageuploads\**" />
+    <None Remove="Messageuploads\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Controllers\PaypalController.cs" />
   </ItemGroup>
 
@@ -366,6 +373,10 @@
     <None Include="wwwroot\Images\wellness_report.svg" />
     <None Include="wwwroot\Images\what%27s-new.svg" />
     <None Include="wwwroot\Images\YogaGuy.svg" />
+    <None Include="wwwroot\ProfilePictures\1mDoctor-Launcher-Icon.png" />
+    <None Include="wwwroot\ProfilePictures\51dr-gordon.jpg" />
+    <None Include="wwwroot\ProfilePictures\avatar.jpg" />
+    <None Include="wwwroot\ProfilePictures\_040324063538945.jpg" />
     <None Include="wwwroot\Scripts\AddEditAppointment.js" />
     <None Include="wwwroot\Scripts\AgeValidation.js" />
     <None Include="wwwroot\Scripts\ajaxupload.js" />
@@ -984,7 +995,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Messageuploads\" />
+    <Folder Include="wwwroot\Messageuploads\" />
   </ItemGroup>
 
 </Project>
