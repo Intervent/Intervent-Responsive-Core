@@ -27,8 +27,7 @@
                                 <div class="grid-x">
                                     <div class="cell medium-4 profile-card  clearfix hide-for-print">
                                         @{var url = "";
-                                            url = Model.BaseUrl;
-                                            url = url + "/ProfilePictures/" + Model.user.Picture;
+                                            url = "/ProfilePictures/" + Model.user.Picture;
                                         }
                                         <div class="photo-frame user" style="background-image:url('@url')"></div>
                                     </div>

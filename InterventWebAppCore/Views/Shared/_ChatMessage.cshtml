@@ -413,7 +413,7 @@
                         {
                             var ProfilePicture = "";
                             if (data.model.parentMessages[i].Picture != null)
-                                ProfilePicture = url + "/ProfilePictures/" + data.model.parentMessages[i].Picture;
+                                ProfilePicture = "/ProfilePictures/" + data.model.parentMessages[i].Picture;
                             var date = new Date(parseInt(data.model.parentMessages[i].CreateDate.substr(6)));
                             var isRead = data.model.parentMessages[i].StatusId != 1 ? "" : "msg-unread";
                             if (category == 1) {
@@ -446,7 +446,7 @@
                     }
                     else {
                         messagesHtml += "<div class='no-msg-container'><div class='no-msg'><img src='../../Images/messages/no-msg.jpg'><h3>No Messages, Yet</h3><p>There are No Messages in your Inbox as yet!</p>";
-                        if (Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)) && @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId) != @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId)) {
+                        if (@Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)) && @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId) != @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId)) {
                             messagesHtml += "<p>You can start by creating a new message</p><button class='button' data-open='new-msg-modal' onclick='addNewMsg();' aria-controls='new-msg-modal' aria-haspopup='true' tabindex='0'>Create New</button>";
                         }
                         messagesHtml += "</div></div>";
@@ -518,7 +518,7 @@
         //messageDetailsHtml += "<div class='dropdown-pane small ellipsis-dropdown' id='ellipsis-dropdown' data-dropdown data-auto-focus='true' data-position='bottom' data-alignment='right'><button class='close-button' data-close aria-label='Close dropdown menu' type='button'><span aria-hidden='true'>&times;</span>";
         //messageDetailsHtml += "<ul class='drop-menu-lv1'><li><a href='#'><span>Search</span></a></li><li><a href='#'><span>Add Contacts</span></a></li><li><a href='#' data-toggle='msg-detail-modal'><span>Details</span></a></li></ul></button>";
         messageDetailsHtml += "" + unReadOption + "</div>";
-        messageDetailsHtml += "<div class='chat-heading-btm'><div><div class='msg-contact-img'><img src='" + url + "/ProfilePictures/" + messageDetails[0].MessageRecipients[0].OwnershipImage + "' /></div><div class='msg-contact-detail'>" + messageDetails[0].MessageRecipients[0].OwnershipName + "<span>" + messageDetails[0].MessageRecipients[0].OwnershipRole + "</span></div></div><div><div class='tick-buttons'><label><input type='checkbox' id='activate-button' onclick='updateAction(" + messageDetails[(messageDetails.length - 1)].Id + ", " + true + ", " + false + ")' " + noActionNeeded + "/>No action needed<span class='checkmark'></span></label></div></div></div></div></div></div>";
+        messageDetailsHtml += "<div class='chat-heading-btm'><div><div class='msg-contact-img'><img src='" + "/ProfilePictures/" + messageDetails[0].MessageRecipients[0].OwnershipImage + "' /></div><div class='msg-contact-detail'>" + messageDetails[0].MessageRecipients[0].OwnershipName + "<span>" + messageDetails[0].MessageRecipients[0].OwnershipRole + "</span></div></div><div><div class='tick-buttons'><label><input type='checkbox' id='activate-button' onclick='updateAction(" + messageDetails[(messageDetails.length - 1)].Id + ", " + true + ", " + false + ")' " + noActionNeeded + "/>No action needed<span class='checkmark'></span></label></div></div></div></div></div></div>";
         messageDetailsHtml += "<div class='message-chat'><div class='chat-scroll-container'><div class='chat-container'>";
         if (messageDetails != null && messageDetails.length > 0) {
             for (var i = 0; i < messageDetails.length; i++) {

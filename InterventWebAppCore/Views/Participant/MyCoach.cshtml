@@ -718,7 +718,7 @@ $(document).ready(function() {
 						html += "<div class='coach-card-head'>";
 						html += "<div class='coach-profile-img'>";
 						if (coach.Picture != null) {
-							html += "<img src='" + url + "/ProfilePictures/" + coach.Picture + "' alt='' />";
+							html += "<img src='/ProfilePictures/" + coach.Picture + "' alt='' />";
 						}
 						html += "</div>";
 						html += "<div class='coach-profile-detail'>";
@@ -771,10 +771,10 @@ $(document).ready(function() {
             selectedCoach = coachId;
             $("#coachName").html(coachName);
             $("#bioText").html(bio);
-            $("#profileImage").attr("src", url + "/ProfilePictures/" + coachPicture);
+            $("#profileImage").attr("src", "/ProfilePictures/" + coachPicture);
             $("#coachSpecialities").html(coachSpeciality);
             $("#coachLanguages").html(coachLang);
-            $("#coachImage").attr("src", url + "/ProfilePictures/" + coachPicture);
+            $("#coachImage").attr("src", "/ProfilePictures/" + coachPicture);
             if (selectedDate == null) {
 				$("#coach-selected").removeAttr("disabled");
 				windowScroll('coach-proceed', true);
@@ -930,7 +930,7 @@ $(document).ready(function() {
 
     function UpdateBioText(text, picture) {
         $('#bioText').html(text);
-        $("#profileImage").attr("src", url + "/ProfilePictures/" + picture);
+        $("#profileImage").attr("src", "/ProfilePictures/" + picture);
     }
 
     function getWeeksInMonth(month, year) {

@@ -96,3 +96,8 @@ ipch/
 *.v2
 *.dll
 *.pak
+/InterventWebAppCore/wwwroot/ProfilePictures
+/InterventWebAppCore/wwwroot/Messageuploads
+/InterventWebAppCore/wwwroot/lab
+/InterventWebAppCore/wwwroot/temp
+/InterventWebAppCore/wwwroot/IncentiveUploads

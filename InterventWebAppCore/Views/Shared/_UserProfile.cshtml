@@ -37,8 +37,7 @@
 
 								@if (Model.user.Picture != null)
 								{
-									url = Model.user.BaseUrl;
-									url = url + "/ProfilePictures/" + Model.user.Picture;
+									url = "/ProfilePictures/" + Model.user.Picture;
 									styleText = "background-image:url('" + @url + "')";
 
 								}

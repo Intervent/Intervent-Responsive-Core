@@ -17,11 +17,13 @@ namespace InterventWebApp
 
         private readonly IHostEnvironment environment;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public CommonController(UserManager<ApplicationUser> userManager, IHostEnvironment environment)
+        public CommonController(UserManager<ApplicationUser> userManager, IHostEnvironment environment, IWebHostEnvironment hostingEnvironment)
         {
             _userManager = userManager;
             this.environment = environment;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [Authorize]
@@ -109,7 +111,7 @@ namespace InterventWebApp
                     }
                     else if (image.ContentType.Contains("image"))
                     {
-                        var rootpath = Path.Combine(environment.ContentRootPath , "ProfilePictures");
+                        var rootpath = Path.Combine(_hostingEnvironment.WebRootPath, "ProfilePictures");
                         path = Path.Combine(rootpath, fileName);
                         absolutePath = fileName;
                         await AccountUtility.UploadPicture(_userManager, id.Value, fileName, rootpath);

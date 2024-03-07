@@ -43,12 +43,12 @@
 
         for (i = 0; i < cols.length; i++) {
             if (type == 'add') {
-                cols[i].style.backgroundImage = "url('" + url + "/ProfilePictures/" + imageName + "')";
+                cols[i].style.backgroundImage = "url('/ProfilePictures/" + imageName + "')";
                 $("#removelink-@Model.Id").show();
             }
             else if (type == 'show') {
                 var pic = '@Model.Picture';
-                cols[i].style.backgroundImage = "url('" + url + "/ProfilePictures/" + pic + "')";
+                cols[i].style.backgroundImage = "url('/ProfilePictures/" + pic + "')";
                 $("#removelink-@Model.Id").show();
             }
             else {

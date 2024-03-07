@@ -32,10 +32,8 @@
 
 								@if (Model.user.Picture != null)
 								{
-									url = Model.BaseUrl;
-									url = url + "/ProfilePictures/" + Model.user.Picture;
+									url = "/ProfilePictures/" + Model.user.Picture;
 									styleText = "background-image:url('" + @url + "')";
-
 								}
 								<div id="profilepic" class="photo-frame @className" style="@styleText" value="fff"></div>
 								@*<div>

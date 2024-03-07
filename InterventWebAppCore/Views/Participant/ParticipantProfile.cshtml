@@ -30,10 +30,8 @@
 								}
 								@if (Model.User.Picture != null)
 								{
-									var url = "";
-                                    url = Model.BaseUrl;
-									url = url + "/ProfilePictures/" + Model.User.Picture;
-									<img id="profilepic" class="photo-frame @className" data-open="user-profile" style="background-image:url('@url')" data-modal-path="@Html.Raw(Url.Action("userprofile", "Account", new { module = "Admin" }))" />
+									var url = "/ProfilePictures/" + Model.User.Picture;
+									<img id="profilepic" class="photo-frame @className" data-open="user-profile" src="@url" data-modal-path="@Html.Raw(Url.Action("userprofile", "Account", new { module = "Admin" }))" />
 								}
 								else
 								{

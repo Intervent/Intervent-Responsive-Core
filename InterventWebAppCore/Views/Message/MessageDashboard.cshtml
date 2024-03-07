@@ -742,7 +742,7 @@
                         {
                             var ProfilePicture = "";
                             if (data.model.parentMessages[i].Picture != null)
-                                ProfilePicture = url + "/ProfilePictures/" + data.model.parentMessages[i].Picture;
+                                ProfilePicture = "/ProfilePictures/" + data.model.parentMessages[i].Picture;
                             var date = new Date(parseInt(data.model.parentMessages[i].LastMessageDate.substr(6)));
                             var isRead = data.model.parentMessages[i].StatusId != 1 ? "" : "msg-unread";
 
@@ -922,7 +922,7 @@
                         for (var i = 0; i < data.model.favoriteContacts.length; i++) {
                             if (data.model.favoriteContacts[i].Picture != null)
                                 var ProfilePicture = "";
-                            ProfilePicture = url + "/ProfilePictures/" + data.model.favoriteContacts[i].Picture;
+                            ProfilePicture = "/ProfilePictures/" + data.model.favoriteContacts[i].Picture;
                             messagesHtml += " <li><a href='#' data-open='new-msg-modal' aria-controls='new-msg-modal' aria-haspopup='true' onclick='messageFavoriteContact(`" + data.model.favoriteContacts[i].ContactName + "`," + data.model.favoriteContacts[i].Id + ");'><div class='msg-contact-img'><img src='" + ProfilePicture + "' /></div><div class='msg-contact-detail'>" + data.model.favoriteContacts[i].ContactName + " <span>" + data.model.favoriteContacts[i].RoleName + "</span></div></a>";
                             if (controlToUpdate == 'fav-mem-list') {
                                 messagesHtml += " <span><a href='#' onclick='addOrRemoveFavoriteContacts(" + data.model.favoriteContacts[i].Id + ");' class='remove-members'>Remove</a></span>";
@@ -971,7 +971,7 @@
         messageDetailsHtml += "<section class='chat-section'><div class='admin-chat-heading'><div class='chat-heading-top'><a href='#' class='back-btn'>Back</a>";
         messageDetailsHtml += "<h5>" + messageDetails[0].Subject + "</h5><i class='fa fa-ellipsis-v ellipsis-dropdown' aria-hidden='true' data-toggle='ellipsis-dropdown'></i>";
         messageDetailsHtml += "" + unReadOption +"</div>";
-        messageDetailsHtml += "<div class='chat-heading-btm'><div class='heading-partition'><div><div class='msg-contact-img'><img src='" + url + "/ProfilePictures/" + messageDetails[0].MessageRecipients[0].OwnershipImage + "' /></div><a onclick='ViewParticipant(" + messageDetails[0].MessageRecipients[0].OwnershipId + ")'><div class='msg-contact-detail'>" + messageDetails[0].MessageRecipients[0].OwnershipName + "<span>" + messageDetails[0].MessageRecipients[0].OwnershipRole + "</span></div></a></div><div><div class='tick-buttons'><label><input type='checkbox' id='activate-button' onclick='updateAction(" + messageDetails[(messageDetails.length - 1)].Id + ", " + true + ", " + false +")' " + noActionNeeded +"/>No action needed<span class='checkmark'></span></label></div></div></div></div></div></div></div>";
+        messageDetailsHtml += "<div class='chat-heading-btm'><div class='heading-partition'><div><div class='msg-contact-img'><img src='"/ProfilePictures/" + messageDetails[0].MessageRecipients[0].OwnershipImage + "' /></div><a onclick='ViewParticipant(" + messageDetails[0].MessageRecipients[0].OwnershipId + ")'><div class='msg-contact-detail'>" + messageDetails[0].MessageRecipients[0].OwnershipName + "<span>" + messageDetails[0].MessageRecipients[0].OwnershipRole + "</span></div></a></div><div><div class='tick-buttons'><label><input type='checkbox' id='activate-button' onclick='updateAction(" + messageDetails[(messageDetails.length - 1)].Id + ", " + true + ", " + false +")' " + noActionNeeded +"/>No action needed<span class='checkmark'></span></label></div></div></div></div></div></div></div>";
 		messageDetailsHtml += "<div class='message-chat'><div class='chat-scroll-container'><div class='chat-container'>";
         if (messageDetails != null && messageDetails.length > 0) {
             for (var i = 0; i < messageDetails.length; i++) {
