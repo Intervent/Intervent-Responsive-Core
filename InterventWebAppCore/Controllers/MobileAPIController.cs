@@ -22,10 +22,10 @@ namespace InterventWebApp.Controllers
 	public class MobileAPIController : ControllerBase
 	{
 		private readonly AppSettings _appSettings;
-		private readonly IHostEnvironment _environment;
+		private readonly IWebHostEnvironment _environment;
 		private readonly UserManager<ApplicationUser> _userManager;
 
-		public MobileAPIController(UserManager<ApplicationUser> userManager, IOptions<AppSettings> appSettings, IHostEnvironment environment)
+		public MobileAPIController(UserManager<ApplicationUser> userManager, IOptions<AppSettings> appSettings, IWebHostEnvironment environment)
 		{
 			_userManager = userManager;
 			_appSettings = appSettings.Value;
@@ -247,7 +247,7 @@ namespace InterventWebApp.Controllers
 		{
 			if (request != null && !string.IsNullOrEmpty(request.email))
 			{
-				var response = await AccountUtility.ForgotPassword(_userManager, _environment.ContentRootPath, request.email, "info@myintervent.com", _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
+				var response = await AccountUtility.ForgotPassword(_userManager, _environment.WebRootPath, request.email, "info@myintervent.com", _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
 				return Ok(new { status = response.Contains("success"), message = response });
 			}
 			else
@@ -384,7 +384,7 @@ namespace InterventWebApp.Controllers
 			var userIdentity = MobileUtility.GetUserSession((ClaimsIdentity)User.Identity);
 			if (userIdentity != null && userIdentity.UserId != 0 && request != null && request.message_id != 0)
 			{
-				var response = MobileUtility.GetMessages(userIdentity.UserId, request.message_id, userIdentity.TimeZone, _appSettings.SystemAdminId, _appSettings.EmailUrl);
+				var response = MobileUtility.GetMessages(userIdentity.UserId, request.message_id, userIdentity.TimeZone, _appSettings.SystemAdminId, _appSettings.EmailUrl, _environment.WebRootPath);
 				if (response != null)
 					return Ok(response);
 				else
@@ -408,7 +408,7 @@ namespace InterventWebApp.Controllers
 				if (Request.Form.Files.Count > 0)
 				{
 					IFormFile postedFile = Request.Form.Files["attachment"];
-					string filePath = Path.Combine(_environment.ContentRootPath, "Messageuploads");
+					string filePath = Path.Combine(_environment.WebRootPath, "Messageuploads");
 
 					var postedFileExtension = Path.GetExtension(postedFile.FileName);
 					var fileName = DateTime.Now.ToString("_ddMMyyhhmmssFFF") + postedFileExtension;
@@ -451,7 +451,7 @@ namespace InterventWebApp.Controllers
 				if (string.IsNullOrEmpty(request.message))
 					return BadRequest("Message body can't be empty");
 
-				var response = MobileUtility.AddMessage(userIdentity.UserId, _appSettings.SystemAdminId, request, userIdentity.TimeZone, userIdentity.RoleCode, _appSettings.EmailUrl);
+				var response = MobileUtility.AddMessage(userIdentity.UserId, _appSettings.SystemAdminId, request, userIdentity.TimeZone, userIdentity.RoleCode, _appSettings.EmailUrl, _environment.WebRootPath);
 				if (response != null)
 					return Ok(response);
 				else
@@ -471,7 +471,7 @@ namespace InterventWebApp.Controllers
 			{
 				try
 				{
-					if (MobileUtility.DeleteAttachment(userIdentity.UserId, request, _appSettings.SystemAdminId))
+					if (MobileUtility.DeleteAttachment(userIdentity.UserId, _environment.WebRootPath, request, _appSettings.SystemAdminId))
 						return Ok(new { status = true, message = "Successfully updated" });
 					else
 						return Ok(new { status = false, message = "Error" });
@@ -498,7 +498,7 @@ namespace InterventWebApp.Controllers
 			{
 				if (userIdentity != null && userIdentity.UserId != 0 && Request.Form.Files.Count > 0)
 				{
-					string filePath = Path.Combine(_environment.ContentRootPath, "ProfilePictures");
+					string filePath = Path.Combine(_environment.WebRootPath, "ProfilePictures");
 
 					if (Request.Form.Files.Count > 0)
 					{

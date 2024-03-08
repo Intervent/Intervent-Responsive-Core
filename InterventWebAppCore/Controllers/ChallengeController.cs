@@ -6,9 +6,9 @@ namespace InterventWebApp.Controllers
 {
     public class ChallengeController : BaseController
     {
-        private readonly IHostEnvironment environment;
+        private readonly IWebHostEnvironment environment;
 
-        public ChallengeController(IHostEnvironment environment)
+        public ChallengeController(IWebHostEnvironment environment)
         {
             this.environment = environment;
         }
@@ -65,7 +65,7 @@ namespace InterventWebApp.Controllers
 
         public void deleteTobaccoFile(string fileName)
         {
-            string filePath = Path.Combine(environment.ContentRootPath + "/IncentiveUploads", fileName);
+            string filePath = Path.Combine(environment.WebRootPath, "IncentiveUploads", fileName);
             if (System.IO.File.Exists(filePath))
             {
                 System.IO.File.Delete(filePath);
@@ -93,7 +93,7 @@ namespace InterventWebApp.Controllers
             model.DateFormat = HttpContext.Session.GetString(SessionContext.DateFormat);
             model.HasActivePortal = Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.HasActivePortal));
             model.OrganizationName = HttpContext.Session.GetString(SessionContext.OrganizationName);
-            model.Path = environment.ContentRootPath;
+            model.Path = environment.WebRootPath;
             return View(model);
         }
 

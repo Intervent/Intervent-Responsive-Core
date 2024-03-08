@@ -993,7 +993,7 @@ namespace InterventWebApp
             }
         }
 
-        public static List<Message> GetMessages(int userId, int messageId, string timeZone, int systemAdminId, string baseUrl)
+        public static List<Message> GetMessages(int userId, int messageId, string timeZone, int systemAdminId, string baseUrl, string rootPath)
         {
             try
             {
@@ -1006,7 +1006,7 @@ namespace InterventWebApp
                     {
                         if (!(!message.IsSent && !string.IsNullOrEmpty(message.CreatorName)))
                         {
-                            var fileExist = !string.IsNullOrEmpty(message.Attachment) && File.Exists(Directory.GetCurrentDirectory().Replace("\\", "/") + "/Messageuploads/" + message.Attachment);
+                            var fileExist = !string.IsNullOrEmpty(message.Attachment) && File.Exists(Path.Combine(rootPath, "Messageuploads" + message.Attachment));
                             if (parent_message_id == 0)
                                 parent_message_id = message.Id;
                             Message newMsg = new Message();
@@ -1041,7 +1041,7 @@ namespace InterventWebApp
             }
         }
 
-        public static List<Message> AddMessage(int userId, int systemAdminId, AddMessageRequest request, string timeZone, string role, string baseUrl)
+        public static List<Message> AddMessage(int userId, int systemAdminId, AddMessageRequest request, string timeZone, string role, string baseUrl, string rootPath)
         {
             try
             {
@@ -1052,7 +1052,7 @@ namespace InterventWebApp
                 if (updateResponse.updatedId != 0)
                 {
                     int msgId = parentMessageId != null ? request.parent_message_id : updateResponse.updatedId;
-                    return GetMessages(userId, msgId, timeZone, systemAdminId, baseUrl);
+                    return GetMessages(userId, msgId, timeZone, systemAdminId, baseUrl, rootPath);
                 }
                 return new List<Message>();
             }
@@ -1065,12 +1065,12 @@ namespace InterventWebApp
             }
         }
 
-        public static bool DeleteAttachment(int userId, DeleteMessageRequest request, int systemAdminId)
+        public static bool DeleteAttachment(int userId, string rootPath, DeleteMessageRequest request, int systemAdminId)
         {
             try
             {
-                if (File.Exists(Directory.GetCurrentDirectory().Replace("\\", "/") + "/Messageuploads/" + request.attachement_name))
-                    File.Delete(Directory.GetCurrentDirectory().Replace("\\", "/") + "/Messageuploads/" + request.attachement_name);
+                if (File.Exists(Path.Combine(rootPath, "Messageuploads" + request.attachement_name)))
+                    File.Delete(Path.Combine(rootPath, "Messageuploads" + request.attachement_name));
                 MessageUtility.DeleteAttachment(request.message_id, systemAdminId);
                 return true;
             }

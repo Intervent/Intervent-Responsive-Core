@@ -4,9 +4,9 @@ namespace InterventWebApp
 {
     public class NewsLetterController : AccountBaseController
     {
-        private readonly IHostEnvironment environment;
+        private readonly IWebHostEnvironment environment;
 
-        public NewsLetterController(IHostEnvironment environment)
+        public NewsLetterController(IWebHostEnvironment environment)
         {
             this.environment = environment;
         }
@@ -36,7 +36,7 @@ namespace InterventWebApp
         public JsonResult AddEditNewsLetter(IFormFile FileUpload, int id, string name, string pdf)
         {
             bool Status = false;
-            string targetpath = environment.ContentRootPath + "/Pdf/";
+            string targetpath = Path.Combine(environment.WebRootPath, "Pdf");
             if (FileUpload != null || id != 0)
             {
                 if (FileUpload != null)

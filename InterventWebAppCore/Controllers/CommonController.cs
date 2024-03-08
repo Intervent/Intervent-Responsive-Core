@@ -11,318 +11,316 @@ using System.Web.Helpers;
 
 namespace InterventWebApp
 {
-    public class CommonController : BaseController
-    {
-        public const int ImageMinimumBytes = 512;
+	public class CommonController : BaseController
+	{
+		public const int ImageMinimumBytes = 512;
 
-        private readonly IHostEnvironment environment;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IWebHostEnvironment _hostingEnvironment;
+		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly IWebHostEnvironment environment;
 
-        public CommonController(UserManager<ApplicationUser> userManager, IHostEnvironment environment, IWebHostEnvironment hostingEnvironment)
-        {
-            _userManager = userManager;
-            this.environment = environment;
-            _hostingEnvironment = hostingEnvironment;
-        }
+		public CommonController(UserManager<ApplicationUser> userManager, IWebHostEnvironment environment)
+		{
+			_userManager = userManager;
+			this.environment = environment;
+		}
 
-        [Authorize]
-        [HttpPost]
-        public async Task<JsonResult> UploadFile(int? id, string action, int? formType, string langCode)
-        {
-            IFormFile image = Request.Form.Files["FileUpload"];
-            if (image != null && !string.IsNullOrEmpty(image.FileName))
-            {
-                if (CheckIfImage(image))
-                {
-                    var postedFileExtension = Path.GetExtension(image.FileName);
-                    var fileName = System.DateTime.Now.ToString("_ddMMyyhhmmssFFF") + postedFileExtension;
-                    string path = "";
-                    string uri = Request.Headers["Referer"].ToString();
-                    string absolutePath = "";
+		[Authorize]
+		[HttpPost]
+		public async Task<JsonResult> UploadFile(int? id, string action, int? formType, string langCode)
+		{
+			IFormFile image = Request.Form.Files["FileUpload"];
+			if (image != null && !string.IsNullOrEmpty(image.FileName))
+			{
+				if (CheckIfImage(image))
+				{
+					var postedFileExtension = Path.GetExtension(image.FileName);
+					var fileName = System.DateTime.Now.ToString("_ddMMyyhhmmssFFF") + postedFileExtension;
+					string path = "";
+					string uri = Request.Headers["Referer"].ToString();
+					string absolutePath = "";
 
-                    if (action.ToLower().Contains("recipe") && image.ContentType.Contains("image"))
-                    {
-                        var recipeId = uri.Substring(uri.LastIndexOf("/") + 1);
-						var rootpath = Path.Combine(environment.ContentRootPath, "images/upload");
-                        path = Path.Combine(rootpath, fileName);
-                        absolutePath = Url.Content("/images/upload/" + fileName);
-                        RecipeUtility.UpdateImageUrl(int.Parse(recipeId), fileName);
-                    }
-                    else if (action.ToLower().Contains("kit") && image.ContentType.Contains("pdf"))
-                    {
-                        var kitId = uri.Substring(uri.LastIndexOf("/") + 1);
-						var rootpath = Path.Combine(environment.ContentRootPath, "Pdf");
-                        path = Path.Combine(rootpath, image.FileName);
-                        absolutePath = Url.Content("/Pdf/" + image.FileName);
-                        string pdfFiles = KitUtility.UploadPdf(int.Parse(kitId), image.FileName, langCode).UploadedPdf;
+					if (action.ToLower().Contains("recipe") && image.ContentType.Contains("image"))
+					{
+						var recipeId = uri.Substring(uri.LastIndexOf("/") + 1);
+						var rootpath = Path.Combine(environment.WebRootPath, "images/upload");
+						path = Path.Combine(rootpath, fileName);
+						absolutePath = Url.Content("/images/upload/" + fileName);
+						RecipeUtility.UpdateImageUrl(int.Parse(recipeId), fileName);
+					}
+					else if (action.ToLower().Contains("kit") && image.ContentType.Contains("pdf"))
+					{
+						var kitId = uri.Substring(uri.LastIndexOf("/") + 1);
+						var rootpath = Path.Combine(environment.WebRootPath, "Pdf");
+						path = Path.Combine(rootpath, image.FileName);
+						absolutePath = Url.Content("/Pdf/" + image.FileName);
+						string pdfFiles = KitUtility.UploadPdf(int.Parse(kitId), image.FileName, langCode).UploadedPdf;
 
-                        if (!string.IsNullOrWhiteSpace(path))
-                        {
-                            using (var stream = new FileStream(path, FileMode.Create))
-                            {
-                                await image.CopyToAsync(stream);
-                            }
-                            return Json(new { data = pdfFiles });
-                        }
-                    }
-                    else if (action.ToLower().Contains("lab"))
-                    {
-                        if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
-                        {
-							var rootpath = Path.Combine(environment.ContentRootPath, "Lab");
-                            path = Path.Combine(rootpath, fileName);
-                            LabUtility.UpdateLabResultFile(id, fileName, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.AdminId).HasValue ? HttpContext.Session.GetInt32(SessionContext.AdminId).Value : null, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), User.RoleCode(), null, true);
-                            if (!string.IsNullOrWhiteSpace(path))
-                            {
-                                using (var stream = new FileStream(path, FileMode.Create))
-                                {
-                                    await image.CopyToAsync(stream);
-                                }
-                                return Json(new { data = fileName, AdminView = TempData["AdminView"] != null ? TempData["AdminView"].ToString() : "False" });
-                            }
-                        }
-                    }
-                    else if (action.ToLower().Contains("incentive"))
-                    {
-                        if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
-                        {
-                            var userId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
-							var rootpath = Path.Combine(environment.ContentRootPath, "IncentiveUploads");
-                            path = Path.Combine(rootpath, fileName);
-                            PortalUtility.AddTobaccoIncentive(fileName, userId, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.ProgramsInPortalId).HasValue ? HttpContext.Session.GetInt32(SessionContext.ProgramsInPortalId).Value : null);
-                        }
-                    }
-                    else if (action.ToLower().Contains("form"))
-                    {
-                        if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
-                        {
-                            var userId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
-							var rootpath = Path.Combine(environment.ContentRootPath, "FormUploads");
-                            path = Path.Combine(rootpath, fileName);
-                            absolutePath = fileName;
-                            ParticipantUtility.AddUserForm(fileName, userId, formType.Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value);
-                        }
-                        else
-                        {
-                            return Json(new { data = "Failed" });
-                        }
+						if (!string.IsNullOrWhiteSpace(path))
+						{
+							using (var stream = new FileStream(path, FileMode.Create))
+							{
+								await image.CopyToAsync(stream);
+							}
+							return Json(new { data = pdfFiles });
+						}
+					}
+					else if (action.ToLower().Contains("lab"))
+					{
+						if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
+						{
+							var rootpath = Path.Combine(environment.WebRootPath, "Lab");
+							path = Path.Combine(rootpath, fileName);
+							LabUtility.UpdateLabResultFile(id, fileName, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetInt32(SessionContext.AdminId).HasValue ? HttpContext.Session.GetInt32(SessionContext.AdminId).Value : null, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), User.RoleCode(), null, true);
+							if (!string.IsNullOrWhiteSpace(path))
+							{
+								using (var stream = new FileStream(path, FileMode.Create))
+								{
+									await image.CopyToAsync(stream);
+								}
+								return Json(new { data = fileName, AdminView = TempData["AdminView"] != null ? TempData["AdminView"].ToString() : "False" });
+							}
+						}
+					}
+					else if (action.ToLower().Contains("incentive"))
+					{
+						if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
+						{
+							var userId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
+							var rootpath = Path.Combine(environment.WebRootPath, "IncentiveUploads");
+							path = Path.Combine(rootpath, fileName);
+							PortalUtility.AddTobaccoIncentive(fileName, userId, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.ProgramsInPortalId).HasValue ? HttpContext.Session.GetInt32(SessionContext.ProgramsInPortalId).Value : null);
+						}
+					}
+					else if (action.ToLower().Contains("form"))
+					{
+						if (image.ContentType.Contains("pdf") || image.ContentType.Contains("image"))
+						{
+							var userId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
+							var rootpath = Path.Combine(environment.WebRootPath, "FormUploads");
+							path = Path.Combine(rootpath, fileName);
+							absolutePath = fileName;
+							ParticipantUtility.AddUserForm(fileName, userId, formType.Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value);
+						}
+						else
+						{
+							return Json(new { data = "Failed" });
+						}
 
-                    }
-                    else if (image.ContentType.Contains("image"))
-                    {
-                        var rootpath = Path.Combine(_hostingEnvironment.WebRootPath, "ProfilePictures");
-                        path = Path.Combine(rootpath, fileName);
-                        absolutePath = fileName;
-                        await AccountUtility.UploadPicture(_userManager, id.Value, fileName, rootpath);
-                    }
-                    if (!string.IsNullOrWhiteSpace(path))
-                    {
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await image.CopyToAsync(stream);
-                        }
-                        return Json(new { data = absolutePath });
-                    }
-                    else
-                    {
-                        return Json(new { data = "Failed" });
-                    }
-                }
-                else
-                {
-                    return Json(new { data = "Failed" });
-                }
-            }
-            else
-                return Json(new { data = "Failed" });
-        }
-        [Authorize]
-        [HttpPost]
-        public async Task<JsonResult> ValidateImage()
-        {
-            IFormFile image = Request.Form.Files["FileUpload"];
-            var response = CheckIfImage(image) ? "Success" : "Failed";
-            return Json(new { data = response });
-        }
+					}
+					else if (image.ContentType.Contains("image"))
+					{
+						var rootpath = Path.Combine(environment.WebRootPath, "ProfilePictures");
+						path = Path.Combine(rootpath, fileName);
+						absolutePath = fileName;
+						await AccountUtility.UploadPicture(_userManager, id.Value, fileName, rootpath);
+					}
+					if (!string.IsNullOrWhiteSpace(path))
+					{
+						using (var stream = new FileStream(path, FileMode.Create))
+						{
+							await image.CopyToAsync(stream);
+						}
+						return Json(new { data = absolutePath });
+					}
+					else
+					{
+						return Json(new { data = "Failed" });
+					}
+				}
+				else
+				{
+					return Json(new { data = "Failed" });
+				}
+			}
+			else
+				return Json(new { data = "Failed" });
+		}
+		[Authorize]
+		[HttpPost]
+		public async Task<JsonResult> ValidateImage()
+		{
+			IFormFile image = Request.Form.Files["FileUpload"];
+			var response = CheckIfImage(image) ? "Success" : "Failed";
+			return Json(new { data = response });
+		}
 
-        private bool CheckIfImage(IFormFile postedFile)
-        {
-            var postedFileExtension = Path.GetExtension(postedFile.FileName);
-            if (string.Equals(postedFileExtension, ".jpg", StringComparison.OrdinalIgnoreCase)
-                       || string.Equals(postedFileExtension, ".png", StringComparison.OrdinalIgnoreCase)
-                       || string.Equals(postedFileExtension, ".gif", StringComparison.OrdinalIgnoreCase)
-                       || string.Equals(postedFileExtension, ".jpeg", StringComparison.OrdinalIgnoreCase))
-            {
-                if (!string.Equals(postedFile.ContentType, "image/jpg", StringComparison.OrdinalIgnoreCase) &&
-           !string.Equals(postedFile.ContentType, "image/jpeg", StringComparison.OrdinalIgnoreCase) &&
-           !string.Equals(postedFile.ContentType, "image/pjpeg", StringComparison.OrdinalIgnoreCase) &&
-           !string.Equals(postedFile.ContentType, "image/gif", StringComparison.OrdinalIgnoreCase) &&
-           !string.Equals(postedFile.ContentType, "image/x-png", StringComparison.OrdinalIgnoreCase) &&
-           !string.Equals(postedFile.ContentType, "image/png", StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-                try
-                {
-                    if (!postedFile.OpenReadStream().CanRead)
-                    {
-                        return false;
-                    }
-                    //------------------------------------------
-                    //   Check whether the image size exceeding the limit or not
-                    //------------------------------------------ 
-                    if (postedFile.Length < ImageMinimumBytes)
-                    {
-                        return false;
-                    }
+		private bool CheckIfImage(IFormFile postedFile)
+		{
+			var postedFileExtension = Path.GetExtension(postedFile.FileName);
+			if (string.Equals(postedFileExtension, ".jpg", StringComparison.OrdinalIgnoreCase)
+					   || string.Equals(postedFileExtension, ".png", StringComparison.OrdinalIgnoreCase)
+					   || string.Equals(postedFileExtension, ".gif", StringComparison.OrdinalIgnoreCase)
+					   || string.Equals(postedFileExtension, ".jpeg", StringComparison.OrdinalIgnoreCase))
+			{
+				if (!string.Equals(postedFile.ContentType, "image/jpg", StringComparison.OrdinalIgnoreCase) &&
+		   !string.Equals(postedFile.ContentType, "image/jpeg", StringComparison.OrdinalIgnoreCase) &&
+		   !string.Equals(postedFile.ContentType, "image/pjpeg", StringComparison.OrdinalIgnoreCase) &&
+		   !string.Equals(postedFile.ContentType, "image/gif", StringComparison.OrdinalIgnoreCase) &&
+		   !string.Equals(postedFile.ContentType, "image/x-png", StringComparison.OrdinalIgnoreCase) &&
+		   !string.Equals(postedFile.ContentType, "image/png", StringComparison.OrdinalIgnoreCase))
+				{
+					return false;
+				}
+				try
+				{
+					if (!postedFile.OpenReadStream().CanRead)
+					{
+						return false;
+					}
+					//------------------------------------------
+					//   Check whether the image size exceeding the limit or not
+					//------------------------------------------ 
+					if (postedFile.Length < ImageMinimumBytes)
+					{
+						return false;
+					}
 
-                    byte[] buffer = new byte[ImageMinimumBytes];
-                    postedFile.OpenReadStream().Read(buffer, 0, ImageMinimumBytes);
-                    string content = System.Text.Encoding.UTF8.GetString(buffer);
-                    if (Regex.IsMatch(content, @"<script|<html|<head|<title|<body|<pre|<table|<a\s+href|<img|<plaintext|<cross\-domain\-policy",
-                        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline))
-                    {
-                        return false;
-                    }
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
+					byte[] buffer = new byte[ImageMinimumBytes];
+					postedFile.OpenReadStream().Read(buffer, 0, ImageMinimumBytes);
+					string content = System.Text.Encoding.UTF8.GetString(buffer);
+					if (Regex.IsMatch(content, @"<script|<html|<head|<title|<body|<pre|<table|<a\s+href|<img|<plaintext|<cross\-domain\-policy",
+						RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline))
+					{
+						return false;
+					}
+				}
+				catch (Exception)
+				{
+					return false;
+				}
 
-                //-------------------------------------------
-                //  Try to instantiate new Bitmap, if .NET will throw exception
-                //  we can assume that it's not a valid image
-                //-------------------------------------------
+				//-------------------------------------------
+				//  Try to instantiate new Bitmap, if .NET will throw exception
+				//  we can assume that it's not a valid image
+				//-------------------------------------------
 
-                try
-                {
-                    using (var stream = postedFile.OpenReadStream())
-                    {
-                        new Bitmap(stream);
-                    }
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-                finally
-                {
-                    postedFile.OpenReadStream().Position = 0;
-                }
-            }
-            else
-            {
-                return true;
-            }
-            return true;
-        }
+				try
+				{
+					using (var stream = postedFile.OpenReadStream())
+					{
+						new Bitmap(stream);
+					}
+				}
+				catch (Exception)
+				{
+					return false;
+				}
+				finally
+				{
+					postedFile.OpenReadStream().Position = 0;
+				}
+			}
+			else
+			{
+				return true;
+			}
+			return true;
+		}
 
-        [Authorize]
-        public ActionResult GetRPEChart()
-        {
-            return PartialView("_FullRPE");
-        }
+		[Authorize]
+		public ActionResult GetRPEChart()
+		{
+			return PartialView("_FullRPE");
+		}
 
-        [Authorize]
-        public JsonResult ListStates(int CountryId)
-        {
-            var states = CommonUtility.ListStates(CountryId);
-            return Json(new { Result = "OK", Records = states });
-        }
+		[Authorize]
+		public JsonResult ListStates(int CountryId)
+		{
+			var states = CommonUtility.ListStates(CountryId);
+			return Json(new { Result = "OK", Records = states });
+		}
 
-        [Authorize]
-        public JsonResult CheckIfCountryHasZipCode(int CountryId)
-        {
-            var country = CommonUtility.ListCountries().Where(x => x.Id == CountryId).FirstOrDefault();
-            return Json(new { Result = "OK", HasZipCode = country.HasZipCode });
-        }
+		[Authorize]
+		public JsonResult CheckIfCountryHasZipCode(int CountryId)
+		{
+			var country = CommonUtility.ListCountries().Where(x => x.Id == CountryId).FirstOrDefault();
+			return Json(new { Result = "OK", HasZipCode = country.HasZipCode });
+		}
 
-        [Authorize]
-        public JsonResult ListProviderDetails(int organizationId)
-        {
-            var providers = CommonUtility.GetProvidersList(organizationId).Where(x => x.Active).Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() }).OrderBy(y => y.Text);
-            var portal = PortalUtility.ListPortals(organizationId).portals.Where(x => x.Active == true).FirstOrDefault();
-            return Json(new { Result = "OK", Records = providers, hasProviderDropDown = portal != null && portal.ProviderDetails == (byte)ProviderDetails.DropDown });
-        }
+		[Authorize]
+		public JsonResult ListProviderDetails(int organizationId)
+		{
+			var providers = CommonUtility.GetProvidersList(organizationId).Where(x => x.Active).Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() }).OrderBy(y => y.Text);
+			var portal = PortalUtility.ListPortals(organizationId).portals.Where(x => x.Active == true).FirstOrDefault();
+			return Json(new { Result = "OK", Records = providers, hasProviderDropDown = portal != null && portal.ProviderDetails == (byte)ProviderDetails.DropDown });
+		}
 
-        [Authorize]
-        public JsonResult ListRace(int CountryId)
-        {
-            var race = CommonUtility.ListRace(CountryId);
-            return Json(new
-            {
-                Result = "OK",
-                Records = race.Select(x => new
-                {
-                    Id = x.Id,
-                    Name = Translate.Message(x.LanguageCode)
-                })
-            });
-        }
+		[Authorize]
+		public JsonResult ListRace(int CountryId)
+		{
+			var race = CommonUtility.ListRace(CountryId);
+			return Json(new
+			{
+				Result = "OK",
+				Records = race.Select(x => new
+				{
+					Id = x.Id,
+					Name = Translate.Message(x.LanguageCode)
+				})
+			});
+		}
 
-        [HttpPost]
-        public JsonResult CheckIfOther(int raceType)
-        {
-            return Json(new { Result = CommonUtility.CheckIfOther(raceType) });
-        }
+		[HttpPost]
+		public JsonResult CheckIfOther(int raceType)
+		{
+			return Json(new { Result = CommonUtility.CheckIfOther(raceType) });
+		}
 
-        [Authorize]
-        public JsonResult GetRaffleTypes()
-        {
-            var raffles = CommonUtility.GetRaffleTypes();
-            return Json(new { raffles });
-        }
+		[Authorize]
+		public JsonResult GetRaffleTypes()
+		{
+			var raffles = CommonUtility.GetRaffleTypes();
+			return Json(new { raffles });
+		}
 
-        [Authorize]
-        public JsonResult GetGiftCards(int incentiveType)
-        {
-            var giftCards = CommonUtility.GetGiftCards(incentiveType, Convert.ToInt16(HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value));
-            return Json(new { giftCards });
-        }
+		[Authorize]
+		public JsonResult GetGiftCards(int incentiveType)
+		{
+			var giftCards = CommonUtility.GetGiftCards(incentiveType, Convert.ToInt16(HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value));
+			return Json(new { giftCards });
+		}
 
-        [Authorize]
-        [HttpPost]
-        public JsonResult Logger(string loggerName, string param1, string param2, string param3)
-        {
-            LogReader logReader = new LogReader();
-            int userId = HttpContext.Session.GetInt32(SessionContext.UserId).Value;
-            string ParticipantId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value != userId ? " ,P:" + HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value : "";
-            loggerName = !string.IsNullOrEmpty(param1) ? loggerName : "LoggerController";
-            param1 = !string.IsNullOrEmpty(param1) ? " ,Param 1 : " + param1 : "";
-            param2 = !string.IsNullOrEmpty(param2) ? " ,Param 2 : " + param2 : "";
-            param3 = !string.IsNullOrEmpty(param3) ? " ,Param 3 : " + param3 : "";
+		[Authorize]
+		[HttpPost]
+		public JsonResult Logger(string loggerName, string param1, string param2, string param3)
+		{
+			LogReader logReader = new LogReader();
+			int userId = HttpContext.Session.GetInt32(SessionContext.UserId).Value;
+			string ParticipantId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value != userId ? " ,P:" + HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value : "";
+			loggerName = !string.IsNullOrEmpty(param1) ? loggerName : "LoggerController";
+			param1 = !string.IsNullOrEmpty(param1) ? " ,Param 1 : " + param1 : "";
+			param2 = !string.IsNullOrEmpty(param2) ? " ,Param 2 : " + param2 : "";
+			param3 = !string.IsNullOrEmpty(param3) ? " ,Param 3 : " + param3 : "";
 
-            var logEvent = new LogEventInfo(NLog.LogLevel.Info, "U:" + userId + ParticipantId + param1 + param2 + param3, null, loggerName, null, null);
-            logReader.WriteLogMessage(logEvent);
+			var logEvent = new LogEventInfo(NLog.LogLevel.Info, "U:" + userId + ParticipantId + param1 + param2 + param3, null, loggerName, null, null);
+			logReader.WriteLogMessage(logEvent);
 
-            return Json(new { Result = true });
-        }
+			return Json(new { Result = true });
+		}
 
-        public async Task<JsonResult> RotateImage(string image, int direction, int userId)
-        {
-            WebImage photo = new WebImage("../ProfilePictures/" + image);
-            if (photo != null)
-            {
-                var imagePath = "/ProfilePictures/" + image;
-                if (direction == 1)
-                {
-                    photo.FileName = imagePath;
-                    photo.RotateLeft();
-                }
-                else
-                {
-                    photo.RotateRight();
-                }
-                System.IO.File.Delete(Path.Combine(environment.ContentRootPath + "/ProfilePictures", image));
+		public async Task<JsonResult> RotateImage(string image, int direction, int userId)
+		{
+			WebImage photo = new WebImage("../ProfilePictures/" + image);
+			if (photo != null)
+			{
+				var imagePath = "/ProfilePictures/" + image;
+				if (direction == 1)
+				{
+					photo.FileName = imagePath;
+					photo.RotateLeft();
+				}
+				else
+				{
+					photo.RotateRight();
+				}
+				System.IO.File.Delete(Path.Combine(environment.WebRootPath + "/ProfilePictures", image));
 
-                image = System.DateTime.Now.ToString("_ddMMyyhhmmss") + image.Substring(13);
-                imagePath = "/ProfilePictures/" + image;
-                photo.Save(imagePath);
-                await AccountUtility.UploadPicture(_userManager, userId, image, environment.ContentRootPath + "/ProfilePictures");
-            }
-            return Json(new { Image = image });
-        }
-    }
+				image = System.DateTime.Now.ToString("_ddMMyyhhmmss") + image.Substring(13);
+				imagePath = "/ProfilePictures/" + image;
+				photo.Save(imagePath);
+				await AccountUtility.UploadPicture(_userManager, userId, image, environment.WebRootPath + "/ProfilePictures");
+			}
+			return Json(new { Image = image });
+		}
+	}
 }

@@ -9,11 +9,11 @@ namespace InterventWebApp.Controllers
 {
     public class MessageController : BaseController
     {
-        private readonly IHostEnvironment environment;
+        private readonly IWebHostEnvironment environment;
 
         private readonly AppSettings _appSettings;
 
-        public MessageController(IOptions<AppSettings> appSettings, IHostEnvironment environment)
+        public MessageController(IOptions<AppSettings> appSettings, IWebHostEnvironment environment)
         {
             _appSettings = appSettings.Value;
             this.environment = environment;
@@ -89,7 +89,7 @@ namespace InterventWebApp.Controllers
             string messageBody, bool isSent, int? parentMessageId, bool? infoPage)
         {
             GetMessageDetailsResponse messageDetails = new GetMessageDetailsResponse();
-            string targetpath = environment.ContentRootPath + "../Messageuploads/";
+            string targetpath = Path.Combine(environment.WebRootPath, "Messageuploads");
             string attachement = null;
             if (FileUpload != null)
             {
@@ -139,7 +139,7 @@ namespace InterventWebApp.Controllers
 
         public JsonResult DeleteAttachment(int MessageId, string AttachmentName)
         {
-            System.IO.File.Delete(Path.Combine(environment.ContentRootPath + "/Messageuploads", AttachmentName));
+            System.IO.File.Delete(Path.Combine(environment.WebRootPath, "Messageuploads", AttachmentName));
             MessageUtility.DeleteAttachment(MessageId, _appSettings.SystemAdminId);
             return Json(new { Result = "OK" });
         }

@@ -20,10 +20,10 @@ namespace InterventWebApp
     {
         private readonly IOptions<AppSettings> iOptionAppSettings;
         private readonly AppSettings _appSettings;
-        private readonly IHostEnvironment environment;
+        private readonly IWebHostEnvironment environment;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AdminController(UserManager<ApplicationUser> userManager, IOptions<AppSettings> appSettings, IHostEnvironment environment)
+        public AdminController(UserManager<ApplicationUser> userManager, IOptions<AppSettings> appSettings, IWebHostEnvironment environment)
         {
             _userManager = userManager;
             _appSettings = appSettings.Value;
@@ -1097,7 +1097,7 @@ namespace InterventWebApp
             string filename = FileUpload.FileName;
             if (filename.EndsWith(".xlsx"))
             {
-                string targetpath = environment.ContentRootPath + "/temp/";
+                string targetpath = Path.Combine(environment.WebRootPath, "temp");
                 if (!Directory.Exists(targetpath))
                     Directory.CreateDirectory(targetpath);
                 string pathToExcelFile = Path.Combine(targetpath, filename);

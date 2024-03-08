@@ -19,9 +19,9 @@ namespace InterventWebApp
 	public class CRMController : BaseController
     {
         private readonly AppSettings _appSettings;
-        private readonly IHostEnvironment environment;
+        private readonly IWebHostEnvironment environment;
 
-        public CRMController(IOptions<AppSettings> appSettings, IHostEnvironment environment)
+        public CRMController(IOptions<AppSettings> appSettings, IWebHostEnvironment environment)
 		{
 			_appSettings = appSettings.Value;
 			this.environment = environment;
@@ -76,7 +76,7 @@ namespace InterventWebApp
             string filename = FileUpload.FileName;
             if (filename.EndsWith(".csv"))
             {
-                string targetpath = environment.ContentRootPath +"/temp/";
+                string targetpath = Path.Combine(environment.WebRootPath, "temp");
                 if (!Directory.Exists(targetpath))
                     Directory.CreateDirectory(targetpath);
                 string pathToFile = Path.Combine(targetpath, filename);

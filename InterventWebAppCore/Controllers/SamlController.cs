@@ -7,9 +7,9 @@ namespace InterventWebApp.Controllers
     public class SamlController : Controller
     {
         private readonly AppSettings _appSettings;
-        private readonly IHostEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
 
-        public SamlController(IOptions<AppSettings> appSettings, IHostEnvironment environment)
+        public SamlController(IOptions<AppSettings> appSettings, IWebHostEnvironment environment)
         {
             _appSettings = appSettings.Value;
             _environment = environment;
@@ -499,7 +499,7 @@ namespace InterventWebApp.Controllers
                                 user.EmailConfirmed = false;
                                 user.TermsAccepted = true;
                                 request.user = user;
-                                request.rootPath = _webHostEnvironment.ContentRootPath;
+                                request.rootPath = _webHostEnvironment.WebRootPath;
                                 request.InfoEmail = _appSettings.InfoEmail;
                                 request.SecureEmail = _appSettings.SecureEmail;
                                 request.SMPTAddress = _appSettings.SMPTAddress;

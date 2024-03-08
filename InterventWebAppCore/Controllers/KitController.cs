@@ -9,9 +9,9 @@ namespace InterventWebApp
 {
     public class KitController : BaseController
     {
-        private readonly IHostEnvironment environment;
+        private readonly IWebHostEnvironment environment;
 
-        public KitController(IHostEnvironment environment)
+        public KitController(IWebHostEnvironment environment)
         {
             this.environment = environment;
         }
@@ -246,8 +246,8 @@ namespace InterventWebApp
             string filename = FileUpload.FileName;
             if (filename.EndsWith(".xlsx"))
              {
-                 string targetpath = environment.ContentRootPath + "/temp/";
-                 if (!Directory.Exists(targetpath))
+                string targetpath = Path.Combine(environment.WebRootPath, "temp");
+				if (!Directory.Exists(targetpath))
                      Directory.CreateDirectory(targetpath);
                 string pathToExcelFile = Path.Combine(targetpath, filename);
                 using (var fileStream = new FileStream(pathToExcelFile, FileMode.Create))

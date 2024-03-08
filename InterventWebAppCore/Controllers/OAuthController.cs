@@ -26,10 +26,10 @@ namespace InterventWebApp.Controllers
     public class OAuthController : Controller
     {
         private readonly AppSettings _appSettings;
-        private readonly IHostEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
         private readonly ApplicationUserManager _userManager;
 
-        public OAuthController(ApplicationUserManager userManager, IOptions<AppSettings> appSettings, IHostEnvironment environment)
+        public OAuthController(ApplicationUserManager userManager, IOptions<AppSettings> appSettings, IWebHostEnvironment environment)
         {
             _appSettings = appSettings.Value;
             _userManager = userManager;
@@ -454,7 +454,7 @@ namespace InterventWebApp.Controllers
                                         createUser.EmailConfirmed = false;
                                         createUser.TermsAccepted = true;
                                         request.user = createUser;
-                                        request.rootPath = _environment.ContentRootPath;
+                                        request.rootPath = _environment.WebRootPath;
                                         request.InfoEmail = _appSettings.InfoEmail;
                                         request.SecureEmail = _appSettings.SecureEmail;
                                         request.SMPTAddress = _appSettings.SMPTAddress;

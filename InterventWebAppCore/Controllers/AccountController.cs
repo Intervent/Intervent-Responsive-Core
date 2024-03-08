@@ -26,10 +26,10 @@ namespace InterventWebApp
     {
         protected Logger Log = LogManager.GetLogger(typeof(AccountController).FullName);
         private readonly AppSettings _appSettings;
-        private readonly IHostEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountController(UserManager<ApplicationUser> userManager, IOptions<AppSettings> appSettings, IHostEnvironment environment)
+        public AccountController(UserManager<ApplicationUser> userManager, IOptions<AppSettings> appSettings, IWebHostEnvironment environment)
         {
             _userManager = userManager;
             _appSettings = appSettings.Value;
@@ -49,7 +49,7 @@ namespace InterventWebApp
         [HttpPost]
         public async Task<JsonResult> Login(LoginModel model)
         {
-            var errMsg = string.Format(Translate.Message("L467"), model.UserName, model.OrganizationEmail);
+			var errMsg = string.Format(Translate.Message("L467"), model.UserName, model.OrganizationEmail);
             model.Password = Encoding.ASCII.GetString(Convert.FromBase64String(model.Password)).Substring(6);
             var response = await AccountUtility.GetUser(_userManager, model.UserName, model.Password, null, true, model.DeviceId, _appSettings.VerifyDeviceLogin);
             if (response.EmailConfirmed == false)
@@ -208,7 +208,7 @@ namespace InterventWebApp
                 user.UserDoctorInfoes.Add(new UserDoctorInfoDto { ProviderId = model.ProviderId });
             }
             request.user = user;
-            request.rootPath = _environment.ContentRootPath;
+            request.rootPath = _environment.WebRootPath;
             request.InfoEmail = _appSettings.InfoEmail;
             request.SecureEmail = _appSettings.SecureEmail;
             request.SMPTAddress = _appSettings.SMPTAddress;
@@ -528,7 +528,7 @@ namespace InterventWebApp
             }
             request.welcomeEmail = welcomeEmail;
             request.user = user;
-            request.rootPath = _environment.ContentRootPath;
+            request.rootPath = _environment.WebRootPath;
             request.InfoEmail = _appSettings.InfoEmail;
             request.SecureEmail = _appSettings.SecureEmail;
             request.SMPTAddress = _appSettings.SMPTAddress;
@@ -638,14 +638,14 @@ namespace InterventWebApp
         [HttpPost]
         public async Task<JsonResult> ForgotPassword(string email, string OrgContactEmail)
         {
-            var response = await AccountUtility.ForgotPassword(_userManager, _environment.ContentRootPath, email, OrgContactEmail, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
+            var response = await AccountUtility.ForgotPassword(_userManager, _environment.WebRootPath, email, OrgContactEmail, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
             return Json(response);
         }
 
         [HttpPost]
         public async Task<JsonResult> ResendConfirmEmail(string email, string OrgContactEmail)
         {
-            var response = await AccountUtility.ResendConfirmEmail(_userManager, _environment.ContentRootPath, email, OrgContactEmail, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
+            var response = await AccountUtility.ResendConfirmEmail(_userManager, _environment.WebRootPath, email, OrgContactEmail, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
             return Json(response);
         }
 
@@ -890,7 +890,7 @@ namespace InterventWebApp
                 request.user.Complete = true;
                 request.user.TermsAccepted = true;
                 request.welcomeEmail = true;
-                request.rootPath = _environment.ContentRootPath;
+                request.rootPath = _environment.WebRootPath;
                 request.InfoEmail = _appSettings.InfoEmail;
                 request.SecureEmail = _appSettings.SecureEmail;
                 request.SMPTAddress = _appSettings.SMPTAddress;
@@ -960,7 +960,7 @@ namespace InterventWebApp
             {
                 if (!string.IsNullOrEmpty(source) && source == "Lab")
                 {
-                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath + "/Lab", picture));
+                    System.IO.File.Delete(Path.Combine(_environment.WebRootPath, "Lab", picture));
                     if (CommonUtility.HasAdminRole(User.RoleCode()) && sendEmail.HasValue && sendEmail.Value && !string.IsNullOrEmpty(reason))
                     {
                         string emailReason = ListOptions.GetLabRejectionReasons().FirstOrDefault(x => x.Value == reason).Text;
@@ -972,18 +972,18 @@ namespace InterventWebApp
                 else if (uri.Contains("Recipe"))
                 {
                     var recipeId = uri.Substring(uri.LastIndexOf("/") + 1);
-                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath + "/images/upload", picture));
+                    System.IO.File.Delete(Path.Combine(_environment.WebRootPath, "images/upload", picture));
                     RecipeUtility.UpdateImageUrl(int.Parse(recipeId), string.Empty);
                 }
                 else if (!string.IsNullOrEmpty(source) && source.Contains("Forms"))
                 {
                     var userId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
-                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath + "/FormUploads", picture));
+                    System.IO.File.Delete(Path.Combine(_environment.WebRootPath, "FormUploads", picture));
                     ParticipantUtility.DeleteUserForm(id.Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value);
                 }
                 else
                 {
-                    System.IO.File.Delete(Path.Combine(_environment.ContentRootPath + "/ProfilePictures", picture));
+                    System.IO.File.Delete(Path.Combine(_environment.WebRootPath, "ProfilePictures", picture));
                     AccountUtility.DeletePicture(_userManager, id.Value);
                 }
                 return Json("success");
@@ -1053,7 +1053,7 @@ namespace InterventWebApp
                 bool sent;
 
                 if (throughEmail)
-                    sent = AccountUtility.SendSecurityCodeToEmail(_environment.ContentRootPath, user.User.FirstName, user.User.Email, code, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
+                    sent = AccountUtility.SendSecurityCodeToEmail(_environment.WebRootPath, user.User.FirstName, user.User.Email, code, _appSettings.InfoEmail, _appSettings.SecureEmail, _appSettings.SMPTAddress, _appSettings.PortNumber, _appSettings.SecureEmailPassword, _appSettings.MailAttachmentPath);
                 else
                     sent = AccountUtility.SendSecurityCodeToPhone(user.User.Id, user.User.CellNumber, code);
 
