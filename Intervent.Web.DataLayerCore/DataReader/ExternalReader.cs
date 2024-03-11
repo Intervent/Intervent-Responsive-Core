@@ -464,17 +464,41 @@ namespace Intervent.Web.DataLayer
             {
                 if (sleepDAL != null)
                 {
-                    sleep.Id = sleepDAL.Id;
-                    sleepDAL = sleep;
-                    context1.EXT_Sleeps.Attach(sleepDAL);
-                    context1.Entry(sleepDAL).State = EntityState.Modified;
+                    EXT_Sleeps sleepModify = sleepDAL;
+                    if (sleep.SleepScore.HasValue)
+                        sleepModify.SleepScore = sleep.SleepScore;
+                    if (sleep.LightDuration.HasValue)
+                        sleepModify.LightDuration = sleep.LightDuration;
+                    if (sleep.RemDuration.HasValue)
+                        sleepModify.RemDuration = sleep.RemDuration;
+                    if (sleep.DeepDuration.HasValue)
+                        sleepModify.DeepDuration = sleep.DeepDuration;
+                    if (sleep.TotalSleepDuration.HasValue)
+                        sleepModify.TotalSleepDuration = sleep.TotalSleepDuration;
+                    if (sleep.AwakeCount.HasValue)
+                        sleepModify.AwakeCount = sleep.AwakeCount;
+                    if (sleep.WakeCount.HasValue)
+                        sleepModify.WakeCount = sleep.WakeCount;
+                    if (sleep.AwakeDuration.HasValue)
+                        sleepModify.AwakeDuration = sleep.AwakeDuration;
+                    if (sleep.TimetoBed.HasValue)
+                        sleepModify.TimetoBed = sleep.TimetoBed;
+                    if (sleep.TimetoWake.HasValue)
+                        sleepModify.TimetoWake = sleep.TimetoWake;
+
+                    sleepModify.InputMethod = sleep.InputMethod;
+                    sleepModify.IsActive = sleep.IsActive;
+                    sleepModify.StartTimeStamp = sleep.StartTimeStamp;
+                    sleepModify.Source = sleep.Source;
+                    context.EXT_Sleeps.Attach(sleepDAL);
+                    context.Entry(sleepDAL).State = EntityState.Modified;
                 }
                 else
                 {
-                    //context1.Configuration.AutoDetectChangesEnabled = false;
-                    context1.EXT_Sleeps.Add(sleep);
+                    //context.Configuration.AutoDetectChangesEnabled = false;
+                    context.EXT_Sleeps.Add(sleep);
                 }
-                context1.SaveChanges();
+                context.SaveChanges();
             }
         }
 

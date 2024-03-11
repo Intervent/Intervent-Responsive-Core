@@ -1,4 +1,5 @@
 ﻿using Intervent.Utils;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using static Intervent.HWS.PlacerRequest;
@@ -133,7 +134,7 @@ namespace Intervent.HWS
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    HttpResponseMessage response = await client.GetAsync(string.Format("/wearable/summarygraphic/coach?apiKey={0}&study_subject_ID={1}&start_date={2}&end_date={3}", teamsBPApiKey, request.uniqueId, request.startDate.Date.ToString("yyyy-MM-dd"), request.endDate.Date.ToString("yyyy-MM-dd")));
+                    HttpResponseMessage response = await client.GetAsync(string.Format("/wrbl/wearable/summarygraphic/coach?apiKey={0}&study_subject_ID={1}&start_date={2}&end_date={3}", teamsBPApiKey, request.uniqueId, request.startDate.Date.ToString("yyyy-MM-dd"), request.endDate.Date.ToString("yyyy-MM-dd")));
 
                     if (response.IsSuccessStatusCode)
                     {

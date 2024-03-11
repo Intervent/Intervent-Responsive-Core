@@ -272,12 +272,12 @@
                     if (request.GetType() == typeof(PatternSync))
                     {
                         PatternSync patternSync = request as PatternSync;
-                        response = await client.PutAsJsonAsync("/api/v1/patterns/" + patternSync.pattern.guid, patternSync);
+                        response = await client.PutAsJsonAsync("/api/v1/patterns/" + patternSync.guid, patternSync);
                     }
                     else if (request.GetType() == typeof(PatternPairing))
                     {
                         PatternPairing patternParing = request as PatternPairing;
-                        response = await client.PutAsJsonAsync("/api/v1/patterns/" + patternParing.pattern.guid, patternParing);
+                        response = await client.PutAsJsonAsync("/api/v1/patterns/" + patternParing.guid, patternParing);
                     }
                     else if (request.GetType() == typeof(PatternCreation))
                     {

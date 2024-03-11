@@ -270,14 +270,13 @@ namespace Intervent.Services.Eligibility
                             var logEvent = new LogEventInfo(LogLevel.Trace, "Service", null, "Assigned recipe to " + recipeCount + " user(s) on " + DateTime.Now.ToString(), null, null);
                             reader.WriteLogMessage(logEvent);
                         }
-
-                        if(now.Day == 15 || now.Day == DateTime.DaysInMonth(now.Year, now.Month))
+                        /*if(now.Day == 15 || now.Day == DateTime.DaysInMonth(now.Year, now.Month))
                         {
                             new InvoiceManager().ProcessInvoiceBilling();
                             LogReader reader = new LogReader();
                             var logEvent = new LogEventInfo(LogLevel.Trace, "Invoice Service", null, "Generate Invoice process initiated on " + DateTime.Now.ToString(), null, null);
                             reader.WriteLogMessage(logEvent);
-                        }
+                        }*/
                     }
                     else if (now.Hour == 9 && !OutreachEmailSent)
                     {
@@ -382,7 +381,7 @@ namespace Intervent.Services.Eligibility
                     //Process subject files for CAPTIVA
                     new CaptivaManager().ProcessCaptivaSubjectFiles();
                     //Process Billing Notes
-                    new PlacerManager().ProcessBillingNotes();
+                    //new PlacerManager().ProcessBillingNotes();
                     //Process biometric files for CAPTIVA
                     var biometricCount = new CaptivaManager().ProcessCaptivaBiometricFiles();
                     if (biometricCount > 0)
