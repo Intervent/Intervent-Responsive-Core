@@ -27,11 +27,11 @@ namespace InterventWebApp
 
         public bool readOnly { get; set; }
 
+        public bool isSouthUniversity { get; set; }
+
         public int UserId { get; set; }
 
         public string HRAPageSeq { get; set; }
-
-        public string AssessmentName { get; set; }
 
         public string OrgContactEmail { get; set; }
 
@@ -61,8 +61,6 @@ namespace InterventWebApp
         public int? hraId { get; set; }
 
         public int? integrationWith { get; set; }
-
-        public string AssessmentName { get; set; }
 
         public string DateFormat { get; set; }
 
@@ -168,8 +166,6 @@ namespace InterventWebApp
         public int? hraId { get; set; }
 
         public int? integrationWith { get; set; }
-
-        public string AssessmentName { get; set; }
 
         public int? HRAVer { get; set; }
 

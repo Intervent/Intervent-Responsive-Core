@@ -1175,7 +1175,7 @@
         <div class="grid-x grid-margin-x">
             <span>
                 <b>@Translate.Message("L3590")</b>
-                <br /><br />@string.Format(Translate.Message("L3591"), Translate.Message(Model.assessmentName).ToLower())
+                <br /><br />@Translate.Message("L3591")
                 @if (Model.Risks != null && !Model.Risks.adaRisk.isDiaborPreDiab)
                 {
                     if (!string.IsNullOrEmpty(Model.Risks.adaRisk.riskText))

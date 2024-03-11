@@ -141,7 +141,6 @@ namespace InterventWebApp
 			model.keyActionSteps = keyActionSteps.gapActionSteps.Where(x => x.noneIdentified != true).Count() + keyActionSteps.lifetimeActionSteps.Where(x => x.noneIdentified != true).Count();
 			model.gender = HttpContext.Session.GetInt32(SessionContext.Gender);
 			model.dob = HttpContext.Session.GetString(SessionContext.DOB);
-			model.assessmentName = HttpContext.Session.GetString(SessionContext.AssessmentName);
 			model.hraId = HttpContext.Session.GetInt32(SessionContext.HRAId).Value;
 			model.integrationWith = HttpContext.Session.GetInt32(SessionContext.IntegrationWith);
 			bool isMediOrbisUser = !string.IsNullOrEmpty(HttpContext.Session.GetString(SessionContext.IsMediOrbisUser)) && Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.IsMediOrbisUser));
@@ -217,7 +216,6 @@ namespace InterventWebApp
 			model.clientNameInReport = Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.ClientNameInReport) != null ? HttpContext.Session.GetString(SessionContext.ClientNameInReport) : false);
 			model.organizationName = HttpContext.Session.GetString(SessionContext.OrganizationName);
 			model.orgContactEmail = HttpContext.Session.GetString(SessionContext.OrgContactEmail);
-			model.assessmentName = HttpContext.Session.GetString(SessionContext.AssessmentName);
 			model.dob = HttpContext.Session.GetString(SessionContext.DOB);
 			model.dateFormat = HttpContext.Session.GetString(SessionContext.DateFormat);
 			model.hraId = HttpContext.Session.GetInt32(SessionContext.HRAId).Value;
@@ -276,7 +274,7 @@ namespace InterventWebApp
 			if (program == null)
 				program = new UsersinProgramDto();
 			model.DrReferralGoal = ReportUtility.DrReferral(response.hra.Goals, HttpContext.Session.GetInt32(SessionContext.HRAVer), response.hra.HealthNumbers.CAC);
-			model.NutritionGoal = ReportUtility.NutritionGoal(response.hra.Goals, program, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetString(SessionContext.AssessmentName), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
+			model.NutritionGoal = ReportUtility.NutritionGoal(response.hra.Goals, program, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
 			model.PhysicalActivityGoal = ReportUtility.PhysicalActivityGoal(response.hra, program, HttpContext.Session.GetInt32(SessionContext.ProgramType));
 			TobaccoGoalModel tobaccoGoal = new TobaccoGoalModel();
 			tobaccoGoal.tobaccoGoalContent = ReportUtility.GetTobaccoGoalContent(response);
@@ -370,7 +368,6 @@ namespace InterventWebApp
 			}
 			model.needCareplanApproval = Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.NeedCareplanApproval) != null ? HttpContext.Session.GetString(SessionContext.NeedCareplanApproval) : false);
 			model.integrationWith = HttpContext.Session.GetInt32(SessionContext.IntegrationWith);
-			model.assessmentName = HttpContext.Session.GetString(SessionContext.AssessmentName);
 			model.hraVer = HttpContext.Session.GetInt32(SessionContext.HRAVer).HasValue ? HttpContext.Session.GetInt32(SessionContext.HRAVer).Value : null;
 			return model;
 		}
@@ -418,8 +415,7 @@ namespace InterventWebApp
 		[Authorize]
 		public ActionResult MSInfo()
 		{
-			MSInfoModel model = new MSInfoModel();
-			return PartialView("_MSInfo", model);
+			return PartialView("_MSInfo");
 		}
 
 		[Authorize]
@@ -519,7 +515,7 @@ namespace InterventWebApp
 		{
 			NutritionGoalModel model = new NutritionGoalModel();
 			var Goals = ReportUtility.ReadHRAGoals(HttpContext.Session.GetInt32(SessionContext.HRAId).Value).hraGoals;
-			model = ReportUtility.NutritionGoal(Goals, null, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetString(SessionContext.AssessmentName), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
+			model = ReportUtility.NutritionGoal(Goals, null, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
 			model.onlydiet = onlydiet;
 			model.onlymeal = onlymeal;
 			return PartialView("_NutritionGoal", model);

@@ -13,7 +13,18 @@
                 <div class="small-12 cell">
 					<h1>@Translate.Message("L6"), @HttpContextAccessor.HttpContext.Session.GetString(SessionContext.ParticipantName)!</h1>
                     <p>
-						@String.Format(Translate.Message("L1927"), Translate.Message(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.AssessmentName)).ToLower())
+                        @if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.OrganizationId).HasValue && HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.SouthUniversityOrgId).HasValue && HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value == HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.SouthUniversityOrgId).Value)
+                        {
+                            <p>
+                                @Translate.Message("L3879")
+                            </p>
+                        }
+                        else
+                        {
+                            <p>
+                                @Translate.Message("L1927")
+                            </p>
+                        }
                     </p>
                 </div>
 				@Url.Action("ProgramOptions", "Participant", new { Coaching = false })

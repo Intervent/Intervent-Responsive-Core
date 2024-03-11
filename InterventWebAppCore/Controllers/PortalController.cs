@@ -232,13 +232,11 @@ namespace InterventWebApp
             model.HRAStatus = CommonUtility.GetHRAStatus();
             model.CarePlanTypes = CommonUtility.GetCarePlanTypes();
             model.HRAVersions = CommonUtility.GetHRAVersions();
-            model.AssessmentNames = CommonUtility.AssessmentNames();
             model.EligibilityFormats = CommonUtility.GetEligibilityFormats();
             model.ProviderDetails = CommonUtility.GetProviderDetails();
             model.EligibilitytoIntuity = CommonUtility.GetEligibilitytoIntuity();
             ViewData["languageList"] = CommonUtility.GetLanguages().Languages.Select(x => new SelectListItem { Text = Translate.Message(x.LanguageItem), Value = x.LanguageCode });
             model.yesorNoQuestion = CommonUtility.GetBoolQuestion().Select(x => new SelectListItem { Text = x.Text, Value = x.Value }).ToList();
-            model.hraOption = CommonUtility.GetHRAOption().Select(x => new SelectListItem { Text = x.Text, Value = x.Value }).ToList();
             model.portal = PortalUtility.ReadPortal(id).portal;
             model.LabProcedures = PortalUtility.GetLabProcedures().Select(x => new SelectListItem { Text = x.Type, Value = x.Id.ToString() }).ToList();
             model.CoachingConditions = PortalUtility.GetCoachingConditions().Select(x => new SelectListItem { Text = x.Condition, Value = x.Id.ToString() }).ToList();
@@ -346,7 +344,6 @@ namespace InterventWebApp
                 CarePlan = response.portal.CarePlan,
                 CarePlanType = response.portal.CarePlanType,
                 response.portal.HRAVer,
-                response.portal.AssessmentName,
                 response.portal.EligibilityFormat,
                 response.portal.EligibilityImportLoadFlag,
                 response.portal.EligibilityFolderPath,

@@ -172,8 +172,6 @@ namespace InterventWebApp
 
         public string participantName { get; set; }
 
-        public string assessmentName { get; set; }
-
         public string userStatus { get; set; }
 
         public int? userinProgramId { get; set; }
@@ -193,6 +191,8 @@ namespace InterventWebApp
         public int participantId { get; set; }
 
         public int organizationId { get; set; }
+
+        public bool isSouthUniversity { get; set; }
 
     }
 
@@ -234,16 +234,26 @@ namespace InterventWebApp
         public int? externalReportId { get; set; }
 
         public bool visitedTab { get; set; }
+
         public bool hasActivePortal { get; set; }
-        public string AssessmentName { get; set; }
+
         public int? UserinProgramId { get; set; }
+
         public int? AdminId { get; set; }
+
         public int UserId { get; set; }
+
         public int ParticipantId { get; set; }
+
         public string ParticipantEmail { get; set; }
+
         public bool MailScoreCard { get; set; }
+
         public bool ShowSelfScheduling { get; set; }
-        public bool IsRescheduling { get; set; }
+
+        public bool IsRescheduling { get; set; }.
+
+        public bool isSouthUniversity { get; set; }
     }
 
     public class InitialDashboardModel

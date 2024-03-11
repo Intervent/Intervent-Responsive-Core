@@ -149,7 +149,6 @@ namespace InterventWebApp
                 case 2:
                     request.Portal.HasHRA = model.portal.HasHRA;
                     request.Portal.HRAVer = model.portal.HRAVer;
-                    request.Portal.AssessmentName = model.portal.AssessmentName;
                     request.Portal.HRAValidity = model.portal.HRAValidity;
                     request.Portal.AWV = model.portal.AWV;
                     request.Portal.CACScanQuestion = model.portal.CACScanQuestion;

@@ -132,7 +132,14 @@
                                 <li>
 
                                     <a href="#" class="submenu-parent">
-                                        @Translate.Message(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.AssessmentName))
+                                        @if (HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.OrganizationId).HasValue && HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.SouthUniversityOrgId).HasValue && HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value == HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.SouthUniversityOrgId).Value)
+                                        {
+                                            @Translate.Message("L3845")
+                                        }
+                                        else
+                                        {
+                                            @Translate.Message("L535")
+                                        }
                                     </a>
                                     <ul class="menu vertical">
                                         <li><a href="~/HRA/HRADashboard">@Translate.Message("L926")</a></li>

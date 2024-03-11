@@ -242,7 +242,7 @@ namespace InterventWebApp.Controllers
 
             if (hrareport != null && hrareport.hra != null)
             {
-                var nutritionGoals = ReportUtility.NutritionGoal(hrareport.hra.Goals, null, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetString(SessionContext.AssessmentName), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
+                var nutritionGoals = ReportUtility.NutritionGoal(hrareport.hra.Goals, null, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
                 result.fatGoal = "<p>" + Translate.Message("L1640") + " " + nutritionGoals.FirstNutPlan + "<span class='monthly-nutrient'>" + nutritionGoals.NutFatNum.Value.ToString() + "-" + nutritionGoals.NewNutFatNum.ToString() + " g" + "</span></p>";
                 result.carbGoal = "<p>" + Translate.Message("L1640") + " " + nutritionGoals.FirstNutPlan + "<span class='monthly-nutrient'>" + nutritionGoals.NutCarbFrom.ToString() + "-" + nutritionGoals.NutCarbTo.ToString() + " g" + "</span></p>";
                 result.sodiumGoal = "<p>" + Translate.Message("L1640") + " " + nutritionGoals.FirstNutPlan + "<span class='monthly-nutrient'>" + Translate.Message("L1528") + " 1500 mg</span></p>";

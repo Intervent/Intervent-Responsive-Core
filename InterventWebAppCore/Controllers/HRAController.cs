@@ -37,7 +37,6 @@ namespace InterventWebApp
                 if (!(partResponse.user.Complete.HasValue && partResponse.user.Complete.Value))
                     return RedirectToAction("InitialDashboard", "Participant");
             }
-            model.AssessmentName = HttpContext.Session.GetString(SessionContext.AssessmentName);
             model.AdminId = HttpContext.Session.GetInt32(SessionContext.AdminId);
             model.HRAValidity = HttpContext.Session.GetInt32(SessionContext.HRAValidity).ToString();
             model.OrgContactEmail = HttpContext.Session.GetString(SessionContext.OrgContactEmail);
@@ -45,6 +44,7 @@ namespace InterventWebApp
             model.HRAPageSeq = HttpContext.Session.GetString(SessionContext.HRAPageSeq);
             model.hraPercent = HRAUtility.GetHRACompletionPercent(model.HRAPageSeq, model.HAPageSeqDone);
             model.readOnly = ReadOnly(null);
+            model.isSouthUniversity = HttpContext.Session.GetInt32(SessionContext.OrganizationId).HasValue && HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value == _appSettings.SouthUniversityOrgId;
             return View(model);
         }
 
@@ -154,7 +154,6 @@ namespace InterventWebApp
             }
             model.userId = HttpContext.Session.GetInt32(SessionContext.UserId).Value;
             model.participantId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
-            model.AssessmentName = HttpContext.Session.GetString(SessionContext.AssessmentName);
             model.DateFormat = HttpContext.Session.GetString(SessionContext.DateFormat);
             model.AdminId = HttpContext.Session.GetInt32(SessionContext.AdminId);
             model.ParticipantEmail = HttpContext.Session.GetString(SessionContext.ParticipantEmail);
@@ -229,7 +228,6 @@ namespace InterventWebApp
                 model.otherRisks = otherRisks;
             }
             model.integrationWith = HttpContext.Session.GetInt32(SessionContext.IntegrationWith);
-            model.AssessmentName = HttpContext.Session.GetString(SessionContext.AssessmentName);
             model.HRAVer = HttpContext.Session.GetInt32(SessionContext.HRAVer);
             return PartialView("_OtherRiskFactors", model);
         }
@@ -804,7 +802,6 @@ namespace InterventWebApp
                 model.hraid = hraid;
                 model.HRAVer = HttpContext.Session.GetInt32(SessionContext.HRAVer);
                 model.integrationWith = HttpContext.Session.GetInt32(SessionContext.IntegrationWith);
-                model.AssessmentName = HttpContext.Session.GetString(SessionContext.AssessmentName);
                 var response = ReportUtility.ReadHRAReport(hraid);
                 if (response.hra != null && response.hra.CompleteDate.HasValue)
                 {
@@ -889,7 +886,7 @@ namespace InterventWebApp
                     model.measurementsandGoals = ReportUtility.GetMeasurementsandGoals(response.hra, response.hra.Goals, response.hra.User, response.hra.Age.Value, HttpContext.Session.GetInt32(SessionContext.Unit).Value, HttpContext.Session.GetInt32(SessionContext.IntegrationWith).Value);
                     model.checkupsandGoals = ReportUtility.GetCheckupsandGoals(response.hra.Exams, response.hra.HealthNumbers, response.hra.User, response.hra.Age.Value);
                     model.immunizationandGoals = ReportUtility.GetImmunizationandGoals(response.hra.Exams, response.hra.HealthNumbers, response.hra.User, response.hra.Age.Value);
-                    model.nutritionGoal = ReportUtility.NutritionGoal(response.hra.Goals, program, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetString(SessionContext.AssessmentName), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
+                    model.nutritionGoal = ReportUtility.NutritionGoal(response.hra.Goals, program, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
                     model.physicalActivityGoal = ReportUtility.PhysicalActivityGoal(response.hra, program, HttpContext.Session.GetInt32(SessionContext.ProgramType));
                     model.drReferralGoal = ReportUtility.DrReferral(response.hra.Goals, HttpContext.Session.GetInt32(SessionContext.HRAVer), response.hra.HealthNumbers.CAC);
                     if (HttpContext.Session.GetInt32(SessionContext.HRAVer).HasValue && HttpContext.Session.GetInt32(SessionContext.HRAVer).Value == (int)HRAVersions.ActivateVersion)

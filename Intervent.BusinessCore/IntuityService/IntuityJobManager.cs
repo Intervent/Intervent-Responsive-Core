@@ -513,14 +513,11 @@ namespace Intervent.Business
                             string patient_unique_id = request.IntuityEligibility.Organization.Code + "-" + request.IntuityEligibility.UniqueId;
                             Replenishment replenishment = new Replenishment
                             {
-                                patient = new Replenishment.Patient
-                                {
-                                    require_immediate_shipment = request.ImmediateShipment.HasValue ? request.ImmediateShipment.Value : false,
-                                    custom_replenishment_quantity = request.ReplenishmentQuantity.Value,
-                                    custom_replenishment_num_of_shipments = request.NumberOfShipments,
-                                    custom_replenishment_qty_reason = request.Reason,
-                                    custom_replenishment_counter = counter
-                                }
+                                require_immediate_shipment = request.ImmediateShipment.HasValue ? request.ImmediateShipment.Value : false,
+                                custom_replenishment_quantity = request.ReplenishmentQuantity.Value,
+                                custom_replenishment_num_of_shipments = request.NumberOfShipments,
+                                custom_replenishment_qty_reason = request.Reason,
+                                custom_replenishment_counter = counter
                             };
                             var orgDetails = GetIntuityAPIDetails(request.IntuityEligibility.Organization.Code);
                             var apiResponse = Intuity.PostIntuityResponse(replenishment, patient_unique_id, orgDetails.IntuityEmpUrl, orgDetails.IntuityEmpToken);
@@ -551,11 +548,8 @@ namespace Intervent.Business
                         {
                             QuantityOnHand qoh = new QuantityOnHand
                             {
-                                patient = new QuantityOnHand.Patient
-                                {
-                                    coachcall_cartridge_qoh = request.QuantityOnHand,
-                                    coachcall_date = request.CreatedOn.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                }
+                                coachcall_cartridge_qoh = request.QuantityOnHand,
+                                coachcall_date = request.CreatedOn.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                             };
                             var orgDetails = GetIntuityAPIDetails(request.IntuityEligibility.Organization.Code);
                             string patient_unique_id = request.IntuityEligibility.Organization.Code + "-" + request.IntuityEligibility.UniqueId;
@@ -588,19 +582,16 @@ namespace Intervent.Business
                         {
                             IntuityEligibilityProfile profileRequest = new IntuityEligibilityProfile
                             {
-                                patient = new IntuityEligibilityProfile.Patient
-                                {
-                                    firstname = request.FirstName,
-                                    lastname = request.LastName,
-                                    email = request.email,
-                                    phone = request.PhoneNumber,
-                                    address1 = request.AddressLine1,
-                                    address2 = request.AddressLine2,
-                                    city = request.City,
-                                    state = _commonReader.ListStates(new ListStatesRequest { CountryId = request.Country.Value }).States.Where(x => x.Id == request.State.Value).Select(x => x.Name).FirstOrDefault(),
-                                    country = Countries.Where(x => x.Id == request.Country.Value).Select(x => x.Name).FirstOrDefault(),
-                                    zip = request.Zip
-                                }
+                                firstname = request.FirstName,
+                                lastname = request.LastName,
+                                email = request.email,
+                                phone = request.PhoneNumber,
+                                address1 = request.AddressLine1,
+                                address2 = request.AddressLine2,
+                                city = request.City,
+                                state = _commonReader.ListStates(new ListStatesRequest { CountryId = request.Country.Value }).States.Where(x => x.Id == request.State.Value).Select(x => x.Name).FirstOrDefault(),
+                                country = Countries.Where(x => x.Id == request.Country.Value).Select(x => x.Name).FirstOrDefault(),
+                                zip = request.Zip
                             };
                             var orgDetails = GetIntuityAPIDetails(request.OrganizationCode);
                             string patient_unique_id = request.OrganizationCode + '-' + request.UniqueId;
@@ -632,11 +623,8 @@ namespace Intervent.Business
                         {
                             IntuityEligibilityLogAPIRequest.IntuityEligibilityStatus eligibilityStatus = new IntuityEligibilityLogAPIRequest.IntuityEligibilityStatus
                             {
-                                patient = new IntuityEligibilityLogAPIRequest.IntuityEligibilityStatus.Patient
-                                {
-                                    eligibility_status = ListOptions.GetEligibilityStatusList().Where(x => x.Value == request.EligibilityStatus.ToString()).Select(x => x.Text).FirstOrDefault(),
-                                    status_reason = ListOptions.GetEligibilityReasonsList().Where(x => x.Value == request.EligibilityReason.ToString()).Select(x => x.Text).FirstOrDefault()
-                                }
+                                eligibility_status = ListOptions.GetEligibilityStatusList().Where(x => x.Value == request.EligibilityStatus.ToString()).Select(x => x.Text).FirstOrDefault(),
+                                status_reason = ListOptions.GetEligibilityReasonsList().Where(x => x.Value == request.EligibilityReason.ToString()).Select(x => x.Text).FirstOrDefault()
                             };
                             var orgDetails = GetIntuityAPIDetails(request.OrganizationCode);
                             string patient_unique_id = request.OrganizationCode + '-' + request.UniqueId;
@@ -668,10 +656,7 @@ namespace Intervent.Business
                         {
                             OptingOut optingOut = new OptingOut
                             {
-                                patient = new OptingOut.Patient
-                                {
-                                    opting_out_date = request.OptingOut.HasValue ? request.OptingOut.Value.ToString("yyyy-MM-dd") : null
-                                }
+                                opting_out_date = request.OptingOut.HasValue ? request.OptingOut.Value.ToString("yyyy-MM-dd") : null
                             };
                             var orgDetails = GetIntuityAPIDetails(request.OrganizationCode);
                             string patient_unique_id = request.OrganizationCode + '-' + request.UniqueId;
@@ -704,12 +689,9 @@ namespace Intervent.Business
                             string pattern_unique_id = _intuityReader.GetIntuityUserExternalId(new GetIntuityUserExternalIdRequest { OrganizationId = request.OrganizationId.Value, UniqueId = request.UniqueId }).ExternalId;
                             PatternPairing pattern = new PatternPairing
                             {
-                                pattern = new PatternPairing.Pattern
-                                {
-                                    guid = pattern_unique_id,
-                                    pairing_date = request.PairedDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                    pattern_paired_sn = request.Devices
-                                }
+                                guid = pattern_unique_id,
+                                pairing_date = request.PairedDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                pattern_paired_sn = request.Devices
                             };
                             var orgDetails = GetIntuityAPIDetails(request.OrganizationCode);
                             SendPatternDetailsResponse apiResponse = Intuity.SendPatternsDetailsRequest(pattern, orgDetails.IntuityEmpUrl, orgDetails.IntuityEmpToken);
@@ -741,12 +723,9 @@ namespace Intervent.Business
                             string pattern_unique_id = _intuityReader.GetIntuityUserExternalId(new GetIntuityUserExternalIdRequest { OrganizationId = request.OrganizationId.Value, UniqueId = request.UniqueId }).ExternalId;
                             PatternCreation pattern = new PatternCreation
                             {
-                                pattern = new PatternCreation.Pattern
-                                {
-                                    guid = pattern_unique_id,
-                                    email = request.email,
-                                    pattern_creation_date = request.PatternsRegDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                }
+                                guid = pattern_unique_id,
+                                email = request.email,
+                                pattern_creation_date = request.PatternsRegDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                             };
                             var orgDetails = GetIntuityAPIDetails(request.OrganizationCode);
                             SendPatternDetailsResponse apiResponse = Intuity.SendPatternsDetailsRequest(pattern, orgDetails.IntuityEmpUrl, orgDetails.IntuityEmpToken);

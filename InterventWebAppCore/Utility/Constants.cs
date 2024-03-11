@@ -254,8 +254,6 @@
 
         public const string CarePlanType = "CarePlanType";
 
-        public const string AssessmentName = "AssessmentName";
-
         public const string InActiveParticipantPortalId = "InActiveParticipantPortalId";
 
         public const string GarminOAuthSecretKey = "GarminOAuthSecretKey";
@@ -269,6 +267,8 @@
         public const string MobileSignOn = "MobileSignOn";
 
         public const string KitAlert = "KitAlert";
+
+        public const string SouthUniversityOrgId = "SouthUniversityOrgId";
     }
 
     public class HealthNumberType

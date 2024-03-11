@@ -39,7 +39,6 @@ namespace InterventWebApp
         public int? gender { get; set; }
         public string dob { get; set; }
         public int hraId { get; set; }
-        public string assessmentName { get; set; }
         public int? hraVer { get; set; }
         public int? integrationWith { get; set; }
         public bool showSelfScheduling { get; set; }
@@ -116,8 +115,6 @@ namespace InterventWebApp
         public string dateFormat { get; set; }
 
         public string orgContactEmail { get; set; }
-
-        public string assessmentName { get; set; }
 
         public bool coachingProgram { get; set; }
 
@@ -480,8 +477,6 @@ namespace InterventWebApp
         public int? HRAVer { get; set; }
 
         public int? integrationWith { get; set; }
-
-        public string AssessmentName { get; set; }
 
         public WellnessScoreInfo wellnessScoreInfo { get; set; }
 
@@ -909,8 +904,6 @@ namespace InterventWebApp
         public int? hraVer { get; set; }
 
         public int? integrationWith { get; set; }
-
-        public string assessmentName { get; set; }
     }
 
     public class SummaryCarePlansModel

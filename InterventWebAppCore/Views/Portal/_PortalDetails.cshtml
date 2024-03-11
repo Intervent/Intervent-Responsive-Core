@@ -160,10 +160,6 @@
                     <p><span id="hraVersionDisplay"></span></p>
                 </div>
                 <div class="cell medium-4">
-                    <label>Assessment Name</label>
-                    <p><span id="assessmentNameDisplay"></span></p>
-                </div>
-                <div class="cell medium-4">
                     <label>No. of days HRA can be updated</label>
                     <p><span id="hraValidityDisplay"></span></p>
                 </div>
@@ -239,11 +235,6 @@
                         <label>HRA Version</label>
                         @Html.DropDownListFor(m => m.portal.HRAVer, Model.HRAVersions, "--Select--", new Dictionary<string, object> { { "id", "HRAVer" }, { "data-validator", "validateHRAVer" } })
                         <small class="form-error">HRA Version is required.</small>
-                    </div>
-                    <div class="cell medium-4">
-                        <label>Assessment Name</label>
-                        @Html.DropDownListFor(m => m.portal.AssessmentName, Model.AssessmentNames, "--Select--", new Dictionary<string, object> { { "id", "AssessmentName" }, { "data-validator", "validateAssessmentName" } })
-                        <small class="form-error">Assessment Name is required.</small>
                     </div>
                     <div class="cell medium-4">
                         <label>No. of days HRA can be updated</label>
@@ -634,7 +625,7 @@
                         <small class="form-error">Required</small>
                     </div>
                     <div class="cell medium-4">
-                        <label>Eligibility FormatEligibility to Intuity</label>
+                        <label>Eligibility Format</label>
                         @Html.DropDownListFor(m => m.portal.EligibilityFormat, Model.EligibilityFormats, "--Select--", new Dictionary<string, object> { { "id", "eligibiityFormat" }, { "data-validator", "validateFormat" } })
                         <small class="form-error">Eligibility Format is required.</small>
                     </div>
@@ -862,7 +853,6 @@
         });
         $('#hraStatus').on('change', function () {
             $("#hraStatus").val() == 2 ? ($("#HRAVer").prop("disabled", true), $('#HRAVer').val('')) : $("#HRAVer").prop("disabled", false);
-            $("#hraStatus").val() == 2 ? ($("#AssessmentName").prop("disabled", true), $('#AssessmentName').val('')) : $("#AssessmentName").prop("disabled", false);
             $("#hraStatus").val() == 2 ? ($("#HRAValidity").prop("disabled", true), $('#HRAValidity').val('')) : $("#HRAValidity").prop("disabled", false);
             $("#hraStatus").val() == 2 ? ($("#awv").prop("disabled", true), $('#awv').val('')) : $("#awv").prop("disabled", false);
             $("#hraStatus").val() == 2 ? ($("#CACScanQuestion").prop("disabled", true), $('#CACScanQuestion').val('')) : $("#CACScanQuestion").prop("disabled", false);
@@ -916,7 +906,6 @@
                 $("#portalIncompleteHRA").prop("disabled", false);
                 $("#portalHRAOnly").prop("disabled", false);
                 $("#portalHRAandBiometrics").prop("disabled", false);
-                $("#portalFirstCoaching").prop("disabled", false);
                 $("#portalFirstCoaching").prop("disabled", false);
                 $("#portalCompletedCoaching").prop("disabled", false);
                 $("#portalFirsttimeHRA").prop("disabled", false);
@@ -1606,7 +1595,6 @@
         //Assessment
         $('#healthAssessmentDisplay').html($('select[name="portal.HasHRA"] option:selected').val() != '' ? $('select[name="portal.HasHRA"] option:selected').text() : "N/A");
         $('#hraVersionDisplay').html($('select[name="portal.HRAVer"] option:selected').val() != '' ? $('select[name="portal.HRAVer"] option:selected').text() : "N/A");
-        $('#assessmentNameDisplay').html($('select[name="portal.AssessmentName"] option:selected').val() != '' ? $('select[name="portal.AssessmentName"] option:selected').text() : "N/A");
         $('#hraValidityDisplay').html($('[name="portal.HRAValidity"]').val() != '' ? $('[name="portal.HRAValidity"]').val() : "N/A");
         $('#awvDisplay').html($('select[name="portal.AWV"] option:selected').val() != '' ? $('select[name="portal.AWV"] option:selected').text() : "N/A");
         $('#cacScanDisplay').html($('select[name="portal.CACScanQuestion"] option:selected').val() != '' ? $('select[name="portal.CACScanQuestion"] option:selected').text() : "N/A");

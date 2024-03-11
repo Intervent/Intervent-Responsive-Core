@@ -153,7 +153,7 @@
                                         <div id="peer-score" class="peer-score">
                                         </div>
                                         <div class="gauge-title">
-                                            <span data-tooltip aria-haspopup="true" class="has-tip" title="@string.Format(Translate.Message("L1677"), Translate.Message(Model.assessmentName).ToLower())">
+                                            <span data-tooltip aria-haspopup="true" class="has-tip" title="@Translate.Message("L1677")">
                                                 @Translate.Message("L1150")
                                             </span>
                                         </div>
@@ -908,7 +908,7 @@
         <div class="grid-x grid-margin-x">
             <span>
                 <b>@Translate.Message("L3590")</b>
-                <br /><br />@string.Format(Translate.Message("L3591"), Model.assessmentName.ToLower())
+                <br /><br />@Translate.Message("L3591")
                 @if (Model.risks != null && !Model.risks.adaRisk.isDiaborPreDiab)
                 {
                     if (!string.IsNullOrEmpty(Model.risks.adaRisk.riskText))

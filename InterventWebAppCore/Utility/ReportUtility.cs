@@ -2961,10 +2961,10 @@ namespace InterventWebApp
             return immunizationandGoals;
         }
 
-        public static NutritionGoalModel NutritionGoal(HRAGoalsDto Goals, UsersinProgramDto program, int? programType, string assessmentName, int? integrationWith, int? gender, bool showSelfScheduling)
+        public static NutritionGoalModel NutritionGoal(HRAGoalsDto Goals, UsersinProgramDto program, int? programType, int? integrationWith, int? gender, bool showSelfScheduling)
         {
             NutritionGoalModel model = new NutritionGoalModel();
-            model.nutGoalIntro = string.Format(Translate.Message("L1530"), Translate.Message(assessmentName).ToLower()) + " "
+            model.nutGoalIntro = Translate.Message("L1530") + " "
             + Translate.Message("L1531") + " "
             + Translate.Message("L1532");
             //meal plan

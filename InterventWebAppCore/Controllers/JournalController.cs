@@ -246,7 +246,7 @@ namespace InterventWebApp
             DateTime date = model.startDate.Date;
             var wellnessData = ParticipantUtility.ListWellnessData(HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value).WellnessData.LastOrDefault();
             var goals = ReportUtility.ReadHRAGoals(HttpContext.Session.GetInt32(SessionContext.HRAId).Value).hraGoals;
-            var nutritionGoal = ReportUtility.NutritionGoal(goals, null, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetString(SessionContext.AssessmentName), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
+            var nutritionGoal = ReportUtility.NutritionGoal(goals, null, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
             if (wellnessData != null && wellnessData.Weight.HasValue && goals.LtWt > wellnessData.Weight.Value && model.startDate.Date >= wellnessData.CollectedOn.Date && nutritionGoal.SecondNutPlanArray != null)
             {
                 meatGoal = Convert.ToDouble(nutritionGoal.SecondNutPlanArray.GetValue(0, 4).ToString());

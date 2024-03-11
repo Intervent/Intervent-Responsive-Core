@@ -485,7 +485,6 @@ namespace Intervent.Web.DataLayer
                         portal.HRAforSelfHelpProgram = false;
                     }
                     portal.HRAVer = request.Portal.HRAVer;
-                    portal.AssessmentName = request.Portal.AssessmentName;
                     portal.HRAValidity = request.Portal.HRAValidity;
                     portal.AWV = request.Portal.AWV;
                     portal.CACScanQuestion = request.Portal.CACScanQuestion;

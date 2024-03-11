@@ -787,7 +787,7 @@ namespace InterventWebApp
         {
             NutritionGoalModel model = new NutritionGoalModel();
             var Goals = ReportUtility.ReadHRAGoals(HttpContext.Session.GetInt32(SessionContext.HRAId).Value).hraGoals;
-            model = ReportUtility.NutritionGoal(Goals, null, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetString(SessionContext.AssessmentName), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
+            model = ReportUtility.NutritionGoal(Goals, null, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
             model.onlydiet = onlydiet;
             model.onlymeal = onlymeal;
             return PartialView("_NutritionData", model);
