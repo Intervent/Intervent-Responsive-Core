@@ -56,6 +56,14 @@
 
 </head>
 <body class="user-layout">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BDHDFE3Q5Y"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-BDHDFE3Q5Y');
+    </script>
     @{ Html.RenderPartial("_Session"); }
     <div data-sticky-container>
         <div class="contain-to-grid" data-sticky data-stick-to="top" data-margin-top="0" data-sticky-on="small">

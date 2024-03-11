@@ -938,24 +938,4 @@ namespace InterventWebApp
         public bool isPrintableReport { get; set; }
 
     }
-
-    public class InvoiceModel
-    {
-        public List<InvoiceDetailsDto> InvoiceList { get; set; }
-
-        public UserDto User { get; set; }
-
-        public UserDto Participant { get; set; }
-
-        public string InvoiceNo { get; set; }
-
-        public decimal Total { get; set; }
-
-        public DateTime InvoiceDate { get; set; }
-
-        public DateTime InvoiceStartDate { get; set; }
-
-        public DateTime InvoiceEndDate { get; set; }
-    }
-
 }
