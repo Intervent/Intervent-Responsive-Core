@@ -12,7 +12,7 @@
 				<div class="small-12 cell">
 					<h1>@Translate.Message("L6"), @Model.participantName!</h1>
 					<p>
-                        @String.Format(Translate.Message("L596"), Translate.Message(Model.assessmentName).ToLower())!
+						@String.Format(Translate.Message("L596"), (Model.isSouthUniversity ? Translate.Message("L2447") : @Translate.Message("L535")).ToLower())!
 						@if (!string.IsNullOrEmpty(Model.conditions))
 						{
 							@: @Translate.Message("L597") <strong>@Model.conditions</strong>.

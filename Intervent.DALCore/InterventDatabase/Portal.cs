@@ -231,8 +231,6 @@ namespace Intervent.DAL
 
         public string? CareplanPath { get; set; }
 
-        public string? AssessmentName { get; set; }
-
         public bool? ShowTimeTracker { get; set; }
 
         public byte ProviderDetails { get; set; }

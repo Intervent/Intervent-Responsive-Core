@@ -23,8 +23,6 @@ namespace InterventWebApp
 
         public IEnumerable<SelectListItem> HRAVersions { get; set; }
 
-        public IEnumerable<SelectListItem> AssessmentNames { get; set; }
-
         public IEnumerable<SelectListItem> LabProcedures { get; set; }
 
         public IEnumerable<SelectListItem> CoachingConditions { get; set; }

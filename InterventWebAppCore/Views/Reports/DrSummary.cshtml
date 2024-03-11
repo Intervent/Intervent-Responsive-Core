@@ -58,20 +58,20 @@
                                         @if (Model.clientNameInReport)
                                         {
                                             <p>@string.Format(Translate.Message("L2017"), Model.orgContactEmail)</p>
-                                            <p>@string.Format(Translate.Message("L2018"), " " + Model.organizationName + " ", Translate.Message(Model.assessmentName).ToLower())</p>
+                                            <p>@string.Format(Translate.Message("L2018"), " " + Model.organizationName + " ")</p>
                                             <p>@string.Format(Translate.Message("L3180"), Model.orgContactEmail)</p>
                                             <p>@Html.Raw(string.Format(Translate.Message("L3179"), Model.organizationName))</p>
                                         }
                                         else if (Model.coachingProgram || Model.selfHelpProgram)
                                         {
                                             <p>@string.Format(Translate.Message("L2017"), Model.orgContactEmail)</p>
-                                            <p>@string.Format(Translate.Message("L2018"), " ",  Translate.Message(Model.assessmentName).ToLower())</p>
+                                            <p>@string.Format(Translate.Message("L2018"), " ")</p>
                                             <p>@string.Format(Translate.Message("L2019"), Model.orgContactEmail)</p>
                                         }
                                         else
                                         {
                                             <p>@string.Format(Translate.Message("L2017"), Model.orgContactEmail)</p>
-                                            <p>@string.Format(Translate.Message("L2018"), " ", Translate.Message(Model.assessmentName).ToLower())</p>
+                                            <p>@string.Format(Translate.Message("L2018"), " ")</p>
                                             <p>@string.Format(Translate.Message("L3178"), Model.orgContactEmail)</p>
                                             <p>@Html.Raw(string.Format(Translate.Message("L3179"), "INTERVENT"))</p>
                                         }
@@ -145,7 +145,7 @@
                                             </div>
                                             <div class="cell small-12">
                                                 <span>
-                                                    @Html.Raw(string.Format(Translate.Message("L2012"), Translate.Message(Model.assessmentName).ToLower(), Model.ageInfo.Age))
+                                                    @Html.Raw(string.Format(Translate.Message("L2012"), Model.ageInfo.Age))
                                                 </span>
                                                 <span>
                                                     @Html.Raw(Model.arterialAgeText)
@@ -169,7 +169,7 @@
                                                    <br />@Html.Raw(Translate.Message("L2015")) @Model.wellnessScoreInfo.newWellnessScore (@Translate.Message(Model.wellnessScoreInfo.wellnessHead)). @Translate.Message(Model.wellnessScoreInfo.wellnessText)
                                                     @if (Model.PeerAverage.HasValue)
                                                     {
-                                                        <br/><span>@Html.Raw(string.Format(Translate.Message("L2014"), Model.PeerAverage, Translate.Message(Model.assessmentName).ToLower()))</span>
+                                                        <br/><span>@Html.Raw(string.Format(Translate.Message("L2014")))</span>
                                                     }
                                                 </span>
                                             </div>

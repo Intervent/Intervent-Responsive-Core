@@ -193,7 +193,6 @@ namespace InterventWebApp
             HttpContext.Session.Remove(SessionContext.ShowPostmenopausal);
             HttpContext.Session.Remove(SessionContext.NeedCareplanApproval);
             HttpContext.Session.Remove(SessionContext.CareplanPath);
-            HttpContext.Session.Remove(SessionContext.AssessmentName);
             HttpContext.Session.Remove(SessionContext.InActiveParticipantPortalId);
             HttpContext.Session.Remove(SessionContext.GarminOAuthSecretKey);
             HttpContext.Session.Remove(SessionContext.ProgramCode);

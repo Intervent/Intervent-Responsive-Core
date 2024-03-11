@@ -96,6 +96,7 @@ namespace InterventWebApp
                     HttpContext.Session.SetInt32(SessionContext.StateId, partResponse.user.State.Value);
                 if (partResponse.user.OrganizationId > 0)
                     HttpContext.Session.SetInt32(SessionContext.OrganizationId, partResponse.user.OrganizationId);
+                HttpContext.Session.SetInt32(SessionContext.SouthUniversityOrgId, _appSettings.SouthUniversityOrgId);
                 HttpContext.Session.SetString(SessionContext.OrganizationName, partResponse.user.Organization.Name.ToString());
                 if (!string.IsNullOrEmpty(partResponse.user.Organization.Code))
                     HttpContext.Session.SetString(SessionContext.OrganizationCode, partResponse.user.Organization.Code.ToString());
@@ -171,7 +172,6 @@ namespace InterventWebApp
                 HttpContext.Session.SetString(SessionContext.CareplanPath, CommonUtility.NullCheck(partResponse.Portal.CareplanPath));
                 if (partResponse.Portal.CarePlanType.HasValue)
                     HttpContext.Session.SetInt32(SessionContext.CarePlanType, partResponse.Portal.CarePlanType.Value);
-                HttpContext.Session.SetString(SessionContext.AssessmentName, (string.IsNullOrEmpty(partResponse.Portal.AssessmentName) ? "L535" : partResponse.Portal.AssessmentName).ToString());
                 model.portalStartDate = partResponse.Portal.StartDate;
                 model.ShowSelfScheduling = ShowSelfScheduling();
                 model.IsRescheduling = IsRescheduling();
@@ -303,7 +303,6 @@ namespace InterventWebApp
                 HttpContext.Session.SetString(SessionContext.CareplanPath, portalDetails.CareplanPath.ToString());
                 if (portalDetails.CarePlanType.HasValue)
                     HttpContext.Session.SetInt32(SessionContext.CarePlanType, portalDetails.CarePlanType.Value);
-                HttpContext.Session.SetString(SessionContext.AssessmentName, (string.IsNullOrEmpty(portalDetails.AssessmentName) ? "L535" : portalDetails.AssessmentName).ToString());
                 model.portalStartDate = portalDetails.StartDate;
                 HttpContext.Session.SetInt32(SessionContext.MessageCount, MessageUtility.GetMessageCountForDashboard(UserId, false, null, false, _appSettings.SystemAdminId).MessageBoardCount);
 
@@ -345,12 +344,12 @@ namespace InterventWebApp
                 model.PreviousPortalAvailable = true;
             model.openProfile = openProfile.HasValue ? openProfile.Value : false;
             model.MailScoreCard = HttpContext.Session.GetString(SessionContext.MailScoreCard) == "true";
-            model.AssessmentName = HttpContext.Session.GetString(SessionContext.AssessmentName);
             model.UserinProgramId = HttpContext.Session.GetInt32(SessionContext.UserinProgramId);
             model.AdminId = HttpContext.Session.GetInt32(SessionContext.AdminId);
             model.ParticipantId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
             model.ParticipantEmail = HttpContext.Session.GetString(SessionContext.ParticipantEmail);
             model.UserId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
+            model.isSouthUniversity = HttpContext.Session.GetInt32(SessionContext.OrganizationId).HasValue && HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value == _appSettings.SouthUniversityOrgId;
             return View(model);
         }
 
@@ -527,7 +526,6 @@ namespace InterventWebApp
                 model.FutureAppointmentDate = CommonUtility.dateFormater(Convert.ToDateTime(appointments.Appointments[0].Date + " " + appointments.Appointments[0].StartTime), true, HttpContext.Session.GetString(SessionContext.DateFormat)) + " (" + HttpContext.Session.GetString(SessionContext.ParticipantTimeZoneName) + ")";
             model.hasCoachingConditions = HasCoachingConditions();
             model.participantName = HttpContext.Session.GetString(SessionContext.ParticipantName);
-            model.assessmentName = HttpContext.Session.GetString(SessionContext.AssessmentName);
             model.userStatus = HttpContext.Session.GetString(SessionContext.UserStatus) != null ? HttpContext.Session.GetString(SessionContext.UserStatus) : "";
             model.userinProgramId = HttpContext.Session.GetInt32(SessionContext.UserinProgramId).HasValue ? HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value : null;
             model.nextApptDate = HttpContext.Session.GetString(SessionContext.NextApptDate) != null ? HttpContext.Session.GetString(SessionContext.NextApptDate) : "";
@@ -538,6 +536,7 @@ namespace InterventWebApp
             model.organizationId = HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value;
             model.programType = HttpContext.Session.GetInt32(SessionContext.ProgramType);
             model.orgContactEmail = HttpContext.Session.GetString(SessionContext.OrgContactEmail);
+            model.isSouthUniversity = HttpContext.Session.GetInt32(SessionContext.OrganizationId).HasValue && HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value == _appSettings.SouthUniversityOrgId;
             return View(model);
         }
 
@@ -1497,7 +1496,6 @@ namespace InterventWebApp
                     HttpContext.Session.SetInt32(SessionContext.FollowUpValidity, inActivepPortal.FollowUpValidity.Value);
                 HttpContext.Session.SetString(SessionContext.ShowPostmenopausal, inActivepPortal.ShowPostmenopausal.ToString());
                 HttpContext.Session.SetString(SessionContext.CarePlan, inActivepPortal.CarePlan.ToString());
-                HttpContext.Session.SetString(SessionContext.AssessmentName, string.IsNullOrEmpty(inActivepPortal.AssessmentName) ? "L535" : inActivepPortal.AssessmentName);
             }
             if (response.portal != null)
                 model.ShowTimeTracker = response.portal.ShowTimeTracker.HasValue && response.portal.ShowTimeTracker.Value;
@@ -1576,7 +1574,6 @@ namespace InterventWebApp
                 HttpContext.Session.SetString(SessionContext.ShowPostmenopausal, response.portal.ShowPostmenopausal.ToString());
                 HttpContext.Session.SetString(SessionContext.CarePlan, response.portal.CarePlan.ToString());
                 HttpContext.Session.SetString(SessionContext.KitAlert, response.portal.KitAlert.ToString());
-                HttpContext.Session.SetString(SessionContext.AssessmentName, (string.IsNullOrEmpty(response.portal.AssessmentName) ? "L535" : response.portal.AssessmentName).ToString());
             }
             if (response.participant.UPId != null)
             {

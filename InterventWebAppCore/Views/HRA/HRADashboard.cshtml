@@ -12,7 +12,14 @@
 		<div class="grid-x grid-margin-x">
 			<div class="medium-10 cell">
 				<h1>
-                    @Translate.Message(Model.AssessmentName)
+                    @if (Model.isSouthUniversity)
+                    {
+                        @Translate.Message("L3845")
+                    }
+                    else
+                    {
+                        @Translate.Message("L535")
+                    }
 				</h1>
 			</div>
 			<div class="medium-2 cell text-right">
@@ -27,7 +34,7 @@
 				{
 					<div class="panel hra-main-message">
 						<p>
-                            @string.Format(Translate.Message("L2086"), Translate.Message(Model.AssessmentName).ToLower(), Model.HRAValidity, Model.OrgContactEmail)
+                            @string.Format(Translate.Message("L2086"), Model.HRAValidity, Model.OrgContactEmail)
 						</p>
 					</div>
 				}

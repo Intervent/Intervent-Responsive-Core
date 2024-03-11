@@ -12,7 +12,9 @@
             <div class="main-column medium-12 cell" data-equalizer-watch>
                 <div class="grid-x grid-margin-x tile-item">
                     <div class="cell">
-                        @{string assessmentText = Translate.Message(Model.AssessmentName).ToLower();}
+                        @{
+                            string assessmentText = Model.isSouthUniversity ? Translate.Message("L3845").ToLower() : Translate.Message("L535").ToLower();
+                        }
                         @if (Model.PreviousPortalAvailable)
                         {
                             <div class="tiles cell small-12">
@@ -89,7 +91,7 @@
         <div class="cell">
             <h2>@assessmentText</h2>
             <p>
-                @string.Format(Translate.Message("L1692"), Translate.Message(Model.AssessmentName).ToLower())
+                @Translate.Message("L1692")
             </p>
             <input type="checkbox" id="dont-show-again" value="">
             <label for="dont-show-again">@Translate.Message("L1693")</label>

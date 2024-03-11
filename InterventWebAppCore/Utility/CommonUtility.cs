@@ -892,16 +892,6 @@ namespace InterventWebApp
             return versions;
         }
 
-        public static List<SelectListItem> AssessmentNames()
-        {
-            List<SelectListItem> assessmentNames = new List<SelectListItem>();
-            assessmentNames.Add(new SelectListItem() { Text = Translate.Message("L535"), Value = "L535" });
-            assessmentNames.Add(new SelectListItem() { Text = Translate.Message("L3845"), Value = "L3845" });
-            assessmentNames.Add(new SelectListItem() { Text = Translate.Message("L4425"), Value = "L4425" });
-
-            return assessmentNames;
-        }
-
         public static List<SelectListItem> GetIntegrationsList()
         {
             List<SelectListItem> integrations = new List<SelectListItem>();
