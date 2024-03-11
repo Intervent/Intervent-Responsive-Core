@@ -359,14 +359,17 @@ namespace InterventWebApp
                 if (intuityReader.HasIntuityEligibilityRecord(new GetIntuityRequest() { UniqueId = uniqueId, OrganizationId = orgId }) && model.user.ContactMode != null && model.user.ContactMode.HasValue)
                 {
                     string intuityPhone = "";
-                    if (model.user.ContactMode.Value == 1)
-                        intuityPhone = user.HomeNumber;
-                    else if (model.user.ContactMode.Value == 2)
-                        intuityPhone = user.WorkNumber;
-                    else if (model.user.ContactMode.Value == 3)
-                        intuityPhone = user.CellNumber;
+					if (model.user.ContactMode.HasValue)
+					{
+						if (model.user.ContactMode.Value == 1)
+							intuityPhone = user.HomeNumber;
+						else if (model.user.ContactMode.Value == 2)
+							intuityPhone = user.WorkNumber;
+						else if (model.user.ContactMode.Value == 3)
+							intuityPhone = user.CellNumber;
+					}
 
-                    if (!string.IsNullOrEmpty(intuityPhone))
+					if (!string.IsNullOrEmpty(intuityPhone))
                     {
                         IntuityEligibilityModel intuityEligibility = new IntuityEligibilityModel();
                         intuityEligibility.IntuityEligibilityLog = new IntuityEligibilityLogDto();
