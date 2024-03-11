@@ -42,8 +42,6 @@ namespace Intervent.DAL
 
         public byte? ProgramType { get; set; }
 
-        public string? ProgramName { get; set; }
-
         public int? Records { get; set; }
 
         public string? HRAPageSeqDone { get; set; }
