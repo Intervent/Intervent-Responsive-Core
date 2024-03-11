@@ -71,14 +71,8 @@
                 <div class="title-bar hide-for-large" data-responsive-toggle="responsive-menu" data-hide-for="large">
                     <button class="menu-icon" type="button" data-toggle="responsive-menu"></button>
                 </div>
-
-                <div class="flex-container align-middle mobile-sidebar-trigger">
-                    <a href="#" class="device-sidebar-btn hide-for-large">
-                        <img src="~/Images/participant/mobile_navigation_icon.svg" alt="" class="hide" />
-                    </a>
-
-                    <h1 class="menu-text"><a href="~/Admin/AdminDashboardNew">INTERVENT</a></h1>
-                </div>
+                
+                <h1 class="menu-text"><a href="~/Admin/AdminDashboard">INTERVENT</a></h1>
 
                 <div class="top-bar-menu-items" id="responsive-menu">
                     <div class="top-bar-right large-order-2">
@@ -203,7 +197,6 @@
 			}
 		}
 
-	    LoadMenu();
         $(document).ready(function () {
             $("[data-open]").on('click', function(e){
 				showmodal($(this), e);

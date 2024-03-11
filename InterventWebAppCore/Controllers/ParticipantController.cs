@@ -66,7 +66,7 @@ namespace InterventWebApp
             else if (CommonUtility.HasAdminRole(User.RoleCode()))
             {
                 HttpContext.Session.SetInt32(SessionContext.AdminId, Convert.ToInt32(User.UserId()));
-                return RedirectToAction("AdminDashboardNew", "Admin");
+                return RedirectToAction("AdminDashboard", "Admin");
             }
             else
             {
