@@ -121,7 +121,7 @@ namespace InterventWebApp
             return response;
         }
 
-        public static UpdateUserinProgramResponse UpdateUserinProgram(int? PrograminPortalId, int? CoachId, int? LoginId, byte? InactiveReasonId, string Language, bool AssignedFollowUp, int userinProgramId, int participantId, int participantPortalId, string orgContactEmail, string orgContactNumber, int systemAdminId, bool UpdateSubscriptionRenewal)
+        public static UpdateUserinProgramResponse UpdateUserinProgram(int? PrograminPortalId, int? CoachId, int? LoginId, byte? InactiveReasonId, string Language, bool AssignedFollowUp, int userinProgramId, int participantId, int participantPortalId, string orgContactEmail, string orgContactNumber, int systemAdminId)
         {
             ProgramReader reader = new ProgramReader();
             UpdateUserinProgramRequest request = new UpdateUserinProgramRequest();
@@ -136,8 +136,6 @@ namespace InterventWebApp
                 request.InactiveReasonId = InactiveReasonId;
             if (AssignedFollowUp == true)
                 request.AssignedFollowup = AssignedFollowUp;
-            if (UpdateSubscriptionRenewal == true)
-                request.UpdateSubscriptionRenewal = UpdateSubscriptionRenewal;
             request.userId = participantId;
             request.LoginId = LoginId;
             request.PortalId = participantPortalId;

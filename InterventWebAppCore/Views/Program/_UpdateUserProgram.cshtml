@@ -42,7 +42,7 @@
                 url: "@Url.Action("UpdateUserinProgram", "Program")",
                 type: 'POST',
                 dataType: "json",
-                data: { PrograminPortalId: PrograminPortalId, CoachId: CoachId, InactiveReasonId: InactiveReasonId, Language: language, AssignedFollowUp: false, UpdateSubscriptionRenewal : false },
+                data: { PrograminPortalId: PrograminPortalId, CoachId: CoachId, InactiveReasonId: InactiveReasonId, Language: language, AssignedFollowUp: false },
                 success: function (data) {
                     $('#add-program').foundation('close');
                     GetUserProgramHistory();

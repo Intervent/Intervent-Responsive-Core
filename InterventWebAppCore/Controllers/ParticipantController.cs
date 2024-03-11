@@ -1599,10 +1599,6 @@ namespace InterventWebApp
                     if (!HttpContext.Session.GetInt32(SessionContext.FollowUpId).HasValue && HttpContext.Session.GetString(SessionContext.FollowUpCompleteDate) != null && response.UsersinProgram.FirstOrDefault().IsActive)
                         model.followUpDue = true;
                 }
-                if (HttpContext.Session.GetInt32(SessionContext.OrganizationId) == _appSettings.RetailOrgId && response.UsersinProgram.Where(x => x.IsActive).Count() > 0 && ((DateTime.UtcNow - response.UsersinProgram.Where(x => x.IsActive).LastOrDefault().EnrolledOn).Days / 365) + 1 > response.UsersinProgram.Sum(x => x.YearsPaid))
-                {
-                    model.dueForRenewal = true;
-                }
             }
             model.CompIntroKitsOnTime = response.participant.CompIntroKitsOnTime;
             TimeZoneInfo custTZone = TimeZoneInfo.FindSystemTimeZoneById(User.TimeZone());

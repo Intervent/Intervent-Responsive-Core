@@ -332,10 +332,10 @@ namespace InterventWebApp
 
         [ModuleControl(null, RoleCode.Administrator, RoleCode.Coach, RoleCode.CSR)]
         [HttpPost]
-        public JsonResult UpdateUserinProgram(int? PrograminPortalId, int? CoachId, byte? InactiveReasonId, string Language, bool AssignedFollowUp, bool UpdateSubscriptionRenewal)
+        public JsonResult UpdateUserinProgram(int? PrograminPortalId, int? CoachId, byte? InactiveReasonId, string Language, bool AssignedFollowUp)
         {
             int LoginId = HttpContext.Session.GetInt32(SessionContext.UserId).Value;
-            var response = ProgramUtility.UpdateUserinProgram(PrograminPortalId, CoachId, LoginId, InactiveReasonId, Language, AssignedFollowUp, HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetString(SessionContext.OrgContactEmail), HttpContext.Session.GetString(SessionContext.OrgContactNumber), _appSettings.SystemAdminId, UpdateSubscriptionRenewal);
+            var response = ProgramUtility.UpdateUserinProgram(PrograminPortalId, CoachId, LoginId, InactiveReasonId, Language, AssignedFollowUp, HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetString(SessionContext.OrgContactEmail), HttpContext.Session.GetString(SessionContext.OrgContactNumber), _appSettings.SystemAdminId);
             if (InactiveReasonId.HasValue)
             {
                 ClearProgramRelatedSessions();
@@ -643,7 +643,7 @@ namespace InterventWebApp
                             reader.WriteLogMessage(new LogEventInfo(NLog.LogLevel.Info, "MediOrbis Program Status", null, "Program status update for user : " + userId + " - RefId : " + uniqueId + " - status : Completed", null, null));
                         else
                             reader.WriteLogMessage(new LogEventInfo(NLog.LogLevel.Error, "MediOrbis Program Status", null, "Update program status failed for user : " + userId + " - RefId : " + uniqueId + " - status : Completed - Status code : " + mediOrbisResponse.StatusCode + " - Message : " + mediOrbisResponse.ErrorMsg, null, null));
-                        ProgramUtility.UpdateUserinProgram(userinProgram.ProgramsinPortal.Id, null, userId, (int)ProgramInactiveReasons.SuccessfullyCompleted, null, false, HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetString(SessionContext.OrgContactEmail), HttpContext.Session.GetString(SessionContext.OrgContactNumber), _appSettings.SystemAdminId, false);
+                        ProgramUtility.UpdateUserinProgram(userinProgram.ProgramsinPortal.Id, null, userId, (int)ProgramInactiveReasons.SuccessfullyCompleted, null, false, HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetString(SessionContext.OrgContactEmail), HttpContext.Session.GetString(SessionContext.OrgContactNumber), _appSettings.SystemAdminId);
                     }
                     IncentiveReader incentiveReader = new IncentiveReader();
                     AwardIncentivesRequest incentivesRequest = new AwardIncentivesRequest();
@@ -688,7 +688,7 @@ namespace InterventWebApp
                     model.TestimonialForm = userinProgram.ProgramsinPortal.portal.TestimonialForm.Insert(userinProgram.ProgramsinPortal.portal.TestimonialForm.IndexOf("."), languageCode);
                 if (!string.IsNullOrEmpty(userinProgram.ProgramsinPortal.portal.TobaccoReleaseForm) && ParticipantUtility.CheckIfTobaccoUser(true, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, GetParticipantPortalId()).smoker)
                     model.TobaccoReleaseForm = userinProgram.ProgramsinPortal.portal.TobaccoReleaseForm.Insert(userinProgram.ProgramsinPortal.portal.TobaccoReleaseForm.IndexOf("."), languageCode);
-                model.FoodList = HttpContext.Session.GetString(SessionContext.LanguagePreference) != null && HttpContext.Session.GetString(SessionContext.LanguagePreference).Equals("en-us") ? "FoodSearch.pdf" : "";
+                model.FoodList = HttpContext.Session.GetString(SessionContext.LanguagePreference) != null && HttpContext.Session.GetString(SessionContext.LanguagePreference).Equals("en-us") ? "Food Search.pdf" : "";
             }
             model.hasActivePortal = Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.HasActivePortal));
             return PartialView("_UserForms", model);
@@ -765,8 +765,8 @@ namespace InterventWebApp
                 request.wellnessData.waist = Convert.ToInt16(HttpContext.Session.GetInt32(SessionContext.Unit)) == (int)Unit.Metric ? (float)CommonUtility.ToImperial(model.Waist.Value, BioLookup.Waist, HttpContext.Session.GetInt32(SessionContext.Unit).Value) : model.Waist.Value;
             request.wellnessData.WellnessVision = model.WellnessVision;
             request.userId = HttpContext.Session.GetInt32(SessionContext.UserId).Value;
-            var respone = ParticipantUtility.AddEditWellnessData(request);
-            return Json(new { Result = "success", Record = respone.wellnessDataId });
+            var result = ParticipantUtility.AddEditWellnessData(request);
+            return Json(new { Result = "OK", Record = result });
         }
 
         [Authorize]

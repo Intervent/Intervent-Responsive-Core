@@ -53,8 +53,6 @@ namespace Intervent.DAL
 
         public bool? CompIntroKitsOnTime { get; set; }
 
-        public byte? YearsPaid { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FollowUp> FollowUps { get; set; }
 

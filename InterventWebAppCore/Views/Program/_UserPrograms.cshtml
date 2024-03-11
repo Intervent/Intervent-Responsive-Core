@@ -82,7 +82,7 @@
             url: "@Url.Action("UpdateUserinProgram", "Program")",
             type: 'POST',
             dataType: "json",
-            data: { AssignedFollowUp: true, UpdateSubscriptionRenewal: false },
+            data: { AssignedFollowUp: true },
             success: function (data) {
                 $('#followup').foundation('close');
                 //$(document).on('closed.zf.reveal', '[data-reveal]', function () {

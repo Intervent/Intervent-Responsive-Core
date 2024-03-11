@@ -474,8 +474,6 @@ namespace Intervent.Web.DataLayer
                         userinProgram.ProgramsinPortalsId = request.PrograminPortalId;
                     //if (request.AssignedFollowup)
                     //    userinProgram.AssignedFollowUp = request.AssignedFollowup;
-                    if (request.UpdateSubscriptionRenewal)
-                        userinProgram.YearsPaid = (byte)(userinProgram.YearsPaid.HasValue ? userinProgram.YearsPaid + 1 : 1);
                     userinProgram.UpdatedBy = request.LoginId;
                     userinProgram.UpdatedOn = DateTime.UtcNow;
                     context.UsersinPrograms.Attach(userinProgram);
