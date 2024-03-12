@@ -28437,6 +28437,15 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Kits attribués.
+        /// </summary>
+        internal static string L4609 {
+            get {
+                return ResourceManager.GetString("L4609", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Votre nouveau compte a été créé! Utilisez votre adresse électronique et votre mot de passe pour vous connecter..
         /// </summary>
         internal static string L462 {

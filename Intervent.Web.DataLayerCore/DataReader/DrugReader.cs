@@ -71,7 +71,7 @@ namespace Intervent.Web.DataLayer
             if (request.drug.Id != 0)
                 drug = context.UserDrugs.Where(x => x.Id == request.drug.Id).FirstOrDefault();
             else
-                drug = context.UserDrugs.Where(x => x.UserId == request.drug.UserId && x.MedicationName == request.drug.MedicationName && x.MedicationStartDate.Date == request.drug.MedicationStartDate.Date).FirstOrDefault();
+                drug = context.UserDrugs.Where(x => x.UserId == request.drug.UserId && x.MedicationName == request.drug.MedicationName && x.Dosage == request.drug.Dosage).FirstOrDefault();
             if (drug == null)
             {
                 UserDrug daldrug = new UserDrug();

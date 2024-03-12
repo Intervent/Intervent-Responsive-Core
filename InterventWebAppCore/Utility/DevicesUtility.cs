@@ -229,15 +229,23 @@ namespace InterventWebApp
             if (!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
             {
                 startDateFilter = TimeZoneInfo.ConvertTimeToUtc(Convert.ToDateTime(startDate), custTZone);
-                endDateFilter = TimeZoneInfo.ConvertTimeToUtc(Convert.ToDateTime(endDate), custTZone);
+                endDateFilter = TimeZoneInfo.ConvertTimeToUtc(Convert.ToDateTime(endDate), custTZone).AddDays(1);
                 days = (int)(endDateFilter.Value - startDateFilter.Value).TotalDays;
             }
             else if (days > 0)
             {
-                endDateFilter = TimeZoneInfo.ConvertTimeToUtc(DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified), custTZone);
-                startDateFilter = TimeZoneInfo.ConvertTimeToUtc(DateTime.SpecifyKind(endDateFilter.Value.AddDays(-days), DateTimeKind.Unspecified), custTZone);
+                endDateFilter = TimeZoneInfo.ConvertTimeToUtc(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, custTZone).Date, custTZone);
+                startDateFilter = TimeZoneInfo.ConvertTimeToUtc(TimeZoneInfo.ConvertTimeFromUtc(endDateFilter.Value.AddDays(-days), custTZone).Date, custTZone);
             }
             var response = GetWorkoutData(startDateFilter, endDateFilter, participantId);
+            if (response != null && response.Workouts != null && response.Workouts.Count() > 0)
+            {
+                foreach (var item in response.Workouts)
+                {
+                    item.starttimestamp = TimeZoneInfo.ConvertTimeFromUtc(item.starttimestamp, custTZone);
+                    item.endtimestamp = TimeZoneInfo.ConvertTimeFromUtc(item.endtimestamp, custTZone);
+                }
+            }
             //Time data
             var timeData = response.Workouts.Where(x => x.duration > 0).GroupBy(y => y.starttimestamp.Date).Select(groupedData => new Fitness
             {
@@ -256,6 +264,14 @@ namespace InterventWebApp
             }).ToList();
 
             var summaries = GetSummariesData(startDateFilter.Value, endDateFilter.Value, participantId);
+            if (summaries != null && summaries.Summaries != null && summaries.Summaries.Count() > 0)
+            {
+                foreach (var item in summaries.Summaries)
+                {
+                    item.StartTimeStamp = TimeZoneInfo.ConvertTimeFromUtc(item.StartTimeStamp, custTZone);
+                    item.EndTimeStamp = TimeZoneInfo.ConvertTimeFromUtc(item.EndTimeStamp, custTZone);
+                }
+            }
             var summariesSteps = summaries.Summaries.Where(x => x.Steps != null && x.Steps > 0).Select(x => new Fitness
             {
                 timestamp = x.StartTimeStamp.ToShortDateString(),

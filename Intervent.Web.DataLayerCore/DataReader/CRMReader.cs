@@ -252,6 +252,7 @@ namespace Intervent.Web.DataLayer
                 CRM_Note.CallerProfileType = request.crm_Note.CallerProfileType;
                 CRM_Note.FullName = request.crm_Note.FullName;
                 CRM_Note.AccountType = request.crm_Note.AccountType;
+                CRM_Note.InsType = request.crm_Note.InsType;
                 CRM_Note.RequiredEscalation = request.crm_Note.RequiredEscalation;
                 CRM_Note.RequiredRMA = request.crm_Note.RequiredRMA;
                 CRM_Note.RMANumber = request.crm_Note.RMANumber;

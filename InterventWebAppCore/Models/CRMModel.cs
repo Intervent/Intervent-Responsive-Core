@@ -18,6 +18,8 @@ namespace InterventWebApp
 
         public IEnumerable<SelectListItem> States { get; set; }
 
+        public IEnumerable<SelectListItem> NoteTypes { get; set; }
+
         public IEnumerable<SelectListItem> AccountTypes { get; set; }
 
         public IEnumerable<SelectListItem> CallerProfileTypes { get; set; }
@@ -25,6 +27,8 @@ namespace InterventWebApp
         public IEnumerable<SelectListItem> Languages { get; set; }
 
         public IEnumerable<SelectListItem> InquiryTypes { get; set; }
+
+        public IEnumerable<SelectListItem> MedicareInsuranceTypes { get; set; }
 
         public IEnumerable<SelectListItem> ComplaintClassificationTypes { get; set; }
 
@@ -68,6 +72,8 @@ namespace InterventWebApp
 
         public IEnumerable<SelectListItem> InactiveReason { get; set; }
 
+        public string accountTypeList { get; set; }
+
         public bool readOnly { get; set; }
 
         public IList<string> readOnlyList { get; set; }
@@ -103,6 +109,8 @@ namespace InterventWebApp
         public int eligibilityId { get; set; }
 
         public int? userId { get; set; }
+
+        public string dispositionsList { get; set; }
 
         public FilterReportTempData tempData { get; set; }
 

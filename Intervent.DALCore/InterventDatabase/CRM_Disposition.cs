@@ -24,6 +24,8 @@ namespace Intervent.DAL
 
         public int? CategoryId { get; set; }
 
+        public byte? Type { get; set; }
+
         public bool EligibleforActivity { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

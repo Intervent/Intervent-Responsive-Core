@@ -29965,6 +29965,15 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Kits asignados.
+        /// </summary>
+        internal static string L4609 {
+            get {
+                return ResourceManager.GetString("L4609", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Empiece AHORA – ¡cada día es un buen día para mejorar su salud!.
         /// </summary>
         internal static string L461 {

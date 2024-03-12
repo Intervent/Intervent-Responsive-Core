@@ -17471,4 +17471,8 @@ cholesterol</value>
     <value>To summarize, INTERVENT's use and transfer to any other app any information received from Google APIs will adhere to the &lt;a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes" style="color:deepskyblue"&gt;Google API Services User Data Policy&lt;/a&gt;, including the concerned Limited Use requirements.</value>
     <comment>Home</comment>
   </data>
+  <data name="L4609" xml:space="preserve">
+    <value>Assigned Kits</value>
+    <comment>Program</comment>
+  </data>
 </root>

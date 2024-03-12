@@ -545,6 +545,16 @@ namespace Intervent.Web.DataLayer
             try
             {
                 string fileName = Path.Combine(Directory.GetCurrentDirectory(), "intervent-mobile-apps-firebase-adminsdk-9k8vh-d3a3410a49.json");
+                if (!File.Exists(fileName))
+                {
+                    fileName = Path.Combine(Directory.GetCurrentDirectory(), "intervent-mobile-apps-firebase-adminsdk-9k8vh-d3a3410a49.json");
+                    if (!File.Exists(fileName))
+                    {
+                        var logEvent = new LogEventInfo(LogLevel.Error, "Send Notification Service", null, "intervent json file not found. Path : " + fileName, null, null);
+                        logreader.WriteLogMessage(logEvent);
+                        return false;
+                    }
+                }
                 string scopes = "https://www.googleapis.com/auth/firebase.messaging"; 
                 var bearertoken = "";
                 using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))

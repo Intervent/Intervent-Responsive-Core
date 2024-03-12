@@ -12127,4 +12127,7 @@ recomendamos que haga sus laboratorios de sangre en ayuna y no consuma nada dura
   <data name="L4607" xml:space="preserve">
     <value>En resumen, el uso de INTERVENT y la transferencia a cualquier otra aplicación de cualquier información recibida de las API de Google se ajustarán a los &lt;a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes" style="color:deepskyblue"&gt;Política de datos de usuario de los servicios API de Google&lt;/a&gt;, incluidos los requisitos de uso limitado correspondientes.</value>
   </data>
+  <data name="L4609" xml:space="preserve">
+    <value>Kits asignados</value>
+  </data>
 </root>

@@ -183,16 +183,19 @@
             </div>
         </a>
     }
-    <a href="~/Drug/MedicationDashboard">
-        <div class="dashboard-item pink">
-            <div class="icon-container">
-                <i class="fa fa-medkit"></i>
-            </div>
-            <div class="description">
-                <div class="title">@Translate.Message("L1061")</div>
-            </div>
-        </div>
-    </a>
+    @if (!CommonUtility.IsIntegratedWithCaptiva(HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.IntegrationWith)))
+    {
+            <a href="~/Drug/MedicationDashboard">
+                <div class="dashboard-item pink">
+                    <div class="icon-container">
+                        <i class="fa fa-medkit"></i>
+                    </div>
+                    <div class="description">
+                        <div class="title">@Translate.Message("L1061")</div>
+                    </div>
+                </div>
+            </a>
+    }
     <a href="~/Recipe/Recipes">
         <div class="dashboard-item orange">
             <div class="icon-container">

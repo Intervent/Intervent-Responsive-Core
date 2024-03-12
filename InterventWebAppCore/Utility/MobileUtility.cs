@@ -574,7 +574,7 @@ namespace InterventWebApp
                 FeedsResponse response = new FeedsResponse();
                 var user = accountReader.GetBasicUserInfo(participantId);
                 var dateFormat = user.Country1 != null ? user.Country1.DateFormat : "MM/dd/yyyy";
-                var feeds = ParticipantUtility.GetDashboadMessages(participantId, 0, 10, null, user.Organization.Portals.Where(x => x.Active == true).FirstOrDefault().StartDate.ToString(), true, timeZone, timeZoneName, dateFormat, (int)NotificationTypes.Feed, false);
+                var feeds = ParticipantUtility.GetDashboadMessages(participantId, 0, 10, null, user.Organization.Portals.Where(x => x.Active == true).FirstOrDefault().StartDate.ToString(), true, timeZone, timeZoneName, dateFormat, (int)NotificationTypes.Feed, true);
                 dateFormat += " hh:mm tt";
                 IList<Feed> Feeds = new List<Feed>();
                 if (feeds.dashboardMessages != null)

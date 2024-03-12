@@ -56,8 +56,14 @@
                                     <p>Contact Name <span>@(note.FullName != null ? note.FullName : "")</span></p>
                                 </div>
                                 <div class="cell small-6 large-4">
-                                    <p>Account Type <span>@(note.CRM_AccountTypes != null ? note.CRM_AccountTypes.Type : "")</span></p>
+                                    <p>Sales Channel <span>@(note.CRM_AccountTypes != null ? note.CRM_AccountTypes.Type : "")</span></p>
                                 </div>
+                                @if (note.InsType.HasValue)
+                                {
+                                    <div class="cell small-6 large-4">
+                                        <p>Insurance <span>@(note.InsType == 1 ? "Private insurance" : note.InsType == 2 ? "Medicare" : note.InsType == 3 ? "Other" : "")</span></p>
+                                    </div>
+                                }
                                 @if (note.InquiryType1 != null)
                                 {
                                     <div class="cell small-6 large-4">

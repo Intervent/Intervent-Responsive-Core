@@ -22,6 +22,8 @@ namespace Intervent.DAL
         [Required]
         public bool IsActive { get; set; }
 
+        public byte? Group { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CRM_Note> CRM_Notes { get; set; }
 

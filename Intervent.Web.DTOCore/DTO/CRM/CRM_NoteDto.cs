@@ -138,6 +138,8 @@
 
         public string Language { get; set; }
 
+        public int? InsType { get; set; }
+
         public virtual CRM_AccountTypesDto CRM_AccountTypes { get; set; }
 
         public virtual CRM_CallerProfileTypesDto CRM_CallerProfileTypes { get; set; }

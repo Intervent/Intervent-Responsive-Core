@@ -11257,4 +11257,7 @@ Prenez-vous plus d’une consommation d’alcool par jour en moyenne (1 consomm
   <data name="L4607" xml:space="preserve">
     <value>Pour résumer, l'utilisation par INTERVENT et le transfert vers toute autre application de toute information reçue des API Google respecteront les &lt;a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_special_api_scopes" style="color:deepskyblue"&gt;Politique relative aux données utilisateur des services API Google&lt;/a&gt;, y compris les exigences d'utilisation limitée concernées.</value>
   </data>
+  <data name="L4609" xml:space="preserve">
+    <value>Kits attribués</value>
+  </data>
 </root>

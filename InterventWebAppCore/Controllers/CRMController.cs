@@ -250,14 +250,20 @@ namespace InterventWebApp
             if (noteId.HasValue)
                 model.CRM_Note = model.CRM_Contact.CRM_Notes.Where(x => x.Id == noteId).FirstOrDefault();
             model.CRM_Note.ContactId = contactId;
-            model.AccountTypes = CRMUtility.GetAccountTypes().CRM_AccountTypes.Where(x => x.IsActive).Select(x => new SelectListItem { Text = x.Type, Value = x.Id.ToString() }).OrderBy(x => x.Text);
+            model.NoteTypes = CRMUtility.GetCRMNoteTypes(model.CRM_Note.Type).OrderBy(x => x.Text);
+            model.MedicareInsuranceTypes = CRMUtility.GetMedicareInsuranceTypes();
+            var accountTypes = CRMUtility.GetAccountTypes().CRM_AccountTypes;
+            model.AccountTypes = accountTypes.Where(x => x.IsActive).Select(x => new SelectListItem { Text = x.Type, Value = x.Id.ToString() }).OrderBy(x => x.Text);
+            model.accountTypeList = JsonConvert.SerializeObject(accountTypes.Where(x => x.IsActive && x.Group.HasValue && x.Group.Value == 1).Select(x => new { x.Id, x.Group }).ToList());
             model.InquiryTypes = CRMUtility.GetInquiryTypes().InquiryTypes.Select(x => new SelectListItem { Text = x.Type, Value = x.Id.ToString() });
             model.CallerProfileTypes = CRMUtility.CallerProfileTypes().CRM_CallerProfileTypes.Where(x => x.IsActive).Select(x => new SelectListItem { Text = x.Type, Value = x.Id.ToString() }).OrderBy(x => x.Text);
             model.Languages = CommonUtility.GetPortalLanguages().Where(x => x.LanguageCode == "en-us" || x.LanguageCode == "es").Select(x => new SelectListItem { Text = Translate.Message(x.LanguageItem), Value = x.LanguageCode });
             model.ComplaintClassificationTypes = CRMUtility.ComplaintClassificationTypes().CRM_ComplaintClassificationTypes.Where(x => x.IsActive).Select(x => new SelectListItem { Text = x.Type, Value = x.Id.ToString() });
             model.PogoMeterNumbers = CRMUtility.GetPogoMeterNumbers(contactId).Where(x => x.Id == model.CRM_Note.PogoMeterNumber || x.IsActive).Select(x => new SelectListItem { Text = x.PogoMeterNumber, Value = x.Id.ToString() });
-            model.Dispositions = CRMUtility.GetDispositionsList().CRM_Dispositions.Where(d => d.Disposition == "Inbound email" || d.Disposition == "Outbound email" || d.Disposition == "Email Complaint" || d.Disposition == "Handled" || d.Disposition == "Complaint Follow up").Select(x => new SelectListItem { Text = x.Disposition, Value = x.Id.ToString() });
+            var dispositionsList = CRMUtility.GetDispositionsList().CRM_Dispositions;
+            model.Dispositions = dispositionsList.Where(d => d.Type.HasValue).Select(x => new SelectListItem { Text = x.Disposition, Value = x.Id.ToString() });
             model.States = CommonUtility.ListStates(236).Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() }).OrderBy(x => x.Text);
+            model.dispositionsList = JsonConvert.SerializeObject(dispositionsList.Where(d => d.Type.HasValue).Select(x => new { x.Id, x.Type }).ToList()); 
             model.DateFormat = HttpContext.Session.GetString(SessionContext.DateFormat);
             return PartialView("_CRMNotes", model);
         }
@@ -486,7 +492,7 @@ namespace InterventWebApp
             propertyName.Add("PogoMeterNumber", "Pogo Meter Number");
             propertyName.Add("CallerProfileType", "Caller Profile");
             propertyName.Add("FullName", "Full Name");
-            propertyName.Add("AccountType", "Account Type");
+            propertyName.Add("AccountType", "Sales Channel");
             propertyName.Add("RequiredEscalation", "Required Escalation");
             propertyName.Add("RequiredRMA", "RMA Required");
             propertyName.Add("RMANumber", "RMA Number");
