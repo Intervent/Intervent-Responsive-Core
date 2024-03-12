@@ -569,7 +569,7 @@ namespace Intervent.Web.DataLayer
         public GetAppointmentDetailsResponse GetAppointmentDetails(GetAppointmentDetailsRequest request)
         {
             GetAppointmentDetailsResponse response = new GetAppointmentDetailsResponse();
-            var appoinment = context.Appointments.Include("User").Include("User1").Where(x => x.Id == request.apptId && x.Active == true).FirstOrDefault();
+            var appoinment = context.Appointments.Include("User").Include("User1").Include("User1.AdminProperty").Where(x => x.Id == request.apptId && x.Active == true).FirstOrDefault();
             if (appoinment != null)
             {
                 TimeZoneInfo custTZone = TimeZoneInfo.FindSystemTimeZoneById(request.timeZone);
