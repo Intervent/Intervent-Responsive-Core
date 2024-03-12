@@ -1342,7 +1342,7 @@
     <value>Complete estas actividades para ganar puntos</value>
   </data>
   <data name="L1366" xml:space="preserve">
-    <value>Health Risk Assessment</value>
+    <value>Health Assessment</value>
   </data>
   <data name="L1367" xml:space="preserve">
     <value>Primera sesión de Entrenamiento de la salud</value>
@@ -1892,7 +1892,7 @@
     <value>¿Programa de nutrición?</value>
   </data>
   <data name="L1530" xml:space="preserve">
-    <value>Un estilo de vida saludable empieza con un modelo saludable de comer. Basado en su {0}, hemos preparado un plan de nutrición personalizado para usted.</value>
+    <value>Un estilo de vida saludable empieza con un modelo saludable de comer. Basado en su evaluación de salud, hemos preparado un plan de nutrición personalizado para usted.</value>
   </data>
   <data name="L1531" xml:space="preserve">
     <value>Su plan de nutrición consiste de dos partes. 1. Plan Alimenticio Diario, 2. Gráfica de Consumo Dietético Diario. Su Plan de Comida Diaria provee número recomendado de porciones al día de cinco grupos de comida (Leche/Yogur, Frutas, Granos/Vegetales con almidón,  Vegetales sin almidón, y Carnes/Queso).</value>
@@ -2294,22 +2294,22 @@
     <value>Sus exámenes, revisiones e inmunizaciones específicas deberían ser determinados por usted y su doctor. Las tablas debajo muestran si esta al día o no con el horario mínimo recomendado para adultos sanos.</value>
   </data>
   <data name="L1651" xml:space="preserve">
-    <value>1 Porción: 2 a 3 onzas (56 a 84 gramos) de carne magra cocida, pollo, pezcado o substitutos de carnes • 1 onza (28 gramos) de carne • 1 huevo ó 2 claras de huevo • 1 cubo o rebanada de queso • ¼ taza de queso fresco • 1 taza de leche de soya • 1 Cda de mantequilla de maní • ¼ taza de nueces</value>
+    <value>&lt;h5&gt;1 Porción&lt;/h5&gt;&lt;ul&gt;&lt;li&gt; 2 a 3 onzas (56 a 84 gramos) de carne magra cocida, pollo, pezcado o substitutos de carnes &lt;/li&gt;&lt;li&gt; 1 onza (28 gramos) de carne &lt;/li&gt;&lt;li&gt; 1 huevo ó 2 claras de huevo &lt;/li&gt;&lt;li&gt; 1 cubo o rebanada de queso &lt;/li&gt;&lt;li&gt; ¼ taza de queso fresco &lt;/li&gt;&lt;li&gt; 1 taza de leche de soya &lt;/li&gt;&lt;li&gt; 1 Cda de mantequilla de maní &lt;/li&gt;&lt;li&gt; ¼ taza de nueces &lt;/li&gt;&lt;/ul&gt;</value>
   </data>
   <data name="L1652" xml:space="preserve">
-    <value>1 Porción: 1 taza de leche o yogur </value>
+    <value>&lt;h5&gt;1 Porción&lt;/h5&gt;&lt;ul&gt;&lt;li&gt;  1 taza de leche o yogur &lt;/li&gt;&lt;/ul&gt;</value>
   </data>
   <data name="L1653" xml:space="preserve">
-    <value>1 Porcion: 1 pedazo pequeño o mediano de fruta o melon • ½ toronja • ½ taza de bayas • ½ taza de fruta enlatada • ¼ taza de frutas secas • ½ taza de jugo</value>
+    <value>&lt;h5&gt;1 Porcion&lt;/h5&gt;&lt;ul&gt;&lt;li&gt; 1 pedazo pequeño o mediano de fruta o melon&lt;/li&gt;&lt;li&gt; ½ toronja &lt;/li&gt;&lt;li&gt; ½ taza de bayas &lt;/li&gt;&lt;li&gt; ½ taza de fruta enlatada &lt;/li&gt;&lt;li&gt; ¼ taza de frutas secas &lt;/li&gt;&lt;li&gt; ½ taza de jugo &lt;/li&gt;&lt;ul&gt;</value>
   </data>
   <data name="L1654" xml:space="preserve">
-    <value>1 Porción: ½ taza de vegetales de vegetales cocidos o crudos • 1 taza de vegetales de hojas crudos • ½ taza de jugo de vegetales </value>
+    <value>&lt;h5&gt;1 Porción&lt;/h5&gt;&lt;ul&gt;&lt;li&gt; ½ taza de vegetales de vegetales cocidos o crudos &lt;/li&gt;&lt;li&gt; 1 taza de vegetales de hojas crudos &lt;/li&gt;&lt;li&gt; ½ taza de jugo de vegetales &lt;/li&gt;&lt;/ul&gt;</value>
   </data>
   <data name="L1655" xml:space="preserve">
-    <value>1 Porción: ½ taza de vegetales de vegetales con almidón cocidos o crudos • 3 onzas (84 gramos) papa asada</value>
+    <value>&lt;h5&gt;1 Porción&lt;/h5&gt; &lt;ul&gt;&lt;li&gt; ½ taza de vegetales de vegetales con almidón cocidos o crudos &lt;/li&gt;&lt;li&gt; 3 onzas (84 gramos) papa asada&lt;/li&gt;&lt;/ul&gt;</value>
   </data>
   <data name="L1656" xml:space="preserve">
-    <value>1 Porción: 1 onza (28 gramos) de cereal seco • 1 rebanada de pan • ½ taza de arroz, pasta o cereal cocido • 1 tortilla • ½ pan de hamburguesa • ½ panecillo inglés o rosca • 1 bollo pequeño • panecillo • o rosca </value>
+    <value>&lt;h5&gt;1 Porción&lt;/h5&gt; &lt;ul&gt;&lt;li&gt; 1 onza (28 gramos) de cereal seco &lt;/li&gt;&lt;li&gt; 1 rebanada de pan &lt;/li&gt;&lt;li&gt; ½ taza de arroz, pasta o cereal cocido &lt;/li&gt;&lt;li&gt;1 tortilla &lt;/li&gt;&lt;li&gt; ½ pan de hamburguesa &lt;/li&gt;&lt;li&gt; ½ panecillo inglés o rosca &lt;/li&gt;&lt;li&gt; 1 bollo pequeño &lt;/li&gt;&lt;li&gt; panecillo &lt;/li&gt;&lt;li&gt; o rosca &lt;/li&gt;&lt;/ul</value>
   </data>
   <data name="L1657" xml:space="preserve">
     <value>Ir al Tablero</value>
@@ -2372,13 +2372,13 @@
     <value>Continue </value>
   </data>
   <data name="L1675" xml:space="preserve">
-    <value>Basado en su evaluación de salud, le recomendamos que complete uno de los siguientes programas para comenzar. ¡Esperamos que disfrute las actividades y materiales educativos!</value>
+    <value>¡Bienvenido a su programa de Auto-Ayuda! Basado en su evaluación de salud, le recomendamos que complete uno de los siguientes programas para comenzar. ¡Esperamos que disfrute las actividades y materiales educativos!</value>
   </data>
   <data name="L1676" xml:space="preserve">
     <value>Kits</value>
   </data>
   <data name="L1677" xml:space="preserve">
-    <value>Este es la puntuación de bienestar promedio para personas de su mismo sexo y edad que han tomado la {0}</value>
+    <value>Este es la puntuación de bienestar promedio para personas de su mismo sexo y edad que han tomado la evaluación de salud</value>
   </data>
   <data name="L1678" xml:space="preserve">
     <value>Tome Acción Ahora</value>
@@ -2429,7 +2429,7 @@
     <value>la evaluación completa en una sola sesión, no se preocupe. Siempre puede volver más tarde para completarla</value>
   </data>
   <data name="L1692" xml:space="preserve">
-    <value>Por favor complete su perfil antes de comenzar su {0}</value>
+    <value>Por favor complete su perfil antes de comenzar su health assessment</value>
   </data>
   <data name="L1693" xml:space="preserve">
     <value>No mostrar de nuevo</value>
@@ -3216,7 +3216,7 @@ SU EMPLEADOR (O EL EMPLEADOR DE SU CONYUGE, PAREJA O MIEMBRO FAMILIAR) LE HA DAD
     <value>¿Planifica quedar embarazada en el próximo año o poco después?</value>
   </data>
   <data name="L1927" xml:space="preserve">
-    <value>¡Gracias de nuevo por completar su {0}! Le hemos preparado un reporte personalizado de bienestar para usted. Lo puede imprimir para compartirlo con su doctor. Pero antes de mostrarle su informe, por favor considere inscribirse en un programa(s) de bienestar de INTERVENT que están disponibles para usted.</value>
+    <value>¡Gracias de nuevo por completar su evaluación de salud! Le hemos preparado un reporte personalizado de bienestar para usted. Lo puede imprimir para compartirlo con su doctor. Pero antes de mostrarle su informe, por favor considere inscribirse en un programa(s) de bienestar de INTERVENT que están disponibles para usted.</value>
   </data>
   <data name="L1928" xml:space="preserve">
     <value>Contraseña requerida</value>
@@ -3495,13 +3495,13 @@ SU EMPLEADOR (O EL EMPLEADOR DE SU CONYUGE, PAREJA O MIEMBRO FAMILIAR) LE HA DAD
     <value>no puede ser calculada debido a su edad. </value>
   </data>
   <data name="L2012" xml:space="preserve">
-    <value>&lt;b&gt;Su edad&lt;/b&gt; (basado en su fecha de nacimiento) cuando completó su {0} era de {1} años.</value>
+    <value>&lt;b&gt;Su edad&lt;/b&gt; (basado en su fecha de nacimiento) cuando completó su evaluación de salud era de {0} años.</value>
   </data>
   <data name="L2013" xml:space="preserve">
     <value>&lt;b&gt; Su Puntuación de CAC&lt;/b&gt; es</value>
   </data>
   <data name="L2014" xml:space="preserve">
-    <value>&lt;b&gt;Su Puntuación de Bienestar Promedio &lt;/b&gt; is {0}. (Eso es, la Puntuación de Bienestar promedio para personas de su grupo de edad del mismo sexo que han tomado la {1}).</value>
+    <value>&lt;b&gt;Su Puntuación de Bienestar Promedio &lt;/b&gt; is {0}. (Eso es, la Puntuación de Bienestar promedio para personas de su grupo de edad del mismo sexo que han tomado la evaluación de salud).</value>
   </data>
   <data name="L2015" xml:space="preserve">
     <value>&lt;b&gt;Su Puntuación de Bienestar &lt;/b&gt;es</value>
@@ -3513,7 +3513,7 @@ SU EMPLEADOR (O EL EMPLEADOR DE SU CONYUGE, PAREJA O MIEMBRO FAMILIAR) LE HA DAD
     <value>Este paquete de información es confidencial y / o privilegiado. El propósito de la información es para el uso de la persona o entidad mencionada anteriormente. Si usted no es el destinatario, tenga en cuenta que cualquier divulgación, copia, distribución o uso del contenido de esta información está prohibido. Si ha recibido esta página por error, por favor notifique a nuestra oficina inmediatamente enviándonos un correo electrónico a {0}.</value>
   </data>
   <data name="L2018" xml:space="preserve">
-    <value>Gracias por completar su{0}{1}. </value>
+    <value>Gracias por completar su evaluación de salud.</value>
   </data>
   <data name="L2019" xml:space="preserve">
     <value>Adjunto, encuentre su breve informe de resumen para su médico. Si desea recibir acceso en línea a un informe más completo y/o inscribirse en un programa, envíenos un correo electrónico a {0}</value>
@@ -5499,7 +5499,7 @@ recibieron cuando eran más jóvenes</value>
     <value>Diabetes</value>
   </data>
   <data name="L778" xml:space="preserve">
-    <value>Ningún examen particular puede identificar el síndrome metabólico. El U.S. National Cholesterol Education Program’s Adult Treatment Panel III (ATP III) estableció cinco distinciones para el diagnóstico del síndrome metabólico. La definición precisa de cada criterio fue actualizada por el American Heart Association y el National Heart, Lung and Blood Institute en Octubre del 2005. Su {0} evaluad las cinco características e informa sus valores por usted.</value>
+    <value>Ningún examen particular puede identificar el síndrome metabólico. El U.S. National Cholesterol Education Program’s Adult Treatment Panel III (ATP III) estableció cinco distinciones para el diagnóstico del síndrome metabólico. La definición precisa de cada criterio fue actualizada por el American Heart Association y el National Heart, Lung and Blood Institute en Octubre del 2005. Su evaluación de salud evaluad las cinco características e informa sus valores por usted.</value>
   </data>
   <data name="L779" xml:space="preserve">
     <value>Si usted sufre tres o más de los factores de riesgo de síndrome metabólico mostrados en la tabla inferior, padece de síndrome metabólico. </value>
@@ -6380,7 +6380,7 @@ recibieron cuando eran más jóvenes</value>
     <value>Un miembro especialmente entrenado de su equipo del Hospital MCAllen Heart revisara su evaluacion de Cernimiento de Puntuacion Cardiaca con CT y sus informes personales con usted. Recibira una abundacnia de recursos invaluable proveidos por su equipo de cuidado de salud en el Hospital McAllen Heart e INTERVENT.</value>
   </data>
   <data name="L2102" xml:space="preserve">
-    <value>Como ha modificado su contestación para esta pregunta, favor de visitar la sección 5: Interés y motivación, para poder completar su {0}.</value>
+    <value>Como ha modificado su contestación para esta pregunta, favor de visitar la sección 5: Interés y motivación, para poder completar su evaluación de salud.</value>
   </data>
   <data name="L2418" xml:space="preserve">
     <value>Su programa individualizado incluye educación sobre temas importantes de salud.  Los temas que se le recomienden son basados en sus necesidades y preferencias específicas.  Los módulos educativos que le fueron asignados están enumerados abajo.</value>
@@ -6457,7 +6457,7 @@ recibieron cuando eran más jóvenes</value>
     <value>¿Nuevo a INTERVENT?</value>
   </data>
   <data name="L2086" xml:space="preserve">
-    <value>Completo su {0} hace mas de {1} días. Por favor envíenos un correo electrónico a {2} para obtener ayuda en actualizar su información.</value>
+    <value>Completo su evaluación de salud hace mas de {0} días. Por favor envíenos un correo electrónico a {1} para obtener ayuda en actualizar su información.</value>
   </data>
   <data name="L2088" xml:space="preserve">
     <value>Por favor programe una cita con su doctor para discutir si medicamentos son / cambios en medicamentos son necesarios para mejorar el control de su presión arterial (como es recomendado por la American College of Cardiology/American Heart Association en la edición de Hypertension de Noviembre del 2017).</value>
@@ -9865,7 +9865,7 @@ recomendamos que haga sus laboratorios de sangre en ayuna y no consuma nada dura
     <value>Su puntuación de riesgo de diabetes</value>
   </data>
   <data name="L3591" xml:space="preserve">
-    <value>Su puntuación del riesgo de diabetes es una calculación de sus respuestas a preguntas en su {0}, pero no toma en consideración sus resultados de laboratorios de sangre. Está basado en el examen de riesgo de diabetes tipo 2 de la Asociación Americana de Diabetes. Altas puntuaciones están asociadas a un riesgo más alto de tener prediabetes o diabetes tipo 2 (una condición que precede diabetes tipo 2 en la cual los niveles de glucosa en la sangre son más altos de lo normal). Una puntuación de 5 o más se asocia con un riesgo especialmente elevado de tener prediabetes o diabetes tipo 2.</value>
+    <value>Su puntuación del riesgo de diabetes es una calculación de sus respuestas a preguntas en su evaluación de salud, pero no toma en consideración sus resultados de laboratorios de sangre. Está basado en el examen de riesgo de diabetes tipo 2 de la Asociación Americana de Diabetes. Altas puntuaciones están asociadas a un riesgo más alto de tener prediabetes o diabetes tipo 2 (una condición que precede diabetes tipo 2 en la cual los niveles de glucosa en la sangre son más altos de lo normal). Una puntuación de 5 o más se asocia con un riesgo especialmente elevado de tener prediabetes o diabetes tipo 2.</value>
   </data>
   <data name="L3592" xml:space="preserve">
     <value>Si tiene una madre, padre, hermana o hermano con diabetes que es pariente sanguíneo, debe agregar un punto adicional a su puntuación de riesgo de diabetes.</value>
@@ -11559,7 +11559,7 @@ recomendamos que haga sus laboratorios de sangre en ayuna y no consuma nada dura
     <value>(cada una)</value>
   </data>
   <data name="L4448" xml:space="preserve">
-    <value>La evaluación de riesgos de salud es una evaluación gratuita y confidencial que considera su historial de salud y hábitos de estilo de vida para determinar qué tan saludable es usted, y si es que está en riesgo de desarrollar ciertas enfermedades crónicas. Completar la evaluación solo toma 15 minutos.</value>
+    <value>El health risk assessment (HRA) es una evaluación gratis en línea que considera hábitos de su estilo de vida e historial médico para determinar cuan saludable esta y si está en riesgo para ciertas condiciones o enfermedades crónicas. Solo toma unos 15 minutos en completar.</value>
   </data>
   <data name="L4449" xml:space="preserve">
     <value>Sistema de Recompensas INTERVENT</value>
@@ -12057,7 +12057,7 @@ recomendamos que haga sus laboratorios de sangre en ayuna y no consuma nada dura
     <value>Este sistema es monitoreado durante el horario comercial normal, Lunes-Viernes 8:00 a.m. a 5:00 p.m. Hora del Este.</value>
   </data>
   <data name="L4584" xml:space="preserve">
-    <value>Créditos de Bienestar &amp; Premios</value>
+    <value>LCréditos de Bienestar &amp; Premios</value>
   </data>
   <data name="L4585" xml:space="preserve">
     <value>Además, South University premiará a los primeros 100 participantes que completen cuatro sesiones de entrenamiento antes del 31/12/23 con una tarjeta de regalo de $100. Su primera sesión de entrenamiento debe completarse antes del 30/09/23 para calificar.</value>
@@ -12126,5 +12126,17 @@ recomendamos que haga sus laboratorios de sangre en ayuna y no consuma nada dura
   </data>
   <data name="L4607" xml:space="preserve">
     <value>En resumen, el uso de INTERVENT y la transferencia a cualquier otra aplicación de cualquier información recibida de las API de Google se ajustarán a los &lt;a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes" style="color:deepskyblue"&gt;Política de datos de usuario de los servicios API de Google&lt;/a&gt;, incluidos los requisitos de uso limitado correspondientes.</value>
+  </data>
+  <data name="L4429" xml:space="preserve">
+    <value>Webinars</value>
+  </data>
+  <data name="L4430" xml:space="preserve">
+    <value>Access informative webinars for additional support between your coaching visits.</value>
+  </data>
+  <data name="L4608" xml:space="preserve">
+    <value>Llamada de vídeo</value>
+  </data>
+  <data name="L4609" xml:space="preserve">
+    <value>Kits asignados</value>
   </data>
 </root>
