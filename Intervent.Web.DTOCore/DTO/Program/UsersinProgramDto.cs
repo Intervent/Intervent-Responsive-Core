@@ -34,8 +34,6 @@
 
         public bool? CompIntroKitsOnTime { get; set; }
 
-        public byte? YearsPaid { get; set; }
-
         public UserDto User { get; set; }
 
         public UserDto User1 { get; set; }

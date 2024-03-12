@@ -204,21 +204,6 @@
                                 </div>
                             </div>
                         }
-                        @if (Model.dueForRenewal)
-                        {
-                                <div class="data-item">
-                                    <div class="data-title">Program subscription due for Renewal</div>
-                                    <div class="data-content">
-                                        <div class="tick-buttons check-btn">
-                                            <input type="checkbox" id="subscriptionRenewed" />
-                                            <label for="subscriptionRenewed">
-                                                Confirm the User Renewal
-                                                <span class="checkmark"></span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                        }
                         <div class="data-item">
                             <div class="data-title"><a class="anchor-blue" href="@Url.Action("Stream", "Participant", new { ForceParticipant = true })">Go To Participant View</a></div>
                         </div>
@@ -505,25 +490,6 @@
                     type: "POST",
                     dataType: 'json',
                     url: "@Url.Action("AcceptTerms", "Participant")",
-                    success: function (data) {
-                        if (data.Result) {
-                            window.location.reload();
-                        }
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    RedirectToErrorPage(jqXHR.status);
-                });
-            }
-        });
-
-        $("#subscriptionRenewed").on('click', function () {
-            var checked = $('#subscriptionRenewed').is(':checked');
-            if (checked) {
-                $.ajax({
-                    url: "@Url.Action("UpdateUserinProgram", "Program")",
-                    type: 'POST',
-                    dataType: "json",
-                    data: { AssignedFollowUp: false, UpdateSubscriptionRenewal: true },
                     success: function (data) {
                         if (data.Result) {
                             window.location.reload();

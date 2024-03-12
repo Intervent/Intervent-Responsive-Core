@@ -251,7 +251,7 @@ namespace InterventWebApp
 
         public bool ShowSelfScheduling { get; set; }
 
-        public bool IsRescheduling { get; set; }.
+        public bool IsRescheduling { get; set; }
 
         public bool isSouthUniversity { get; set; }
     }
@@ -407,8 +407,6 @@ namespace InterventWebApp
         public bool IsProfileCompleted { get; set; }
 
         public bool followUpDue { get; set; }
-
-        public bool dueForRenewal { get; set; }
 
         public int participantPortalId { get; set; }
 

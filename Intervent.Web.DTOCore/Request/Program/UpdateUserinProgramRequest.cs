@@ -18,8 +18,6 @@
 
         public bool AssignedFollowup { get; set; }
 
-        public bool UpdateSubscriptionRenewal { get; set; }
-
         public int userId { get; set; }
 
         public int systemAdminId { get; set; }
