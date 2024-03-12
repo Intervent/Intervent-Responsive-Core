@@ -11,7 +11,7 @@ namespace Intervent.Web.DataLayer
         public GetSummariesResponse getSummariesData(GetDeviceDataRequest request)
         {
             GetSummariesResponse response = new GetSummariesResponse();
-            var summariesDAL = context.EXT_Summaries.Where(x => x.UserId == request.UserId && (!request.StartDate.HasValue || x.StartTimeStamp >= request.StartDate) && (!request.EndDate.HasValue || x.StartTimeStamp < request.EndDate)).OrderByDescending(x => x.StartTimeStamp).ToList();
+            var summariesDAL = context.EXT_Summaries.Where(x => x.UserId == request.UserId && (!request.StartDate.HasValue || x.EndTimeStamp.Date >= request.StartDate.Value.Date) && (!request.EndDate.HasValue || x.EndTimeStamp.Date <= request.EndDate.Value.Date)).OrderByDescending(x => x.EndTimeStamp).ToList();
             response.Summaries = Utility.mapper.Map<List<DAL.EXT_Summaries>, List<EXT_SummariesDto>>(summariesDAL);
             return response;
         }
@@ -59,7 +59,7 @@ namespace Intervent.Web.DataLayer
         public GetWorkoutResponse GetWorkoutsData(GetDeviceDataRequest request)
         {
             GetWorkoutResponse response = new GetWorkoutResponse();
-            var Workoutss = context.EXT_Workouts.Where(x => x.UserId == request.UserId && (!request.StartDate.HasValue || x.StartTimeStamp >= request.StartDate) && (!request.EndDate.HasValue || x.StartTimeStamp < request.EndDate)).OrderBy(x => x.StartTimeStamp).ToList();
+            var Workoutss = context.EXT_Workouts.Where(x => x.UserId == request.UserId && (!request.StartDate.HasValue || x.StartTimeStamp.Value.Date >= request.StartDate.Value.Date) && (!request.EndDate.HasValue || x.StartTimeStamp.Value.Date <= request.EndDate.Value.Date)).OrderBy(x => x.StartTimeStamp).ToList();
             response.Workouts = Utility.mapper.Map<List<DAL.EXT_Workouts>, List<EXT_WorkoutsDto>>(Workoutss);
             return response;
         }

@@ -394,7 +394,7 @@
             type: "POST",
             dataType: "json",
             url: "../Scheduler/ScheduleAppointment",
-            data: { apptId: apptId, Date: appDate.toLocaleString('en-US'), coachId: selectedCoach, minutes: null, comments: null, timeZone: selectedTimezone },
+            data: { apptId: apptId, Date: appDate.toLocaleString(), coachId: selectedCoach, minutes: null, comments: null, timeZone: selectedTimezone },
             success: function (data) {
                 $("#appt-confirm-btn").removeAttr("disabled", "disabled");
                 $("#appt-confirm-btn-datetime").removeAttr("disabled", "disabled");

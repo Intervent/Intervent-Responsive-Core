@@ -5373,7 +5373,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A healthy lifestyle begins with a healthy eating pattern. Based on your {0}, we have prepared a personalized nutrition plan for you..
+        ///   Looks up a localized string similar to A healthy lifestyle begins with a healthy eating pattern. Based on your health assessment, we have prepared a personalized nutrition plan for you..
         /// </summary>
         internal static string L1530 {
             get {
@@ -6831,7 +6831,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is the average Wellness Score for people in your age group of the same gender who have taken the {0}.
+        ///   Looks up a localized string similar to This is the average Wellness Score for people in your age group of the same gender who have taken the health assessment.
         /// </summary>
         internal static string L1677 {
             get {
@@ -6984,7 +6984,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please complete your profile before starting the {0}.
+        ///   Looks up a localized string similar to Please complete your profile before starting the health assessment.
         /// </summary>
         internal static string L1692 {
             get {
@@ -9306,7 +9306,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thanks again for completing your {0}! We have prepared a personalized wellness report for you. It&apos;s also printable so that you can take it to your doctor. But before we show you your report, please consider enrolling in one of the INTERVENT wellness program(s) that are available to you..
+        ///   Looks up a localized string similar to Thanks again for completing your health assessment! We have prepared a personalized wellness report for you. It&apos;s also printable so that you can take it to your doctor. But before we show you your report, please consider enrolling in one of the INTERVENT wellness program(s) that are available to you..
         /// </summary>
         internal static string L1927 {
             get {
@@ -10170,7 +10170,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Your age&lt;/b&gt; (based on your date of birth) when you completed your {0} was {1} years..
+        ///   Looks up a localized string similar to &lt;b&gt;Your age&lt;/b&gt; (based on your date of birth) when you completed your health assessment was {0} years..
         /// </summary>
         internal static string L2012 {
             get {
@@ -10188,7 +10188,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Your Peer Average Wellness Score &lt;/b&gt; is {0}. (that is, the average Wellness Score for people in your age group of the same gender who have taken the {1})..
+        ///   Looks up a localized string similar to &lt;b&gt;Your Peer Average Wellness Score &lt;/b&gt; is {0}. (that is, the average Wellness Score for people in your age group of the same gender who have taken the health assessment)..
         /// </summary>
         internal static string L2014 {
             get {
@@ -10224,7 +10224,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thank you for completing your{0}{1}..
+        ///   Looks up a localized string similar to Thank you for completing your{0}health assessment..
         /// </summary>
         internal static string L2018 {
             get {
@@ -10901,7 +10901,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You completed your {0} more than {1} days ago. Please email us at {2} for assistance in updating your information..
+        ///   Looks up a localized string similar to You completed your health assessment more than {0} days ago. Please email us at {1} for assistance in updating your information..
         /// </summary>
         internal static string L2086 {
             get {
@@ -11072,7 +11072,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Because you have changed your answer to this question, please re-visit Section 5: Interest and Motivation, in order to complete your {0} (HRA)..
+        ///   Looks up a localized string similar to Because you have changed your answer to this question, please re-visit Section 5: Interest and Motivation, in order to complete your health assessment (HRA)..
         /// </summary>
         internal static string L2102 {
             get {
@@ -16218,7 +16218,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Recommended goal for nonpregnant adults without diabetes= 70 to 100 mg/dl..
+        ///   Looks up a localized string similar to Recommended goal for nonpregnant adults without diabetes= 80 to 100 mg/dl..
         /// </summary>
         internal static string L2770 {
             get {
@@ -24411,7 +24411,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your Diabetes Risk Test score is calculated from your responses to questions in the {0} but does not take into consideration your blood test results. It is based on the American Diabetes Association’s type 2 diabetes risk test. Higher scores are associated with a higher risk for having type 2 diabetes or prediabetes (a condition that precedes type 2 diabetes in which blood glucose levels are higher than normal). A score of 5 or higher is associated with an especially increased risk for having prediabetes or [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to Your Diabetes Risk Test score is calculated from your responses to questions in the health assessment but does not take into consideration your blood test results. It is based on the American Diabetes Association’s type 2 diabetes risk test. Higher scores are associated with a higher risk for having type 2 diabetes or prediabetes (a condition that precedes type 2 diabetes in which blood glucose levels are higher than normal). A score of 5 or higher is associated with an especially increased risk for having  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string L3591 {
             get {
@@ -25914,7 +25914,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Always refer to your personal medical plan for detailed coverage information. Copays and other costs may apply..
+        ///   Looks up a localized string similar to *Always refer to your personal medical plan for detailed coverage information. Copays and other costs may apply..
         /// </summary>
         internal static string L3741 {
             get {
@@ -34147,7 +34147,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Portuguese.
+        ///   Looks up a localized string similar to Portugais.
         /// </summary>
         internal static string L4568 {
             get {
@@ -34554,6 +34554,15 @@ namespace Intervent.Web.DataLayerCore.Properties {
         internal static string L4607 {
             get {
                 return ResourceManager.GetString("L4607", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Video call.
+        /// </summary>
+        internal static string L4608 {
+            get {
+                return ResourceManager.GetString("L4608", resourceCulture);
             }
         }
         
@@ -37726,7 +37735,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No single test can identify the metabolic syndrome.  The U.S. National Cholesterol Education Program’s Adult Treatment Panel III (ATP III) established five features for the diagnosis of the metabolic syndrome.  The precise definition of each criterion was updated by the American Heart Association and National Heart, Lung, and Blood Institute in October 2005. Your {0} evaluates all five features and reports your values for you..
+        ///   Looks up a localized string similar to No single test can identify the metabolic syndrome.  The U.S. National Cholesterol Education Program’s Adult Treatment Panel III (ATP III) established five features for the diagnosis of the metabolic syndrome.  The precise definition of each criterion was updated by the American Heart Association and National Heart, Lung, and Blood Institute in October 2005. Your health assessment evaluates all five features and reports your values for you..
         /// </summary>
         internal static string L778 {
             get {

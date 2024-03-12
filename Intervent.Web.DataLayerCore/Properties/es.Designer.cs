@@ -3733,7 +3733,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Health Risk Assessment.
+        ///   Looks up a localized string similar to Health Assessment.
         /// </summary>
         internal static string L1366 {
             get {
@@ -5380,7 +5380,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Un estilo de vida saludable empieza con un modelo saludable de comer. Basado en su {0}, hemos preparado un plan de nutrición personalizado para usted..
+        ///   Looks up a localized string similar to Un estilo de vida saludable empieza con un modelo saludable de comer. Basado en su evaluación de salud, hemos preparado un plan de nutrición personalizado para usted..
         /// </summary>
         internal static string L1530 {
             get {
@@ -6586,7 +6586,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 Porción: 2 a 3 onzas (56 a 84 gramos) de carne magra cocida, pollo, pezcado o substitutos de carnes • 1 onza (28 gramos) de carne • 1 huevo ó 2 claras de huevo • 1 cubo o rebanada de queso • ¼ taza de queso fresco • 1 taza de leche de soya • 1 Cda de mantequilla de maní • ¼ taza de nueces.
+        ///   Looks up a localized string similar to &lt;h5&gt;1 Porción&lt;/h5&gt;&lt;ul&gt;&lt;li&gt; 2 a 3 onzas (56 a 84 gramos) de carne magra cocida, pollo, pezcado o substitutos de carnes &lt;/li&gt;&lt;li&gt; 1 onza (28 gramos) de carne &lt;/li&gt;&lt;li&gt; 1 huevo ó 2 claras de huevo &lt;/li&gt;&lt;li&gt; 1 cubo o rebanada de queso &lt;/li&gt;&lt;li&gt; ¼ taza de queso fresco &lt;/li&gt;&lt;li&gt; 1 taza de leche de soya &lt;/li&gt;&lt;li&gt; 1 Cda de mantequilla de maní &lt;/li&gt;&lt;li&gt; ¼ taza de nueces &lt;/li&gt;&lt;/ul&gt;.
         /// </summary>
         internal static string L1651 {
             get {
@@ -6595,7 +6595,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 Porción: 1 taza de leche o yogur .
+        ///   Looks up a localized string similar to &lt;h5&gt;1 Porción&lt;/h5&gt;&lt;ul&gt;&lt;li&gt;  1 taza de leche o yogur &lt;/li&gt;&lt;/ul&gt;.
         /// </summary>
         internal static string L1652 {
             get {
@@ -6604,7 +6604,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 Porcion: 1 pedazo pequeño o mediano de fruta o melon • ½ toronja • ½ taza de bayas • ½ taza de fruta enlatada • ¼ taza de frutas secas • ½ taza de jugo.
+        ///   Looks up a localized string similar to &lt;h5&gt;1 Porcion&lt;/h5&gt;&lt;ul&gt;&lt;li&gt; 1 pedazo pequeño o mediano de fruta o melon&lt;/li&gt;&lt;li&gt; ½ toronja &lt;/li&gt;&lt;li&gt; ½ taza de bayas &lt;/li&gt;&lt;li&gt; ½ taza de fruta enlatada &lt;/li&gt;&lt;li&gt; ¼ taza de frutas secas &lt;/li&gt;&lt;li&gt; ½ taza de jugo &lt;/li&gt;&lt;ul&gt;.
         /// </summary>
         internal static string L1653 {
             get {
@@ -6613,7 +6613,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 Porción: ½ taza de vegetales de vegetales cocidos o crudos • 1 taza de vegetales de hojas crudos • ½ taza de jugo de vegetales .
+        ///   Looks up a localized string similar to &lt;h5&gt;1 Porción&lt;/h5&gt;&lt;ul&gt;&lt;li&gt; ½ taza de vegetales de vegetales cocidos o crudos &lt;/li&gt;&lt;li&gt; 1 taza de vegetales de hojas crudos &lt;/li&gt;&lt;li&gt; ½ taza de jugo de vegetales &lt;/li&gt;&lt;/ul&gt;.
         /// </summary>
         internal static string L1654 {
             get {
@@ -6622,7 +6622,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 Porción: ½ taza de vegetales de vegetales con almidón cocidos o crudos • 3 onzas (84 gramos) papa asada.
+        ///   Looks up a localized string similar to &lt;h5&gt;1 Porción&lt;/h5&gt; &lt;ul&gt;&lt;li&gt; ½ taza de vegetales de vegetales con almidón cocidos o crudos &lt;/li&gt;&lt;li&gt; 3 onzas (84 gramos) papa asada&lt;/li&gt;&lt;/ul&gt;.
         /// </summary>
         internal static string L1655 {
             get {
@@ -6631,7 +6631,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 Porción: 1 onza (28 gramos) de cereal seco • 1 rebanada de pan • ½ taza de arroz, pasta o cereal cocido • 1 tortilla • ½ pan de hamburguesa • ½ panecillo inglés o rosca • 1 bollo pequeño • panecillo • o rosca .
+        ///   Looks up a localized string similar to &lt;h5&gt;1 Porción&lt;/h5&gt; &lt;ul&gt;&lt;li&gt; 1 onza (28 gramos) de cereal seco &lt;/li&gt;&lt;li&gt; 1 rebanada de pan &lt;/li&gt;&lt;li&gt; ½ taza de arroz, pasta o cereal cocido &lt;/li&gt;&lt;li&gt;1 tortilla &lt;/li&gt;&lt;li&gt; ½ pan de hamburguesa &lt;/li&gt;&lt;li&gt; ½ panecillo inglés o rosca &lt;/li&gt;&lt;li&gt; 1 bollo pequeño &lt;/li&gt;&lt;li&gt; panecillo &lt;/li&gt;&lt;li&gt; o rosca &lt;/li&gt;&lt;/ul.
         /// </summary>
         internal static string L1656 {
             get {
@@ -6820,7 +6820,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Basado en su evaluación de salud, le recomendamos que complete uno de los siguientes programas para comenzar. ¡Esperamos que disfrute las actividades y materiales educativos!.
+        ///   Looks up a localized string similar to ¡Bienvenido a su programa de Auto-Ayuda! Basado en su evaluación de salud, le recomendamos que complete uno de los siguientes programas para comenzar. ¡Esperamos que disfrute las actividades y materiales educativos!.
         /// </summary>
         internal static string L1675 {
             get {
@@ -6838,7 +6838,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Este es la puntuación de bienestar promedio para personas de su mismo sexo y edad que han tomado la {0}.
+        ///   Looks up a localized string similar to Este es la puntuación de bienestar promedio para personas de su mismo sexo y edad que han tomado la evaluación de salud.
         /// </summary>
         internal static string L1677 {
             get {
@@ -6991,7 +6991,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Por favor complete su perfil antes de comenzar su {0}.
+        ///   Looks up a localized string similar to Por favor complete su perfil antes de comenzar su health assessment.
         /// </summary>
         internal static string L1692 {
             get {
@@ -9335,7 +9335,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ¡Gracias de nuevo por completar su {0}! Le hemos preparado un reporte personalizado de bienestar para usted. Lo puede imprimir para compartirlo con su doctor. Pero antes de mostrarle su informe, por favor considere inscribirse en un programa(s) de bienestar de INTERVENT que están disponibles para usted..
+        ///   Looks up a localized string similar to ¡Gracias de nuevo por completar su evaluación de salud! Le hemos preparado un reporte personalizado de bienestar para usted. Lo puede imprimir para compartirlo con su doctor. Pero antes de mostrarle su informe, por favor considere inscribirse en un programa(s) de bienestar de INTERVENT que están disponibles para usted..
         /// </summary>
         internal static string L1927 {
             get {
@@ -10181,7 +10181,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Su edad&lt;/b&gt; (basado en su fecha de nacimiento) cuando completó su {0} era de {1} años..
+        ///   Looks up a localized string similar to &lt;b&gt;Su edad&lt;/b&gt; (basado en su fecha de nacimiento) cuando completó su evaluación de salud era de {0} años..
         /// </summary>
         internal static string L2012 {
             get {
@@ -10199,7 +10199,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Su Puntuación de Bienestar Promedio &lt;/b&gt; is {0}. (Eso es, la Puntuación de Bienestar promedio para personas de su grupo de edad del mismo sexo que han tomado la {1})..
+        ///   Looks up a localized string similar to &lt;b&gt;Su Puntuación de Bienestar Promedio &lt;/b&gt; is {0}. (Eso es, la Puntuación de Bienestar promedio para personas de su grupo de edad del mismo sexo que han tomado la evaluación de salud)..
         /// </summary>
         internal static string L2014 {
             get {
@@ -10235,7 +10235,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Gracias por completar su{0}{1}. .
+        ///   Looks up a localized string similar to Gracias por completar su evaluación de salud..
         /// </summary>
         internal static string L2018 {
             get {
@@ -10849,7 +10849,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Completo su {0} hace mas de {1} días. Por favor envíenos un correo electrónico a {2} para obtener ayuda en actualizar su información..
+        ///   Looks up a localized string similar to Completo su evaluación de salud hace mas de {0} días. Por favor envíenos un correo electrónico a {1} para obtener ayuda en actualizar su información..
         /// </summary>
         internal static string L2086 {
             get {
@@ -11020,7 +11020,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Como ha modificado su contestación para esta pregunta, favor de visitar la sección 5: Interés y motivación, para poder completar su {0}..
+        ///   Looks up a localized string similar to Como ha modificado su contestación para esta pregunta, favor de visitar la sección 5: Interés y motivación, para poder completar su evaluación de salud..
         /// </summary>
         internal static string L2102 {
             get {
@@ -20720,7 +20720,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Su puntuación del riesgo de diabetes es una calculación de sus respuestas a preguntas en su {0}, pero no toma en consideración sus resultados de laboratorios de sangre. Está basado en el examen de riesgo de diabetes tipo 2 de la Asociación Americana de Diabetes. Altas puntuaciones están asociadas a un riesgo más alto de tener prediabetes o diabetes tipo 2 (una condición que precede diabetes tipo 2 en la cual los niveles de glucosa en la sangre son más altos de lo normal). Una puntuación de 5 o más se asocia [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to Su puntuación del riesgo de diabetes es una calculación de sus respuestas a preguntas en su evaluación de salud, pero no toma en consideración sus resultados de laboratorios de sangre. Está basado en el examen de riesgo de diabetes tipo 2 de la Asociación Americana de Diabetes. Altas puntuaciones están asociadas a un riesgo más alto de tener prediabetes o diabetes tipo 2 (una condición que precede diabetes tipo 2 en la cual los niveles de glucosa en la sangre son más altos de lo normal). Una puntuación de 5 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string L3591 {
             get {
@@ -28312,11 +28312,29 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Webinars.
+        /// </summary>
+        internal static string L4429 {
+            get {
+                return ResourceManager.GetString("L4429", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Iniciar sesión.
         /// </summary>
         internal static string L443 {
             get {
                 return ResourceManager.GetString("L443", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Access informative webinars for additional support between your coaching visits..
+        /// </summary>
+        internal static string L4430 {
+            get {
+                return ResourceManager.GetString("L4430", resourceCulture);
             }
         }
         
@@ -28474,7 +28492,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to La evaluación de riesgos de salud es una evaluación gratuita y confidencial que considera su historial de salud y hábitos de estilo de vida para determinar qué tan saludable es usted, y si es que está en riesgo de desarrollar ciertas enfermedades crónicas. Completar la evaluación solo toma 15 minutos..
+        ///   Looks up a localized string similar to El health risk assessment (HRA) es una evaluación gratis en línea que considera hábitos de su estilo de vida e historial médico para determinar cuan saludable esta y si está en riesgo para ciertas condiciones o enfermedades crónicas. Solo toma unos 15 minutos en completar..
         /// </summary>
         internal static string L4448 {
             get {
@@ -29743,7 +29761,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Créditos de Bienestar &amp; Premios.
+        ///   Looks up a localized string similar to LCréditos de Bienestar &amp; Premios.
         /// </summary>
         internal static string L4584 {
             get {
@@ -29961,6 +29979,15 @@ namespace Intervent.Web.DataLayerCore.Properties {
         internal static string L4607 {
             get {
                 return ResourceManager.GetString("L4607", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Llamada de vídeo.
+        /// </summary>
+        internal static string L4608 {
+            get {
+                return ResourceManager.GetString("L4608", resourceCulture);
             }
         }
         
@@ -33133,7 +33160,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ningún examen particular puede identificar el síndrome metabólico. El U.S. National Cholesterol Education Program’s Adult Treatment Panel III (ATP III) estableció cinco distinciones para el diagnóstico del síndrome metabólico. La definición precisa de cada criterio fue actualizada por el American Heart Association y el National Heart, Lung and Blood Institute en Octubre del 2005. Su {0} evaluad las cinco características e informa sus valores por usted..
+        ///   Looks up a localized string similar to Ningún examen particular puede identificar el síndrome metabólico. El U.S. National Cholesterol Education Program’s Adult Treatment Panel III (ATP III) estableció cinco distinciones para el diagnóstico del síndrome metabólico. La definición precisa de cada criterio fue actualizada por el American Heart Association y el National Heart, Lung and Blood Institute en Octubre del 2005. Su evaluación de salud evaluad las cinco características e informa sus valores por usted..
         /// </summary>
         internal static string L778 {
             get {

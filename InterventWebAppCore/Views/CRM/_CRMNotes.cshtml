@@ -2,9 +2,7 @@
 @using InterventWebApp
 
 <div id="new-record" class="grid-x grid-margin-x">
-    @{
-        Html.RenderPartial("_CRMProfileDetails", Model);
-    }
+    @{ Html.RenderPartial("_CRMProfileDetails", Model); }
 
     <div class="cell large-8">
         <div class="crm-form-title align-justify align-middle flex-container crm-details-container">
@@ -17,28 +15,50 @@
                 <div class="form-section">
                     <div class="grid-x grid-margin-x">
                         <div class="cell medium-6">
-                            <label for="">
-                                Type
-                                @Html.DropDownListFor(m => m.CRM_Note.Type, Model.NoteTypes, "----Select----", new Dictionary<string, object> { { "id", "notes-type" }, { "class", "NotesTypes" }, { "required", "required" } })
-                                <small class="form-error">Type is required</small>
-                            </label>
+                            <label for="" class="options-main-label">Type</label>
+                            <div class="flex-container">
+                                <div class="tick-buttons radio-btn">
+                                    @Html.RadioButtonFor(M => M.CRM_Note.Type, 2, new Dictionary<string, object> { { "id", "TypeCall" }, { "Name", "CRM_Note.Type" }, { "data-validator", "validateType" } })
+                                    <label for="TypeCall">
+                                        Call
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <div class="tick-buttons radio-btn">
+                                    @Html.RadioButtonFor(M => M.CRM_Note.Type, 1, new Dictionary<string, object> { { "id", "TypeEmail" }, { "Name", "CRM_Note.Type" }, { "data-validator", "validateType" } })
+                                    <label for="TypeEmail">
+                                        Email
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                @if (Model.CRM_Note != null && Model.CRM_Note.Type == 3)
+                                {
+                                    <div class="tick-buttons radio-btn">
+                                        @Html.RadioButtonFor(M => M.CRM_Note.Type, 3, new Dictionary<string, object> { { "id", "TypeWebform" }, { "Name", "CRM_Note.Type" }, { "data-validator", "validateType" } })
+                                        <label for="TypeWebform">
+                                            Webform
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                }
+                                <small class="form-error inline-error-message" data-form-error-for="TypeEmail" id="typeError">@Translate.Message("L480")</small>
+                            </div>
                         </div>
-
                         <div class="cell medium-6" id="disposition-card-cell">
-                            <label for="">
-                                Disposition
-                                @Html.DropDownListFor(m => m.CRM_Note.Disposition, Model.Dispositions, "----Select----", new Dictionary<string, object> { { "id", "Disposition" }, { "class", "Disposition" } })
-                                <small class="form-error">Disposition is required</small>
-                            </label>
+							<label for="">
+								Disposition
+								@Html.DropDownListFor(m => m.CRM_Note.Disposition, Model.Dispositions, "----Select----", new Dictionary<string, object> { { "id", "Disposition" }, { "class", "Disposition" } })
+								<small class="form-error">Disposition is required</small>
+							</label>
                         </div>
                     </div>
                     <div class="grid-x grid-margin-x">
                         <div class="cell medium-6" id="inquiry-type-cell">
-                            <label for="">
-                                Inquiry Type
-                                @Html.DropDownListFor(m => m.CRM_Note.InquiryType, Model.InquiryTypes, "----Select----")
-                                <small class="form-error">Inquiry Type is required</small>
-                            </label>
+							<label for="">
+								Inquiry Type
+								@Html.DropDownListFor(m => m.CRM_Note.InquiryType, Model.InquiryTypes, "----Select----")
+								<small class="form-error">Inquiry Type is required</small>
+							</label>
                         </div>
                         <div class="cell medium-6">
                             <label for="">
@@ -48,38 +68,38 @@
                             </label>
                         </div>
                         <div class="cell medium-6">
-                            <label for="">
-                                Caller Profile
-                                @Html.DropDownListFor(m => m.CRM_Note.CallerProfileType, Model.CallerProfileTypes, "----Select----", new { @required = "required", @id = "caller-profile" })
-                                <small class="form-error">Caller Profile is required</small>
-                            </label>
+							<label for="">
+								Caller Profile
+								@Html.DropDownListFor(m => m.CRM_Note.CallerProfileType, Model.CallerProfileTypes, "----Select----", new { @required = "required", @id = "caller-profile" })
+								<small class="form-error">Caller Profile is required</small>
+							</label>
                         </div>
 
                         <div class="cell medium-6">
-                            <label for="">
-                                Coupon Code
-                                @Html.TextBoxFor(m => m.CRM_Note.CouponCode, new Dictionary<string, object> { { "placeholder", "Coupon Code" }, { "maxLength", "50" }, { "data-validator", "validateCouponCode" } })
-                                <small class="form-error">Coupon Code already used</small>
-                            </label>
+							<label for="">
+								Coupon Code
+								@Html.TextBoxFor(m => m.CRM_Note.CouponCode, new Dictionary<string, object> { { "placeholder", "Coupon Code" }, { "maxLength", "50" }, { "data-validator", "validateCouponCode" } })
+								<small class="form-error">Coupon Code already used</small>
+							</label>
                         </div>
 
                         <div class="cell" id="cartridgePrescriptions" hidden>
-                            <label for="">
-                                Where did you pick up your cartridge prescriptions?
-                                @Html.TextBoxFor(m => m.CRM_Note.CartridgePrescriptions, new Dictionary<string, object> { { "placeholder", "Where did you pick up your cartridge prescriptions?" }, { "maxLength", "250" } })
-                            </label>
+							<label for="">
+								Where did you pick up your cartridge prescriptions?
+								@Html.TextBoxFor(m => m.CRM_Note.CartridgePrescriptions, new Dictionary<string, object> { { "placeholder", "Where did you pick up your cartridge prescriptions?" }, { "maxLength", "250" } })
+							</label>
                         </div>
 
                         <div class="cell escalation-card-cell" id="hcp-doctor-details">
                             <div class="escalation-card create-profile-form">
                                 <div class="grid-x grid-margin-x grid-margin-y">
                                     <div class="cell doctor-search-form">
-                                        <label>
-                                            Select HCP
-                                            <input type="search" placeholder="Choose your hcp" class="animated-search-form" id="search-id" data-validator="validateHCP">
-                                            <input type="hidden" id="hcp-id" name="CRM_Note.HCPId" />
-                                            <small class="form-error" id="hcp-error">HCP required</small>
-                                        </label>
+										<label>
+											Select HCP
+											<input type="search" placeholder="Choose your hcp" class="animated-search-form" id="search-id" data-validator="validateHCP">
+											<input type="hidden" id="hcp-id" name="CRM_Note.HCPId" />
+											<small class="form-error" id="hcp-error">HCP required</small>
+										</label>
                                         <div class="ini-medi-list">
                                             <div class="no-search-result text-center" id="no-results">
                                                 <i class='fa fa-frown-o'></i>
@@ -94,91 +114,83 @@
                                 <div class="grid-x grid-margin-x grid-margin-y" id="add-doctor-details">
                                     <div class="cell"><p>Please enter your HCP details:</p></div>
                                     <div class="cell medium-6">
-                                        <label>
-                                            HCP First Name
-                                            <input type="text" placeholder="First Name of HCP" id="HCPFirstName" name="CRM_Note.FirstName" />
-                                            <small class="form-error">FirstName is required</small>
-                                        </label>
+										<label>
+											HCP First Name
+											<input type="text" placeholder="First Name of HCP" id="HCPFirstName" name="CRM_Note.FirstName" />
+											<small class="form-error">FirstName is required</small>
+										</label>
                                     </div>
                                     <div class="cell medium-6">
-                                        <label>
-                                            HCP Last Name
-                                            <input type="text" placeholder="Last Name of HCP" id="HCPLastName" name="CRM_Note.LastName" />
-                                            <small class="form-error">LastName is required</small>
-                                        </label>
+										<label>
+											HCP Last Name
+											<input type="text" placeholder="Last Name of HCP" id="HCPLastName" name="CRM_Note.LastName" />
+											<small class="form-error">LastName is required</small>
+										</label>
                                     </div>
                                     <div class="cell">
-                                        <label>
-                                            HCP Address
-                                            <input type="text" placeholder="Address Line 1" id="Address1" name="CRM_Note.Address1" />
-                                            <small class="form-error">Address Line 1 is required</small>
-                                        </label>
+										<label>
+											HCP Address
+											<input type="text" placeholder="Address Line 1" id="Address1" name="CRM_Note.Address1" />
+											<small class="form-error">Address Line 1 is required</small>
+										</label>
                                     </div>
                                     <div class="cell">
-                                        <label>
-                                            HCP Address
-                                            <input type="text" placeholder="Address Line 2" id="Address2" name="CRM_Note.Address2" />
-                                        </label>
+										<label>
+											HCP Address
+											<input type="text" placeholder="Address Line 2" id="Address2" name="CRM_Note.Address2" />
+										</label>
                                     </div>
                                     <div class="cell medium-6">
-                                        <label>
-                                            HCP City
-                                            <input type="text" placeholder="HCP City" id="City" name="CRM_Note.City" />
-                                            <small class="form-error">City is required</small>
-                                        </label>
+										<label>
+											HCP City
+											<input type="text" placeholder="HCP City" id="City" name="CRM_Note.City" />
+											<small class="form-error">City is required</small>
+										</label>
                                     </div>
                                     <div class="cell medium-6">
-                                        <label>
-                                            HCP State
-                                            @Html.DropDownListFor(m => m.CRM_Note.State, Model.States, "----Select----")
-                                            <small class="form-error">State is required</small>
-                                        </label>
+										<label>
+											HCP State
+											@Html.DropDownListFor(m => m.CRM_Note.State, Model.States, "----Select----")
+											<small class="form-error">State is required</small>
+										</label>
                                     </div>
                                     <div class="cell medium-6">
-                                        <label>
-                                            HCP Zip Code
-                                            <input type="text" placeholder="HCP Zip Code" id="Zipcode" name="CRM_Note.Zipcode" />
-                                            <small class="form-error">Zip Code isrequired</small>
-                                        </label>
+										<label>
+											HCP Zip Code
+											<input type="text" placeholder="HCP Zip Code" id="Zipcode" name="CRM_Note.Zipcode" />
+											<small class="form-error">Zip Code isrequired</small>
+										</label>
                                     </div>
                                     <div class="cell medium-6">
-                                        <label>
-                                            HCP Phone Number
-                                            <input type="text" placeholder="HCP Phone Number" id="PhoneNumber" name="CRM_Note.PhoneNumber" />
-                                            <small class="form-error">Phone Number required</small>
-                                        </label>
+										<label>
+											HCP Phone Number
+											<input type="text" placeholder="HCP Phone Number" id="PhoneNumber" name="CRM_Note.PhoneNumber" />
+											<small class="form-error">Phone Number required</small>
+										</label>
                                     </div>
                                     <div class="cell medium-6">
-                                        <label>
-                                            HCP Email
-                                            <input type="email" placeholder="HCP Email Address" id="Email" name="CRM_Note.Email" />
-                                        </label>
+										<label>
+											HCP Email
+											<input type="email" placeholder="HCP Email Address" id="Email" name="CRM_Note.Email" />
+										</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="cell medium-6">
-                            <label for="">
-                                Full Name (if different from customer)
-                                @Html.TextBoxFor(m => m.CRM_Note.FullName, new { @pattern = "[a-zA-Z]+", @placeholder = "Full Name", @maxLength = 50 })
-                            </label>
+							<label for="">
+								Full Name (if different from customer)
+								@Html.TextBoxFor(m => m.CRM_Note.FullName, new { @pattern = "[a-zA-Z]+", @placeholder = "Full Name", @maxLength = 50 })
+							</label>
                         </div>
 
                         <div class="cell medium-6">
-                            <label for="">
-                                Sales Channel
-                                @Html.DropDownListFor(m => m.CRM_Note.AccountType, Model.AccountTypes, "----Select----", new { @required = "required" })
-                                <small class="form-error">Sales Channel is required</small>
-                            </label>
-                        </div>
-
-                        <div class="cell medium-6" id="insurance-type-cell">
-                            <label for="">
-                                Insurance
-                                @Html.DropDownListFor(m => m.CRM_Note.InsType, Model.MedicareInsuranceTypes, "----Select----")
-                                <small class="form-error">Insurance is required</small>
-                            </label>
+							<label for="">
+								Account Type
+								@Html.DropDownListFor(m => m.CRM_Note.AccountType, Model.AccountTypes, "----Select----", new { @required = "required" })
+								<small class="form-error">Account Type is required</small>
+							</label>
                         </div>
 
                         <div class="cell medium-6">
@@ -190,10 +202,10 @@
                         </div>
 
                         <div class="cell medium-6">
-                            <label>
-                                Pogo Serial Number
-                                @Html.DropDownListFor(m => m.CRM_Note.PogoMeterNumber, Model.PogoMeterNumbers, "----Select----", new Dictionary<string, object> { { "id", "PogoMeterNumber" }, { "Name", "CRM_Note.PogoMeterNumber" } })
-                            </label>
+							<label>
+								Pogo Serial Number
+								@Html.DropDownListFor(m => m.CRM_Note.PogoMeterNumber, Model.PogoMeterNumbers, "----Select----", new Dictionary<string, object> { { "id", "PogoMeterNumber" }, { "Name", "CRM_Note.PogoMeterNumber" } })
+							</label>
                         </div>
 
                         <div class="cell medium-6">
@@ -242,44 +254,44 @@
 
                         <div class="cell escalation-card-cell" id="rma-details">
                             <div class="escalation-card">
-                                <label for="">
-                                    RMA Number
-                                    @Html.TextBoxFor(m => m.CRM_Note.RMANumber, new { @id = "RMANumber" })
-                                    <small class="form-error">RMANumber is required</small>
-                                </label>
+								<label for="">
+									RMA Number
+									@Html.TextBoxFor(m => m.CRM_Note.RMANumber, new { @id = "RMANumber" })
+									<small class="form-error">RMANumber is required</small>
+								</label>
                             </div>
                         </div>
 
                         <div class="cell escalation-card-cell" id="qad-details">
                             <div class="escalation-card">
-                                <label for="">
-                                    QAD Sales Order Number
-                                    @Html.TextBoxFor(m => m.CRM_Note.QADNumber, new { @id = "QADNumber" })
-                                </label>
+								<label for="">
+									QAD Sales Order Number
+									@Html.TextBoxFor(m => m.CRM_Note.QADNumber, new { @id = "QADNumber" })
+								</label>
                             </div>
                         </div>
 
                         <div class="cell medium-6 classification" id="masterControlNo">
-                            <label for="">
-                                Master Control Number
-                                @Html.TextBoxFor(m => m.CRM_Note.MasterControlNo, new { @id = "MasterControlNo", @placeholder = "Master Control Number", @maxLength = 50 })
-                                <small class="form-error">Master Control Number is required</small>
-                            </label>
+							<label for="">
+								Master Control Number
+								@Html.TextBoxFor(m => m.CRM_Note.MasterControlNo, new { @id = "MasterControlNo", @placeholder = "Master Control Number", @maxLength = 50 })
+								<small class="form-error">Master Control Number is required</small>
+							</label>
                         </div>
 
                         <div class="cell medium-6 classification" id="cartridgeLotNumber">
-                            <label for="">
-                                Cartridge Lot Number
-                                @Html.TextBoxFor(m => m.CRM_Note.CartridgeLotNumber, new { @placeholder = "Cartridge Lot Number", @maxLength = 50 })
-                            </label>
+							<label for="">
+								Cartridge Lot Number
+								@Html.TextBoxFor(m => m.CRM_Note.CartridgeLotNumber, new { @placeholder = "Cartridge Lot Number", @maxLength = 50 })
+							</label>
                         </div>
 
                         <div class="cell">
-                            <label for="">
-                                Call Notes
-                                @Html.TextAreaFor(m => m.CRM_Note.Notes, new { placeholder = "Call Notes", required = "required" })
-                                <small class="form-error">Call Notes is required</small>
-                            </label>
+							<label for="">
+								Call Notes
+								@Html.TextAreaFor(m => m.CRM_Note.Notes, new { placeholder = "Call Notes", required = "required" })
+								<small class="form-error">Call Notes is required</small>
+							</label>
                         </div>
 
                         <div class="cell medium-6">
@@ -334,16 +346,22 @@
                 @Html.HiddenFor(x => x.CRM_Note.ContactId)
                 @if (Model.CRM_Note.HCPList != null)
                 {
-                        <input type="hidden" id="hiddenHCPName" value="@Model.CRM_Note.HCPList.FirstName  @Model.CRM_Note.HCPList.LastName" />
+                    <input type="hidden" id="hiddenHCPName" value="@Model.CRM_Note.HCPList.FirstName  @Model.CRM_Note.HCPList.LastName" />
                 }
             </form>
         </div>
     </div>
 </div>
 <script>
-    var dispositionsList = JSON.parse('@Html.Raw(Model.dispositionsList)');
-    var accountTypes = JSON.parse('@Html.Raw(Model.accountTypeList)');
-
+    Foundation.Abide.defaults.validators['validateType'] = function ($el, required, parent) {
+        if ($("input[name='CRM_Note.Type']:checked").length == 0) {
+            return false;
+        }
+        else {
+            $("#typeError").removeClass('is-visible');
+            return true;
+        }
+    };
     Foundation.Abide.defaults.validators['validateHCP'] = function ($el, required, parent) {
         if (($('#caller-profile').find(":selected").val() == 3 || $("#CRM_Note_CouponCode").val() != "") && !$("#HCPFirstName").prop('required') && ($('#search-id').val() == '' || $("input[name='CRM_Note.HCPId']").val() == '')) {
             return false;
@@ -411,7 +429,7 @@
         {
             $('#languages').val("en-us");
         }
-        $("#notes-from, #doctor-details").foundation();
+		$("#notes-from, #doctor-details").foundation();
         $('#notes-from')
             .on('forminvalid.zf.abide', function () {
             var invalid_fields = $(this).find('[data-invalid]');
@@ -423,13 +441,13 @@
             }
         })
             .on('formvalid.zf.abide', function () {
-                $.ajax({
+            $.ajax({
                 url: "@Url.Action("AddEditNotes", "CRM")",
                 type: 'POST',
                 dataType: "json",
                 data: $("#notes-from").serialize(),
                 success: function (data) {
-                    if (data.response.success)
+                    if (data.response.success) 
                     {
                         $("#notes-from").find('input:text, number, input:password, input:file, select, textarea, :input').val('');
                         $("#new-record").html('');
@@ -479,116 +497,76 @@
             }
         });
 
-        function populateDispositionDropDown(crmNoteType) {
+        $("input#TypeEmail").on('change', function () {
+            if ($('#Disposition :selected').val() != '' && $('#Disposition :selected').val() == $('.Disposition option:last').val()) {
+                $('#Disposition').val('');
+            }
             $("#Disposition option").each(function () {
                 if (this.value != '') {
-                    var dispositionValue = parseInt(this.value);
-                    var disposition = dispositionsList.filter(function (obj) {
-                        return obj.Type == parseInt(crmNoteType) && obj.Id == dispositionValue;
-                    });
-                    if (disposition.length > 0) {
-                        $("#Disposition option[value=" + this.value + "]").show();
+                    if (this.value == $('.Disposition option:last').val()) {
+
+                        $("#Disposition option[value=" + this.value + "]").hide();
                     }
                     else {
-                        $("#Disposition option[value=" + this.value + "]").hide();
+                        $("#Disposition option[value=" + this.value + "]").show();
                     }
                     $("#container").append(this.value + ' ');
                 }
             });
-        }
-
-        $("select#notes-type").on("change", function () {
-            if ($('#notes-type').find(":selected").val() == 2) {
-                $('#Disposition').val(null);
-                $("#disposition-card-cell").hide();
-                $("#Disposition").prop('required', false);
-                $('#CRM_Note_InquiryType').val('');
-                $("#inquiry-type-cell").hide();
-                $("#CRM_Note_InquiryType").prop('required', false);
-            }
-            else if ($('#notes-type').find(":selected").val() == 1) {
-                if ($('#Disposition :selected').val() != '') {
-                    $('#Disposition').val('');
-                }
-                populateDispositionDropDown(1);
-                $("#disposition-card-cell").show();
-                $("#Disposition").prop('required', true);
-                $('#CRM_Note_InquiryType').val('');
-                $("#inquiry-type-cell").hide();
-                $("#CRM_Note_InquiryType").prop('required', false);
-            }
-            else if ($('#notes-type').find(":selected").val() == 3) {
-
-                if ($('#Disposition :selected').val() != '' ) {
-                    $('#Disposition').val('');
-                }
-                populateDispositionDropDown(3);
-                $("#disposition-card-cell").show();
-                $("#Disposition").prop('required', true);
-                $('#CRM_Note_InquiryType').val('');
-                $("#inquiry-type-cell").show();
-                $("#CRM_Note_InquiryType").prop('required', true);
-            }
-            else if ($('#notes-type').find(":selected").val() == 4) {
-                if ($('#Disposition :selected').val() != '') {
-                    $('#Disposition').val('');
-                }
-                populateDispositionDropDown(4);
-                $("#disposition-card-cell").show();
-                $("#Disposition").prop('required', true);
-            }
-            else {
-                $("#disposition-card-cell").hide();
-                $("#Disposition").prop('required', false);
-                $("#inquiry-type-cell").hide();
-                $("#CRM_Note_InquiryType").prop('required', false);
-            }
+            $("#disposition-card-cell").show();
+            $("#Disposition").prop('required', true);
+            $('#CRM_Note_InquiryType').val('');
+            $("#inquiry-type-cell").hide();
+            $("#CRM_Note_InquiryType").prop('required', false);
         });
 
-        $("select#CRM_Note_AccountType").on("change", function () {
-            changeAccountTypeSection(parseInt($('#CRM_Note_AccountType').find(":selected").val())); 
+        $("input#TypeWebform").on('change', function () {
+            if ($('#Disposition :selected').val() != '' && $('#Disposition :selected').val() != $('.Disposition option:last').val()) {
+                $('#Disposition').val('');
+            }
+            $("#Disposition option").each(function () {
+            if (this.value != '') {
+                if (this.value == $('.Disposition option:last').val()) {
+                    $("#Disposition option[value=" + this.value + "]").show();
+                }
+                else {
+                    $("#Disposition option[value=" + this.value + "]").hide();
+                }
+                $("#container").append(this.value + ' ');
+            }
         });
-        function changeAccountTypeSection(accountTypeValue) {
-            var accountType = accountTypes.filter(function (obj) {
-                return obj.Id == accountTypeValue;
-            });
-            if (accountType.length > 0) {
-                $("#insurance-type-cell").show();
-                $("#CRM_Note_InsType").prop('required', true);
-            }
-            else {
-                $("#insurance-type-cell").hide();
-                $('#CRM_Note_InsType').val('');
-                $("#CRM_Note_InsType").prop('required', false);
-            }
-        }
-        if ('@Model.CRM_Note.AccountType.HasValue' == 'True') {
-            changeAccountTypeSection(parseInt('@Model.CRM_Note.AccountType'));
-        }
+            $("#disposition-card-cell").show();
+            $("#Disposition").prop('required', true);
+            $("#inquiry-type-cell").show();
+            $("#CRM_Note_InquiryType").prop('required', true);
+        });
 
         if ('@Model.CRM_Note.Type' == '1') {
             $("#disposition-card-cell").show();
             $("#Disposition").prop('required', true);
-            populateDispositionDropDown('@Model.CRM_Note.Type');
+            $("input#TypeEmail").trigger("change");
         }
         else if ('@Model.CRM_Note.Type' == '3') {
             $("#disposition-card-cell").show();
             $("#Disposition").prop('required', true);
             $("#inquiry-type-cell").show();
             $("#CRM_Note_InquiryType").prop('required', true);
-            populateDispositionDropDown('@Model.CRM_Note.Type');
-        }
-        else if ('@Model.CRM_Note.Type' == '4') {
-            $("#disposition-card-cell").show();
-            $("#Disposition").prop('required', true);
-            populateDispositionDropDown('@Model.CRM_Note.Type');
-        }
-        else {
+            $("input#TypeWebform").trigger("change");
+        } else {
             $("#disposition-card-cell").hide();
             $("#Disposition").prop('required', false);
             $("#inquiry-type-cell").hide();
             $("#CRM_Note_InquiryType").prop('required', false);
         }
+
+        $("input#TypeCall").on('change', function () {
+            $('#Disposition').val(null);
+            $("#disposition-card-cell").hide();
+            $("#Disposition").prop('required', false);
+            $('#CRM_Note_InquiryType').val('');
+            $("#inquiry-type-cell").hide();
+            $("#CRM_Note_InquiryType").prop('required', false);
+        });
 
         if ($('#ClassificationTypes').val() == '3') {
             $("#MasterControlNo").prop('required', true);
@@ -602,7 +580,7 @@
             } else {
                 $("#MasterControlNo").prop('required', false);
             }
-        });
+		});
 
         $("select#caller-profile").on("change", function () {
             if ($('#caller-profile').find(":selected").val() == 3) {
@@ -634,11 +612,11 @@
 
 </script>
 <script>
-    $(document).ready(function(){
+	$(document).ready(function(){
         var listHCPURL = "@Url.Action("SearchHCPList", "CRM")";
         $("#search-id").autocomplete({
-            minLength: 3,
-            appendTo: "#ini-medi-list",
+			minLength: 3,
+			appendTo: "#ini-medi-list",
             source: function(request, response) {
                 $.ajax({
                     url: listHCPURL,
@@ -685,15 +663,15 @@
                     .appendTo(ul);
             };
         $("#search-id").on("autocompleteopen", function (event, ui) {
-            $(".ini-medi-list").show();
+			$(".ini-medi-list").show();
 
-            var pane1 = $('.medi-search-list');
-            pane1.jScrollPane({
-                showArrows: false,
-                resizeSensor: true
-            });
-            var api1 = pane1.data().jsp;
-        });
+			var pane1 = $('.medi-search-list');
+			pane1.jScrollPane({
+				showArrows: false,
+				resizeSensor: true
+			});
+			var api1 = pane1.data().jsp;
+		});
 
         $("input#search-id").on('focusout', function (event) {
             if ($(event.relatedTarget).is("a#advancedSearch")) {

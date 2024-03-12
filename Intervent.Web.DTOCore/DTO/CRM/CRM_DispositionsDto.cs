@@ -10,8 +10,6 @@
 
         public int CategoryId { get; set; }
 
-        public byte? Type { get; set; }
-
         public bool EligibleforActivity { get; set; }
 
         public virtual IList<CRM_NoteDto> CRM_Notes { get; set; }

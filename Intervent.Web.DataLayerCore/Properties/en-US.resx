@@ -2480,7 +2480,7 @@
     <comment>HRA</comment>
   </data>
   <data name="L1530" xml:space="preserve">
-    <value>A healthy lifestyle begins with a healthy eating pattern. Based on your {0}, we have prepared a personalized nutrition plan for you.</value>
+    <value>A healthy lifestyle begins with a healthy eating pattern. Based on your health assessment, we have prepared a personalized nutrition plan for you.</value>
     <comment>HRAReport;Diaries;Kits;Recommendations</comment>
   </data>
   <data name="L1531" xml:space="preserve">
@@ -3128,7 +3128,7 @@
     <comment>Program</comment>
   </data>
   <data name="L1677" xml:space="preserve">
-    <value>This is the average Wellness Score for people in your age group of the same gender who have taken the {0}</value>
+    <value>This is the average Wellness Score for people in your age group of the same gender who have taken the health assessment</value>
     <comment>Reports</comment>
   </data>
   <data name="L1678" xml:space="preserve">
@@ -3196,7 +3196,7 @@
     <comment>InitialDashboard</comment>
   </data>
   <data name="L1692" xml:space="preserve">
-    <value>Please complete your profile before starting the {0}</value>
+    <value>Please complete your profile before starting the health assessment</value>
     <comment>InitialDashboard</comment>
   </data>
   <data name="L1693" xml:space="preserve">
@@ -4228,7 +4228,7 @@
     <comment>HRA</comment>
   </data>
   <data name="L1927" xml:space="preserve">
-    <value>Thanks again for completing your {0}! We have prepared a personalized wellness report for you. It's also printable so that you can take it to your doctor. But before we show you your report, please consider enrolling in one of the INTERVENT wellness program(s) that are available to you.</value>
+    <value>Thanks again for completing your health assessment! We have prepared a personalized wellness report for you. It's also printable so that you can take it to your doctor. But before we show you your report, please consider enrolling in one of the INTERVENT wellness program(s) that are available to you.</value>
     <comment>Program</comment>
   </data>
   <data name="L1928" xml:space="preserve">
@@ -4608,7 +4608,7 @@
     <comment>HRAReport</comment>
   </data>
   <data name="L2012" xml:space="preserve">
-    <value>&lt;b&gt;Your age&lt;/b&gt; (based on your date of birth) when you completed your {0} was {1} years.</value>
+    <value>&lt;b&gt;Your age&lt;/b&gt; (based on your date of birth) when you completed your health assessment was {0} years.</value>
     <comment>HRAReports</comment>
   </data>
   <data name="L2013" xml:space="preserve">
@@ -4616,7 +4616,7 @@
     <comment>HRAReports</comment>
   </data>
   <data name="L2014" xml:space="preserve">
-    <value>&lt;b&gt;Your Peer Average Wellness Score &lt;/b&gt; is {0}. (that is, the average Wellness Score for people in your age group of the same gender who have taken the {1}).</value>
+    <value>&lt;b&gt;Your Peer Average Wellness Score &lt;/b&gt; is {0}. (that is, the average Wellness Score for people in your age group of the same gender who have taken the health assessment).</value>
     <comment>HRAReport</comment>
   </data>
   <data name="L2015" xml:space="preserve">
@@ -4632,7 +4632,7 @@
     <comment>HRAReports;FollowupReport</comment>
   </data>
   <data name="L2018" xml:space="preserve">
-    <value>Thank you for completing your{0}{1}.</value>
+    <value>Thank you for completing your{0}health assessment.</value>
     <comment>HRAReports;FollowupReport</comment>
   </data>
   <data name="L2019" xml:space="preserve">
@@ -4934,7 +4934,7 @@ key potentially modifiable behaviors and risk factors. Scores range from 0 (wors
     <comment>not in use</comment>
   </data>
   <data name="L2086" xml:space="preserve">
-    <value>You completed your {0} more than {1} days ago. Please email us at {2} for assistance in updating your information.</value>
+    <value>You completed your health assessment more than {0} days ago. Please email us at {1} for assistance in updating your information.</value>
     <comment>HRA</comment>
   </data>
   <data name="L2087" xml:space="preserve">
@@ -5010,7 +5010,7 @@ key potentially modifiable behaviors and risk factors. Scores range from 0 (wors
     <comment>Followup</comment>
   </data>
   <data name="L2102" xml:space="preserve">
-    <value>Because you have changed your answer to this question, please re-visit Section 5: Interest and Motivation, in order to complete your {0} (HRA).</value>
+    <value>Because you have changed your answer to this question, please re-visit Section 5: Interest and Motivation, in order to complete your health assessment (HRA).</value>
     <comment>HRA</comment>
   </data>
   <data name="L211" xml:space="preserve">
@@ -7526,7 +7526,7 @@ key potentially modifiable behaviors and risk factors. Scores range from 0 (wors
     <comment>not in use</comment>
   </data>
   <data name="L778" xml:space="preserve">
-    <value>No single test can identify the metabolic syndrome.  The U.S. National Cholesterol Education Program’s Adult Treatment Panel III (ATP III) established five features for the diagnosis of the metabolic syndrome.  The precise definition of each criterion was updated by the American Heart Association and National Heart, Lung, and Blood Institute in October 2005. Your {0} evaluates all five features and reports your values for you.</value>
+    <value>No single test can identify the metabolic syndrome.  The U.S. National Cholesterol Education Program’s Adult Treatment Panel III (ATP III) established five features for the diagnosis of the metabolic syndrome.  The precise definition of each criterion was updated by the American Heart Association and National Heart, Lung, and Blood Institute in October 2005. Your health assessment evaluates all five features and reports your values for you.</value>
     <comment>Reports-MSInfo</comment>
   </data>
   <data name="L779" xml:space="preserve">
@@ -10436,7 +10436,7 @@ Here are some of the ways you might earn these special rewards from your coach:
   </data>
   <data name="L2745" xml:space="preserve">
     <value>Steps/Day</value>
-    <comment>Devices;New_Devices</comment>
+    <comment>Devices;Diaries;New_Devices</comment>
   </data>
   <data name="L2746" xml:space="preserve">
     <value>Number of days</value>
@@ -10524,7 +10524,7 @@ Here are some of the ways you might earn these special rewards from your coach:
   </data>
   <data name="L2767" xml:space="preserve">
     <value>An A1C of 7.0% corresponds to an estimated average glucose of 154 mg/dl</value>
-    <comment>Admin</comment>
+    <comment>Devices;Admin</comment>
   </data>
   <data name="L2768" xml:space="preserve">
     <value>An A1C of 5.7% corresponds to an estimated average glucose of 117 mg/dl</value>
@@ -10532,15 +10532,15 @@ Here are some of the ways you might earn these special rewards from your coach:
   </data>
   <data name="L2769" xml:space="preserve">
     <value>Recommended goal for nonpregnant adults= 80 to 130 mg/dl. More or less stringent goals may be appropriate for certain individuals.</value>
-    <comment>Admin</comment>
+    <comment>Devices;Admin</comment>
   </data>
   <data name="L2770" xml:space="preserve">
-    <value>Recommended goal for nonpregnant adults without diabetes= 70 to 100 mg/dl.</value>
+    <value>Recommended goal for nonpregnant adults without diabetes= 80 to 100 mg/dl.</value>
     <comment>Devices;Admin</comment>
   </data>
   <data name="L2771" xml:space="preserve">
     <value>Post-meal measurement should be made 1-2 h after start of meal, Recommended goal for nonpregnant adults is below 180 mg/dl (should not be below 80 mg/dl)</value>
-    <comment>Admin</comment>
+    <comment>Devices;Admin</comment>
   </data>
   <data name="L2772" xml:space="preserve">
     <value>Post-meal measurement should be made 1-2 h after start of meal, Recommended goal for nonpregnant adults is below 140 mg/dl</value>
@@ -13805,7 +13805,7 @@ SPOUSES&lt;/b&gt; (who are not employed by PentaSystems) - Enter your first and 
     <comment>Reports</comment>
   </data>
   <data name="L3591" xml:space="preserve">
-    <value>Your Diabetes Risk Test score is calculated from your responses to questions in the {0} but does not take into consideration your blood test results. It is based on the American Diabetes Association’s type 2 diabetes risk test. Higher scores are associated with a higher risk for having type 2 diabetes or prediabetes (a condition that precedes type 2 diabetes in which blood glucose levels are higher than normal). A score of 5 or higher is associated with an especially increased risk for having prediabetes or type 2 diabetes.</value>
+    <value>Your Diabetes Risk Test score is calculated from your responses to questions in the health assessment but does not take into consideration your blood test results. It is based on the American Diabetes Association’s type 2 diabetes risk test. Higher scores are associated with a higher risk for having type 2 diabetes or prediabetes (a condition that precedes type 2 diabetes in which blood glucose levels are higher than normal). A score of 5 or higher is associated with an especially increased risk for having prediabetes or type 2 diabetes.</value>
     <comment>Reports</comment>
   </data>
   <data name="L3592" xml:space="preserve">
@@ -14391,7 +14391,7 @@ SPOUSES&lt;/b&gt; (who are not employed by PentaSystems) - Enter your first and 
     <comment>Program</comment>
   </data>
   <data name="L3741" xml:space="preserve">
-    <value>Always refer to your personal medical plan for detailed coverage information. Copays and other costs may apply.</value>
+    <value>*Always refer to your personal medical plan for detailed coverage information. Copays and other costs may apply.</value>
     <comment>HRA;Lab</comment>
   </data>
   <data name="L3742" xml:space="preserve">
@@ -17302,7 +17302,7 @@ cholesterol</value>
     <comment>Dashboardmessage</comment>
   </data>
   <data name="L4568" xml:space="preserve">
-    <value>Portuguese</value>
+    <value>Portugais</value>
   </data>
   <data name="L4569" xml:space="preserve">
     <value>Group Coaching</value>
@@ -17470,6 +17470,10 @@ cholesterol</value>
   <data name="L4607" xml:space="preserve">
     <value>To summarize, INTERVENT's use and transfer to any other app any information received from Google APIs will adhere to the &lt;a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes" style="color:deepskyblue"&gt;Google API Services User Data Policy&lt;/a&gt;, including the concerned Limited Use requirements.</value>
     <comment>Home</comment>
+  </data>
+  <data name="L4608" xml:space="preserve">
+    <value>Video call</value>
+    <comment>Scheduler</comment>
   </data>
   <data name="L4609" xml:space="preserve">
     <value>Assigned Kits</value>

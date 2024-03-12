@@ -7,7 +7,5 @@
         public string Type { get; set; }
 
         public bool IsActive { get; set; }
-
-        public byte? Group { get; set; }
     }
 }

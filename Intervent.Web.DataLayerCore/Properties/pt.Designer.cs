@@ -10710,7 +10710,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Marque uma consulta com seu médico para discutir o nível elevado de glicose (&apos;açúcar&apos;) no sangue (conforme recomendado pela American Diabetes Association no suplemento da revista Diabetes Care publicado em janeiro de 2022)..
+        ///   Looks up a localized string similar to Marque uma consulta com seu médico para discutir o nível elevado de glicose (&apos;açúcar&apos;) no sangue (conforme recomendado pela American Diabetes Association no suplemento da revista Diabetes Care publicado em janeiro de 2023)..
         /// </summary>
         internal static string L357 {
             get {
@@ -10719,7 +10719,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Verifique novamente seu A1C depois de mudar seu estilo de vida por 12 semanas (conforme recomendado pela American Diabetes Association no suplemento de janeiro de 2022 da Diabetes Care)..
+        ///   Looks up a localized string similar to Verifique novamente seu A1C depois de mudar seu estilo de vida por 12 semanas (conforme recomendado pela American Diabetes Association no suplemento de janeiro de 2023 da Diabetes Care)..
         /// </summary>
         internal static string L358 {
             get {
@@ -10755,7 +10755,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Marque uma consulta com seu médico para discutir o valor elevado de A1C (conforme recomendado pela American Diabetes Association no suplemento da revista Diabetes Care publicado em janeiro de 2022)..
+        ///   Looks up a localized string similar to Marque uma consulta com seu médico para discutir o valor elevado de A1C (conforme recomendado pela American Diabetes Association no suplemento da revista Diabetes Care publicado em janeiro de 2023)..
         /// </summary>
         internal static string L359 {
             get {

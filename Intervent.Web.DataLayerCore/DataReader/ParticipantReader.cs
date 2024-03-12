@@ -525,13 +525,12 @@ namespace Intervent.Web.DataLayer
             {
                 context.Notes.Add(noteData);
                 EditContactRequirementAlertActiveStatus(noteData.userId, null);
-                //NOTE - changes related intuity billing
-                /*if (noteData.Type == (int)NoteTypes.Coaching)
+                if (noteData.Type == (int)NoteTypes.Coaching)
                 {
                     ReportReader reportReader = new ReportReader();
                     var list = reportReader.GetBillingServiceTypes();
                     reportReader.AddInvoiceDetails(new InvoiceDetailsRequest { UserId = request.note.userId, CreatedOn = DateTime.UtcNow, Type = list.Where(x => x.Type == CommonReader.BillingServiceTypes.HealthCoaching).Select(x => x.Id).FirstOrDefault() });
-                }*/
+                }
             }
             context.SaveChanges();
             response.success = true;

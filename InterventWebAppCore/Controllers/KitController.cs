@@ -774,15 +774,15 @@ namespace InterventWebApp
         {
             CompletedKitsModel model = new CompletedKitsModel();
             var programHistory = ProgramUtility.GetUserProgramHistory(HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, User.TimeZone(), HttpContext.Session.GetString(SessionContext.LanguagePreference) != null ? HttpContext.Session.GetString(SessionContext.LanguagePreference) : "");
-            if (programHistory != null && programHistory.usersinPrograms.Where(x => x.Id == HttpContext.Session.GetInt32(SessionContext.UserinProgramId) && x.KitsinUserPrograms.Count() > 0).Where(y => y.IsActive).Count() > 1)
+            if (programHistory != null && programHistory.usersinPrograms.Where(x => x.Id == HttpContext.Session.GetInt32(SessionContext.UserinProgramId) && x.KitsinUserPrograms.Count() > 0).Count() > 0)
             {
-                model.KitsinUserPrograms = programHistory.usersinPrograms.Where(x => x.Id == HttpContext.Session.GetInt32(SessionContext.UserinProgramId)).FirstOrDefault().KitsinUserPrograms.Where(y => y.IsActive).ToList();
+                model.KitsinUserPrograms = programHistory.usersinPrograms.Where(x => x.Id == HttpContext.Session.GetInt32(SessionContext.UserinProgramId)).FirstOrDefault().KitsinUserPrograms.ToList();
             }
             else
             {
                 var pastPrograms = programHistory.usersinPrograms.Where(x => x.Id != HttpContext.Session.GetInt32(SessionContext.UserinProgramId) && x.KitsinUserPrograms.Count() > 0).ToList();
                 if (pastPrograms.Count > 0)
-                    model.KitsinUserPrograms = pastPrograms.FirstOrDefault().KitsinUserPrograms.Where(y => y.IsActive).ToList();
+                    model.KitsinUserPrograms = pastPrograms.FirstOrDefault().KitsinUserPrograms.Where(y => y.CompleteDate.HasValue).ToList();
             }
             return PartialView("_CompletedKits", model);
         }

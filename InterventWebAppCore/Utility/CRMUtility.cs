@@ -1,11 +1,9 @@
 ﻿using Intervent.HWS;
 using Intervent.Web.DataLayer;
 using Intervent.Web.DTO;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using NLog;
 using System.Text.RegularExpressions;
-using System.Web.Mvc;
 
 namespace InterventWebApp
 {
@@ -287,28 +285,6 @@ namespace InterventWebApp
         {
             CRMReader crmReader = new CRMReader();
             return crmReader.BulkAddQADOrders(request);
-        }
-
-        public static List<SelectListItem> GetCRMNoteTypes(int? type)
-        {
-            List<SelectListItem> noteTypes = new List<SelectListItem>();
-            noteTypes.Add(new SelectListItem() { Text = "Call", Value = "2" });
-            noteTypes.Add(new SelectListItem() { Text = "Email", Value = "1" });
-            if (type.HasValue && type.Value == 3)
-                noteTypes.Add(new SelectListItem() { Text = "Webform", Value = "3" });
-            noteTypes.Add(new SelectListItem() { Text = "Social Media", Value = "4" });
-
-            return noteTypes;
-        }
-
-        public static List<SelectListItem> GetMedicareInsuranceTypes()
-        {
-            List<SelectListItem> noteTypes = new List<SelectListItem>();
-            noteTypes.Add(new SelectListItem() { Text = "Private insurance", Value = "1" });
-            noteTypes.Add(new SelectListItem() { Text = "Medicare", Value = "2" });
-            noteTypes.Add(new SelectListItem() { Text = "Other", Value = "3" });
-
-            return noteTypes;
         }
     }
 }
