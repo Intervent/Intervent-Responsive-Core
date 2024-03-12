@@ -4409,7 +4409,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SBP.
+        ///   Looks up a localized string similar to PSS.
         /// </summary>
         internal static string L1503 {
             get {
@@ -4418,7 +4418,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DBP.
+        ///   Looks up a localized string similar to PSD.
         /// </summary>
         internal static string L1504 {
             get {
@@ -5786,7 +5786,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 portion : 55 à 85 g de viande maigre, de volaille, de poisson ou de substitut de viande cuits • 28 g de viande • 1 œuf ou 2 blancs d’œufs • 1 cube ou tranche de fromage • 1/4 tasse de fromage cottage • 1 tasse de lait de soya • 1 c. à soupe de beurre d’arachide • 1/4 tasse de noix.
+        ///   Looks up a localized string similar to &lt;h5&gt;1 portion &lt;/h5&gt; &lt;ul&gt;&lt;li&gt; 55 à 85 g de viande maigre, de volaille, de poisson ou de substitut de viande cuits &lt;/li&gt;&lt;li&gt; 28 g de viande &lt;/li&gt;&lt;li&gt; 1 œuf ou 2 blancs d’œufs &lt;/li&gt;&lt;li&gt; 1 cube ou tranche de fromage &lt;/li&gt;&lt;li&gt; 1/4 tasse de fromage cottage &lt;/li&gt;&lt;li&gt; 1 tasse de lait de soya &lt;/li&gt;&lt;li&gt; 1 c. à soupe de beurre d’arachide &lt;/li&gt;&lt;li&gt; 1/4 tasse de noix &lt;/li&gt;&lt;/ul&gt;.
         /// </summary>
         internal static string L1651 {
             get {
@@ -5795,7 +5795,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 portion : 1 tasse de lait ou de yogourt.
+        ///   Looks up a localized string similar to &lt;h5&gt;1 portion &lt;/h5&gt; &lt;ul&gt;&lt;li&gt; 1 tasse de lait ou de yogourt &lt;/li&gt;&lt;/ul&gt;.
         /// </summary>
         internal static string L1652 {
             get {
@@ -5804,7 +5804,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 portion : 1 morceau de fruit ou de melon de petite à moyenne taille • 1/2 pamplemousse • 1/2 tasse de baies • 1/2 tasse de fruits en conserve • 1/4 tasse de fruits séchés • 1/2 tasse de jus.
+        ///   Looks up a localized string similar to &lt;h5&gt;1 portion &lt;/h5&gt; &lt;ul&gt;&lt;li&gt; 1 morceau de fruit ou de melon de petite à moyenne taille &lt;/li&gt;&lt;li&gt; 1/2 pamplemousse &lt;/li&gt;&lt;li&gt; 1/2 tasse de baies &lt;/li&gt;&lt;li&gt;1/2 tasse de fruits en conserve &lt;/li&gt;&lt;li&gt; 1/4 tasse de fruits séchés &lt;/li&gt;&lt;li&gt; 1/2 tasse de jus &lt;/li&gt;&lt;/ul&gt;.
         /// </summary>
         internal static string L1653 {
             get {
@@ -5813,7 +5813,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 portion : 1/2 tasse de légumes crus hachés ou cuits • 1 tasse de légumes-feuilles crus • 1/2 tasse de jus de légumes.
+        ///   Looks up a localized string similar to &lt;h5&gt;1 portion &lt;/h5&gt; &lt;ul&gt;&lt;li&gt; 1/2 tasse de légumes crus hachés ou cuits &lt;/li&gt;&lt;li&gt; 1 tasse de légumes-feuilles crus &lt;/li&gt;&lt;li&gt; 1/2 tasse de jus de légumes&lt;/li&gt;&lt;/ul&gt;.
         /// </summary>
         internal static string L1654 {
             get {
@@ -5822,7 +5822,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 portion : 1/2 tasse de légumes riches en féculents hachés crus ou cuits • 85 g de pommes de terre cuites au four.
+        ///   Looks up a localized string similar to &lt;h5&gt;1 portion &lt;/h5&gt; &lt;ul&gt;&lt;li&gt;  1/2 tasse de légumes riches en féculents hachés crus ou cuits &lt;/li&gt;&lt;li&gt; 85 g de pommes de terre cuites au four &lt;/li&gt;&lt;/ul&gt;.
         /// </summary>
         internal static string L1655 {
             get {
@@ -5831,7 +5831,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 portion : 28 g de céréales sèches • 1 tranche de pain • 1/2 tasse de riz, de pâtes ou de céréales cuits • 1 tortilla • 1/2 pain à hamburger • 1/2 muffin anglais ou bagel • 1 petit pain, biscuit ou muffin.
+        ///   Looks up a localized string similar to &lt;h5&gt;1 portion &lt;/h5&gt; &lt;ul&gt;&lt;li&gt;  28 g de céréales sèches &lt;/li&gt;&lt;li&gt;  1 tranche de pain &lt;/li&gt;&lt;li&gt; 1/2 tasse de riz, de pâtes ou de céréales cuits &lt;/li&gt;&lt;li&gt;  1 tortilla &lt;/li&gt;&lt;li&gt;  1/2 pain à hamburger &lt;/li&gt;&lt;li&gt;  1/2 muffin anglais ou bagel &lt;/li&gt;&lt;li&gt;  1 petit pain, biscuit ou muffin &lt;/li&gt;&lt;/ul&gt;.
         /// </summary>
         internal static string L1656 {
             get {
@@ -6038,7 +6038,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Il s’agit du score de bien-être moyen des personnes du même sexe et du même groupe d’âge qui ont subi l’{0}.
+        ///   Looks up a localized string similar to Il s’agit du score de bien-être moyen des personnes du même sexe et du même groupe d’âge qui ont subi l’évaluation de l’état de santé..
         /// </summary>
         internal static string L1677 {
             get {
@@ -8774,7 +8774,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Votre score de bien-être moyen des pairs &lt;/b&gt; est de {0}. (Il s’agit du score de bien-être moyen des personnes du même sexe et du même groupe d’âge qui ont subi l’{1}).
+        ///   Looks up a localized string similar to &lt;b&gt;Votre score de bien-être moyen des pairs &lt;/b&gt; est de {0}. (Il s’agit du score de bien-être moyen des personnes du même sexe et du même groupe d’âge qui ont subi l’évaluation de l’état de santé.).
         /// </summary>
         internal static string L2014 {
             get {
@@ -19503,7 +19503,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ce score est calculé à partir de vos réponses aux questions de l’{0}, mais ne tient pas compte des résultats de votre analyse sanguine. Il repose sur le test de risque de diabète de type 2 de l’American Diabetes Association. On associe des scores élevés à un risque plus élevé de diabète de type 2 ou de prédiabète (une affection caractérisée par une glycémie plus élevée que la normale et qui précède le diabète de type 2). Un score d’au moins cinq est associé à un risque accru de prédiabète ou de diabète de t [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to Ce score est calculé à partir de vos réponses aux questions de l’évaluation de l’état de santé, mais ne tient pas compte des résultats de votre analyse sanguine. Il repose sur le test de risque de diabète de type 2 de l’American Diabetes Association. On associe des scores élevés à un risque plus élevé de diabète de type 2 ou de prédiabète (une affection caractérisée par une glycémie plus élevée que la normale et qui précède le diabète de type 2). Un score d’au moins cinq est associé à un risque accru de pré [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string L3591 {
             get {
@@ -20538,8 +20538,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        /// Vous avez commencé ce programme il y a 12 semaines. Veuillez remplir cette évaluation de suivi pour examiner vos progrès et rester sur la bonne voie..
+        ///   Looks up a localized string similar to Vous avez commencé ce programme il y a 12 semaines. Veuillez remplir cette évaluation de suivi pour examiner vos progrès et rester sur la bonne voie..
         /// </summary>
         internal static string L3697 {
             get {
@@ -28302,7 +28301,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connaître, surveiller et gérer les taux de ses de facteurs de risque modifiables de maladie cardiométabolique, conformément aux instructions de son ou ses professionnels de la santé.
+        ///   Looks up a localized string similar to Connaissez, surveillez et gérez vos numéros de facteurs de risque de maladies cardiométaboliques modifiables selon les directives de votre (vos) fournisseur(s) de soins de santé.
         /// </summary>
         internal static string L4591 {
             get {
@@ -28311,7 +28310,7 @@ namespace Intervent.Web.DataLayerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Atteindre ou maintenir un poids santé.
+        ///   Looks up a localized string similar to Atteindre et/ou maintenir un poids santé.
         /// </summary>
         internal static string L4592 {
             get {
@@ -28433,6 +28432,24 @@ namespace Intervent.Web.DataLayerCore.Properties {
         internal static string L4607 {
             get {
                 return ResourceManager.GetString("L4607", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Appel vidéo.
+        /// </summary>
+        internal static string L4608 {
+            get {
+                return ResourceManager.GetString("L4608", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kits attribués.
+        /// </summary>
+        internal static string L4609 {
+            get {
+                return ResourceManager.GetString("L4609", resourceCulture);
             }
         }
         
