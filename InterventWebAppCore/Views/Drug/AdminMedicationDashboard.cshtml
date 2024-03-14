@@ -349,7 +349,7 @@
                     var notes = $("#notes").val();
                     var model = {};
                     var strdata = {
-                        'Id': id,
+                        'Id': id != '' ? id : 0,
                         'medication': mDrugText,
                         'Dosage': mDosage,
                         'Ingredient': mIngredient,

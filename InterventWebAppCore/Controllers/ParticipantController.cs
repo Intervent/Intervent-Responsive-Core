@@ -144,6 +144,7 @@ namespace InterventWebApp
             }
             if (partResponse.hasActivePortal)
             {
+                model.hasActivePortal = true;
                 HttpContext.Session.SetString(SessionContext.HasActivePortal, true.ToString());
                 if (partResponse.HRA != null)
                     HttpContext.Session.SetInt32(SessionContext.HRAId, partResponse.HRA.Id);
@@ -276,6 +277,7 @@ namespace InterventWebApp
                             HttpContext.Session.SetString(SessionContext.FollowUpCompleteDate, userDetails.usersinProgram.FollowUps.OrderByDescending(x => x.Id).FirstOrDefault().CompleteDate.ToString());
                     }
                 }
+                model.hasActivePortal = false;
                 HttpContext.Session.SetString(SessionContext.HasActivePortal, false.ToString());
                 HttpContext.Session.SetInt32(SessionContext.InActiveParticipantPortalId, portalDetails.Id);
                 HttpContext.Session.SetInt32(SessionContext.ParticipantPortalId, portalDetails.Id);
