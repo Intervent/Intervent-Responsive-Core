@@ -98,8 +98,8 @@ namespace InterventWebApp
             JournalReader reader = new JournalReader();
             ListFoodDiaryRequest request = new ListFoodDiaryRequest();
             request.ParticipantId = participantId;
-            request.startDate = model.startDate.Date;
-            request.endDate = model.endDate.Date;
+            request.startDate = model.startDateTime.Date;
+            request.endDate = model.endDateTime.Date;
             return reader.ListFood(request);
         }
 
@@ -117,7 +117,7 @@ namespace InterventWebApp
             JournalReader reader = new JournalReader();
             ListFoodDiaryRequest request = new ListFoodDiaryRequest();
             request.ParticipantId = participantId;
-            request.startDate = model.startDate.Date;
+            request.startDate = model.startDateTime;
             return reader.ListFoodDetails(request);
         }
 

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NLog;
 using System.Data.Common;
+using System.Data.SqlTypes;
 
 namespace Intervent.Web.DataLayer
 {
@@ -221,7 +222,7 @@ namespace Intervent.Web.DataLayer
             response.fg4RecentItems = foodDiaries.Where(x => x.FoodGroupId == 4 && !string.IsNullOrEmpty(x.Name)).OrderByDescending(x => x.Id).GroupBy(x => x.Name).Select(x => x.Key).Take(10).ToList();
             response.fg5RecentItems = foodDiaries.Where(x => x.FoodGroupId == 5 && !string.IsNullOrEmpty(x.Name)).OrderByDescending(x => x.Id).GroupBy(x => x.Name).Select(x => x.Key).Take(10).ToList();
             response.fg6RecentItems = foodDiaries.Where(x => x.FoodGroupId == 6 && !string.IsNullOrEmpty(x.Name)).OrderByDescending(x => x.Id).GroupBy(x => x.Name).Select(x => x.Key).Take(10).ToList();
-            var FoodDAL = foodDiaries.Where(x => x.Date == request.startDate).OrderBy(x => x.Date).ToList();
+            var FoodDAL = foodDiaries.Where(x => x.Date.Date == request.startDate.Date).OrderBy(x => x.Date).ToList();
             response.FoodDiaryList = Utility.mapper.Map<IList<DAL.FoodDiary>, IList<FoodDiaryDto>>(FoodDAL);
             return response;
         }
@@ -230,7 +231,7 @@ namespace Intervent.Web.DataLayer
         {
             ListFoodDairyResponse response = new ListFoodDairyResponse();
             var FoodDAL = context.FoodDiaries.Include("FoodGroup").Include("MealType").
-                Where(x => x.UserId == request.ParticipantId && x.Date >= request.startDate && x.Date <= request.endDate).OrderBy(x => x.Date).ToList();
+                Where(x => x.UserId == request.ParticipantId && x.Date.Date >= request.startDate.Date && x.Date.Date <= request.endDate.Date).OrderBy(x => x.Date).ToList();
             response.FoodDiaryList = Utility.mapper.Map<IList<DAL.FoodDiary>, IList<FoodDiaryDto>>(FoodDAL);
             return response;
         }

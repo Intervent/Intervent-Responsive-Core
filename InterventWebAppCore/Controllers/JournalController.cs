@@ -1,4 +1,5 @@
-﻿using Intervent.Web.DataLayer;
+﻿using Intervent.DAL;
+using Intervent.Web.DataLayer;
 using Intervent.Web.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -172,6 +173,8 @@ namespace InterventWebApp
         [Authorize]
         public ActionResult ListFoodDetails([FromBody] FoodDiaryListModel model)
         {
+            model.startDateTime = Convert.ToDateTime(model.startDate);
+            model.endDateTime = Convert.ToDateTime(model.endDate);
             FoodDiaryDetailsModel response = new FoodDiaryDetailsModel();
             var foodDetails = JournalUtility.ListFoodDetails(model, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value);
             response.FoodDiaryList = foodDetails.FoodDiaryList;
@@ -183,7 +186,7 @@ namespace InterventWebApp
             response.fg6RecentItems = foodDetails.fg6RecentItems;
             response.FoodDiaryAccess = model.FoodDiaryAccess;
             response.mousehover = model.mousehover;
-            response.foodDate = model.startDate.ToString(HttpContext.Session.GetString(SessionContext.DateFormat));
+            response.foodDate = model.startDateTime.ToString(HttpContext.Session.GetString(SessionContext.DateFormat));
             response.DateFormat = HttpContext.Session.GetString(SessionContext.DateFormat);
             response.HasActivePortal = Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.HasActivePortal));
             return PartialView("_AddFoodDiary", response);
@@ -192,11 +195,15 @@ namespace InterventWebApp
         [Authorize]
         public ActionResult LoadFoodDetails([FromBody] FoodDiaryListModel model)
         {
+            model.startDateTime = Convert.ToDateTime(model.startDate);
+            model.endDateTime = Convert.ToDateTime(model.endDate);
             FoodDiaryDetailsModel response = new FoodDiaryDetailsModel();
-            response.FoodDiaryList = JournalUtility.ListFood(model, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value).FoodDiaryList;
+              response.FoodDiaryList = JournalUtility.ListFood(model, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value).FoodDiaryList;
             response.FoodDiaryAccess = model.FoodDiaryAccess;
-            response.startDate = model.startDate.Date;
-            response.endDate = model.endDate.Date;
+            response.startDate = model.startDate;
+            response.startDateTime = model.startDateTime;
+            response.endDate = model.endDate;
+            response.endDateTime = model.endDateTime;
             return PartialView("_EditFoodDiary", response);
         }
 
@@ -204,6 +211,8 @@ namespace InterventWebApp
         [HttpPost]
         public JsonResult AddtoFoodDiary(FoodDiaryDetailsModel model)
         {
+            model.startDateTime = Convert.ToDateTime(model.startDate);
+            model.endDateTime = Convert.ToDateTime(model.endDate);
             var result = JournalUtility.AddtoFoodDiary(model, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value);
             return Json(new { Result = "OK", Record = result });
         }
@@ -219,6 +228,8 @@ namespace InterventWebApp
         [Authorize]
         public JsonResult ListFood([FromBody] FoodDiaryListModel model)
         {
+            model.startDateTime = Convert.ToDateTime(model.startDate);
+            model.endDateTime = Convert.ToDateTime(model.endDate);
             var foodListResponse = JournalUtility.ListFood(model, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value);
             List<double> FatGrams = new List<double>();
             List<double> CarbChoices = new List<double>();
@@ -243,11 +254,11 @@ namespace InterventWebApp
             double fruitGoal = 0;
             double starchyGoal = 0;
             double grainsGoal = 0;
-            DateTime date = model.startDate.Date;
+            DateTime date = Convert.ToDateTime(model.startDate).Date;
             var wellnessData = ParticipantUtility.ListWellnessData(HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value).WellnessData.LastOrDefault();
             var goals = ReportUtility.ReadHRAGoals(HttpContext.Session.GetInt32(SessionContext.HRAId).Value).hraGoals;
             var nutritionGoal = ReportUtility.NutritionGoal(goals, null, HttpContext.Session.GetInt32(SessionContext.ProgramType), HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.Gender), ShowSelfScheduling());
-            if (wellnessData != null && wellnessData.Weight.HasValue && goals.LtWt > wellnessData.Weight.Value && model.startDate.Date >= wellnessData.CollectedOn.Date && nutritionGoal.SecondNutPlanArray != null)
+            if (wellnessData != null && wellnessData.Weight.HasValue && goals.LtWt > wellnessData.Weight.Value && date >= wellnessData.CollectedOn.Date && nutritionGoal.SecondNutPlanArray != null)
             {
                 meatGoal = Convert.ToDouble(nutritionGoal.SecondNutPlanArray.GetValue(0, 4).ToString());
                 milkGoal = Convert.ToDouble(nutritionGoal.SecondNutPlanArray.GetValue(1, 4).ToString());
@@ -263,7 +274,7 @@ namespace InterventWebApp
                 starchyGoal = Convert.ToDouble(nutritionGoal.FirstNutPlanArray.GetValue(3, 4).ToString());
                 grainsGoal = Convert.ToDouble(nutritionGoal.FirstNutPlanArray.GetValue(4, 4).ToString());
             }
-            while (date.Date <= model.endDate.Date)
+            while (date.Date <= Convert.ToDateTime(model.endDate).Date)
             {
                 meat = grains = fruit = starchy = milk = others = 0;
                 FatGrams.Add(Math.Round(foodListResponse.FoodDiaryList.Where(x => x.Date.Date == date.Date).Sum(x => x.FatGrams).GetValueOrDefault(), 1));

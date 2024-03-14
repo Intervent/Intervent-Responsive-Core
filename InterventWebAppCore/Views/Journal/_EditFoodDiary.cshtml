@@ -1,20 +1,20 @@
 ﻿@using InterventWebApp
 @model InterventWebApp.FoodDiaryDetailsModel
 
-@while (Model.startDate <= Model.endDate)
+@while (Model.startDateTime <= Model.endDateTime)
 {
-    if (Model.startDate <= DateTime.Now)
+    if (Model.startDateTime <= DateTime.Now)
     {
         <div class="food-cal-day-wrapper">
-            <span class="foodEntry food-cal-day" data-toggle='food-entry-@Model.startDate.DayOfWeek' id="@Model.startDate.DayOfWeek">@Model.startDate.DayOfWeek.ToString().Substring(0, 3) <input type="hidden" id="food-date-@Model.startDate.DayOfWeek" value="@Model.startDate.ToString("yyyy/MM/dd")" /> </span>
-            <div class='dropdown-pane cal-dropdown food-entry-modal edit-cal-entry' id='food-entry-@Model.startDate.DayOfWeek'>
+            <span class="foodEntry food-cal-day" data-toggle='food-entry-@Model.startDateTime.DayOfWeek' id="@Model.startDateTime.DayOfWeek">@Model.startDateTime.DayOfWeek.ToString().Substring(0, 3) <input type="hidden" id="food-date-@Model.startDateTime.DayOfWeek" value="@Model.startDateTime.ToString("yyyy/MM/dd")" /> </span>
+            <div class='dropdown-pane cal-dropdown food-entry-modal edit-cal-entry' id='food-entry-@Model.startDateTime.DayOfWeek'>
             </div>
         </div>
     }
     else
     {
         <div class="food-cal-day-wrapper">
-            <span class="foodEntry food-cal-day" data-toggle='food-entry-@Model.startDate.DayOfWeek' id="@Model.startDate.DayOfWeek">@Model.startDate.DayOfWeek.ToString().Substring(0, 3) <input type="hidden" id="food-date-@Model.startDate.DayOfWeek" value="@Model.startDate.ToString("yyyy/MM/dd")" /> </span>
+            <span class="foodEntry food-cal-day" data-toggle='food-entry-@Model.startDateTime.DayOfWeek' id="@Model.startDateTime.DayOfWeek">@Model.startDateTime.DayOfWeek.ToString().Substring(0, 3) <input type="hidden" id="food-date-@Model.startDateTime.DayOfWeek" value="@Model.startDateTime.ToString("yyyy/MM/dd")" /> </span>
             <div class='dropdown-pane cal-dropdown food-entry-modal edit-cal-entry modal-empty'>
                 <div class="welcome-title">
                     <p>@Translate.Message("L4482").</p>
@@ -25,7 +25,7 @@
             </div>
         </div>
     }
-    <div hidden>@(Model.startDate = Model.startDate.AddDays(1))</div>
+    <div hidden>@(Model.startDateTime = Model.startDateTime.AddDays(1))</div>
 }
 
 <script>

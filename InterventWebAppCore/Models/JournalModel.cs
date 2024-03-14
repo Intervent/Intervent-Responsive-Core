@@ -90,9 +90,13 @@ namespace InterventWebApp
 
         public int FoodDiaryAccess { get; set; }
 
-        public DateTime startDate { get; set; }
+        public string startDate { get; set; }
 
-        public DateTime endDate { get; set; }
+        public string endDate { get; set; }
+
+        public DateTime startDateTime { get; set; }
+
+        public DateTime endDateTime { get; set; }
 
         public bool mousehover { get; set; }
 
@@ -117,9 +121,13 @@ namespace InterventWebApp
 
     public class FoodDiaryListModel
     {
-        public DateTime startDate { get; set; }
+        public string startDate { get; set; }
 
-        public DateTime endDate { get; set; }
+        public string endDate { get; set; }
+
+        public DateTime startDateTime { get; set; }
+
+        public DateTime endDateTime { get; set; }
 
         public int FoodDiaryAccess { get; set; }
 

@@ -567,7 +567,7 @@
             }
         }
         var messageFooter = "";
-        if (@Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)) && @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId) != @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId))
+        if ("@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)" == "True" && @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId) != @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId))
             messageFooter = "<div class='message-footer'><div class='doc-remove-container hide'><div><p id='UploadedForm'></p></div></div><input type='text' name='name' value='' /><textarea id='msg-textbox' class='msg-textbox'></textarea><label><input type='file' name='files' id='updatePDF' class='upload' accept='.pdf' onchange='ValidateFileExtension(" + true + ");' /></label><button type='submit' class='submit-chat' onclick='sendResponse(" + false + ",);'></button></div>";
         messageDetailsHtml += "</div></div>"+ messageFooter +"</div></section>";
         $('#chat-message').html(messageDetailsHtml);

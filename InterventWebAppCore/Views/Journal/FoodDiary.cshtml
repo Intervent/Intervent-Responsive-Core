@@ -311,12 +311,13 @@
         }
         var model = {};
         var paginationdata = {
-            'startDate': startDate.toISOString(),
-            'endDate': endDate.toISOString(),
+            'startDate': toSystemDateFormat(startDate),
+            'endDate': toSystemDateFormat(endDate),
             'FoodDiaryAccess': foodDiaryAccess
         };
         model = (paginationdata);
         var strData = JSON.stringify(model);
+        console.log("LoadFoodDetails " + strData);
         $.ajax({
             url: "@Url.Action("LoadFoodDetails", "Journal")",
             data: strData,
@@ -346,12 +347,13 @@
     function LoadFood() {
         var model = {};
         var paginationdata = {
-            'startDate': startDate.toISOString(),
-            'endDate': endDate.toISOString(),
+            'startDate': toSystemDateFormat(startDate),
+            'endDate': toSystemDateFormat(endDate),
             'FoodDiaryAccess': foodDiaryAccess
         };
         model = (paginationdata);
         var strData = JSON.stringify(model);
+        console.log("LoadFood " + strData);
         $.ajax({
             url: "@Url.Action("ListFood", "Journal")",
             data: strData,
@@ -502,12 +504,13 @@
 		$('#food-entry, .edit-cal-entry:not(.modal-empty)').html("");
         var model = {};
         var paginationdata = {
-            'startDate': new Date($("#hdate-diary").val()).toISOString(),
+            'startDate': $("#hdate-diary").val(),
             'FoodDiaryAccess': foodDiaryAccess,
             'mousehover': hover
         };
         model = (paginationdata);
         var strData = JSON.stringify(model);
+        console.log("ListFoodDetails " + strData);
         $.ajax({
             url: "@Url.Action("ListFoodDetails", "Journal")",
             data: strData,
