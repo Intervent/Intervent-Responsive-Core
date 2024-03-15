@@ -3,6 +3,7 @@ using Intervent.Business.Eligibility;
 using Intervent.Business.Organization;
 using Intervent.DAL;
 using Intervent.Framework.Cryptography;
+using Intervent.HWS;
 using Intervent.Web.DTO;
 using InterventWebApp.Helpers;
 using InterventWebApp.Models;
@@ -17,8 +18,12 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog;
 using System.Globalization;
+using System.Net;
 using System.Security.Claims;
+using System.Security.Policy;
 using System.Text;
+using System.Web;
+using static Intervent.HWS.Model.FitbitProfile;
 
 namespace InterventWebApp
 {
@@ -65,6 +70,7 @@ namespace InterventWebApp
                 {
                     new Claim("UserId", response.User.Id.ToString()),
                     new Claim("FullName", response.User.FirstName + " " + response.User.LastName),
+                    new Claim("UserName", model.UserName),
                     new Claim("Module", GetGroups(response.User)),
                     new Claim("RoleCode", GetRoleCodes(response.User)),
                     new Claim("ExpirationUrl", response.User.Organization.Url),
@@ -602,7 +608,7 @@ namespace InterventWebApp
 
         public async Task<JsonResult> ValidateToken(string email, string Token)
         {
-            var response = await AccountUtility.ValidateToken(_userManager, email, Token);
+            var response = await AccountUtility.ValidateToken(_userManager, email, WebUtility.HtmlDecode(Token));
             if (response.Succeeded == true)
                 return Json("success");
             else
@@ -619,12 +625,11 @@ namespace InterventWebApp
             model.OldPassword = Encoding.ASCII.GetString(Convert.FromBase64String(model.OldPassword)).Substring(6);
             var errMsg2 = Translate.Message("L1976");
             var errMsg3 = String.Format(Translate.Message("L3050"), _appSettings.PreviousPasswordLimit);
-            var Identity = new ClaimsIdentity(User.Identity);
-            string deviceId = Identity.Claims.Where(c => c.Type == "DeviceId").Select(c => c.Value).FirstOrDefault();
-            var response = await AccountUtility.GetUser(_userManager, User.Identity.Name, model.OldPassword, null, true, deviceId, _appSettings.VerifyDeviceLogin);
+
+            var response = await AccountUtility.GetUser(_userManager, User.UserName(), model.OldPassword, null, true, User.DeviceId(), _appSettings.VerifyDeviceLogin);
             if (response.User != null)
             {
-                var updateresponse = await AccountUtility.ChangePassword(_userManager, Convert.ToInt32(Convert.ToInt32(User.UserId())), model.OldPassword, model.NewPassword);
+                var updateresponse = await AccountUtility.ChangePassword(_userManager, Convert.ToInt32(User.UserId()), model.OldPassword, model.NewPassword);
                 if (!updateresponse.success)
                 {
                     return Json(new { Success = false, ErrorMessage = errMsg3 });
@@ -660,7 +665,7 @@ namespace InterventWebApp
             //var result = await AccountUtility.VerifyUserToken(UserId, "ResetPassword", Token);
             //if (result.success == false)
             //    model.FailureMessage = "An error has occurred. Either the password link has expired or the key is not valid";
-            var response = await AccountUtility.ConfirmEmailAsync(_userManager, model.Email, Token);
+            var response = await AccountUtility.ConfirmEmailAsync(_userManager, model.Email, WebUtility.HtmlDecode(Token));
             if (!response.Succeeded)
                 return Json(response.error.FirstOrDefault());
             else
@@ -676,9 +681,9 @@ namespace InterventWebApp
             {
                 if (model.DOB.Contains("-"))
                     model.DOB = model.DOB.Replace("-", "/");
-                DateTime.ParseExact(model.DOB, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+                dob = DateTime.ParseExact(model.DOB, "MM/dd/yyyy", CultureInfo.InvariantCulture);
             }
-            var response = await AccountUtility.ResetPassword(_userManager, model.Email, model.Token, model.NewPassword, dob);
+            var response = await AccountUtility.ResetPassword(_userManager, model.Email, WebUtility.HtmlDecode(model.Token), model.NewPassword, dob);
             if (response.success == true)
                 return Json("success");
             else if (response.validateDOB == false)
@@ -857,7 +862,6 @@ namespace InterventWebApp
                     var Identity = new ClaimsIdentity(User.Identity);
                     Identity.TryRemoveClaim(Identity.FindFirst("TimeZone"));
                     Identity.AddClaim(new Claim("TimeZone", CommonUtility.GetTimeZones(model.user.TimeZoneId).TimeZones[0].TimeZoneId));
-                    //AuthenticationManager.AuthenticationResponseGrant = new AuthenticationResponseGrant(new ClaimsPrincipal(Identity), new AuthenticationProperties { IsPersistent = true });
                 }
                 else
                 {
@@ -934,7 +938,6 @@ namespace InterventWebApp
                         var Identity = new ClaimsIdentity(User.Identity);
                         Identity.TryRemoveClaim(Identity.FindFirst("TimeZone"));
                         Identity.AddClaim(new Claim("TimeZone", CommonUtility.GetTimeZones(model.user.TimeZoneId).TimeZones[0].TimeZoneId));
-                        //  AuthenticationManager.AuthenticationResponseGrant = new AuthenticationResponseGrant(new ClaimsPrincipal(Identity), new AuthenticationProperties { IsPersistent = true });
                     }
                     var TimeZones = CommonUtility.GetTimeZones(model.user.TimeZoneId).TimeZones;
                     HttpContext.Session.SetString(SessionContext.ParticipantTimeZone, TimeZones.Select(x => x.TimeZoneId).FirstOrDefault());
@@ -943,7 +946,7 @@ namespace InterventWebApp
                 return Json("success");
             }
             else
-                error = response.error.FirstOrDefault().Description;
+                error = response.error.Count() > 0 ? response.error.FirstOrDefault().Description : "";
             if (error.Contains("is already taken"))
                 return Json(emailerrMsg);
             else
@@ -1084,6 +1087,7 @@ namespace InterventWebApp
                     HttpContext.Session.SetInt32(SessionContext.UserId, response.User.Id);
                     identity.AddClaim(new Claim("UserId", response.User.Id.ToString()));
                     identity.AddClaim(new Claim("FullName", response.User.FirstName + " " + response.User.LastName));
+                    identity.AddClaim(new Claim("UserName", response.User.UserName));
                     identity.AddClaim(new Claim("Module", GetGroups(response.User)));
                     identity.AddClaim(new Claim("RoleCode", GetRoleCodes(response.User)));
                     identity.AddClaim(new Claim("ExpirationUrl", response.User.Organization.Url));

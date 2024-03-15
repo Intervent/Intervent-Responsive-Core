@@ -16,6 +16,17 @@ namespace InterventWebApp
                 return "";
         }
 
+        public static string UserName(this IPrincipal user)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                ClaimsIdentity claimsIdentity = user.Identity as ClaimsIdentity;
+                return claimsIdentity.Claims.First(c => c.Type == "UserName").Value;
+            }
+            else
+                return "";
+        }
+
         public static string UserId(this IPrincipal user)
         {
             if (user.Identity.IsAuthenticated)

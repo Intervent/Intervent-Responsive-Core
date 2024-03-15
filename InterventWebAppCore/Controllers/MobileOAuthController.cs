@@ -69,6 +69,7 @@ namespace InterventWebApp.Controllers
                         HttpContext.Session.SetString(SessionContext.TermsAccepted, userDto.TermsAccepted.ToString());
                         identity.AddClaim(new Claim("UserId", userDto.Id.ToString()));
                         identity.AddClaim(new Claim("FullName", userDto.FirstName + " " + userDto.LastName));
+                        identity.AddClaim(new Claim("UserName", userDto.UserName));
                         identity.AddClaim(new Claim("Module", AccountController.GetGroups(userDto)));
                         identity.AddClaim(new Claim("RoleCode", AccountController.GetRoleCodes(userDto)));
                         identity.AddClaim(new Claim("ExpirationUrl", userDto.Organization.Url));

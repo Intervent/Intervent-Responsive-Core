@@ -52,6 +52,7 @@ namespace InterventWebApp.Controllers
                         HttpContext.Session.SetString(SessionContext.TermsAccepted, response.TermsAccepted.ToString());
                         identity.claimsIdentity.AddClaim(new Claim("UserId", response.Id.ToString()));
                         identity.claimsIdentity.AddClaim(new Claim("FullName", response.FirstName + " " + response.LastName));
+                        identity.claimsIdentity.AddClaim(new Claim("UserName", response.UserName));
                         identity.claimsIdentity.AddClaim(new Claim("Module", AccountController.GetGroups(response)));
                         identity.claimsIdentity.AddClaim(new Claim("RoleCode", AccountController.GetRoleCodes(response)));
                         identity.claimsIdentity.AddClaim(new Claim("ExpirationUrl", response.Organization.Url));
@@ -529,6 +530,7 @@ namespace InterventWebApp.Controllers
                         HttpContext.Session.SetString(SessionContext.TermsAccepted, response.TermsAccepted.ToString());
                         identity.claimsIdentity.AddClaim(new Claim("UserId", response.Id.ToString()));
                         identity.claimsIdentity.AddClaim(new Claim("FullName", response.FirstName + " " + response.LastName));
+                        identity.claimsIdentity.AddClaim(new Claim("UserName", response.UserName));
                         identity.claimsIdentity.AddClaim(new Claim("Module", AccountController.GetGroups(response)));
                         identity.claimsIdentity.AddClaim(new Claim("RoleCode", AccountController.GetRoleCodes(response)));
                         identity.claimsIdentity.AddClaim(new Claim("ExpirationUrl", response.Organization.Url));

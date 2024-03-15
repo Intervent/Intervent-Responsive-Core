@@ -1,10 +1,10 @@
-﻿using Intervent.DAL;
+﻿using Azure.Core;
+using Intervent.DAL;
 using Intervent.Web.DTO;
 using Intervent.Web.DTO.Diff;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System.Configuration;
 using System.Data;
 using System.Security.Claims;
 
@@ -252,7 +252,6 @@ namespace Intervent.Web.DataLayer
                 }
                 if (!request.User.EmailConfirmed)
                 {
-                    //userManager.UserTokenProvider = new DataProtectorTokenProvider<User, int, logger>(dataProtectionProvider.Create("ConfirmEmail"));
                     response.Token = await userManager.GenerateEmailConfirmationTokenAsync(daluser);
                 }
                 if (!request.User.Complete.HasValue || !request.User.Complete.Value)
@@ -925,11 +924,11 @@ namespace Intervent.Web.DataLayer
         public async Task<ChangePasswordResponse> ChangePassword(ChangePasswordRequest request)
         {
             ChangePasswordResponse response = new ChangePasswordResponse();
-
-            var result = await userManager.ChangePasswordAsync(new ApplicationUser { Id = request.UserId }, request.oldPassword, request.newPassword);
+            var user = await userManager.FindByIdAsync(request.UserId.ToString());
+            var result = await userManager.ChangePasswordAsync(user, request.oldPassword, request.newPassword);
             response.success = result.Succeeded;
             if (!response.success)
-                response.error = result.Errors.FirstOrDefault().Description;
+                response.error = result.Errors.Count() > 0 ? result.Errors.FirstOrDefault().Description : "";
             return response;
         }
 
@@ -992,19 +991,16 @@ namespace Intervent.Web.DataLayer
                 userDAL = dbcontext.Users.Include("Organization").Include("Organization.Portals").Where(x => x.UserName == request.username).FirstOrDefault();
                 if (userDAL != null)
                 {
-                    var locked = await userManager.IsLockedOutAsync(new ApplicationUser { Id = userDAL.Id });
+                    var user = await userManager.FindByNameAsync(request.username);
+                    var locked = await userManager.IsLockedOutAsync(user);
                     if (ValidateUserEligibility(userDAL))
                     {
                         if (!locked)
                         {
-                            var emailConfirmated = await userManager.IsEmailConfirmedAsync(new ApplicationUser { Id = userDAL.Id });
+                            var emailConfirmated = await userManager.IsEmailConfirmedAsync(user);
                             if (emailConfirmated)
                             {
-                                /*userManager.UserTokenProvider = new DataProtectorTokenProvider<User, int>(dataProtectionProvider.Create("ResetPassword"))
-                                {
-                                    TokenLifespan = TimeSpan.FromHours(1),
-                                };*/
-                                var token = await userManager.GeneratePasswordResetTokenAsync(new ApplicationUser { Id = userDAL.Id });
+                                var token = await userManager.GeneratePasswordResetTokenAsync(user);
                                 response.resetToken = token;
                                 response.user = Utility.mapper.Map<User, UserDto>(userDAL);
                             }
@@ -1034,8 +1030,8 @@ namespace Intervent.Web.DataLayer
 
         public async Task<string> GenerateToken(int userId)
         {
-            //userManager.UserTokenProvider = new DataProtectorTokenProvider<User, int>(dataProtectionProvider.Create("ConfirmEmail"));
-            string Tocken = await userManager.GenerateEmailConfirmationTokenAsync(new ApplicationUser { Id = userId });
+            var userResult = await userManager.FindByIdAsync(userId.ToString());
+            string Tocken = await userManager.GenerateEmailConfirmationTokenAsync(userResult);
             return Tocken;
         }
 
@@ -1044,8 +1040,7 @@ namespace Intervent.Web.DataLayer
             ValidateTokenResponse response = new ValidateTokenResponse();
 
             var userResult = await userManager.FindByNameAsync(request.email);
-            //userManager.UserTokenProvider = new DataProtectorTokenProvider<User, int>(dataProtectionProvider.Create("ResetPassword"));
-            var result = await userManager.VerifyUserTokenAsync(new ApplicationUser { Id = userResult.Id }, userManager.Options.Tokens.PasswordResetTokenProvider, UserManager<ApplicationUser>.ResetPasswordTokenPurpose, request.token);
+            var result = await userManager.VerifyUserTokenAsync(userResult, userManager.Options.Tokens.PasswordResetTokenProvider, UserManager<ApplicationUser>.ResetPasswordTokenPurpose, request.token);
             response.Succeeded = result;
             return response;
         }
@@ -1061,10 +1056,9 @@ namespace Intervent.Web.DataLayer
                 return response;
             }
             response.validateDOB = true;
-            //userManager.UserTokenProvider = new DataProtectorTokenProvider<User, int>(dataProtectionProvider.Create("ResetPassword"));
-            var result = await userManager.ResetPasswordAsync(new ApplicationUser { Id = userResult.Id }, request.token, request.Password);
+            var result = await userManager.ResetPasswordAsync(userResult, request.token, request.Password);
             response.success = result.Succeeded;
-            response.message = result.Errors.FirstOrDefault().Description;
+            response.message = result.Errors.Count() > 0 ? result.Errors.FirstOrDefault().Description : "";
             return response;
         }
 
@@ -1073,8 +1067,7 @@ namespace Intervent.Web.DataLayer
             ConfirmEmailResponse response = new ConfirmEmailResponse();
 
             var userResult = await userManager.FindByNameAsync(request.Email);
-            //userManager.UserTokenProvider = new DataProtectorTokenProvider<User, int>(dataProtectionProvider.Create("ConfirmEmail"));
-            var result = await userManager.ConfirmEmailAsync(new ApplicationUser { Id = userResult.Id }, request.token);
+            var result = await userManager.ConfirmEmailAsync(userResult, request.token);
             response.Succeeded = result.Succeeded;
             if (!response.Succeeded)
                 response.error = result.Errors;
