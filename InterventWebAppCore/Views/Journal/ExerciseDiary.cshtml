@@ -332,8 +332,8 @@
             'page': currentPage,
             'pageSize': pageSize,
             'totalRecords': totalRecords,
-            'startDate': startDate.toISOString(),
-            'endDate': endDate.toISOString(),
+            'startDate': startDate != '' ? new Date(startDate) : null,
+            'endDate': endDate != '' ? new Date(endDate) : null,
             'Days' : Days
         };
         model = (paginationdata);
