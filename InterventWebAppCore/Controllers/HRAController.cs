@@ -75,6 +75,8 @@ namespace InterventWebApp
                 HttpContext.Session.SetString(SessionContext.HRACompleteDate, hra.CompleteDate.Value.ToString());
             if (hra != null && !string.IsNullOrEmpty(hra.HAPageSeqDone))
                 HttpContext.Session.SetString(SessionContext.HRAPageSeqDone, hra.HAPageSeqDone.ToString());
+            if (hra != null && !HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue)
+                HttpContext.Session.SetInt32(SessionContext.HRAId, hra.Id);
             return true;
         }
 

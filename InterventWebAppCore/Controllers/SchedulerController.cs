@@ -280,6 +280,12 @@ namespace InterventWebApp
             var createdBy = HttpContext.Session.GetInt32(SessionContext.AdminId).Value;
             var userId = HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value;
             var response = SchedulerUtility.ScheduleAppointment(null, Convert.ToDateTime(Date), type, coachId, minutes, comments, createdBy, userId, string.IsNullOrEmpty(timeZone) ? User.TimeZone() : timeZone, true, videoRequired, meetingId, HttpContext.Session.GetInt32(SessionContext.IntegrationWith), HttpContext.Session.GetInt32(SessionContext.UserinProgramId).HasValue ? HttpContext.Session.GetInt32(SessionContext.UserinProgramId).Value : null, HttpContext.Session.GetInt32(SessionContext.ProgramType).HasValue ? HttpContext.Session.GetInt32(SessionContext.ProgramType).Value : null, HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue ? HttpContext.Session.GetInt32(SessionContext.HRAId).Value : null, HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId).Value, HttpContext.Session.GetInt32(SessionContext.HasHRA).HasValue ? HttpContext.Session.GetInt32(SessionContext.HasHRA).Value : null, Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.AssignPrograms) != null ? HttpContext.Session.GetString(SessionContext.AssignPrograms) : false), HttpContext.Session.GetInt32(SessionContext.UserId).Value, HttpContext.Session.GetString(SessionContext.OrgContactEmail), HttpContext.Session.GetString(SessionContext.OrgContactNumber), _appSettings.SouthUniversityOrgId);
+            if (response.enrollinProgramResponse != null && response.enrollinProgramResponse.success)
+            {
+                HttpContext.Session.SetInt32(SessionContext.UserinProgramId, response.enrollinProgramResponse.UsersinProgramId);
+                HttpContext.Session.SetInt32(SessionContext.ProgramsInPortalId, response.enrollinProgramResponse.ProgramsInPortalId);
+                HttpContext.Session.SetInt32(SessionContext.ProgramType, response.enrollinProgramResponse.ProgramType);
+            }
             return Json(response);
         }
 

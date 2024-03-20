@@ -943,6 +943,8 @@ namespace InterventWebApp
                     HttpContext.Session.SetString(SessionContext.ParticipantTimeZone, TimeZones.Select(x => x.TimeZoneId).FirstOrDefault());
                     HttpContext.Session.SetString(SessionContext.ParticipantTimeZoneName, CommonUtility.GetTimeZones(model.user.TimeZoneId).TimeZones[0].TimeZone1);
                 }
+                if (response.isClearProgramRelatedSessions)
+                    ClearProgramRelatedSessions();
                 return Json("success");
             }
             else
