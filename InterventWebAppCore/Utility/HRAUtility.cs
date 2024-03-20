@@ -65,7 +65,7 @@ namespace InterventWebApp
             if (model.integrationWith.HasValue && model.integrationWith.Value == (int)Integrations.Intuity && ParticipantUtility.IsIntuityUser(model.participantId))
                 request.IsIntuityUser = true;
             if (!model.hraId.HasValue)
-                model.hraId = CreateHRA(model.userId, model.participantId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
+                model.hraId = CreateHRA(model.participantId, model.userId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
 
             medicalCondition = model.medicalConditions;
             medicalCondition.HRAId = model.hraId.Value;
@@ -90,7 +90,7 @@ namespace InterventWebApp
             OtherRiskFactorsDto OtherRiskFactors = new OtherRiskFactorsDto();
 
             if (!model.hraId.HasValue)
-                model.hraId = CreateHRA(model.userId, model.participantId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
+                model.hraId = CreateHRA(model.participantId, model.userId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
 
             OtherRiskFactors = model.otherRisks;
             OtherRiskFactors.HRAId = model.hraId.Value;
@@ -132,7 +132,7 @@ namespace InterventWebApp
             HSPDto HSP = new HSPDto();
 
             if (!model.hraId.HasValue)
-                model.hraId = CreateHRA(model.userId, model.participantId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
+                model.hraId = CreateHRA(model.participantId, model.userId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
 
             HSP = model.hsp;
             HSP.HRAId = model.hraId.Value;
@@ -157,7 +157,7 @@ namespace InterventWebApp
             ExamsandShotsDto exams = new ExamsandShotsDto();
 
             if (!model.hraId.HasValue)
-                model.hraId = CreateHRA(model.userId, model.participantId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
+                model.hraId = CreateHRA(model.participantId, model.userId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
 
             exams.HRAId = model.hraId.Value;
             exams.PhysicalExam = model.PhysicalExamBool == true ? Convert.ToByte(1) : Convert.ToByte(2);
@@ -211,7 +211,7 @@ namespace InterventWebApp
                 request.IsIntuityUser = true;
             InterestsDto interest = new InterestsDto();
             if (!model.hraId.HasValue)
-                model.hraId = CreateHRA(model.userId, model.participantId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
+                model.hraId = CreateHRA(model.participantId, model.userId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
 
             interest = model.interests;
             interest.HRAId = model.hraId.Value;
@@ -253,7 +253,7 @@ namespace InterventWebApp
             request.UpdatedByUserId = model.userId;
             request.UserId = model.userId;
             if (!model.hraId.HasValue)
-                model.hraId = CreateHRA(model.userId, model.participantId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
+                model.hraId = CreateHRA(model.participantId, model.userId, model.systemAdminId, model.userinProgramId, model.participantPortalId, false);
             numbers.HRAId = model.hraId.Value;
             request.HealthNumbers.HRA = UpdateHRADetails("YN.", model.hraCompleteDate, model.hraPageSeqDone, model.hraPageSeq);
             request.HealthNumbers.HRA.UserId = model.participantId;
