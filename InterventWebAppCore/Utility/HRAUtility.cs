@@ -72,6 +72,7 @@ namespace InterventWebApp
             request.medicalCondition = medicalCondition;
             //Update core hra info
             request.medicalCondition.HRA = UpdateHRADetails("MC.", model.hraCompleteDate, model.hraPageSeqDone, model.hraPageSeq);
+            request.medicalCondition.HRA.Id = model.hraId.Value;
 
             //track user changes
             request.UserId = model.userId;
