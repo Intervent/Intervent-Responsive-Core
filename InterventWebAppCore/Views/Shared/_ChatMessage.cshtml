@@ -446,7 +446,7 @@
                     }
                     else {
                         messagesHtml += "<div class='no-msg-container'><div class='no-msg'><img src='../../Images/messages/no-msg.jpg'><h3>No Messages, Yet</h3><p>There are No Messages in your Inbox as yet!</p>";
-                        if (@Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)) && @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId) != @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId)) {
+                        if ("@HttpContextAccessor.HttpContext.Session.GetString(SessionContext.HasActivePortal)" == "True" && @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.UserId) != @HttpContextAccessor.HttpContext.Session.GetInt32(SessionContext.ParticipantId)) {
                             messagesHtml += "<p>You can start by creating a new message</p><button class='button' data-open='new-msg-modal' onclick='addNewMsg();' aria-controls='new-msg-modal' aria-haspopup='true' tabindex='0'>Create New</button>";
                         }
                         messagesHtml += "</div></div>";
