@@ -351,7 +351,7 @@ namespace InterventWebApp
                     HttpContext.Session.SetInt32(SessionContext.AssignedFollowUp, 1);
                 else if (HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp).HasValue && Convert.ToByte(HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp)) >= 0)
                     HttpContext.Session.SetInt32(SessionContext.AssignedFollowUp, HttpContext.Session.GetInt32(SessionContext.AssignedFollowUp).Value + 1);
-                HttpContext.Session.SetString(SessionContext.FollowUpCompleteDate, null);
+                HttpContext.Session.Remove(SessionContext.FollowUpCompleteDate);
             }
             return Json(new { Result = "OK", Records = response.success });
         }

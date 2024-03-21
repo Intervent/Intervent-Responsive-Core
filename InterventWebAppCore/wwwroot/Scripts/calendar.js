@@ -141,7 +141,7 @@ function printDay() {
                         html += "<div class='cell small-5 medium-2 text-right'>";
                         var dateTimeNow = new Date();
                         var utcNow = new Date(dateTimeNow.getTime() + dateTimeNow.getTimezoneOffset() * 60000)
-                        var apptDate = new Date(parseInt(data.Records[i].UTCDate.substr(6)));
+                        var apptDate = new Date(data.Records[i].UTCDate);
                         apptDate.setDate(apptDate.getDate() + 1);
                         if (data.Records[i].Active == true && apptDate > utcNow)
                             html += "<a data-open='cancel-appointment' class='button secondary tiny' data-modal-path='" + cancelUrl + "?appid=" + data.Records[i].Id + "'>Cancel</a>";
