@@ -192,7 +192,7 @@ namespace InterventWebApp
             return response;
         }
 
-        public static AddEditTaskResponse AddEditTask(int? id, int taskTypeId, string status, int? user, int owner, string comment, bool isActive = true)
+        public static AddEditTaskResponse AddEditTask(int? id, int taskTypeId, string status, int userId, int owner, string comment, bool isActive = true, int? user = null)
         {
             AdminReader reader = new AdminReader();
             AddEditTaskRequest request = new AddEditTaskRequest();
@@ -205,7 +205,7 @@ namespace InterventWebApp
                 task.UserId = user.Value;
             task.Owner = owner;
             task.Comment = comment;
-            task.UpdatedBy = task.CreatedBy = user.Value;
+            task.UpdatedBy = task.CreatedBy = userId;
             task.IsActive = isActive;
             request.task = task;
             var response = reader.AddEditTask(request);

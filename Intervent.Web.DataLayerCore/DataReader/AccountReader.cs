@@ -221,7 +221,7 @@ namespace Intervent.Web.DataLayer
                 response.error = result.Errors;
             else
             {
-                var User = userManager.FindByNameAsync(request.User.UserName).Result;
+                var User = GetUserByUserName(request.User.UserName);
                 response.userId = User.Id;
                 if (request.User.PrimaryCarePhysician == 1 && request.User.UserDoctorInfoes != null)
                 {
@@ -431,7 +431,7 @@ namespace Intervent.Web.DataLayer
 
         public User GetUserByUserName(string email)
         {
-            return dbcontext.Users.Include("Organization").Where(x => x.UserName == email).FirstOrDefault();
+            return dbcontext.Users.Include("Organization").Include("Organization.Portals").Where(x => x.UserName == email).FirstOrDefault();
         }
 
         public UserDto GetUserHRAByUniqueId(GetUserRequestByUniqueId request)

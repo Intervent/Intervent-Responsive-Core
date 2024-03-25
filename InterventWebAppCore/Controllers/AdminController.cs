@@ -538,7 +538,7 @@ namespace InterventWebApp
         [Authorize]
         public JsonResult AddEditTask(int? id, int taskTypeId, string status, int? user, int owner, string comment)
         {
-            var response = AdminUtility.AddEditTask(id, taskTypeId, status, user, owner, comment, true);
+            var response = AdminUtility.AddEditTask(id, taskTypeId, status, HttpContext.Session.GetInt32(SessionContext.UserId).Value, owner, comment, true, user);
             return Json(new { Result = "OK", Portal = response.success });
         }
 

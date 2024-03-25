@@ -56,7 +56,7 @@ namespace InterventWebApp
                 var response = NewsLetterUtility.AddEditNewsletter(id, name, pdf);
                 if (id > 0 && FileUpload != null)
                 {
-                    string oldPDF = targetpath + response.OldPdf;
+                    string oldPDF = Path.Combine(targetpath, response.OldPdf);
                     System.IO.File.Delete(oldPDF);
                 }
                 id = response.NewsletterId;
