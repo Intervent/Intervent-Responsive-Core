@@ -542,7 +542,7 @@
 
         var model = {};
         var data = {
-            'Id': Id,
+            'Id': Id != '' ? Id : 0,
             'KitId': @Model.Id,
             'Description': Description,
             'RefId': RefId,
