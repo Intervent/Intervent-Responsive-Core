@@ -711,7 +711,7 @@
                             <div class="grid-x grid-margin-x align-justify button-set">
                                 @if (Model.PortalUserId.HasValue)
                                 {
-                                    <div class="cell medium-6 medium-order-2 medium-text-right">@Url.ActionLink("Go to Profile", "Stream", new { ForceParticipant = true } /* new { @class = "button" } */)</div>
+                                    <div class="cell medium-6 medium-order-2 medium-text-right">@Html.ActionLink("Go to Profile", "Stream", new { ForceParticipant = true }, new { @class = "button" })</div>
                                 }
                                 else if (Model.IntegrationWith != (byte)Integrations.LMC)
                                 {

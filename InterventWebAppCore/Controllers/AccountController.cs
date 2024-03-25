@@ -851,7 +851,8 @@ namespace InterventWebApp
                 model.user.FirstName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(model.user.FirstName.ToLower());
                 model.user.LastName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(model.user.LastName.ToLower());
                 HttpContext.Session.SetString(SessionContext.ParticipantName, model.user.FirstName + " " + model.user.LastName);
-                HttpContext.Session.SetInt32(SessionContext.Unit, (int)model.user.Unit);
+                if (model.user.Unit.HasValue)
+                    HttpContext.Session.SetInt32(SessionContext.Unit, (int)model.user.Unit);
                 if (!string.IsNullOrEmpty(model.user.LanguagePreference) && string.IsNullOrEmpty(model.module))
                 {
                     HttpContext.Session.SetString(SessionContext.LanguagePreference, model.user.LanguagePreference);
