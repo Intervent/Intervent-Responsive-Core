@@ -50,7 +50,7 @@
 				{
 					if (Model.coachingProgram)
 					{
-						@Url.Action("ProgramOptions", "Participant", new { Coaching = true, hasCoachingConditions = Model.hasCoachingConditions});
+						<div id="coachingProgramDiv"> </div>
 						if ((!Model.userinProgramId.HasValue && Model.selfHelpProgram) || Convert.ToString(Model.participantId) == "89")
 						{
 							<p class="text-center underline">
@@ -66,7 +66,7 @@
 					}
 					else if (!Model.userinProgramId.HasValue)
 					{
-						@Url.Action("ProgramOptions", "Participant", new { Coaching = false, hasCoachingConditions = Model.hasCoachingConditions });
+						<div id="noncoachingProgramDiv"> </div>
 						<p class="text-center underline">
 							<a href="../Reports/ReportsDashboard">@Translate.Message("L660")</a>
 						</p>
@@ -113,4 +113,23 @@
     $('#continue').on('click', function () {
         window.location.href = $('#reference').text()
     });
+
+	$(document).ready(function () {
+		if ("@Model.coachingProgram" == "True" || "@Model.userinProgramId.HasValue" == "False") {
+			$.ajax({
+				url: "@Url.Action("ProgramOptions", "Participant", new { Coaching = @Model.coachingProgram, hasCoachingConditions = @Model.hasCoachingConditions })",
+				type: 'POST',
+				contentType: 'application/json, charset=utf-8',
+				success: function (data) {
+					if ("@Model.coachingProgram" == "True") {
+						$('#coachingProgramDiv').html(data);
+					} else {
+						$('#noncoachingProgramDiv').html(data);
+					}
+				}
+			}).fail(function (jqXHR, textStatus, errorThrown) {
+				RedirectToErrorPage(jqXHR.status);
+			});
+		}
+	});
 </script>

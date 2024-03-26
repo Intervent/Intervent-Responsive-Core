@@ -27,7 +27,7 @@
                         }
                     </p>
                 </div>
-				@Url.Action("ProgramOptions", "Participant", new { Coaching = false })
+				<div id="ProgramOptionsmDiv"></div>
 				<p class="text-center underline">
 					<a href="../Reports/ReportsDashboard">@Translate.Message("L660")</a>
 				</p>
@@ -35,3 +35,17 @@
 		</div>
 	</div>
 </section>
+<script type="text/javascript">
+	$(document).ready(function () {
+		$.ajax({
+			url: "@Url.Action("ProgramOptions", "Participant", new { Coaching = false })",
+			contentType: 'application/json, charset=utf-8',
+			type: 'POST',
+			success: function (data) {
+				$('#ProgramOptionsmDiv').html(data);
+			}
+		}).fail(function (jqXHR, textStatus, errorThrown) {
+			RedirectToErrorPage(jqXHR.status);
+		});
+	});
+</script>

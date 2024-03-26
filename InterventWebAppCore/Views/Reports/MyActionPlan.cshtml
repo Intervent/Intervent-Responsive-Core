@@ -30,25 +30,25 @@
     </div>
 
     <div class="tile-item with-padding remove-margin rec-modal exercise force-new-page">
-        @Url.Action("ExerciseRecommendation", "Reports", new { fromKit = false })
+        <div id="ExerciseRecommendationDiv"></div>
     </div>
     <div class="tabular tile-item with-padding force-new-page report-dashboard rec-modal cac-score">
-        @Url.Action("NutritionRecommendation", "Reports")
+        <div id="NutritionRecommendationDiv"></div>
     </div>
     <div class="tabular tile-item with-padding force-new-page report-dashboard rec-modal cac-score">
-        @Url.Action("SupplementRecommendation", "Reports")
+        <div id="SupplementRecommendationDiv"></div>
     </div>
 	<div class="tile-item with-padding rec-modal">
-		@Url.Action("StressRecommendation", "Reports")
+        <div id="StressRecommendationDiv"></div>
 	</div>
 	<div class="tile-item with-padding rec-modal">
-		@Url.Action("TobaccoRecommendation", "Reports")
+        <div id="TobaccoRecommendationDiv"></div>
 	</div>
     <div class="tile-item with-padding rec-modal force-new-page">
-        @Url.Action("ExamsRecommendation", "Reports")
+        <div id="ExamsRecommendationDiv"></div>
     </div>
     <div class="tile-item with-padding rec-modal force-new-page">
-        @Url.Action("Referrals", "Reports")
+        <div id="ReferralsDiv"></div>
     </div>
 </section>
 
@@ -71,5 +71,82 @@
             $('.show-for-print').removeClass('show-for-print');
             $('.user-layout').addClass('user-layout-print')
         }
+
+        $.ajax({
+            url: "@Url.Action("ExerciseRecommendation", "Reports", new { fromKit = false })",
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#ExerciseRecommendationDiv').html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+
+        $.ajax({
+            url: "@Url.Action("NutritionRecommendation", "Reports")",
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#NutritionRecommendationDiv').html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+
+        $.ajax({
+            url: "@Url.Action("SupplementRecommendation", "Reports")",
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#SupplementRecommendationDiv').html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+
+        $.ajax({
+            url: "@Url.Action("StressRecommendation", "Reports")",
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#StressRecommendationDiv').html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+
+        $.ajax({
+            url: "@Url.Action("TobaccoRecommendation", "Reports")",
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#TobaccoRecommendationDiv').html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+
+        $.ajax({
+            url: "@Url.Action("ExamsRecommendation", "Reports")",
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#ExamsRecommendationDiv').html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
+        
+        $.ajax({
+            url: "@Url.Action("Referrals", "Reports")",
+            contentType: 'application/json, charset=utf-8',
+            type: 'POST',
+            success: function (data) {
+                $('#ReferralsDiv').html(data);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            RedirectToErrorPage(jqXHR.status);
+        });
     });
 </script>
