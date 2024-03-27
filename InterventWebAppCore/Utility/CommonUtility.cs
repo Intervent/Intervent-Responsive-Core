@@ -232,13 +232,6 @@ namespace InterventWebApp
             return false;
         }
 
-        public static bool IsParticipantView(string isParticipantView)
-        {
-            if (string.IsNullOrEmpty(isParticipantView) && isParticipantView == "true")
-                return true;
-            return false;
-        }
-
         public static bool IsSuperAdmin(string role)
         {
             var roleList = new List<string>() { RoleCode.Administrator };

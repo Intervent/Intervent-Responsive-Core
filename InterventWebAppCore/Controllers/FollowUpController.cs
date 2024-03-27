@@ -40,8 +40,8 @@ namespace InterventWebApp
         public ActionResult FollowUp(int followupid)
         {
             FollowUpDto model = new FollowUpDto();
-            if (!(followupid > 0))
-                followupid = HttpContext.Session.GetInt32(SessionContext.FollowUpId).HasValue ? HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value : 0;
+            if (!(followupid > 0) && HttpContext.Session.GetInt32(SessionContext.FollowUpId).HasValue)
+                followupid = HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value;
             var response = FollowUpUtility.ReadFollowUp(followupid);
             if (response.FollowUpDto != null)
                 model = response.FollowUpDto;
@@ -146,7 +146,7 @@ namespace InterventWebApp
             FU_HSAModel model = new FU_HSAModel();
             model.StateOfHealthList = ListOptions.GetStateOfHealthLists().Select(x => new SelectListItem { Text = Translate.Message(x.DisplayText), Value = x.Value });
             model.ProductivityLossList = ListOptions.GetHealthProblems().Select(x => new SelectListItem { Text = Translate.Message(x.DisplayText), Value = x.Value });
-            if (!(followupid > 0))
+            if (!(followupid > 0) && HttpContext.Session.GetInt32(SessionContext.FollowUpId).HasValue)
                 followupid = HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value;
             if (followupid > 0)
                 model.HealthCondition = FollowUpUtility.ReadHealthConditions(followupid).FollowUp_HealthConditionsDto;
@@ -424,7 +424,7 @@ namespace InterventWebApp
         public ActionResult FollowUpReport(int followupid)
         {
             FollowUpModuleModel model = new FollowUpModuleModel();
-            if (!(followupid > 0))
+            if (!(followupid > 0) && HttpContext.Session.GetInt32(SessionContext.FollowUpId).HasValue)
                 followupid = HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value;
             model.FollowUpSummary = GetFollowUpReport(followupid);
             model.DateFormat = HttpContext.Session.GetString(SessionContext.DateFormat);

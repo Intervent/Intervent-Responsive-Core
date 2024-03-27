@@ -491,7 +491,7 @@
         if (parseFloat($("#HDL").val())>0 || parseFloat($("#LDL").val())>0)
         {
             if((parseFloat($("#HDL").val()) + parseFloat($("#LDL").val()) > parseFloat($("#TotalChol").val()))){
-                if('@CommonUtility.HasAdminRole(User.RoleCode())' == 'True' && '@CommonUtility.IsParticipantView(Model.IsParticipantView.ToString()))' == 'False'){
+                if ('@CommonUtility.HasAdminRole(User.RoleCode())' == 'True' && '@Convert.ToBoolean(Model.IsParticipantView.ToString())' == 'False') {
                     checkChol = true;
                     return true;
                 }

@@ -186,7 +186,7 @@
                         </div>
                     </div>
 
-                    @if (CommonUtility.HasAdminRole(User.RoleCode()) && !CommonUtility.IsParticipantView(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.IsParticipantView)))
+                    @if (CommonUtility.HasAdminRole(User.RoleCode()) && !Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.IsParticipantView)))
                     {
                         <div class="health-form-seperator">
                             <h5>@Translate.Message("L952") <span>@Translate.Message("L171")</span></h5>
@@ -416,7 +416,7 @@
                                     <p>@Translate.Message("L3857")</p>
                                 </div>
                                 <input id="LMCLabId" type="hidden">
-                                @if (CommonUtility.HasAdminRole(User.RoleCode()) && !CommonUtility.IsParticipantView(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.IsParticipantView)))
+                                @if (CommonUtility.HasAdminRole(User.RoleCode()) && !Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.IsParticipantView)))
                                 {
                                     <div id="lmclabselection" class="lmclabselection diagnostic-selection">
                                         Lab Selection:
@@ -1400,7 +1400,7 @@
         if (parseFloat($("#HDL" + unit).val())>0 || parseFloat($("#LDL" + unit).val())>0)
         {
             if((parseFloat($("#HDL" + unit).val()) + parseFloat($("#LDL" + unit).val()) > parseFloat($("#TotalChol" + unit).val()))){
-                if ('@CommonUtility.HasAdminRole(User.RoleCode())' == 'True' && '@CommonUtility.IsParticipantView(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.IsParticipantView)))' == 'False') {
+                if ('@CommonUtility.HasAdminRole(User.RoleCode())' == 'True' && '@Convert.ToBoolean(HttpContextAccessor.HttpContext.Session.GetString(SessionContext.IsParticipantView))' == 'False') {
                     checkChol = true;
                     return true;
                 }

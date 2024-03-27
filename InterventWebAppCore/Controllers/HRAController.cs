@@ -760,8 +760,8 @@ namespace InterventWebApp
         public ActionResult HRA(int hraid)
         {
             HRAModel model = new HRAModel();
-            if (!(hraid > 0))
-                hraid = HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue ? HttpContext.Session.GetInt32(SessionContext.HRAId).Value : 0 ;
+            if (!(hraid > 0) && HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue)
+                hraid = HttpContext.Session.GetInt32(SessionContext.HRAId).Value;
             if (hraid > 0)
             {
                 if (HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue && hraid == HttpContext.Session.GetInt32(SessionContext.HRAId).Value)
@@ -791,7 +791,7 @@ namespace InterventWebApp
         [ModuleControl(null, RoleCode.Administrator, RoleCode.Coach, RoleCode.CSR)]
         public ActionResult HRAReport(int hraid)
         {
-            if (!(hraid > 0))
+            if (!(hraid > 0) && HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue)
                 hraid = HttpContext.Session.GetInt32(SessionContext.HRAId).Value;
             return PartialView("_HRAReport", GetHRAReport(hraid));
         }

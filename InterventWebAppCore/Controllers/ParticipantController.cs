@@ -55,7 +55,7 @@ namespace InterventWebApp
                     ClearParticipantSession();
                     HttpContext.Session.SetInt32(SessionContext.ParticipantId, Convert.ToInt32(User.UserId()));
                 }
-                HttpContext.Session.SetString(SessionContext.IsParticipantView, "true");
+                HttpContext.Session.SetString(SessionContext.IsParticipantView, true.ToString());
             }
             else if (ForceParticipant.HasValue && !ForceParticipant.Value)
             {

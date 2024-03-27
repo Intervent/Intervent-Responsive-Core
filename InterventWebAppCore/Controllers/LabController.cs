@@ -236,7 +236,7 @@ namespace InterventWebApp
             }
             if (HttpContext.Session.GetInt32(SessionContext.OrganizationId).HasValue)
                 model.OrganizationId = HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value;
-            model.IsParticipantView = CommonUtility.IsParticipantView(HttpContext.Session.GetString(SessionContext.IsParticipantView));
+            model.IsParticipantView = Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.IsParticipantView));
             model.HasActivePortal = Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.HasActivePortal));
             model.IntegrationWith = HttpContext.Session.GetInt32(SessionContext.IntegrationWith);
             model.ParticipantPortalId = HttpContext.Session.GetInt32(SessionContext.ParticipantPortalId);
