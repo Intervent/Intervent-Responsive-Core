@@ -307,7 +307,7 @@
                     $('#message-list').html("");
                     if (data.model.parentMessages != null && data.model.parentMessages.length > 0) {
                         for (var i = 0; i < data.model.parentMessages.length; i++) {
-                            var date = new Date(parseInt(data.model.parentMessages[i].CreateDate.substr(6)));
+                            var date = new Date(data.model.parentMessages[i].CreateDate);
                             if (data.model.parentMessages[i].Attachment != null) {
                                 $('.no-attachments').addClass('hide');
                                 var deleteText = "";
@@ -375,7 +375,7 @@
                 if (messageDetails[i].StatusChange) {
                     $("#Status_" + messageDetails[0].Id + "").html(messageStatus[3]);
                 }
-                var date = new Date(parseInt(messageDetails[i].CreateDate.substr(6)));
+                var date = new Date(messageDetails[i].CreateDate);
                 if (messageDetails[i].Attachment != null) {
                     $('.no-attachments').addClass('hide');
                     var deleteText = "", myMsg = "doc-left";

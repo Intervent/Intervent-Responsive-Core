@@ -224,8 +224,8 @@
     function isValidform() {
         var Sdate = $('#sleepLog_Date').val().replace(/-/g, '/');
         var Edate = $('#sleepLog_GotupTime').val().replace(/-/g, '/');
-        var EdateHrs = new Date(Edate.substr(6));
-        var SdateHrs = new Date(Sdate.substr(6));
+        var EdateHrs = new Date(Edate);
+        var SdateHrs = new Date(Sdate);
 
         if (Sdate == "" || Edate == "")
             return false;
@@ -356,9 +356,9 @@
             success: function (data) {
                 if (data != null) {
                     $('#sleepLog_Id').val(data.Record.Id);
-                    var Stdate = new Date(parseInt(data.Record.Start.substr(6)));
+                    var Stdate = new Date(data.Record.Start);
                     $("#sleepLog_Date").val(toLocalDateFormat(data.Record.StartDT, "24hour"));
-                    var Eddate = new Date(parseInt(data.Record.End.substr(6)));
+                    var Eddate = new Date(data.Record.End);
                     $("#sleepLog_GotupTime").val(toLocalDateFormat(data.Record.EndDT, "24hour"));
                     $("#sleepLog_SleepQuality").val(data.Record.SleepQuality);
                     $("#sleepLog_DaytimeAlertness").val(data.Record.DaytimeAlertness);

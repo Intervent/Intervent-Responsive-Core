@@ -270,7 +270,7 @@
             if (user.MedicalPlanCode != null && user.MedicalPlanCode != "") {
                 var medicalPlanEndDate = "";
                 if (user.MedicalPlanEndDate != null)
-                    medicalPlanEndDate = new Date(parseInt(user.MedicalPlanEndDate.substr(6))).toLocaleDateString();
+                    medicalPlanEndDate = new Date(user.MedicalPlanEndDate).toLocaleDateString();
                 $.ajax({
                     url: "@Url.Action("GetMedicalEligibilityText", "Participant")",
                     type: 'POST',

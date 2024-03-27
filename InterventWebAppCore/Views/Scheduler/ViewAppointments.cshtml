@@ -312,7 +312,6 @@
                     if (data.Records.Appointments != null && data.Records.Appointments.length > 0) {
                         for (var i = 0; i < data.Records.Appointments.length; i++) {
                             var ListAppoinments = data.Records.Appointments[i];
-                            var date = new Date(parseInt(ListAppoinments.Date.substr(6)));
                             if (ListAppoinments.Comments != null)
                                 comment = ListAppoinments.Comments;
                             else
@@ -470,7 +469,6 @@
                         movedHtml += "<tr><th class='green'>Name</th><th class='green'>Time</th><th class='green'>Length</th><th class='green'>Coach</th></tr>"
                         for (var i = 0; i < data.Records.AssignedList.length; i++) {
                             var ListAppoinments = data.Records.AssignedList[i];
-                            var date = new Date(parseInt(ListAppoinments.Date.substr(6)));
                             movedHtml += "<tr><td>" + ListAppoinments.UserName + "</td>" + "<td>" + toLocalDateFormat(ListAppoinments.Date) + " " + ListAppoinments.StartTime + "</td>" +
                                             "<td>" + ListAppoinments.Minutes + " min" + "</td>" + "<td>" + ListAppoinments.CoachName + "</td></tr>";
                         }
@@ -484,7 +482,6 @@
                         unmovedHtml += "<tr><th class='pink'>Name</th><th class='pink'>Time</th><th class='pink'>Length</th></tr>"
                         for (var i = 0; i < data.Records.NotAssignedList.length; i++) {
                             var ListAppoinments = data.Records.NotAssignedList[i];
-                            var date = new Date(parseInt(ListAppoinments.Date.substr(6)));
                             unmovedHtml += "<tr><td>" + ListAppoinments.UserName + "</td>" + "<td>" + toLocalDateFormat(ListAppoinments.Date) + " " + ListAppoinments.StartTime + "</td>" +
                                             "<td>" + ListAppoinments.Minutes + " min" + "</td></tr>";
                         }

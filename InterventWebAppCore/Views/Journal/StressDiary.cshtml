@@ -12,7 +12,7 @@
                 <div class="small-7 cell">
                     <h2>@Translate.Message("L557") </h2>
                 </div>
-                @if (ViewData["HasActivePortal"] == "True")
+                @if (ViewData["HasActivePortal"].ToString() == "True")
                 {
                     <div class="small-5 cell text-right">
                         <button id="add-stress-button" data-open="add-stress" class="button plus-btn right">@Translate.Message("L291")</button>
@@ -144,7 +144,7 @@
 
     $(document).ready(function () {
         $('.fdatepicker').fdatepicker({
-            format: '@ViewData["DateFormat"] hh:ii',
+            format: '@ViewData["DateFormat"].ToString() hh:ii',
             disableDblClickSelection: true,
             pickTime: true,
             endDate: new Date()
@@ -222,13 +222,13 @@
                             "<th class='pink'>@Translate.Message("L2166")</th></tr>");
                         for (var i = 0; i < data.Records.StressDiary.length; i++) {
                             var stress = data.Records.StressDiary[i];
-                            var date = new Date(parseInt(stress.Date.substr(6)));
+                            var date = new Date(stress.Date);
                             //render stress list
                             stressHtml.push("<tr><td>" + toLocalDateFormat(date) + "</td>" + "<td>" + stress.Trigger + "</td>" +
                                 "<td>" + stress.Intensity + "</td>" +
                                 "<td>" + stress.Response + "</td>" +
                                 "<td>" + stress.Duration + "</td>");
-                            if ('@ViewData["HasActivePortal"]' == "True") {
+                            if ("@ViewData["HasActivePortal"].ToString()" == "True") {
                                 stressHtml.push("<td><a onclick='Update(" + stress.Id + ")'><i class='fa fa-file-o'></i></i></a></td></tr>");
                             } else {
                                 stressHtml.push("<td></td></tr>");
@@ -243,7 +243,7 @@
                                 if (stress[j].Duration > 0)
                                     duration = duration + stress[j].Duration;
                             }
-                            var date = new Date(parseInt(stress[0].Date.substr(6)));
+                            var date = new Date(stress[0].Date);
                             stressData.push({ "date": toSystemDateFormat(date), "ay": intensity, "aValue": duration });
                         }
                         stressHtml.push("</table>");
@@ -298,7 +298,7 @@
         am4core.addLicense("CH39169069");
         // Create chart instance
         var chart = am4core.create("chartdiv", am4charts.XYChart);
-        chart.dateFormatter.dateFormat = "@ViewData["DateFormat"];
+        chart.dateFormatter.dateFormat = "@ViewData["DateFormat"].ToString()";
 
         // Create daily series and related axes
         var dateAxis1 = chart.xAxes.push(new am4charts.DateAxis());

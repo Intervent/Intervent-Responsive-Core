@@ -232,7 +232,7 @@
         for (i = 0; i < listData.length; i++) {
             trainingHtml = "";
             training = listData[i];
-            date = new Date(parseInt(training.Date.substr(6)));
+            date = new Date(training.Date);
             if (oldDate == null || date.toLocaleDateString() != oldDate.toLocaleDateString()) {
                 trainingHtml += "<tr class='header'><th>" + toLocalDateFormat(date) + "</th><th>@Translate.Message("L1718")</th><th>@Translate.Message("L2165")</th><th>@Model.WeightText</th><th>@Translate.Message("L2161")</th><th>@Translate.Message("L1732")</th><th><div class='toggle-collapse'></div></th></tr>";
             }

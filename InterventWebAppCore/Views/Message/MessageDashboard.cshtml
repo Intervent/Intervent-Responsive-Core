@@ -743,7 +743,7 @@
                             var ProfilePicture = "";
                             if (data.model.parentMessages[i].Picture != null)
                                 ProfilePicture = "/ProfilePictures/" + data.model.parentMessages[i].Picture;
-                            var date = new Date(parseInt(data.model.parentMessages[i].LastMessageDate.substr(6)));
+                            var date = new Date(data.model.parentMessages[i].LastMessageDate);
                             var isRead = data.model.parentMessages[i].StatusId != 1 ? "" : "msg-unread";
 
                             if (category == 1) {
@@ -975,7 +975,7 @@
 		messageDetailsHtml += "<div class='message-chat'><div class='chat-scroll-container'><div class='chat-container'>";
         if (messageDetails != null && messageDetails.length > 0) {
             for (var i = 0; i < messageDetails.length; i++) {
-                var date = new Date(parseInt(messageDetails[i].CreateDate.substr(6)));
+                var date = new Date(messageDetails[i].CreateDate);
                 if (messageDetails[i].Attachment != null) {
                     $('.no-attachments').addClass('hide');
                     var deleteAttachment = "", myMsg = "doc-left";

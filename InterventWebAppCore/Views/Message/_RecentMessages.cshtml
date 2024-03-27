@@ -246,7 +246,7 @@
         $("#chat-msg-head h5").html(messageDetails[0].Subject);
         if (messageDetails != null && messageDetails.length > 0) {
             for (var i = 0; i < messageDetails.length; i++) {
-                var date = new Date(parseInt(messageDetails[i].CreateDate.substr(6)));
+                var date = new Date(messageDetails[i].CreateDate);
                 if (messageDetails[i].Attachment != null) {
                     var deleteText = "", myMsg = "doc-left";
                     if (messageDetails[i].CreatorName == null)

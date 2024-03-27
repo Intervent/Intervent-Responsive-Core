@@ -194,7 +194,7 @@
                             html = html + "<div class='content'>";
                             for (var j = 0; j < currentRecord.KitsinUserPrograms.length; j++) {
                                 if (currentRecord.KitsinUserPrograms[j].IsActive == true) {
-                                    var kitStartDateDate = new Date(parseInt(currentRecord.KitsinUserPrograms[j].StartDate.substr(6)));
+                                    var kitStartDateDate = new Date(currentRecord.KitsinUserPrograms[j].StartDate);
                                     html = html + "<div class='program-item'>";
                                     if ('@Model.hasActivePortal' == 'True') {
                                         html = html + "<div class='program-download' onclick=\"DeleteKitinUserProgram(" + currentRecord.KitsinUserPrograms[j].Id + ",'" + currentRecord.KitsinUserPrograms[j].Kit.Name + "');\"><i class='fa fa-times'></i></div>";

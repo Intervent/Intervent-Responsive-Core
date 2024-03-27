@@ -211,7 +211,7 @@
                         stressHtml += "<tr><th class='pink'>@Translate.Message("L561")</th><th class='pink'>@Translate.Message("L2167")</th><th class='pink'>@Translate.Message("L2168")</th><th class='pink'>@Translate.Message("L2169")</th><th class='pink'></th>";
                         for (i = 0; i < data.Records.stressManagementLog.length; i++) {
                             var tempStress = data.Records.stressManagementLog[i];
-                            var tempDate = new Date(parseInt(tempStress.Date.substr(6)));
+                            var tempDate = new Date(tempStress.Date);
                             stressHtml += "<tr><td>" + toLocalDateFormat(tempDate) + "</td><td>" + tempStress.StressRating + "</td><td>" + tempStress.TechniqueUsed + "</td><td>" + tempStress.MinutesPerformed + "</td>";
                             if ('@Model.HasActivePortal.ToString()' == "True") {
                                 stressHtml += "<td><a onclick='Update(" + tempStress.Id + ")'><i class='fa fa-file-o'></i></a></td>";
@@ -221,7 +221,7 @@
                         }
                         for (i = 0; i < data.Records.stressManagementLogs.length; i++) {
                             stress = data.Records.stressManagementLogs[i];
-                            date = new Date(parseInt(stress.Date.substr(6)));
+                            date = new Date(stress.Date);
                             if (data.Records.stressManagementLogs.length == 1) {
                                 prevDate = date;
                                 stressRating = stress.StressRating;
@@ -237,7 +237,7 @@
                                     stressRating = stress.StressRating;
                                     noOfRecords = 1;
                                 }
-                                if (i == data.Records.stressManagementLogs.length - 1 || new Date(date).toDateString() != new Date(parseInt(data.Records.stressManagementLogs[i + 1].Date.substr(6))).toDateString())
+                                if (i == data.Records.stressManagementLogs.length - 1 || new Date(date).toDateString() != new Date(data.Records.stressManagementLogs[i + 1].Date).toDateString())
                                     triggerAdd = true;
                                 else
                                     triggerAdd = false;
@@ -282,7 +282,7 @@
             success: function (data) {
                 if (data != null) {
                     $('#streesLog_Id').val(data.Record.Id);
-                    var Stdate = new Date(parseInt(data.Record.Date.substr(6)));
+                    var Stdate = new Date(data.Record.Date);
                     var stressDate = toLocalDateFormat(Stdate, "24hour");
                     $("#streesLog_Date").val(stressDate);
                     $("#streesLog_StressRating").val(data.Record.StressRating);

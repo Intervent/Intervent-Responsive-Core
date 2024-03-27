@@ -499,6 +499,7 @@ namespace InterventWebApp
             model.TrainingSetList = CommonUtility.GetTrainingSet();
             model.TrainingTypes = JournalUtility.ListTrainingType().TrainingTypes.Select(c => new SelectListItem { Text = Translate.Message(c.LanguageItem), Value = c.Id.ToString() }).OrderBy(s => s.Text);
             model.RPE = CommonUtility.GetRPE().Select(x => new SelectListItem { Text = x.Text, Value = x.Value });
+            model.DateFormat = HttpContext.Session.GetString(SessionContext.DateFormat);
             return View(model);
         }
 

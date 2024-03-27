@@ -102,7 +102,7 @@
                     for (var i = 0; i < data.Records.weightLossList.length; i++) {
                         var item = data.Records.weightLossList[i];
                         item.Weight = item.Weight == null ? 0 : item.Weight;
-                        var date = new Date(parseInt(item.Date.substr(6)));
+                        var date = new Date(item.Date);
                         html += "<tr><td>" + toLocalDateFormat(item.DateString) + "</td><td>" + item.DayNo + "</td><td>" + item.Weight + "</td>";
                         if ('@Model.HasActivePortal.ToString()' == "True") {
                             html += "<td><a data-open='add-weight-loss' data-modal-path='" + act + "/" + item.Id + "' aria-controls='add-weight-loss' aria-haspopup='true' tabindex='0'><i class='fa fa-pencil fa-fw'></i></a></td>";
@@ -112,7 +112,7 @@
                     for (var i = 0; i < data.Records.weightLossLists.length; i++) {
                         var item = data.Records.weightLossLists[i];
                         item.Weight = item.Weight == null ? 0 : item.Weight;
-                        var date = toSystemDateFormat(new Date(parseInt(item.Date.substr(6))));
+                        var date = toSystemDateFormat(new Date(item.Date));
                         weightLossData.push({ "date": date, "value": item.Weight });
 
                     }

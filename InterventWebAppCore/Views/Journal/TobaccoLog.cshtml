@@ -223,7 +223,7 @@
                     tobaccoHtml += "<tr><th class='pink'>@Translate.Message("L561")</th><th class='pink'>@Translate.Message("L2175")</th><th class='pink'>@Translate.Message("L564")</th><th class='pink'>@Translate.Message("L2174")</th><th class='pink'></th></tr>"
                     for (var i = 0; i < data.Records.tobaccoLogList.length; i++) {
                         var tobacco = data.Records.tobaccoLogLists[i];
-                        var date = new Date(parseInt(tobacco.Date.substr(6)));
+                        var date = new Date(tobacco.Date);
                         tobaccoHtml += "<tr><td>" + toLocalDateFormat(date, "12hour") + "</td>" + "<td>" + tobacco.UsedWith + "</td>" +
                             "<td>" + tobacco.Trigger + "</td>" + "<td>" + tobacco.Location + "</td>";
                         if ('@Model.HasActivePortal.ToString()' == "True") {
@@ -233,7 +233,7 @@
                     }
                     for (var i = 0; i < data.Records.tobaccoLogLists.length; i++) {
                         var tobacco = data.Records.tobaccoLogLists[i];
-                        var date = new Date(parseInt(tobacco.Date.substr(6)));
+                        var date = new Date(tobacco.Date);
                         if (i == 0) {
                             firstDate = lastDate = date;
                         }
@@ -335,7 +335,7 @@
             success: function (data) {
                 if (data != null) {
                     $('#tobaccoLog_Id').val(data.Record.Id);
-                    var Stdate = new Date(parseInt(data.Record.Date.substr(6)));
+                    var Stdate = new Date(data.Record.Date);
                     var tobDate = toLocalDateFormat(Stdate, "24hour");
                     $("#tobaccoLog_Date").val(tobDate);
                     $("#tobaccoLog_Location").val(data.Record.Location);

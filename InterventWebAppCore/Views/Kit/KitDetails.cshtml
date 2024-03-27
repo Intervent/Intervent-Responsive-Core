@@ -461,7 +461,7 @@
                     promptHtml += "<thead><tr><th>Updated Date</th><th>Description</th><th>Reference Type</th><th>Ref Id</th><th></th></tr></thead>"
                     for (var i = 0; i < data.Record.PromptsinKits.length; i++) {
                         var prompt = data.Record.PromptsinKits[i];
-                        var date = new Date(parseInt(prompt.DateUpdated.substr(6)));
+                        var date = new Date(prompt.DateUpdated);
                         var refTypeTxt = prompt.RefType != null && prompt.RefType == 1 ? "Step" : "Activity";
                         promptHtml += "<tr><td>" + date.toLocaleDateString() + "</td><td>" + prompt.Description + "</td>" +
                                                 "<td>" + refTypeTxt + "</td>" + "<td>" + prompt.RefId + "</td>" +

@@ -361,7 +361,7 @@
                             var exercise = data.Records.ExcerciseDiary[i];
                             var duration = exercise.Duration != null ? exercise.Duration : '@Translate.Message("L1149")';
                             var stepsperday = exercise.StepsPerDay != null ? exercise.StepsPerDay : '@Translate.Message("L1149")';
-                            var date = moment.tz(new Date(parseInt(exercise.Date.substr(6))), '@Model.TimeZone');
+                            var date = moment.tz(new Date(exercise.Date), '@Model.TimeZone');
                             exerciseHtml += "<tr><td>" + toLocalDateFormat(date) + "</td>" + "<td>" + exercise.ExerciseType.Activity + "</td>" +
                                 "<td>" + duration + "</td>" +
                                 "<td>" + stepsperday + "</td>";
@@ -375,7 +375,7 @@
                             var startDate, points = 0, duration = 0, message = "";
                             for (var j = 0; j < exercises.length; j++) {
                                 if (j == 0) {
-                                    var date = new Date(moment.tz(new Date(parseInt(exercises[j].Date.substr(6))), '@Model.TimeZone'));
+                                    var date = new Date(moment.tz(new Date(exercises[j].Date), '@Model.TimeZone'));
                                     startDate = toSystemDateFormat(date);
                                 }
                                 if (exercises[j].Points > 0)
@@ -405,7 +405,7 @@
                             var startDate, points = 0, duration = 0, message = "";
                             for (var j = 0; j < exercises.length; j++) {
                                 if (j == 0) {
-                                    var date = new Date(moment.tz(new Date(parseInt(exercises[j].Date.substr(6))), '@Model.TimeZone'));
+                                    var date = new Date(moment.tz(new Date(exercises[j].Date), '@Model.TimeZone'));
                                     startDate = toSystemDateFormat(date);
                                 }
                                 if (exercises[j].Points > 0)
@@ -459,7 +459,7 @@
             success: function (data) {
                 if (data != null) {
                         $('#ExerciseDiaryId').val(data.Record.Id);
-                        var dateStr = moment.tz(new Date(parseInt(data.Record.Date.substr(6))), '@Model.TimeZone');
+                        var dateStr = moment.tz(new Date(data.Record.Date), '@Model.TimeZone');
                         var exerciseDate = toLocalDateFormat(dateStr);
                         $("#ExerciseDate").val(exerciseDate);
                         $("#ExerciseType").val(data.Record.Type + "^" + data.Record.ExerciseType.Value);
