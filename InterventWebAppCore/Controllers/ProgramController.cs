@@ -591,6 +591,7 @@ namespace InterventWebApp
                 && x.KitsinUserPrograms.Any(y => y.IsActive == true)).ToList();
             }
             model.ProgramWellnessData = ProgramUtility.GetProgramWellnessData(HttpContext.Session.GetInt32(SessionContext.Unit).Value, HttpContext.Session.GetInt32(SessionContext.ParticipantId).Value, HttpContext.Session.GetString(SessionContext.UniqueId) != null ? HttpContext.Session.GetString(SessionContext.UniqueId) : "", HttpContext.Session.GetInt32(SessionContext.OrganizationId).Value);
+            model.ProgramWellnessData.hasActivePortal = Convert.ToBoolean(HttpContext.Session.GetString(SessionContext.HasActivePortal));
             model.IsKitGoalCompletionIncentive = portalIncentive.Where(x => x.IncentiveTypeId == (int)IncentiveTypes.Kit_Goal_Completion && x.IsActive == true).Count() > 0 ? true : false;
             if (model.IsKitGoalCompletionIncentive)
                 model.KitGoalCompletionPoints = portalIncentive.Where(x => x.IncentiveTypeId == (int)IncentiveTypes.Kit_Goal_Completion && x.IsActive == true).FirstOrDefault().Points.ToString();

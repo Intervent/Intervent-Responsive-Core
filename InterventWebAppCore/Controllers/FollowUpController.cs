@@ -41,7 +41,7 @@ namespace InterventWebApp
         {
             FollowUpDto model = new FollowUpDto();
             if (!(followupid > 0))
-                followupid = HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value;
+                followupid = HttpContext.Session.GetInt32(SessionContext.FollowUpId).HasValue ? HttpContext.Session.GetInt32(SessionContext.FollowUpId).Value : 0;
             var response = FollowUpUtility.ReadFollowUp(followupid);
             if (response.FollowUpDto != null)
                 model = response.FollowUpDto;

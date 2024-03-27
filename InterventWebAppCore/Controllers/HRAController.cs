@@ -761,7 +761,7 @@ namespace InterventWebApp
         {
             HRAModel model = new HRAModel();
             if (!(hraid > 0))
-                hraid = HttpContext.Session.GetInt32(SessionContext.HRAId).Value;
+                hraid = HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue ? HttpContext.Session.GetInt32(SessionContext.HRAId).Value : 0 ;
             if (hraid > 0)
             {
                 if (HttpContext.Session.GetInt32(SessionContext.HRAId).HasValue && hraid == HttpContext.Session.GetInt32(SessionContext.HRAId).Value)

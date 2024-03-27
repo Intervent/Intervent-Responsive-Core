@@ -187,7 +187,7 @@ namespace InterventWebApp
 				model.HraLabSource = response.hra.HealthNumbers.Lab.LabSelection.Value == LabSelection.DoctorsOffice ? Translate.Message("L3155") : response.hra.HealthNumbers.Lab.LabSelection.Value == LabSelection.LabCorp ? (CommonUtility.IsIntegratedWithLMC(HttpContext.Session.GetInt32(SessionContext.IntegrationWith)) ? Translate.Message("L3580") : Translate.Message("L3156")) : "";
 			model.BMI = CommonUtility.GetBMI(response.hra.HealthNumbers.Height.Value, response.hra.HealthNumbers.Weight.Value);
 			model.medicalConditionsandRiskFactors = ReportUtility.GetMedicalConditionsandRiskFactors(response.hra, HttpContext.Session.GetInt32(SessionContext.HRAVer), response.hra.User, HttpContext.Session.GetInt32(SessionContext.Unit).Value);
-			model.measurementsandGoals = ReportUtility.GetMeasurementsandGoals(response.hra, response.hra.Goals, response.hra.User, model.ageInfo.Age, HttpContext.Session.GetInt32(SessionContext.Unit).Value, HttpContext.Session.GetInt32(SessionContext.IntegrationWith).Value);
+			model.measurementsandGoals = ReportUtility.GetMeasurementsandGoals(response.hra, response.hra.Goals, response.hra.User, model.ageInfo.Age, HttpContext.Session.GetInt32(SessionContext.Unit).Value, HttpContext.Session.GetInt32(SessionContext.IntegrationWith));
 			model.checkupsandGoals = ReportUtility.GetCheckupsandGoals(response.hra.Exams, response.hra.HealthNumbers, response.hra.User, model.ageInfo.Age);
 			model.immunizationandGoals = ReportUtility.GetImmunizationandGoals(response.hra.Exams, response.hra.HealthNumbers, response.hra.User, model.ageInfo.Age);
 			model.DrReferralModel = ReportUtility.DrReferral(response.hra.Goals, HttpContext.Session.GetInt32(SessionContext.HRAVer), response.hra.HealthNumbers.CAC);
@@ -198,7 +198,7 @@ namespace InterventWebApp
 			if (prevStatus.hra != null && prevStatus.hra.CompleteDate.HasValue)
 			{
 				model.PrevHraCompleteDate = CommonUtility.dateFormater(TimeZoneInfo.ConvertTimeFromUtc(prevStatus.hra.CompleteDate.Value, custTZone), false, HttpContext.Session.GetString(SessionContext.DateFormat));
-				model.initialMeasurementsandGoals = ReportUtility.GetMeasurementsandGoals(prevStatus.hra, prevStatus.hra.Goals, prevStatus.hra.User, model.ageInfo.Age, HttpContext.Session.GetInt32(SessionContext.Unit).Value, HttpContext.Session.GetInt32(SessionContext.IntegrationWith).Value);
+				model.initialMeasurementsandGoals = ReportUtility.GetMeasurementsandGoals(prevStatus.hra, prevStatus.hra.Goals, prevStatus.hra.User, model.ageInfo.Age, HttpContext.Session.GetInt32(SessionContext.Unit).Value, HttpContext.Session.GetInt32(SessionContext.IntegrationWith));
 			}
 			//prev follow-up detai;s
 			if (prevStatus.followupResponse != null)

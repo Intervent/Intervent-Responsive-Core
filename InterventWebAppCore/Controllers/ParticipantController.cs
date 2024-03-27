@@ -302,7 +302,7 @@ namespace InterventWebApp
                 if (portalDetails.HasHRA.HasValue)
                     HttpContext.Session.SetInt32(SessionContext.HasHRA, (int)portalDetails.HasHRA.Value);
                 HttpContext.Session.SetString(SessionContext.NeedCareplanApproval, portalDetails.NeedCareplanApproval.ToString());
-                HttpContext.Session.SetString(SessionContext.CareplanPath, portalDetails.CareplanPath.ToString());
+                HttpContext.Session.SetString(SessionContext.CareplanPath, portalDetails.CareplanPath);
                 if (portalDetails.CarePlanType.HasValue)
                     HttpContext.Session.SetInt32(SessionContext.CarePlanType, portalDetails.CarePlanType.Value);
                 model.portalStartDate = portalDetails.StartDate;
